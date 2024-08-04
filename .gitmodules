@@ -2,7 +2,7 @@
 	path = UI/wwwroot/WDevCore
 	url = https://github.com/Wilber1987/WDevCore
 	branch = cca
-[submodule "UI/Attributes"]
+[submodule "UI/CSharpAttributes"]
 	path = UI/Attributes
 	url = https://github.com/Wilber1987/CSharpAttributes
 	branch = cca
