@@ -8,5 +8,9 @@
 	branch = cca
 [submodule "CAPA_DATOS"]
 	path = CAPA_DATOS
-	url = https://github.com/Wilber1987/CAPA_DATOS.git
+	url = https://github.com/Wilber1987/CAPA_DATOS
 	branch = main
+[submodule "UI/CSharpAttributes"]
+	path = UI/CSharpAttributes
+	url = https://github.com/Wilber1987/CSharpAttributes
+	branch = cca
