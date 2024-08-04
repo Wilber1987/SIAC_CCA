@@ -5,7 +5,7 @@ Bob->Alice : hello
 
 
 clonar con todos los submodulos: 
-´´git clone --recurse-submodules -j8 https://github.com/Wilber1987/EMPRE_SA.git ´´
+´´git clone --recurse-submodules -j8 https://github.com/Wilber1987/SIAC_CCA.git ´´
 
 clonar solo sub modulos:
 ´´git submodule update --init --recursive´´
