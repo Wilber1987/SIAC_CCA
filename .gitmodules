@@ -3,7 +3,7 @@
 	url = https://github.com/Wilber1987/WDevCore
 	branch = cca
 [submodule "UI/CSharpAttributes"]
-	path = UI/Attributes
+	path = UI/CSharpAttributes
 	url = https://github.com/Wilber1987/CSharpAttributes
 	branch = cca
 [submodule "CAPA_DATOS"]
