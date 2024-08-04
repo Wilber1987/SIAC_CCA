@@ -1,0 +1,39 @@
+﻿@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string identify = Context.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] </title>
+    @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
+</head>
+
+<body id="AdminTemplate">
+    <header id="Header" class="admin-header">
+        @if (SecurityController.IsAdmin(identify))
+        {
+            <a href="~/Admin/Index">Admin Panel</a>
+        }
+        <a href="#" id="btnLogOut">Cerrar Sesión</a>
+    </header>
+    <aside id="Aside">
+        @* partial name="MainMenu" incluir fragmentos de otras paginas razor *@
+        <partial name="MainMenu" />
+    </aside>
+
+    @* RenderBody() contenido de las paginas que usan el layout razor *@
+    <main role="main" id="Main">
+        @RenderBody()
+    </main>
+
+
+</body>
+
+</html>

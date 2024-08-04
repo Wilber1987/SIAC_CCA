@@ -1,0 +1,13 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS.Security; 
+@{
+   
+    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("./Security/Login");
+        return;
+    }
+
+}
+<div id="Main"></div>

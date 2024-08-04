@@ -1,0 +1,12 @@
+[submodule "UI/wwwroot/WDevCore"]
+	path = UI/wwwroot/WDevCore
+	url = https://github.com/Wilber1987/WDevCore
+	branch = cca
+[submodule "UI/Attributes"]
+	path = UI/Attributes
+	url = https://github.com/Wilber1987/CSharpAttributes.git
+	branch = cca
+[submodule "CAPA_DATOS"]
+	path = CAPA_DATOS
+	url = https://github.com/Wilber1987/CAPA_DATOS.git
+	branch = main

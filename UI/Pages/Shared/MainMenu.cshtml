@@ -1,0 +1,18 @@
+@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string Identify = Context.Session.GetString("seassonKey");
+    var PageConfig = Config.pageConfig();
+}
+<nav>
+    <a class="title-collapse">TRANSACCIONES</a>
+    <a class="menu-item" id="Home" asp-area="" asp-page="/">HOME</a>
+    @if (SecurityController.HavePermission(Permissions.GESTION_EMPEÑOS.ToString(), Identify))
+    {
+        <a class="title-collapse" id="CollapseMenu" onclick="changeActive(this)">EXAMPLE</a>
+        <div class="collapse">
+            <a class="menu-item" id="EXAMPLE" asp-area="" asp-page="/PagesViews/EXAMPLE">EXAMPLE</a>
+        </div>
+    }
+</nav>
