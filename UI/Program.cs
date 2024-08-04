@@ -8,7 +8,7 @@ SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
 MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 //AppGeneratorProgram.Main(); //generador de codigo
-new MigrateEstudiantes().Migrate();
+//new MigrateEstudiantes().Migrate();
 
 var builder = WebApplication.CreateBuilder(args);
 
