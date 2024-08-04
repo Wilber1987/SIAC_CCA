@@ -328,10 +328,11 @@ public abstract class TransactionalClass
 	{
 		return MTConnection;
 	}
-	public void SetConnection(WDataMapper? wDataMapper)
+	internal void SetConnection(WDataMapper? wDataMapper)
 	{
 		MTConnection = wDataMapper;
 	}
+
 	//TRANSACCIONES
 	public void BeginGlobalTransaction()
 	{

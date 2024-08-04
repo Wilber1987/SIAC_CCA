@@ -28,6 +28,7 @@ public class PostgresADOConnection
         string userSQLConexion = $"Host={PostgreSQL};Port={Port};Username={SGBD_USER};Password={SWGBD_PASSWORD};Database={BDNAME};";
         SQLM = new WDataMapper(new PostgreGDatos(userSQLConexion), new PostgreQueryBuilder());
         if (SQLM.GDatos.TestConnection()) {
+            Connections.Default = SQLM;
             return true;
         } 
         else
