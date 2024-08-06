@@ -29,9 +29,9 @@ namespace DataBaseModel {
        public string? Cargo { get; set; }
        [ManyToOne(TableName = "Escolaridades", KeyColumn = "Id", ForeignKeyColumn = "Escolaridad_id")]
        public Escolaridades? Escolaridades { get; set; }
-       [OneToMany(TableName = "Docente_asignaturas", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
+       //[OneToMany(TableName = "Docente_asignaturas", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
        public List<Docente_asignaturas>? Docente_asignaturas { get; set; }
-       [OneToMany(TableName = "Docente_materias", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
+       //[OneToMany(TableName = "Docente_materias", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
        public List<Docente_materias>? Docente_materias { get; set; }
    }
 }

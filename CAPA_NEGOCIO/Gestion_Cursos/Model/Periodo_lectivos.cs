@@ -17,8 +17,6 @@ namespace DataBaseModel {
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
        public bool? Abierto { get; set; }
-       public bool? Oculto { get; set; }
-       [OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Periodo_lectivo_id")]
-       public List<Estudiante_clases>? Estudiante_clases { get; set; }
+       public bool? Oculto { get; set; }      
    }
 }

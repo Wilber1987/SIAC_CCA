@@ -5,20 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel {
-   public class Niveles : EntityClass {
+   public class Tipo_notas : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? Id { get; set; }
        public string? Nombre { get; set; }
        public string? Nombre_corto { get; set; }
-       public string? Nombre_grado { get; set; }
-       public int? Numero_grados { get; set; }
+       public int? Periodo_lectivo_id { get; set; }
+       public int? Consolidado_id { get; set; }
+       public int? Numero_consolidados { get; set; }
        public string? Observaciones { get; set; }
-       public bool? Habilitado { get; set; }
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
        public int? Orden { get; set; }
-       public int? Inicio_grado { get; set; }
-       [OneToMany(TableName = "Asignaturas", KeyColumn = "Id", ForeignKeyColumn = "Nivel_id")]
-       public List<Asignaturas>? Asignaturas { get; set; }
+     
    }
 }

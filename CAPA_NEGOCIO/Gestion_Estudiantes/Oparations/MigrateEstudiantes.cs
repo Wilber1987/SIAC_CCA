@@ -21,12 +21,21 @@ namespace CAPA_NEGOCIO.Oparations
 				EstudiantesMsql.ForEach(est =>
 				{
 					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
-					est.Save();
+					if (est.Exists<Estudiantes>())
+					{
+						return;
+						//est.Update();
+					} else 
+					{						
+						est.Save();
+					}					
+					
 				});
 				CommitGlobalTransaction();
 			}
-			catch (System.Exception)
+			catch (System.Exception ex)
 			{
+				LoggerServices.AddMessageError("ERROR:.", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}

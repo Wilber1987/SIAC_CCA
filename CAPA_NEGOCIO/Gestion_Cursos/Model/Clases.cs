@@ -14,9 +14,9 @@ namespace DataBaseModel {
        public string? Observaciones { get; set; }
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
-       [OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
+       //[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
        public List<Estudiante_clases>? Estudiante_clases { get; set; }
-       [OneToMany(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
+       //[OneToMany(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
        public List<Materias>? Materias { get; set; }
    }
 }
