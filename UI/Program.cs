@@ -9,8 +9,8 @@ MySQLConnection.IniciarConexion("root", "", "192.168.1.203", "siac_cca_productio
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 //AppGeneratorProgram.Main(); //generador de codigo
 
-//new MigrateEstudiantes().Migrate();
-new MigrateNotas().Migrate();
+new MigrateEstudiantes().Migrate();
+//new MigrateNotas().Migrate();
 
 var builder = WebApplication.CreateBuilder(args);
 

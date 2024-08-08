@@ -19,16 +19,23 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				tipoNotasMsql.ForEach(tn =>
 				{
+					var existingNota = new Tipo_notas()
+					{
+						Id = tn.Id
+					}.Find<Tipo_notas>();
+
 					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
                     tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (tn.Exists<Tipo_notas>())
+					if (existingNota != null)
 					{
-                        tn.Nombre = tn.Nombre;
-                        tn.Nombre_corto = tn.Nombre_corto;
-                        tn.Periodo_lectivo_id = tn.Periodo_lectivo_id;
-                        tn.Consolidado_id = tn.Consolidado_id;
-                        tn.Numero_consolidados = tn.Numero_consolidados;
-                        tn.Update();
+                        existingNota.Nombre = tn.Nombre;
+                        existingNota.Nombre_corto = tn.Nombre_corto;
+                        existingNota.Periodo_lectivo_id = tn.Periodo_lectivo_id;
+                        existingNota.Consolidado_id = tn.Consolidado_id;
+                        existingNota.Numero_consolidados = tn.Numero_consolidados;
+						existingNota.Observaciones = tn.Observaciones;
+						existingNota.Orden = tn.Orden;
+                        existingNota.Update();
                         
 					} else 
 					{                        
