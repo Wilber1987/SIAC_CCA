@@ -8,13 +8,14 @@ using DataBaseModel;
 
 namespace CAPA_NEGOCIO.Oparations
 {
-	public class MigrateNotas : TransactionalClass
+	public class MigrateGestionCursos : TransactionalClass
 	{
-        public bool MigrateNotas(){
-            migrateNiveles()
+        public bool Migrate(){
+            migrateNiveles();
             migrateSecciones();
             migratePeriodosLectivos();
             migrateAsignaturas();
+			return true;
         }
 
         public bool migrateNiveles(){
@@ -26,16 +27,24 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				nivelsMsql.ForEach(niv =>
 				{					
-					if (niv.Exists<Niveles>())
+					var existingNivel = new Niveles()
+					{
+						Id = niv.Id
+					}.Find<Niveles>();
+					niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
+					niv.Updated_at = DateUtil.ValidSqlDateTime(niv.Updated_at.GetValueOrDefault());
+					if (existingNivel!= null )
 					{						
-                        niv.Nombre = niv.Nombre;
-                        niv.Nombre_corto = niv.Nombre_corto;
-                        niv.Nombre_grado = niv.Nombre_grado;
-                        niv.Numero_grados = niv.Numero_grados;
-                        niv.Habilitado = niv.Habilitado;
-                        niv.Orden = niv.Orden;
-                        niv.Inicio_grado = niv.Inicio_grado;
-                        niv.Update();
+                        existingNivel.Nombre = niv.Nombre;
+                        existingNivel.Nombre_corto = niv.Nombre_corto;
+                        existingNivel.Nombre_grado = niv.Nombre_grado;
+                        existingNivel.Numero_grados = niv.Numero_grados;
+						existingNivel.Observaciones = niv.Observaciones;
+                        existingNivel.Habilitado = niv.Habilitado;
+                        existingNivel.Orden = niv.Orden;
+                        existingNivel.Inicio_grado = niv.Inicio_grado;
+						existingNivel.Updated_at = niv.Updated_at;
+                        existingNivel.Update();
 					} else 
 					{						
 						niv.Save();
@@ -63,18 +72,23 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				seccionsMsql.ForEach(secc =>
 				{
-					if (secc.Exists<Secciones>())
+					var existingSeccion = new Secciones()
 					{
-						secc.Nombre = secc.Nombre;
-                        secc.Clase_id = secc.Clase_id;
-                        secc.Docente_id = secc.Docente_id;
-                        secc.Observaciones = secc.Observaciones;                        
-                        secc.Updated_at = secc.Updated_at;
-                        secc.Update();
+						Id = secc.Id
+					}.Find<Secciones>();
+
+					if (existingSeccion!=null)
+					{
+						existingSeccion.Nombre = secc.Nombre;
+                        existingSeccion.Clase_id = secc.Clase_id;
+                        existingSeccion.Docente_id = secc.Docente_id;
+                        existingSeccion.Observaciones = secc.Observaciones;                        
+                        existingSeccion.Updated_at = secc.Updated_at;
+                        existingSeccion.Update();
 					} else 
 					{						
 						secc.Save();
-					}					
+					}
 					
 				});
 				CommitGlobalTransaction();
@@ -97,18 +111,21 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				BeginGlobalTransaction();
 				periodosMsql.ForEach(periodo =>
-				{
-                    periodo.inicio = DateUtil.ValidSqlDateTime(periodo.inicio.GetValueOrDefault());
-                    periodo.fin = DateUtil.ValidSqlDateTime(periodo.fin.GetValueOrDefault());
-					if (periodo.Exists<Periodo_lectivos>())
+				{                    
+					var existingPeriodo = new Periodo_lectivos()
 					{
-						periodo.Nombre = periodo.Nombre;
-                        periodo.Nombre_corto = periodo.Nombre_corto;
-                        periodo.Observaciones = periodo.Observaciones;
-                        periodo.config = periodo.config;
-                        periodo.Abierto = periodo.Abierto;
-                        periodo.Oculto = periodo.Oculto;
-                        periodo.Update();
+						Id = periodo.Id
+					}.Find<Periodo_lectivos>();
+
+					if (existingPeriodo!=null)
+					{
+						existingPeriodo.Nombre = periodo.Nombre;
+                        existingPeriodo.Nombre_corto = periodo.Nombre_corto;
+                        existingPeriodo.Observaciones = periodo.Observaciones;
+                        existingPeriodo.Config = periodo.Config;
+                        existingPeriodo.Abierto = periodo.Abierto;
+                        existingPeriodo.Oculto = periodo.Oculto;
+                        existingPeriodo.Update();
 					} else 
 					{						
 						periodo.Save();
@@ -136,18 +153,24 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				asigsMsql.ForEach(asig =>
 				{
+					var existingAsignatura = new Asignaturas()
+					{
+						Id = asig.Id
+					}.Find<Asignaturas>();
+
+
                     asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
                     asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
-					if (asig.Exists<Asignaturas>())
+					if (existingAsignatura!=null)
 					{
-						asig.Nombre = asig.Nombre;
+						/*asig.Nombre = asig.Nombre;
                         asig.Nombre_corto = asig.Nombre_corto;
                         asig.Observaciones = asig.Observaciones;
                         asig.config = asig.config;
                         asig.Abierto = asig.Abierto;
                         asig.Oculto = asig.Oculto;
                         asig.Nivel_id = asig.Nivel_id;
-                        asig.Update();
+                        asig.Update();*/
 					} else 
 					{						
 						asig.Save();
@@ -167,7 +190,7 @@ namespace CAPA_NEGOCIO.Oparations
         }
 
         public bool migrateMateria(){
-            var asig = new Materias();
+            var mat = new Materias();
 			mat.SetConnection(MySQLConnection.SQLM);
 			var matsMsql = mat.Get<Materias>();
 			try
@@ -182,7 +205,7 @@ namespace CAPA_NEGOCIO.Oparations
 						mat.Clase_id = mat.Clase_id;
                         mat.Asignatura_id = mat.Asignatura_id;
                         mat.Observaciones = mat.Observaciones;
-                        mat.config = mat.config;                        
+                        mat.Config = mat.Config;                        
                         mat.Lock_version = mat.Lock_version;
                         mat.Update();
 					} else 

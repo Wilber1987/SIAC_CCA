@@ -20,16 +20,35 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				EstudiantesMsql.ForEach(est =>
 				{
-					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
-					if (est.Exists<Estudiantes>())
+					var existingEstudiante = new Estudiantes()
 					{
-						return;
-						//est.Update();
-					} else 
-					{						
+						Id = est.Id
+					}.Find<Estudiantes>();
+
+					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
+					if (existingEstudiante != null)
+					{
+						existingEstudiante.Primer_nombre = est.Primer_nombre;
+						existingEstudiante.Segundo_nombre = est.Segundo_nombre;
+						existingEstudiante.Primer_apellido = est.Primer_apellido;
+						existingEstudiante.Segundo_apellido = est.Segundo_apellido;
+						existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
+						existingEstudiante.Lugar_nacimiento = est.Lugar_nacimiento;
+						existingEstudiante.Direccion = est.Direccion;
+						existingEstudiante.Codigo = est.Codigo;
+						existingEstudiante.Madre_id = est.Madre_id;
+						existingEstudiante.Padre_id = est.Padre_id;
+						existingEstudiante.Tipo_sangre = est.Tipo_sangre;
+						existingEstudiante.Padecimientos = est.Padecimientos;
+						existingEstudiante.Recorrido_id = est.Recorrido_id;
+						existingEstudiante.Activo = est.Activo;
+						existingEstudiante.Update();
+					}
+					else
+					{
 						est.Save();
-					}					
-					
+					}
+
 				});
 				CommitGlobalTransaction();
 			}
@@ -42,6 +61,6 @@ namespace CAPA_NEGOCIO.Oparations
 
 			return true;
 		}
-		
+
 	}
 }
