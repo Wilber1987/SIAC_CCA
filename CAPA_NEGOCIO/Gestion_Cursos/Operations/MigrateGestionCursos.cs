@@ -10,12 +10,12 @@ namespace CAPA_NEGOCIO.Oparations
 {
 	public class MigrateGestionCursos : TransactionalClass
 	{
-        public bool Migrate(){
-            migrateNiveles();
-            migrateSecciones();
-            migratePeriodosLectivos();
-            migrateAsignaturas();
-			return true;
+        public bool Migrate(){           
+			return 
+				migrateNiveles() &&
+				migrateSecciones() &&
+				migratePeriodosLectivos() &&
+				migrateAsignaturas();
         }
 
         public bool migrateNiveles(){
@@ -163,14 +163,14 @@ namespace CAPA_NEGOCIO.Oparations
                     asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
 					if (existingAsignatura!=null)
 					{
-						/*asig.Nombre = asig.Nombre;
-                        asig.Nombre_corto = asig.Nombre_corto;
-                        asig.Observaciones = asig.Observaciones;
-                        asig.config = asig.config;
-                        asig.Abierto = asig.Abierto;
-                        asig.Oculto = asig.Oculto;
-                        asig.Nivel_id = asig.Nivel_id;
-                        asig.Update();*/
+						existingAsignatura.Nombre = asig.Nombre;
+                        existingAsignatura.Nombre_corto = asig.Nombre_corto;
+                        existingAsignatura.Observaciones = asig.Observaciones;                        
+                        existingAsignatura.Nivel_id = asig.Nivel_id;
+						existingAsignatura.Habilitado = asig.Habilitado;
+						existingAsignatura.Updated_at = asig.Updated_at;
+						existingAsignatura.Orden = asig.Orden;
+                        existingAsignatura.Update();
 					} else 
 					{						
 						asig.Save();
@@ -198,27 +198,199 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				matsMsql.ForEach(mat =>
 				{
+
+					var existingMateria = new Materias()
+					{
+						Id = mat.Id
+					}.Find<Materias>();
                     mat.Created_at = DateUtil.ValidSqlDateTime(mat.Created_at.GetValueOrDefault());
                     mat.Updated_at = DateUtil.ValidSqlDateTime(mat.Updated_at.GetValueOrDefault());
-					if (mat.Exists<Materias>())
+					if (existingMateria != null)
 					{
-						mat.Clase_id = mat.Clase_id;
-                        mat.Asignatura_id = mat.Asignatura_id;
-                        mat.Observaciones = mat.Observaciones;
-                        mat.Config = mat.Config;                        
-                        mat.Lock_version = mat.Lock_version;
-                        mat.Update();
-					} else 
-					{						
+						existingMateria.Clase_id = mat.Clase_id;
+                        existingMateria.Asignatura_id = mat.Asignatura_id;
+                        existingMateria.Observaciones = mat.Observaciones;
+                        existingMateria.Config = mat.Config;                        
+                        existingMateria.Lock_version = mat.Lock_version;
+						existingMateria.Updated_at = mat.Updated_at;
+                        existingMateria.Update();
+					} else{
 						mat.Save();
 					}					
-					
 				});
 				CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+        }
+
+		public bool migrateClases(){
+            var clase = new Clases();
+			clase.SetConnection(MySQLConnection.SQLM);
+			var clasesMsql = clase.Get<Clases>();
+			try
+			{
+				BeginGlobalTransaction();
+				clasesMsql.ForEach(clase =>
+				{
+
+					var existingClase = new Clases()
+					{
+						Id = clase.Id
+					}.Find<Clases>();
+
+                    clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
+                    clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
+					if (existingClase != null)
+					{
+						existingClase.Grado = clase.Grado;
+                        existingClase.Nivel_id = clase.Nivel_id;
+                        existingClase.Observaciones = clase.Observaciones;
+                        existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;                        
+                        existingClase.Updated_at = clase.Updated_at;
+                        existingClase.Update();
+					} else{
+						clase.Save();
+					}					
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR migrateClases.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+        }
+
+		public bool migrateEstudiantesClases(){
+            var clase = new Estudiante_clases();
+			clase.SetConnection(MySQLConnection.SQLM);
+			var clasesMsql = clase.Get<Estudiante_clases>();
+			try
+			{
+				BeginGlobalTransaction();
+				clasesMsql.ForEach(clase =>
+				{
+
+					var existingClase = new Estudiante_clases()
+					{
+						Id = clase.Id
+					}.Find<Estudiante_clases>();
+
+                    clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
+                    clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
+					if (existingClase != null)
+					{
+						existingClase.Estudiante_id = clase.Estudiante_id;
+                        existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
+                        existingClase.Clase_id = clase.Clase_id;
+                        existingClase.Seccion_id = clase.Seccion_id;                        
+                        existingClase.Retirado = clase.Retirado;
+						existingClase.Observaciones = clase.Observaciones;
+						existingClase.Updated_at = clase.Updated_at;
+						existingClase.Promedio = clase.Promedio;
+						existingClase.Repitente = clase.Repitente;
+						existingClase.Reprobadas = clase.Reprobadas;
+                        existingClase.Update();
+					} else{
+						clase.Save();
+					}					
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+        }
+
+		public bool migrateDocentesAsignaturas(){
+            var docAsig = new Docente_asignaturas();
+			docAsig.SetConnection(MySQLConnection.SQLM);
+			var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
+			try
+			{
+				BeginGlobalTransaction();
+				docAsigsMsql.ForEach(docAsig =>
+				{
+
+					var existingClase = new Docente_asignaturas()
+					{
+						Id = docAsig.Id
+					}.Find<Docente_asignaturas>();
+
+                    docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
+                    docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
+					if (existingClase != null)
+					{
+						existingClase.Docente_id = docAsig.Docente_id;
+                        existingClase.Asignatura_id = docAsig.Asignatura_id;
+                        existingClase.Jefe = docAsig.Jefe;
+                        existingClase.Observaciones = docAsig.Observaciones;                                                
+						existingClase.Updated_at = docAsig.Updated_at;						
+                        existingClase.Update();
+					} else{
+						docAsig.Save();
+					}					
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+        }
+
+		public bool migrateDocentesMaterias(){
+            var docMat = new Docente_materias();
+			docMat.SetConnection(MySQLConnection.SQLM);
+			var docMatsMsql = docMat.Get<Docente_materias>();
+			try
+			{
+				BeginGlobalTransaction();
+				docMatsMsql.ForEach(docMat =>
+				{
+
+					var existingClase = new Docente_materias()
+					{
+						Id = docMat.Id
+					}.Find<Docente_materias>();
+
+                    docMat.Created_at = DateUtil.ValidSqlDateTime(docMat.Created_at.GetValueOrDefault());
+                    docMat.Updated_at = DateUtil.ValidSqlDateTime(docMat.Updated_at.GetValueOrDefault());
+					if (existingClase != null)
+					{
+						existingClase.Materia_id = docMat.Materia_id;
+                        existingClase.Seccion_id = docMat.Seccion_id;
+						existingClase.Docente_id = docMat.Docente_id;                        
+						existingClase.Updated_at = docMat.Updated_at;						
+                        existingClase.Update();
+					} else{
+						docMat.Save();
+					}					
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}

@@ -12,6 +12,10 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
+			return migrateEstudiantes() && migrateParientes() && migrateResponsables();
+		}
+		public bool migrateEstudiantes()
+		{
 			var estudiante = new Estudiantes();
 			estudiante.SetConnection(MySQLConnection.SQLM);
 			var EstudiantesMsql = estudiante.Get<Estudiantes>();
@@ -54,7 +58,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR:.", ex);
+				LoggerServices.AddMessageError("ERROR: migrateEstudiantes.", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}
@@ -62,5 +66,99 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
+		public bool migrateParientes()
+		{
+			var Pariente = new Parientes();
+			Pariente.SetConnection(MySQLConnection.SQLM);
+			var ParientesMsql = Pariente.Get<Parientes>();
+			try
+			{
+				BeginGlobalTransaction();
+				ParientesMsql.ForEach(est =>
+				{
+					var existingPariente = new Parientes()
+					{
+						Id = est.Id
+					}.Find<Parientes>();
+
+					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
+					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
+					if (existingPariente != null)
+					{
+						existingPariente.Primer_nombre = est.Primer_nombre;
+						existingPariente.Segundo_nombre = est.Segundo_nombre;
+						existingPariente.Primer_apellido = est.Primer_apellido;
+						existingPariente.Segundo_apellido = est.Segundo_apellido;
+						existingPariente.Sexo = est.Sexo;
+						existingPariente.Profesion = est.Profesion;
+						existingPariente.Direccion = est.Direccion;
+						existingPariente.Lugar_trabajo = est.Lugar_trabajo;
+						existingPariente.Telefono = est.Telefono;
+						existingPariente.Celular = est.Celular;
+						existingPariente.Email = est.Email;
+						existingPariente.Estado_civil_id = est.Estado_civil_id;
+						existingPariente.Religion_id = est.Religion_id;
+						existingPariente.Update();
+					}
+					else
+					{
+						est.Save();
+					}
+
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR: migrateParientes.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+		}
+
+		public bool migrateResponsables()
+		{
+			var responsable = new Responsables();
+			responsable.SetConnection(MySQLConnection.SQLM);
+			var responsablesMsql = responsable.Get<Responsables>();
+			try
+			{
+				BeginGlobalTransaction();
+				responsablesMsql.ForEach(est =>
+				{
+					var existingResponsable = new Responsables()
+					{
+						Id = est.Id
+					}.Find<Responsables>();
+
+					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
+					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
+					if (existingResponsable != null)
+					{
+						existingResponsable.Estudiante_id = est.Estudiante_id;
+						existingResponsable.Pariente_id = est.Pariente_id;
+						existingResponsable.Updated_at = est.Updated_at;
+						existingResponsable.Parentesco = est.Parentesco;
+						existingResponsable.Update();
+					}
+					else
+					{
+						est.Save();
+					}
+
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR: migrateResponsables.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+		}
 	}
 }

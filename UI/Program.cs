@@ -10,7 +10,9 @@ MySQLConnection.IniciarConexion("root", "", "192.168.1.203", "siac_cca_productio
 //AppGeneratorProgram.Main(); //generador de codigo
 
 new MigrateEstudiantes().Migrate();
-//new MigrateNotas().Migrate();
+new MigrateDocentes().Migrate();
+new MigrateGestionCursos().Migrate();
+new MigrateNotas().Migrate();
 
 var builder = WebApplication.CreateBuilder(args);
 
