@@ -13,12 +13,17 @@ namespace CAPA_NEGOCIO.Oparations
 		public bool Migrate()
 		{
 			return migrateEstudiantes() && migrateParientes() && migrateResponsables();
+			
 		}
 		public bool migrateEstudiantes()
 		{
 			var estudiante = new Estudiantes();
 			estudiante.SetConnection(MySQLConnection.SQLM);
-			var EstudiantesMsql = estudiante.Get<Estudiantes>();
+			var EstudiantesMsql = estudiante.Get<Estudiantes>(
+			//TODO ARREGLAR LO DEL PAGINADO
+			//new FilterData { FilterType = "limit", Values = ["10000"] },
+			// new FilterData { FilterType = "paginated", Values = ["1000"] }
+			);			
 			try
 			{
 				BeginGlobalTransaction();
@@ -30,7 +35,7 @@ namespace CAPA_NEGOCIO.Oparations
 					}.Find<Estudiantes>();
 
 					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
-					if (existingEstudiante != null)
+					if (existingEstudiante != null && existingEstudiante.Updated_at != est.Updated_at)
 					{
 						existingEstudiante.Primer_nombre = est.Primer_nombre;
 						existingEstudiante.Segundo_nombre = est.Segundo_nombre;
@@ -83,7 +88,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
-					if (existingPariente != null)
+					if (existingPariente != null && existingPariente.Updated_at != est.Updated_at)
 					{
 						existingPariente.Primer_nombre = est.Primer_nombre;
 						existingPariente.Segundo_nombre = est.Segundo_nombre;
@@ -135,13 +140,13 @@ namespace CAPA_NEGOCIO.Oparations
 
 					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
-					if (existingResponsable != null)
+					if (existingResponsable != null && existingResponsable.Updated_at != est.Updated_at)
 					{
 						existingResponsable.Estudiante_id = est.Estudiante_id;
 						existingResponsable.Pariente_id = est.Pariente_id;
 						existingResponsable.Updated_at = est.Updated_at;
 						existingResponsable.Parentesco = est.Parentesco;
-						existingResponsable.Update();
+						//existingResponsable.Update();
 					}
 					else
 					{

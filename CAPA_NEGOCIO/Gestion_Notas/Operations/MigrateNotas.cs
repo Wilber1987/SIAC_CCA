@@ -32,7 +32,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
                     tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (existingNota != null)
+					if (existingNota != null && existingNota.Updated_at != tn.Updated_at)
 					{
                         existingNota.Nombre = tn.Nombre;
                         existingNota.Nombre_corto = tn.Nombre_corto;
@@ -77,7 +77,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
                     tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (existingCalificacion != null)
+					if (existingCalificacion != null && existingCalificacion.Updated_at != tn.Updated_at)
 					{
                         existingCalificacion.Resultado = tn.Resultado;
                         existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
@@ -124,7 +124,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					evaluacion.Created_at = DateUtil.ValidSqlDateTime(evaluacion.Created_at.GetValueOrDefault());
                     evaluacion.Updated_at = DateUtil.ValidSqlDateTime(evaluacion.Updated_at.GetValueOrDefault());
-					if (existingEvaluacion != null)
+					if (existingEvaluacion != null && existingEvaluacion.Updated_at != evaluacion.Updated_at)
 					{
                         existingEvaluacion.Fecha = evaluacion.Fecha;
                         //existingEvaluacion.Hora = evaluacion.Hora; //TODO

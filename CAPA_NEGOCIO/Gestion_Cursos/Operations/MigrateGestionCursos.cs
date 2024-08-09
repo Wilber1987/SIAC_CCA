@@ -33,7 +33,7 @@ namespace CAPA_NEGOCIO.Oparations
 					}.Find<Niveles>();
 					niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
 					niv.Updated_at = DateUtil.ValidSqlDateTime(niv.Updated_at.GetValueOrDefault());
-					if (existingNivel!= null )
+					if (existingNivel!= null && existingNivel.Updated_at != niv.Updated_at)
 					{						
                         existingNivel.Nombre = niv.Nombre;
                         existingNivel.Nombre_corto = niv.Nombre_corto;
@@ -117,7 +117,7 @@ namespace CAPA_NEGOCIO.Oparations
 						Id = periodo.Id
 					}.Find<Periodo_lectivos>();
 
-					if (existingPeriodo!=null)
+					if (existingPeriodo!=null && existingPeriodo.Updated_at != periodo.Updated_at)
 					{
 						existingPeriodo.Nombre = periodo.Nombre;
                         existingPeriodo.Nombre_corto = periodo.Nombre_corto;
@@ -161,7 +161,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
                     asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
-					if (existingAsignatura!=null)
+					if (existingAsignatura!=null && existingAsignatura.Updated_at != asig.Updated_at)
 					{
 						existingAsignatura.Nombre = asig.Nombre;
                         existingAsignatura.Nombre_corto = asig.Nombre_corto;
@@ -205,7 +205,7 @@ namespace CAPA_NEGOCIO.Oparations
 					}.Find<Materias>();
                     mat.Created_at = DateUtil.ValidSqlDateTime(mat.Created_at.GetValueOrDefault());
                     mat.Updated_at = DateUtil.ValidSqlDateTime(mat.Updated_at.GetValueOrDefault());
-					if (existingMateria != null)
+					if (existingMateria != null && existingMateria.Updated_at != mat.Updated_at)
 					{
 						existingMateria.Clase_id = mat.Clase_id;
                         existingMateria.Asignatura_id = mat.Asignatura_id;
@@ -247,7 +247,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
                     clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
-					if (existingClase != null)
+					if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
 					{
 						existingClase.Grado = clase.Grado;
                         existingClase.Nivel_id = clase.Nivel_id;
@@ -288,7 +288,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
                     clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
-					if (existingClase != null)
+					if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
 					{
 						existingClase.Estudiante_id = clase.Estudiante_id;
                         existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
@@ -334,7 +334,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
                     docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
-					if (existingClase != null)
+					if (existingClase != null && existingClase.Updated_at != docAsig.Updated_at)
 					{
 						existingClase.Docente_id = docAsig.Docente_id;
                         existingClase.Asignatura_id = docAsig.Asignatura_id;
@@ -375,7 +375,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     docMat.Created_at = DateUtil.ValidSqlDateTime(docMat.Created_at.GetValueOrDefault());
                     docMat.Updated_at = DateUtil.ValidSqlDateTime(docMat.Updated_at.GetValueOrDefault());
-					if (existingClase != null)
+					if (existingClase != null && existingClase.Updated_at != docMat.Updated_at)
 					{
 						existingClase.Materia_id = docMat.Materia_id;
                         existingClase.Seccion_id = docMat.Seccion_id;

@@ -72,7 +72,7 @@ namespace CAPA_NEGOCIO.Oparations
 						Id = tn.Id
 					}.Find<Docentes>();
 					
-					if (existingDocente != null)
+					if (existingDocente != null && existingDocente.Updated_at != tn.Updated_at)
 					{
 						existingDocente.Primer_nombre = tn.Primer_nombre;
 						existingDocente.Segundo_nombre = tn.Segundo_nombre;
