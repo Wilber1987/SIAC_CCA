@@ -12,23 +12,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] </title>
+   
     @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
-      <script type="module">
-            import { WSecurity } from "/WDevCore/Security/WSecurity.js";
-            const logout = () => {
-                WSecurity.LogOut();
-            }
-            window.addEventListener("load", () => {
-                //active nav
-                document.querySelectorAll(".menu-item").forEach(item => {
-                    if (location.href.includes(item.id)) {
-                        item.className = "active";
-                    }
-                })
-                //logOut
-                btnLogOut.onclick = logout;
+    <script type="module">
+        import { WSecurity } from "/WDevCore/Security/WSecurity.js";
+        const logout = () => {
+            WSecurity.LogOut();
+        }
+        window.addEventListener("load", () => {
+            //active nav
+            document.querySelectorAll(".menu-item").forEach(item => {
+                if (location.href.includes(item.id)) {
+                    item.className = "active";
+                }
             })
-        </script>
+            //logOut
+            btnLogOut.onclick = logout;
+        })
+    </script>
 </head>
 
 <body id="AdminTemplate">
@@ -37,7 +38,7 @@
         {
             <a href="~/Admin/Index">Admin Panel</a>
         }
-        <a href="#" id="btnLogOut">Cerrar Sesión</a>      
+        <a href="#" id="btnLogOut">Cerrar Sesión</a>
     </header>
     <aside id="Aside">
         @* partial name="MainMenu" incluir fragmentos de otras paginas razor *@
