@@ -10,4 +10,8 @@
     <ProjectReference Include="..\CAPA_NEGOCIO\CAPA_NEGOCIO.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\NewFolder\" />
+  </ItemGroup>
+
 </Project>

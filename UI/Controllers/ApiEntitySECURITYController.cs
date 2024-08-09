@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CAPA_DATOS.Security; 
+using CAPA_DATOS.Security;
 using System.Collections.Generic;
 
 namespace API.Controllers
@@ -12,13 +12,14 @@ namespace API.Controllers
         #region SECURITY
         [HttpPost]
         [AdminAuth]
-        public Object getSecurity_Permissions(Security_Permissions inv) { return inv.Get<Security_Permissions>(); }
+        public Object getSecurity_Permissions(Security_Permissions inv)
+        { return inv.Get<Security_Permissions>(); }
         [HttpPost]
         [AdminAuth]
         public Object? getSecurity_Roles(Security_Roles inv) { return inv.GetRoles(); }
         [HttpPost]
         [AdminAuth]
-        public Object getSecurity_Users(Security_Users inv) { return inv.GetUsers(); }
+        public Object getSecurity_Users(CAPA_NEGOCIO.Security_Users inv) { return inv.GetUsers(); }
 
         [HttpPost]
         [AdminAuth]
@@ -28,14 +29,17 @@ namespace API.Controllers
         public Object saveSecurity_Roles(Security_Roles inv) { return inv.SaveRole(); }
         [HttpPost]
         [AdminAuth]
-        public Object saveSecurity_Users(Security_Users inv) {
-             return inv.SaveUser(HttpContext.Session.GetString("seassonKey")); }
+        public Object saveSecurity_Users(CAPA_NEGOCIO.Security_Users inv)
+        {
+            return inv.SaveUser(HttpContext.Session.GetString("seassonKey"));
+        }
 
         [HttpPost]
         [AdminAuth]
         public Object updateSecurity_Permissions(Security_Permissions inv) { return inv.Update("Id_Permission"); }
-
-         public Object changePassword(Security_Users inv) { return inv.changePassword(HttpContext.Session.GetString("seassonKey")); }
+        [HttpPost]
+        public Object changePassword(CAPA_NEGOCIO.Security_Users inv) 
+        { return inv.changePassword(HttpContext.Session.GetString("seassonKey")); }
 
         #endregion
     }
