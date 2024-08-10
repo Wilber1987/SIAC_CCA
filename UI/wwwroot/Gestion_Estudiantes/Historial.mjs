@@ -6,6 +6,7 @@ import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
+const route = location.origin
 
 /**
  * @typedef {Object} HistorialConfig
@@ -59,14 +60,31 @@ class HistorialView extends HTMLElement {
         }
         .estudiante-card-container {
             display: block;
-            box-shadow: 0 0 2px 0 #999;
+            border: 1px solid #ede9e9;
             border-radius: 10px;
             cursor: pointer;
             padding: 10px;
         }
+        .alumnos-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .TabContainer {
+            border-left: 1px solid #ede9e9;
+            padding-left: 20px;
+            min-height: 400px;
+        }
         @media (max-width: 768px) {
+            .Historial{               
+                grid-template-columns: 100%;
+            } 
             .Historial .options-container {
                 grid-column: span 1;
+            }
+            .TabContainer {
+                border-left: unset;
+                padding-left: unset;                
             }
         }
     `
@@ -74,10 +92,10 @@ class HistorialView extends HTMLElement {
         return dataset.map((/** @type {Estudiantes} */ Estudiante) =>
             html`<div class="estudiante-card-container" onclick="${() => this.VerEstudianteDetalles(Estudiante)}">            
                 <div class="d-flex title align-items-center">
-                    <img src="${Estudiante.Foto}" class="avatar-sm rounded-circle" alt="">
+                    <img src="${route + Estudiante.Foto}" class="avatar-sm rounded-circle" alt="">
                     <div class="flex-1 ms-2 ps-1">
                     <h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
-                    <label class="text-muted text-uppercase font-size-12">${Estudiante.Fecha_nacimiento}</label>
+                    <label class="text-muted text-uppercase font-size-12">${Estudiante.Codigo}</label>
                     </div>
                 </div>
             </div>`);
@@ -85,7 +103,7 @@ class HistorialView extends HTMLElement {
     VerEstudianteDetalles(Estudiante) {
         console.log(Estudiante);
         
-        this.Manager.NavigateFunction("EstDetail_" + Estudiante.id , new HistorialDetailView(Estudiante));
+        this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id , new HistorialDetailView(Estudiante));
     }
 }
 customElements.define('w-historial', HistorialView);
@@ -103,12 +121,13 @@ class HistorialDetailView extends HTMLElement {
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
-        this.Estudiante = Estudiante
+        this.Estudiante = Estudiante;
         this.Draw();
     }
     Draw = async () => {
         this.append(new WDetailObject({
             ObjectDetail: this.Estudiante,
+            ImageUrlPath: route,
             ModelObject: new Estudiantes_ModelComponent()
         }))
     }

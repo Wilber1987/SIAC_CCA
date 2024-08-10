@@ -40,8 +40,7 @@ namespace DataBaseModel
 			if (pariente?.Responsables != null)
 			{
 				return estudiante.Where<Estudiantes>(
-					FilterData.In("Id_Estudiante",
-				 		pariente.Responsables?.Select(r => r.Id.GetValueOrDefault()).ToArray())
+					FilterData.In("Id",	pariente.Responsables?.Select(r => r.Estudiante_id).ToArray())
 				);
 			}
 			throw new Exception("No posee estudiantes asociados");
