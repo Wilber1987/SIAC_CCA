@@ -6,7 +6,8 @@ using CAPA_NEGOCIO.Oparations;
 
 
 SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
+
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\MSSQLSERVER01", "SIAC_CCA");
 
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
@@ -14,7 +15,7 @@ SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
 //AppGeneratorProgram.Main(); //generador de codigo
 
 /*Migraciones
-
+ 
 
 new MigrateEstudiantes().Migrate();
 new MigrateDocentes().Migrate();

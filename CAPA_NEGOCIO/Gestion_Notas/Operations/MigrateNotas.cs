@@ -12,7 +12,9 @@ namespace CAPA_NEGOCIO.Oparations
 	{
         public bool Migrate(){
 
-			return migrateTipoNotas() && migrateTipoNotas() && migrateEvaluaciones();
+			return //migrateTipoNotas() 
+			//&& migrateTipoNotas() &&
+			 migrateEvaluaciones();
             
         }
 
@@ -43,7 +45,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingNota.Orden = tn.Orden;
                         existingNota.Update();
                         
-					} else 
+					} else if (existingNota != null )
 					{                        
 						tn.Save();
 					}					
@@ -90,7 +92,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingCalificacion.Periodo = tn.Periodo;
                         existingCalificacion.Update();
                         
-					} else 
+					} else if (existingCalificacion != null)
 					{                        
 						tn.Save();
 					}					
@@ -126,7 +128,7 @@ namespace CAPA_NEGOCIO.Oparations
                     evaluacion.Updated_at = DateUtil.ValidSqlDateTime(evaluacion.Updated_at.GetValueOrDefault());
 					if (existingEvaluacion != null && existingEvaluacion.Updated_at != evaluacion.Updated_at)
 					{
-                        existingEvaluacion.Fecha = evaluacion.Fecha;
+                       // existingEvaluacion.Fecha = evaluacion.Fecha;
                         //existingEvaluacion.Hora = evaluacion.Hora; //TODO
                         existingEvaluacion.Tipo = evaluacion.Tipo;
                         existingEvaluacion.Porcentaje = evaluacion.Porcentaje;
@@ -138,10 +140,10 @@ namespace CAPA_NEGOCIO.Oparations
 						existingEvaluacion.Nota_maxima = evaluacion.Nota_maxima;
                         existingEvaluacion.Update();
                         
-					} else 
+					} else 	if (existingEvaluacion != null)
 					{                        
 						evaluacion.Save();
-					}					
+					}				
 					
 				});
 				CommitGlobalTransaction();
