@@ -1,2 +1,21 @@
 ﻿@import url(./variables.css);
-@import url(./template.css);
+@import url(./template.css); 
+.logo-sm{
+    margin-left: -16px;
+}
+
+.logo-lg > img, .logo-sm > img{
+    height: 60px !important;
+}
+
+#page-topbar{
+    background-color: var(--base-secundary-color) !important;
+}
+
+#page-topbar > .navbar-header {
+    color:aliceblue !important;
+}
+
+#page-topbar > .navbar-header > .d-flex > button > i::before{
+    color:aliceblue !important;
+}

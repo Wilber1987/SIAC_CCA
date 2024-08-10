@@ -1,20 +1,18 @@
-﻿@using API.Controllers
-@using CAPA_DATOS.Security
-@using DataBaseModel
-@{
-    string identify = Context.Session.GetString("seassonKey");
-    var pageConfig = Config.pageConfig();
-}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/icons.css">
+    <link rel="stylesheet" href="~/css/app.css">
+    <link rel="stylesheet" href="~/css/site.css">
     <title>@ViewData["Title"] </title>
-    @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
-      <script type="module">
-            import { WSecurity } from "/WDevCore/Security/WSecurity.js";
+    @*
+    <link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
+    <script type="module">
+        import { WSecurity } from "/WDevCore/Security/WSecurity.js";
             const logout = () => {
                 WSecurity.LogOut();
             }
@@ -31,25 +29,32 @@
         </script>
 </head>
 
-<body id="AdminTemplate">
-    <header id="Header" class="admin-header">
-        @if (SecurityController.IsAdmin(identify))
-        {
-            <a href="~/Admin/Index">Admin Panel</a>
-        }
-        <a href="#" id="btnLogOut">Cerrar Sesión</a>      
-    </header>
-    <aside id="Aside">
-        @* partial name="MainMenu" incluir fragmentos de otras paginas razor *@
-        <partial name="MainMenu" />
-    </aside>
+<body cz-shortcut-listen="true" data-sidebar-size="lg" id="AdminTemplate">
+    <div id="layout_wrapper">
+        <header id="page-topbar" class="isvertical-topbar">
+            <partial name="Menu/linksHeader" />
+        </header>
 
-    @* RenderBody() contenido de las paginas que usan el layout razor *@
-    <main role="main" id="Main">
-        @RenderBody()
-    </main>
+        <partial name="Menu/MainMenu" />
+        <partial name="Menu/headerCollapse" />
+
+        @* RenderBody() contenido de las paginas que usan el layout razor *@
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
 
 
+    <!-- JAVASCRIPT -->
+    <script src="~/js/template/bootstrap.bundle.min.js"></script>
+    <script src="~/js/template/metismenujs.min.js"></script>
+    <script src="~/js/template/simplebar.min.js"></script>
+    <script src="~/js/template/eva.min.js"></script>
+    <script src="~/js/app.js"></script>
 </body>
 
 </html>
