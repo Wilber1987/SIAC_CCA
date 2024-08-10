@@ -4,12 +4,17 @@ using CAPA_DATOS;
 using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 
-//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA");
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\MSSQLSERVER01", "SIAC_CCA");
+
 MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 //AppGeneratorProgram.Main(); //generador de codigo
+
 /*Migraciones
+
+
 new MigrateEstudiantes().Migrate();
 new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();

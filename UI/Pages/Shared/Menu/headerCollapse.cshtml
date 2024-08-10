@@ -1,0 +1,13 @@
+@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@using System.Security.Principal
+@{
+    string Identify = Context.Session.GetString("seassonKey");
+    var PageConfig = Config.pageConfig();
+}
+
+<header class="ishorizontal-topbar">
+    <partial name="Menu/linksHeader" />
+    <partial name="Menu/MainMenuCollapse" />
+</header>

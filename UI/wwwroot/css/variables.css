@@ -9,6 +9,11 @@
     --font-secundary-color: #ffffff;
     --font-tertiary-color: rgb(0, 191, 165);
     --font-fourth-color: #595959;
+
+
+    --base-primary-color: #193762;
+    --base-secundary-color: #339BD7;
+
     --bs-blue: #038edc;
     --bs-indigo: #564ab1;
     --bs-purple: #1f58c7;
@@ -147,4 +152,5 @@
     --bs-btn-disabled-color: #fff;
     --bs-btn-disabled-bg: #1f58c7;
     --bs-btn-disabled-border-color: #1f58c7;
+
 }
