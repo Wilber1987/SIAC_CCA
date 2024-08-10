@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Mapping\Entity\" />
     <Folder Include="Mapping\Views\" />
+    <Folder Include="Security\" />
   </ItemGroup>
 
 </Project>

@@ -13,15 +13,23 @@ namespace API.Controllers
             HttpContext.Session.SetString("seassonKey", Guid.NewGuid().ToString());
             return AuthNetCore.loginIN(Inst.mail, Inst.password, HttpContext.Session.GetString("seassonKey"));
         }
+        [HttpPost]
         public object LogOut()
         {
             return AuthNetCore.ClearSeason();
         }
+        [HttpPost]
         public bool Verification()
         {
             return AuthNetCore.Authenticate(HttpContext.Session.GetString("seassonKey"));
         }
-       
+        [HttpPost]
+        public object RecoveryPassword(UserModel Inst)
+        {
+            return AuthNetCore.RecoveryPassword(Inst.mail);
+        }
+        //Statics
+
         public static bool Auth(string identfy)
         {
             return AuthNetCore.Authenticate(identfy);
@@ -34,10 +42,7 @@ namespace API.Controllers
         {
             return AuthNetCore.HavePermission(permission, identfy);
         }
-        public object RecoveryPassword(UserModel Inst)
-        {
-            return AuthNetCore.RecoveryPassword(Inst.mail);     
-        }
+       
 
     }
 }

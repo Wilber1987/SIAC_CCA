@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/app.css">
     <link rel="stylesheet" href="~/css/site.css">
     <title>@ViewData["Title"] </title>
+
     @*
     <link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
@@ -25,15 +26,21 @@
                 })
                 //logOut
                 btnLogOut.onclick = logout;
+
             })
-        </script>
+            //logOut
+            btnLogOut.onclick = logout;
+        })
+    </script>
 </head>
+
 
 <body cz-shortcut-listen="true" data-sidebar-size="lg" id="AdminTemplate">
     <div id="layout_wrapper">
         <header id="page-topbar" class="isvertical-topbar">
             <partial name="Menu/linksHeader" />
         </header>
+
 
         <partial name="Menu/MainMenu" />
         <partial name="Menu/headerCollapse" />
