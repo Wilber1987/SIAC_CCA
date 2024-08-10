@@ -26,13 +26,12 @@ class HistorialView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            this.OptionContainer,
-            this.TabContainer
+            this.OptionContainer
         );
         this.Draw();
     }
     Draw = async () => {
-        this.Manager.NavigateFunction("id", await this.MainHistorial());
+        this.append(await this.MainHistorial());        
     }
 
     async MainHistorial() {
@@ -44,40 +43,49 @@ class HistorialView extends HTMLElement {
                 <h6 class="text-muted text-uppercase mb-3">Today</h6>
                 ${this.BuildEstudiantes(dataset)}
             </div>
-            <div class="alumnos-detalle"></div>
+            ${this.TabContainer}
         </section>`;
         return content;
     }
 
     CustomStyle = css`
         .Historial{
-           display: block;
-        }           
+           display: grid;
+           grid-template-columns: 300px calc(100% - 320px);
+           gap: 20px;
+        }   
+        .Historial .options-container {
+            grid-column: span 2;
+        }
+        .estudiante-card-container {
+            display: block;
+            box-shadow: 0 0 2px 0 #999;
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        @media (max-width: 768px) {
+            .Historial .options-container {
+                grid-column: span 1;
+            }
+        }
     `
     BuildEstudiantes(dataset) {
         return dataset.map((/** @type {Estudiantes} */ Estudiante) =>
-            html`<div class="mb-2" onclick="${() => this.VerEstudianteDetalles(Estudiante)}">
-            <div class="message-list mb-0 p-1">
-                <div class="list">
-                    <div class="col-mail col-mail-1">
-                        <div class="checkbox-wrapper-mail">
-                            <input type="checkbox" id="chk1">
-                            <label for="chk1" class="toggle"></label>
-                        </div>
-                        <div class="d-flex title align-items-center">
-                            <img src="${Estudiante.Foto}" class="avatar-sm rounded-circle" alt="">
-                            <div class="flex-1 ms-2 ps-1">
-                                <h5 class="font-size-14 mb-0"><a href="" class="text-body">${Estudiante.GetNombreCompleto()}</a></h5>
-                                <a href="" class="text-muted text-uppercase font-size-12">${Estudiante.Fecha_nacimiento}</a>
-                            </div>
-                        </div>
-                    </div>                
+            html`<div class="estudiante-card-container" onclick="${() => this.VerEstudianteDetalles(Estudiante)}">            
+                <div class="d-flex title align-items-center">
+                    <img src="${Estudiante.Foto}" class="avatar-sm rounded-circle" alt="">
+                    <div class="flex-1 ms-2 ps-1">
+                    <h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
+                    <label class="text-muted text-uppercase font-size-12">${Estudiante.Fecha_nacimiento}</label>
+                    </div>
                 </div>
-            </div>
-        </div>`);
+            </div>`);
     }
     VerEstudianteDetalles(Estudiante) {
-        throw new Error("Method not implemented.");
+        console.log(Estudiante);
+        
+        this.Manager.NavigateFunction("EstDetail_" + Estudiante.id , new HistorialDetailView(Estudiante));
     }
 }
 customElements.define('w-historial', HistorialView);
@@ -91,7 +99,7 @@ class HistorialDetailView extends HTMLElement {
      */
     constructor(Estudiante) {
         super();
-        this.attachShadow({ mode: 'open' });
+        //this.attachShadow({ mode: 'open' });
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });

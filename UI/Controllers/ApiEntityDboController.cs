@@ -368,22 +368,22 @@ namespace API.Controllers {
        //Log
        [HttpPost]
        [AuthController]
-       public List<Log> getLog(Log Inst) {
-           return Inst.Get<Log>();
+       public List<CAPA_DATOS.Log> getLog(CAPA_DATOS.Log Inst) {
+           return Inst.Get<CAPA_DATOS.Log>();
        }
        [HttpPost]
        [AuthController]
-       public Log findLog(Log Inst) {
-           return Inst.Find<Log>();
+       public CAPA_DATOS.Log findLog(CAPA_DATOS.Log Inst) {
+           return Inst.Find<CAPA_DATOS.Log>();
        }
        [HttpPost]
        [AuthController]
-       public object saveLog(Log inst) {
+       public object saveLog(CAPA_DATOS.Log inst) {
            return inst.Save();
        }
        [HttpPost]
        [AuthController]
-       public object updateLog(Log inst) {
+       public object updateLog(CAPA_DATOS.Log inst) {
            return inst.Update();
        }
    }

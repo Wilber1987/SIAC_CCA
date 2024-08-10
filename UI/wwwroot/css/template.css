@@ -1,4 +1,17 @@
-body {
+.app-container {
+    padding: 30px;
+}
+
+#Main {
+    background-color: var(--secundary-color);
+    color: var(--font-fourth-color);
+    border-radius: 0.3cm;
+    min-height: 500px;
+  /*   box-shadow: 0 0 5px 0 #b3b3b3; */
+    margin: 20px 0px;
+    padding: 20px;
+}
+/*body {
     margin: 0px;
     padding: 0px;
     width: 100%;
@@ -10,6 +23,7 @@ body {
     top: 0px;
     left: 0px;
 }
+
 
 .background {
     top: 0px;
@@ -23,15 +37,15 @@ body {
     width: 100%;
 }
 
-#AdminTemplate {
+ #AdminTemplate {
     display: grid;
     grid-template-rows: 50px calc(100vh - 50px);
     grid-template-columns: 280px calc(100% - 280px);
     padding: 0px;
     margin: 0px;
     font-family: "Poppins", sans-serif;
-}
-
+} */
+/*
 #Header,
 #AdminHeader {
     background-color: var(--tertiary-color);
@@ -226,3 +240,4 @@ body {
         filter: invert(1);
     }
 }
+    */
