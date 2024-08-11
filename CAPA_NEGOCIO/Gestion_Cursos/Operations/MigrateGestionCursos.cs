@@ -16,7 +16,8 @@ namespace CAPA_NEGOCIO.Oparations
 				migrateNiveles() &&
 				migrateSecciones() &&
 				migratePeriodosLectivos() &&
-				migrateAsignaturas();
+				migrateAsignaturas() && migrateClases() && migrateMateria() && migrateEstudiantesClases() && migrateDocentesAsignaturas()
+				&& migrateDocentesMaterias();
 		}
 
 		public bool migrateNiveles()
@@ -48,7 +49,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingNivel.Updated_at = niv.Updated_at;
 						existingNivel.Update();
 					}
-					else if (existingNivel != null)
+					else if (existingNivel == null)
 					{
 						niv.Save();
 					}
@@ -133,7 +134,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingPeriodo.Oculto = periodo.Oculto;
 						existingPeriodo.Update();
 					}
-					else if (existingPeriodo != null)
+					else if (existingPeriodo == null)
 					{
 						periodo.Save();
 					}
@@ -180,7 +181,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingAsignatura.Orden = asig.Orden;
 						existingAsignatura.Update();
 					}
-					else if (existingAsignatura != null)
+					else if (existingAsignatura == null)
 					{
 						asig.Save();
 					}
@@ -225,7 +226,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingMateria.Updated_at = mat.Updated_at;
 						existingMateria.Update();
 					}
-					else if (existingMateria != null)
+					else if (existingMateria == null)
 					{
 						mat.Save();
 					}
@@ -269,7 +270,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingClase.Updated_at = clase.Updated_at;
 						existingClase.Update();
 					}
-					else if (existingClase != null)
+					else if (existingClase == null)
 					{
 						clase.Save();
 					}
@@ -318,7 +319,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingClase.Reprobadas = clase.Reprobadas;
 						existingClase.Update();
 					}
-					else if (existingClase != null)
+					else if (existingClase == null)
 					{
 						clase.Save();
 					}
@@ -362,7 +363,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingClase.Updated_at = docAsig.Updated_at;
 						existingClase.Update();
 					}
-					else if (existingClase != null)
+					else if (existingClase == null)
 					{
 						docAsig.Save();
 					}
@@ -405,7 +406,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingClase.Updated_at = docMat.Updated_at;
 						existingClase.Update();
 					}
-					else if (existingClase != null)
+					else if (existingClase == null)
 					{
 						docMat.Save();
 					}

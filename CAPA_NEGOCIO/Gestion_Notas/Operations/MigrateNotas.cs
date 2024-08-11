@@ -12,9 +12,7 @@ namespace CAPA_NEGOCIO.Oparations
 	{
         public bool Migrate(){
 
-			return //migrateTipoNotas() 
-			//&& migrateTipoNotas() &&
-			 migrateEvaluaciones();
+			return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
             
         }
 
@@ -45,7 +43,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingNota.Orden = tn.Orden;
                         existingNota.Update();
                         
-					} else if (existingNota != null )
+					} else if (existingNota == null )
 					{                        
 						tn.Save();
 					}					
@@ -92,7 +90,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingCalificacion.Periodo = tn.Periodo;
                         existingCalificacion.Update();
                         
-					} else if (existingCalificacion != null)
+					} else if (existingCalificacion == null)
 					{                        
 						tn.Save();
 					}					
@@ -140,7 +138,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingEvaluacion.Nota_maxima = evaluacion.Nota_maxima;
                         existingEvaluacion.Update();
                         
-					} else 	if (existingEvaluacion != null)
+					} else 	if (existingEvaluacion == null)
 					{                        
 						evaluacion.Save();
 					}				

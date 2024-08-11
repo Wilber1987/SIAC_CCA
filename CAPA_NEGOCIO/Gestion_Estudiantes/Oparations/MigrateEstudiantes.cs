@@ -53,7 +53,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingEstudiante.Activo = est.Activo;
 						existingEstudiante.Update();
 					}
-					else if (existingEstudiante != null )
+					else if (existingEstudiante == null )
 					{
 						est.Save();
 					}
@@ -105,7 +105,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingPariente.Religion_id = est.Religion_id;
 						existingPariente.Update();
 					}
-					else if (existingPariente != null )
+					else if (existingPariente == null )
 					{
 						est.Save();
 					}
@@ -148,7 +148,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingResponsable.Parentesco = est.Parentesco;
 						//existingResponsable.Update();
 					}
-					else if (existingResponsable != null)
+					else if (existingResponsable == null)
 					{
 						est.Save();
 					}
