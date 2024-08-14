@@ -4,6 +4,7 @@
 @{
     string identify = Context.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
+    UserModel user = AuthNetCore.User(identify);
 }
 <!DOCTYPE html>
 <html lang="en">
