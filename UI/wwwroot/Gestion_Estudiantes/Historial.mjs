@@ -3,6 +3,7 @@ import { Estudiantes } from "../Model/Estudiantes.js";
 import { Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
@@ -32,14 +33,16 @@ class HistorialView extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.append(await this.MainHistorial());        
+        this.append(await this.MainHistorial());
     }
 
     async MainHistorial() {
         const entityModel = new Estudiantes();
         const dataset = await entityModel.GetOwEstudiantes();
         const content = html`<section class="Historial">  
-            <div class="options-container"></div>         
+            <div class="options-container">
+                ${new WPrintExportToolBar({ PrintAction: this.PrintAction, ExportPdfAction: this.ExportPdfAction })}
+            </div>         
             <div class="alumnos-container">
                 <h6 class="text-muted text-uppercase mb-3">Today</h6>
                 ${this.BuildEstudiantes(dataset)}
@@ -48,6 +51,8 @@ class HistorialView extends HTMLElement {
         </section>`;
         return content;
     }
+    ExportPdfAction = () => { };
+    PrintAction = () => { };
 
     CustomStyle = css`
         .Historial{
@@ -100,10 +105,12 @@ class HistorialView extends HTMLElement {
                 </div>
             </div>`);
     }
-    VerEstudianteDetalles(Estudiante) {
-        console.log(Estudiante);
-        
-        this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id , new HistorialDetailView(Estudiante));
+    /**
+    * @param {Estudiantes} Estudiante 
+    */
+    async VerEstudianteDetalles(Estudiante) {
+        this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id,
+            new HistorialDetailView(await Estudiante.Find()));
     }
 }
 customElements.define('w-historial', HistorialView);

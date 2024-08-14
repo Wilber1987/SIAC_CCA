@@ -7,13 +7,13 @@ import { Estudiantes } from './Estudiantes.js';
 import { Periodo_lectivos } from './Periodo_lectivos.js';
 import { Secciones } from './Secciones.js';
 class Estudiante_clases extends EntityClass {
-   /** @param {Partial<Estudiante_clases>} [props] */
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    /** @param {Partial<Estudiante_clases>} [props] */
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id;
    /**@type {Date}*/ Transferido;
    /**@type {Date}*/ Retirado;
@@ -27,7 +27,7 @@ class Estudiante_clases extends EntityClass {
    /**@type {Estudiantes} ManyToOne*/ Estudiantes;
    /**@type {Periodo_lectivos} ManyToOne*/ Periodo_lectivos;
    /**@type {Secciones} ManyToOne*/ Secciones;
-   /**@type {Array<Calificaciones>} OneToMany*/ Calificaciones;
+   /**@type {Array<Calificaciones>} OneToMany*/ Calificaciones;    
 }
 export { Estudiante_clases };
 

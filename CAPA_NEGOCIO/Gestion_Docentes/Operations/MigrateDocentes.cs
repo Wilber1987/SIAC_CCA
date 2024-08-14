@@ -19,6 +19,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateEscolaridad()
         {
+			Console.Write("-->migrateEscolaridad");
 
 			var escolaridad = new Escolaridades();
 		 	escolaridad.SetConnection(MySQLConnection.SQLM);
@@ -58,6 +59,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateDocentes()
         {
+			Console.Write("-->migrateDocentes");
 
 			var docentes = new Docentes();
 		 	docentes.SetConnection(MySQLConnection.SQLM);

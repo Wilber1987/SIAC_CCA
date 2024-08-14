@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_DATOS.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +37,108 @@ namespace DataBaseModel
 		//[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
 		//[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Responsables>? Responsables { get; set; }		
+		public List<Responsables>? Responsables { get; set; }
+
+		[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		public List<Estudiante_Clases_View>? Clases { get; set; }
+
+		public Estudiantes? FindEstudiante(string? identity)
+		{
+
+			if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES))
+			{
+				return GetFullEstudiante();
+			}
+			else if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+			{
+				UserModel user = AuthNetCore.User(identity);
+				Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
+				if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
+				{
+					return GetFullEstudiante();
+				}
+				else
+				{
+					throw new Exception("Estudiante no esta asignado a este usuario");
+				}
+			}
+			throw new Exception("No posee permisos");
+		}
+
+		private Estudiantes GetFullEstudiante()
+		{
+			var estudiante = Find<Estudiantes>();
+			if (estudiante != null)
+			{
+				estudiante.Estudiante_clases = new Estudiante_clases { Estudiante_id = estudiante.Id }
+					.Get<Estudiante_clases>();
+				/*estudiante.Estudiante_clases.ForEach(c =>
+				{
+					c.Calificaciones = new Calificaciones { Estudiante_clase_id = c.Clase_id }.Get<Calificaciones>();
+				});*/
+				estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
+					.Get<Responsables>();
+				return estudiante;
+			}
+			else
+			{
+				throw new Exception("Estudiante no existe");
+			}
+		}
+		public List<Clase_Group>? Clase_Group
+		{
+			get
+			{
+				return Clases?.GroupBy(C => C.Descripcion)
+				   .Select(C => new Clase_Group
+				   {
+					   Descripcion = C.First().Descripcion,
+					   Asignaturas = C.GroupBy(A => A.Nombre_asignatura).Select(A =>
+					   {
+						   return new Asignatura_Group
+						   {
+							   Descripcion = A.First().Nombre_asignatura,
+							   Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
+							   Calificaciones = A.Select(Calificacion =>
+							   {
+								   return new Calificacion_Group
+								   {
+									   Resultado = Calificacion.Resultado,
+									   Evaluacion = Calificacion.Evaluacion,
+									   Tipo = Calificacion.Tipo
+								   };
+							   }).ToList()
+						   };
+					   }).ToList()
+				   }).ToList();
+			}
+		}
+
+
 
 		public List<Estudiantes> UpdateOwEstudiantes(string? v)
 		{
 			throw new NotImplementedException();
 		}
 	}
+
+    public class Calificacion_Group
+    {
+        public double? Resultado { get; set; }
+        public string? Evaluacion { get; set; }
+        public string? Tipo { get; set; }
+    }
+
+    public class Asignatura_Group
+    {
+        public string? Descripcion { get; set; }
+        public List<string?>? Evaluaciones { get; set; }
+        public List<Calificacion_Group>? Calificaciones { get; set; }
+    }
+
+    public class Clase_Group
+    {
+        public string? Descripcion { get; set; }
+        public List<Asignatura_Group>? Asignaturas { get; set; }
+    }
 }

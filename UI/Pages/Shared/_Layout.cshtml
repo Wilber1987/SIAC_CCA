@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string identify = Context.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -80,3 +87,22 @@
 </body>
 
 </html>
+
+@* 
+ <aside id="Aside">
+        <nav>
+            <img src="~/Media/Image/close.webp" class="navIcon" onclick="displayNav()">
+            <div class="logo-container">
+                <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL">
+            </div>
+            <partial name="MainMenu"/>
+           
+        </nav>
+    </aside>
+
+    <header id="Header" class="admin-header">
+        <img src="~/Media/Image/navIcon.png" class="navIcon" onclick="displayNav()">
+        <div class="title-container">
+            <label for="" class="title">@pageConfig.TITULO</label>
+            <label for="" class="sub-title">@pageConfig.SUB_TITULO</label>
+        </div> *@

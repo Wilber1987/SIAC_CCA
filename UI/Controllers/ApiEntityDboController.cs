@@ -155,48 +155,8 @@ namespace API.Controllers {
        public object updateEscolaridades(Escolaridades inst) {
            return inst.Update();
        }
-       //Estudiante_clases
-       [HttpPost]
-       [AuthController]
-       public List<Estudiante_clases> getEstudiante_clases(Estudiante_clases Inst) {
-           return Inst.Get<Estudiante_clases>();
-       }
-       [HttpPost]
-       [AuthController]
-       public Estudiante_clases findEstudiante_clases(Estudiante_clases Inst) {
-           return Inst.Find<Estudiante_clases>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveEstudiante_clases(Estudiante_clases inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateEstudiante_clases(Estudiante_clases inst) {
-           return inst.Update();
-       }
-       //Estudiantes
-       [HttpPost]
-       [AuthController]
-       public List<Estudiantes> getEstudiantes(Estudiantes Inst) {
-           return Inst.Get<Estudiantes>();
-       }
-       [HttpPost]
-       [AuthController]
-       public Estudiantes findEstudiantes(Estudiantes Inst) {
-           return Inst.Find<Estudiantes>();
-       }
-       [HttpPost]
-       [AuthController]
-       public object saveEstudiantes(Estudiantes inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController]
-       public object updateEstudiantes(Estudiantes inst) {
-           return inst.Update();
-       }
+       
+       
        //Evaluaciones
        [HttpPost]
        [AuthController]

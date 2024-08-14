@@ -24,5 +24,8 @@ namespace DataBaseModel {
        public Evaluaciones? Evaluaciones { get; set; }
        [ManyToOne(TableName = "Tipo_notas", KeyColumn = "Id", ForeignKeyColumn = "Tipo_nota_id")]
        public Tipo_notas? Tipo_notas { get; set; }
+       
+       [ManyToOne(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Materia_id")]
+       public Materias? Materia { get; set; }
    }
 }

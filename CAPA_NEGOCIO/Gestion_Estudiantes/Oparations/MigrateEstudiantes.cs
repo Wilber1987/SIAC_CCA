@@ -17,6 +17,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 		public bool migrateEstudiantes()
 		{
+			Console.Write("-->migrateEstudiantes");
 			var estudiante = new Estudiantes();
 			estudiante.SetConnection(MySQLConnection.SQLM);
 			var EstudiantesMsql = estudiante.Get<Estudiantes>(
@@ -73,6 +74,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateParientes()
 		{
+			Console.Write("-->migrateParientes");
 			var Pariente = new Parientes();
 			Pariente.SetConnection(MySQLConnection.SQLM);
 			var ParientesMsql = Pariente.Get<Parientes>();
@@ -125,6 +127,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateResponsables()
 		{
+			Console.Write("-->migrateResponsables");
 			var responsable = new Responsables();
 			responsable.SetConnection(MySQLConnection.SQLM);
 			var responsablesMsql = responsable.Get<Responsables>();

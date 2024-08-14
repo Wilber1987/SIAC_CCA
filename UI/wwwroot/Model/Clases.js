@@ -2,6 +2,7 @@
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases }  from './Estudiante_clases.js'
 import { Materias }  from './Materias.js'
+import { Niveles } from './Niveles.js';
 class Clases extends EntityClass {
    /** @param {Partial<Clases>} [props] */
    constructor(props) {
@@ -15,6 +16,7 @@ class Clases extends EntityClass {
    /**@type {Number}*/ Nivel_id;
    /**@type {Number}*/ Periodo_lectivo_id;
    /**@type {String}*/ Observaciones;
+   /**@type {Niveles} ManyToOne*/ Niveles;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
    /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;

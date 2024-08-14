@@ -12,13 +12,12 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-
 			return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
-
 		}
 
 		public bool migrateTipoNotas()
 		{
+			Console.Write("-->migrateTipoNotas");
 			var tipoNotas = new Tipo_notas();
 			tipoNotas.SetConnection(MySQLConnection.SQLM);
 			var tipoNotasMsql = tipoNotas.Get<Tipo_notas>();
@@ -66,6 +65,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateCalificaciones()
 		{
+			Console.Write("-->migrateCalificaciones");
 			var calificacion = new Calificaciones();
 			calificacion.SetConnection(MySQLConnection.SQLM);
 			var calificacionMsql = calificacion.Get<Calificaciones>();
@@ -110,7 +110,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 						else
 						{
-						LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error desconocido ignorado, Codigo: "+sqlEx.Number.ToString(), sqlEx);
+							LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error desconocido ignorado, Codigo: " + sqlEx.Number.ToString(), sqlEx);
 
 						}
 					}
@@ -130,6 +130,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool migrateEvaluaciones()
 		{
+			Console.Write("-->migrateEvaluaciones");
 			var Evaluacion = new Evaluaciones();
 			Evaluacion.SetConnection(MySQLConnection.SQLM);
 			var EvaluacionMsql = Evaluacion.Get<Evaluaciones>();

@@ -7,7 +7,7 @@ class Estudiantes extends EntityClass {
     
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
-        super(props, 'EntityDbo');
+        super(props, 'GestionEstudiantes');
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -37,14 +37,15 @@ class Estudiantes extends EntityClass {
     /**@type {Boolean}*/ Activo;
     /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
     /**@type {Array<Responsables>} OneToMany*/ Responsables;
+    /**@type {Array<Clase_Group>} OneToMany*/ Clase_Group;
     /**
     * @returns {Promise<Array<Estudiantes>>}
     */
     async GetOwEstudiantes() {
-        return await this.GetData("GestionEstudiantes/GetOwEstudiantes");
+        return await this.GetData("ApiGestionEstudiantes/GetOwEstudiantes");
     }
     /**
-    * @returns {string}
+    * @returns {String}
     */
     GetNombreCompleto() {
         return `${this.Primer_nombre} ${this.Segundo_nombre ?? ''} ${this.Primer_apellido} ${this.Segundo_apellido ?? ''}`;
@@ -52,3 +53,58 @@ class Estudiantes extends EntityClass {
 }
 export { Estudiantes };
 
+class Calificacion_Group {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {Number}*/
+    Resultado;
+
+    /** @type {String}*/
+    Evaluacion;
+
+    /** @type {String}*/
+    Tipo;
+}
+export { Calificacion_Group };
+
+class Asignatura_Group {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {String}*/
+    Descripcion;
+
+    /** @type {String[]}*/
+    Evaluaciones;
+
+    /** @type {Calificacion_Group[]}*/
+    Calificaciones;
+    get Details() { return this.Calificaciones }
+}
+export { Asignatura_Group };
+class Clase_Group {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {String}*/
+    Descripcion;
+
+    /** @type {Asignatura_Group[]}*/
+    Asignaturas;
+    get Details() { return this.Asignaturas }
+}
+const clase = new Clase_Group();
+clase.Asignaturas = []
+console.log(clase.Details);
+
+
+console.log();
+
+export { Clase_Group };
