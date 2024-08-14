@@ -8,14 +8,30 @@
     height: 60px !important;
 }
 
-#page-topbar{
-    background-color: var(--base-secundary-color) !important;
+#page-topbar, .vertical-menu{
+    background-color:var(--font-primary-color) !important;
+    box-shadow: 0 0 5px #0000002f;
 }
 
 #page-topbar > .navbar-header {
-    color:aliceblue !important;
+    color:var(--font-primary-color) !important;
 }
 
-#page-topbar > .navbar-header > .d-flex > button > i::before{
-    color:aliceblue !important;
+.vertical-menu-btn:hover{
+  background: var(--base-link-menu) !important;
+    color: var(--font-primary-color) !important;
+}
+
+#sidebar-menu ul li.mm-active>a {
+    background: var(--base-link-menu) !important;
+    color: var(--font-primary-color) !important;
+}
+
+#sidebar-menu ul li.menuParentOption>a:hover {
+    background: var(--base-link-menu) !important;
+    color: var(--font-primary-color) !important;
+}
+.sub-menu>li>a:hover, .sub-menu>li>a:hover::before{
+    color: var(--base-secundary-link) !important;
+    font-weight: 100 !important;
 }
