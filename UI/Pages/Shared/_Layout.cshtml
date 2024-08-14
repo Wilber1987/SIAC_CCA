@@ -5,6 +5,7 @@
     string identify = Context.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
     UserModel user = AuthNetCore.User(identify);
+    var perfil = user.UserData?.Get_Profile();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +48,6 @@
         <header id="page-topbar" class="isvertical-topbar">
             <partial name="Menu/linksHeader" />
         </header>
-
 
         <partial name="Menu/MainMenu" />
         <partial name="Menu/headerCollapse" />
