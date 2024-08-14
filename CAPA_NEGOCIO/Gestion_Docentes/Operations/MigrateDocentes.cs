@@ -94,7 +94,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingDocente.Cargo = tn.Cargo;
 						existingDocente.Update();
 					}
-					else
+					else if (existingDocente == null)
 					{
 						tn.Save();
 					}

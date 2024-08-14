@@ -14,13 +14,15 @@
 <script type="module">
    
 </script>
-@* @if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+@if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
 {
     <script src="~/WDevCore/Security/AdminSecurity.js" type="module"></script>
-} *@
-@* @if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+} 
+@if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
 {
     <script  src="~/Admin/AdminConfig.js" type="module"></script>
-} *@
+} 
+<div id="Aside"></div>
+<div id="Main"></div>
 
 

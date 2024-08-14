@@ -27,7 +27,7 @@ class Estudiantes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Padre_id = { type: 'number' };
    /**@type {ModelProperty}*/ Created_at = { type: 'date' };
    /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Foto = { type: 'text' };
+   /**@type {ModelProperty}*/ Foto = { type: 'img' };
    /**@type {ModelProperty}*/ Peso = { type: 'number' };
    /**@type {ModelProperty}*/ Altura = { type: 'number' };
    /**@type {ModelProperty}*/ Tipo_sangre = { type: 'text' };

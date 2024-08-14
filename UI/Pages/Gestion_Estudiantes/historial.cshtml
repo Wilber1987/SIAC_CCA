@@ -1,0 +1,20 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS.Security; 
+@{
+   
+    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("./Security/Login");
+        return;
+    }
+
+}
+<script type="module" src="~/Gestion_Estudiantes/Historial.mjs"></script>
+<script type="module" >
+    import {HistorialView} from "/Gestion_Estudiantes/Historial.mjs";
+    window.onload = ()=> {
+        Main.append(new HistorialView());
+    }
+</script>
+<div id="Main" class="app-container"></div>
