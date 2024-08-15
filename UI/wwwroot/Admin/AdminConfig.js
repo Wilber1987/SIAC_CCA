@@ -2,28 +2,45 @@ import { WRender, ComponentsManager } from '../WDevCore/WModules/WComponentsTool
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { Transactional_ConfiguracionesView } from './Transactional_ConfiguracionesView.js';
 import { LogType, LogView } from './LogErrorView.js';
+import { css } from '../WDevCore/WModules/WStyledRender.js';
 
 window.addEventListener("load", async () => {
     const DOMManager = new ComponentsManager({ MainContainer: Main, SPAManage: true });
     Aside.append(WRender.Create({ tagName: "h3", innerText: "Mantenimiento" }));
-    Aside.append(new WAppNavigator({
+    Aside.append(css`
+        h3 {
+            padding: 20px;
+            margin: 0px;
+        }
+        w-app-navigator {
+            margin:0px;
+            background-color: var(--secundary-color);
+            color: var(--font-fourth-color);
+            border-radius: 0.3cm;
+            padding: 20px;
+            display: block;
+        }`);
+    const navigator = new WAppNavigator({
         DarkMode: false,
-        Direction: "column",
+        //Direction: "row",
         SPAManage: true,
+        NavStyle: "tab",
+        Inicialize: true,
         Elements: [
             {
                 name: "Configuraciones", action: () => {
-                    DOMManager.NavigateFunction("Configuraciones", new Transactional_ConfiguracionesView());
+                    return new Transactional_ConfiguracionesView();
                 }
             }, {
                 name: "Acciones", action: () => {
-                    DOMManager.NavigateFunction("Acciones", new LogView({Type: LogType.ACTION}));
+                    return  new LogView({ Type: LogType.ACTION });
                 }
             }, {
                 name: "Errores", action: () => {
-                    DOMManager.NavigateFunction("Errores", new LogView({Type: LogType.ACTION}));
+                    return  new LogView({ Type: LogType.ACTION });
                 }
             }
         ]
-    }));
+    });
+    Aside.append(navigator);
 });

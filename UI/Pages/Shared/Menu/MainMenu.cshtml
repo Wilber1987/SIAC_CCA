@@ -2,7 +2,7 @@
 @using CAPA_DATOS.Security
 @using DataBaseModel
 @{
-    string Identify = Context.Session.GetString("seassonKey");
+    string? Identify = Context.Session?.GetString("seassonKey");
     var PageConfig = Config.pageConfig();
 }
 
@@ -38,8 +38,10 @@
                         @* <span class="badge rounded-pill bg-primary">2</span> *@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Sales</a></li>
+                        @if(SecurityController.HavePermission(Identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+                        {
+                            <li><a href="~/Gestion_Estudiantes/Historial" data-key="t-ecommerce">Historial</a></li> 
+                        }
                     </ul>
                 </li>
                 <li class="menuParentOption">
@@ -60,8 +62,10 @@
                         @* <span class="badge rounded-pill bg-primary">2</span> *@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Sales</a></li>
+                        @if(SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
+                        {
+                            <li><a href="~/Mensajes/" data-key="t-ecommerce">Mensajes</a></li> 
+                        }
                     </ul>
                 </li>
                 <li class="menuParentOption">

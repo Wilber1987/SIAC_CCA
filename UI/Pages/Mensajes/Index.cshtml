@@ -1,0 +1,17 @@
+@page
+@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string? identify = HttpContext?.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+    if (!SecurityController.HavePermission(identify, Permissions.SEND_MESSAGE))
+    {
+        Response.Redirect("/");
+        return;
+    }
+}
+<script type="module">
+   
+</script>
+<div id="Main"></div>

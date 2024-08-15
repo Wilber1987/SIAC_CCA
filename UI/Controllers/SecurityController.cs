@@ -30,19 +30,22 @@ namespace API.Controllers
         }
         //Statics
 
-        public static bool Auth(string identfy)
+        public static bool Auth(string? identfy)
         {
             return AuthNetCore.Authenticate(identfy);
         }
-        public static bool IsAdmin(string identfy)
+        public static bool IsAdmin(string? identfy)
         {
             return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), identfy);
         }       
-        public static bool HavePermission(string permission, string identfy)
+        public static bool HavePermission(string permission, string? identfy)
         {
             return AuthNetCore.HavePermission(permission, identfy);
         }
-       
+        public static bool HavePermission(string? identfy, params Permissions[] permission)
+        {            
+            return AuthNetCore.HavePermission(identfy, permission);
+        }      
 
     }
 }
