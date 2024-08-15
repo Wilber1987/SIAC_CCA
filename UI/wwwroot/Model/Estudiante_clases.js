@@ -23,11 +23,20 @@ class Estudiante_clases extends EntityClass {
    /**@type {Number}*/ Promedio;
    /**@type {Boolean}*/ Repitente;
    /**@type {Number}*/ Reprobadas;
+   /**@type {Number}*/ Clase_id;
+   /**@type {Number}*/ Estudiante_id;
    /**@type {Clases} ManyToOne*/ Clases;
    /**@type {Estudiantes} ManyToOne*/ Estudiantes;
    /**@type {Periodo_lectivos} ManyToOne*/ Periodo_lectivos;
    /**@type {Secciones} ManyToOne*/ Secciones;
-   /**@type {Array<Calificaciones>} OneToMany*/ Calificaciones;    
+   /**@type {Array<Calificaciones>} OneToMany*/ Calificaciones;
+
+   /**
+   * @returns {Promise< import('../WDevCore/WModules/CommonModel.js').ResponseServices>}
+   */
+    async ExportClaseBoletin() {
+        return await this.Post("Exporter/ExportClaseBoletin", this);
+    }
 }
 export { Estudiante_clases };
 

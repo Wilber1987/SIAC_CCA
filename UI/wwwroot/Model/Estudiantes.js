@@ -93,6 +93,9 @@ class Clase_Group {
             this[prop] = props[prop];
         }
     }
+    /** @type {Number}*/
+    Id_Clase;
+
     /** @type {String}*/
     Descripcion;
 
@@ -100,11 +103,4 @@ class Clase_Group {
     Asignaturas;
     get Details() { return this.Asignaturas }
 }
-const clase = new Clase_Group();
-clase.Asignaturas = []
-console.log(clase.Details);
-
-
-console.log();
-
 export { Clase_Group };

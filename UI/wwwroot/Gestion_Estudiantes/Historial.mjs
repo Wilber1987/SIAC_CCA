@@ -1,4 +1,5 @@
 //@ts-check
+import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
 import { Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
@@ -109,25 +110,52 @@ class EstudiantesView extends HTMLElement {
         this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id,
             new HistorialDetailView(await Estudiante.Find()));
     }
-    ExportPdfAction = () => { };
     PrintAction = () => {
         if (!this.EstudianteSeleccionado) {
             this.append(ModalMessege("Seleccione un estudiante"));
             return;
         }
         this.append(new WModalForm({
+            title: "Imprimir informe clase",
+            StyleForm: "columnX1",
             ModelObject: {
-                Seleccione: {
-                    type: "select",
-                    Dataset: this.EstudianteSeleccionado?.Clase_Group.map(c => c.Descripcion),
-                }
-            }, ObjectOptions: {
-                SaveFunction: (object)=> {
-                    console.log(object);
-                    
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Clase_Group.map(c => c.Descripcion) }
+            }, EditObject: {}, ObjectOptions: {
+                SaveFunction: async (object) => {
+                    const body = await this.GetActa(object);
+                    const ventimp = window.open(' ', 'popimpr');
+                    ventimp?.document.write(body.innerHTML);
+                    ventimp?.focus();
+                    setTimeout(() => {
+                        ventimp?.print();
+                        ventimp?.close();
+                    }, 100)
+                    return;
                 }
             }
-        }))
+        }));
+    };
+    ExportPdfAction = () => {
+        if (!this.EstudianteSeleccionado) {
+            this.append(ModalMessege("Seleccione un estudiante"));
+            return;
+        }
+        this.append(new WModalForm({
+            title: "Imprimir informe clase",
+            StyleForm: "columnX1",
+            ModelObject: {
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Clase_Group.map(c => c.Descripcion) }
+            }, EditObject: {}, ObjectOptions: {
+                SaveFunction: async (object) => {
+                    const body = await this.GetActa(object);
+                    console.log(body);
+                    
+                    // @ts-ignore
+                    html2pdf().from(body).save();
+                    return;
+                }
+            }
+        }));
     };
 
     CustomStyle = css`
@@ -176,6 +204,72 @@ class EstudiantesView extends HTMLElement {
             }
         }
     `
+
+    async GetActa(object) {
+        const id = object.Seleccione?.toString().replaceAll(" ", "");
+        // new Estudiante_clases({ Clase_id: object.Id, Estudiante_id: this.EstudianteSeleccionado?.Id })
+        //  .ExportClaseBoletin({ data: body });
+        /**@type {HTMLElement} */
+        const detail = this.Manager.DomComponents.find(c => c.id === "EstDetail_" + this.EstudianteSeleccionado?.Id);
+        // @ts-ignore
+        const content = detail.querySelector("w-view-detail")?.shadowRoot?.querySelector("w-app-navigator")?.Manager?.DomComponents[0];
+        const body = content.shadowRoot.querySelector(`#${id}`);
+        // @ts-ignore
+        body.append(content.CustomStyle.cloneNode(true));
+        body.append(this.PrintStyle.cloneNode(true));
+        return html`<div class="page">${body.innerHTML}</div>`;
+    }
+    PrintStyle = css`
+        .page {   
+           margin: 40px;
+        }   
+        .prop {
+            font-size: 12px;
+        }               
+        .detail-content {
+            width: 100%;
+            border: none;
+            border-radius: unset;
+            padding: 0;            
+        }        
+        .detail-content .container {
+            width: -webkit-fill-available;
+            & .element-description {
+                font-size: 12px;
+            }
+            & .element-details {
+                & .element-detail {
+                    font-size: 12px;
+                }
+            }   
+        }        
+        .header {
+            width: 100%;           
+            font-size: 12px;
+        }
+        .value {            
+            font-size: 12px;
+        }        
+        @media print{
+            *{
+                -webkit-print-color-adjust: exact !important;
+                border-collapse: collapse;
+            }
+            .page{
+                border: none; /* Optional: Remove border for printing */
+                margin: 0;
+                padding: 0;
+                box-shadow: none; /* Optional: Remove any shadow for printing */
+                page-break-after: always; /* Ensure each .page-container starts on a new page */
+            }
+            .detail-content .container, .detail-content .element-details {
+                flex-direction: row
+            }
+            .hidden {
+                display: none;
+            }
+        } 
+    `
 }
 customElements.define('w-estudiantes', EstudiantesView);
 export { EstudiantesView }
@@ -212,6 +306,6 @@ class HistorialDetailView extends HTMLElement {
         }           
     `
 }
-customElements.define('w-component', HistorialDetailView);
+customElements.define('w-historial-detail', HistorialDetailView);
 export { HistorialDetailView }
 

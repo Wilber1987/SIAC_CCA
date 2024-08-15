@@ -66,6 +66,11 @@ namespace DataBaseModel
             }
         }
 
+        public ResponseService ExportClaseBoletin()
+        {
+            throw new NotImplementedException();
+        }
+
         public Estudiante_clases? FindEstudiante()
         {
             throw new NotImplementedException();

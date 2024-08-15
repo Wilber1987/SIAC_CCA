@@ -92,6 +92,7 @@ namespace DataBaseModel
 				return Clases?.Where(C => C.Nombre_nota != null).GroupBy(C => C.Descripcion)
 				   .Select(C => new Clase_Group
 				   {
+					   Id_Clase = C.First().Id,
 					   Descripcion = C.First().Descripcion,
 					   Asignaturas = C.GroupBy(A => A.Nombre_asignatura).Select(A =>
 					   {
@@ -145,5 +146,6 @@ namespace DataBaseModel
 	{
 		public string? Descripcion { get; set; }
 		public List<Asignatura_Group>? Asignaturas { get; set; }
-	}
+        public int? Id_Clase { get; internal set; }
+    }
 }
