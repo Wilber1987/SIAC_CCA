@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_DATOS.Security;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Identity.Client;
@@ -24,7 +25,8 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->MigrateParientesAndUsers");
 			//si no eixiste el rol de pariente se debe crear para asignarselo al usuario de cada responsable 
 			// ya que se crea un usuario por cada miembro de falia que tenga el check de responsable
-			if(!validateRolPariente()){					
+			if (!validateRolPariente())
+			{
 				return false;
 			}
 
@@ -73,12 +75,18 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool validateRolPariente(){
-
-			Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
-
-			return true;
+		public bool validateRolPariente()
+		{
+			try
+			{
+				Security_Roles? pariente = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
+				return true;
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ADVERTENCIA: validateRolPariente - Error al verificar perfil de responsable.", ex);
+				return false;
+			}
 		}
-
 	}
 }
