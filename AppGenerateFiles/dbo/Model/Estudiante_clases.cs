@@ -20,12 +20,12 @@ namespace DataBaseModel {
        public Double? Promedio { get; set; }
        public bool? Repitente { get; set; }
        public int? Reprobadas { get; set; }
+       [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
+       public Clases? Clases { get; set; }
        [ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
        public Estudiantes? Estudiantes { get; set; }
        [ManyToOne(TableName = "Periodo_lectivos", KeyColumn = "Id", ForeignKeyColumn = "Periodo_lectivo_id")]
        public Periodo_lectivos? Periodo_lectivos { get; set; }
-       [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
-       public Clases? Clases { get; set; }
        [ManyToOne(TableName = "Secciones", KeyColumn = "Id", ForeignKeyColumn = "Seccion_id")]
        public Secciones? Secciones { get; set; }
        [OneToMany(TableName = "Calificaciones", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_clase_id")]

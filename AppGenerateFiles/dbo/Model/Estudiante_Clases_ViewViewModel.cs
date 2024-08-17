@@ -29,7 +29,7 @@ namespace DataBaseModel {
        public ? Hora { get; set; }
        public DateTime? Fecha { get; set; }
        public Double? Porcentaje { get; set; }
-       public string? Nombre_asifnatura { get; set; }
+       public string? Nombre_asignatura { get; set; }
        public string? Nombre_corto_asignatura { get; set; }
        public string? Nombre_grado { get; set; }
        public string? Nombre_corto_nivel { get; set; }
@@ -37,5 +37,6 @@ namespace DataBaseModel {
        public int? Numero_grados { get; set; }
        public int? Inicio_grado { get; set; }
        public int? Grado { get; set; }
+       public int? Clase_id { get; set; }
    }
 }

@@ -7,6 +7,27 @@ namespace API.Controllers {
    [Route("api/[controller]/[action]")]
    [ApiController]
    public class  ApiEntityDboController : ControllerBase {
+       //Familias
+       [HttpPost]
+       [AuthController]
+       public List<Familias> getFamilias(Familias Inst) {
+           return Inst.Get<Familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public Familias findFamilias(Familias Inst) {
+           return Inst.Find<Familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveFamilias(Familias inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateFamilias(Familias inst) {
+           return inst.Update();
+       }
        //Asignaturas
        [HttpPost]
        [AuthController]
@@ -322,25 +343,25 @@ namespace API.Controllers {
        public object updatePeriodo_lectivos(Periodo_lectivos inst) {
            return inst.Update();
        }
-       //Responsables
+       //Estudiantes_responsables_familias
        [HttpPost]
        [AuthController]
-       public List<Responsables> getResponsables(Responsables Inst) {
-           return Inst.Get<Responsables>();
+       public List<Estudiantes_responsables_familias> getEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
+           return Inst.Get<Estudiantes_responsables_familias>();
        }
        [HttpPost]
        [AuthController]
-       public Responsables findResponsables(Responsables Inst) {
-           return Inst.Find<Responsables>();
+       public Estudiantes_responsables_familias findEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
+           return Inst.Find<Estudiantes_responsables_familias>();
        }
        [HttpPost]
        [AuthController]
-       public object saveResponsables(Responsables inst) {
+       public object saveEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
            return inst.Save();
        }
        [HttpPost]
        [AuthController]
-       public object updateResponsables(Responsables inst) {
+       public object updateEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
            return inst.Update();
        }
        //Secciones

@@ -34,7 +34,7 @@ class Estudiante_Clases_View_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Hora = { type: '' };
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
    /**@type {ModelProperty}*/ Porcentaje = { type: 'number' };
-   /**@type {ModelProperty}*/ Nombre_asifnatura = { type: 'text' };
+   /**@type {ModelProperty}*/ Nombre_asignatura = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_corto_asignatura = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_grado = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_corto_nivel = { type: 'text' };
@@ -42,5 +42,6 @@ class Estudiante_Clases_View_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Numero_grados = { type: 'number' };
    /**@type {ModelProperty}*/ Inicio_grado = { type: 'number' };
    /**@type {ModelProperty}*/ Grado = { type: 'number' };
+   /**@type {ModelProperty}*/ Clase_id = { type: 'number' };
 }
 export { Estudiante_Clases_View_ModelComponent }

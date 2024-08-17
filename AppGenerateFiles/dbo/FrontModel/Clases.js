@@ -3,7 +3,6 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Niveles }  from './Niveles.js'
 import { Estudiante_clases }  from './Estudiante_clases.js'
 import { Materias }  from './Materias.js'
 class Clases extends EntityClass {
@@ -16,11 +15,11 @@ class Clases extends EntityClass {
    }
    /**@type {Number}*/ Id;
    /**@type {Number}*/ Grado;
+   /**@type {Number}*/ Nivel_id;
    /**@type {Number}*/ Periodo_lectivo_id;
    /**@type {String}*/ Observaciones;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
-   /**@type {Niveles} ManyToOne*/ Niveles;
    /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
    /**@type {Array<Materias>} OneToMany*/ Materias;
 }

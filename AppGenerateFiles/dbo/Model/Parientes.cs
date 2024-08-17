@@ -24,7 +24,10 @@ namespace DataBaseModel {
        public int? Religion_id { get; set; }
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
-       [OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-       public List<Responsables>? Responsables { get; set; }
+       public int? Pais_id { get; set; }
+       public bool? Responsablepago { get; set; }
+       public string? Noidentificacion { get; set; }
+       [OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
+       public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
    }
 }

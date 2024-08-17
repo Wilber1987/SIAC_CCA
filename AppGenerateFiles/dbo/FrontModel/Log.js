@@ -16,6 +16,5 @@ class Log extends EntityClass {
    /**@type {Date}*/ Fecha;
    /**@type {String}*/ Message;
    /**@type {String}*/ Body;
-   /**@type {Number}*/ Id_User;
 }
 export { Log }

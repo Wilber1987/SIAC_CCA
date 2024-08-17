@@ -3,9 +3,9 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
+import { Clases_ModelComponent }  from './Clases_ModelComponent.js'
 import { Estudiantes_ModelComponent }  from './Estudiantes_ModelComponent.js'
 import { Periodo_lectivos_ModelComponent }  from './Periodo_lectivos_ModelComponent.js'
-import { Clases_ModelComponent }  from './Clases_ModelComponent.js'
 import { Secciones_ModelComponent }  from './Secciones_ModelComponent.js'
 import { Calificaciones_ModelComponent }  from './Calificaciones_ModelComponent.js'
 class Estudiante_clases_ModelComponent extends EntityClass {
@@ -25,9 +25,9 @@ class Estudiante_clases_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Promedio = { type: 'number' };
    /**@type {ModelProperty}*/ Repitente = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Reprobadas = { type: 'number' };
+   /**@type {ModelProperty}*/ Clases = { type: 'WSELECT',  ModelObject: ()=> new Clases_ModelComponent(), ForeignKeyColumn: 'Clase_id'};
    /**@type {ModelProperty}*/ Estudiantes = { type: 'WSELECT',  ModelObject: ()=> new Estudiantes_ModelComponent(), ForeignKeyColumn: 'Estudiante_id'};
    /**@type {ModelProperty}*/ Periodo_lectivos = { type: 'WSELECT',  ModelObject: ()=> new Periodo_lectivos_ModelComponent(), ForeignKeyColumn: 'Periodo_lectivo_id'};
-   /**@type {ModelProperty}*/ Clases = { type: 'WSELECT',  ModelObject: ()=> new Clases_ModelComponent(), ForeignKeyColumn: 'Clase_id'};
    /**@type {ModelProperty}*/ Secciones = { type: 'WSELECT',  ModelObject: ()=> new Secciones_ModelComponent(), ForeignKeyColumn: 'Seccion_id'};
    /**@type {ModelProperty}*/ Calificaciones = { type: 'MasterDetail',  ModelObject: ()=> new Calificaciones_ModelComponent()};
 }

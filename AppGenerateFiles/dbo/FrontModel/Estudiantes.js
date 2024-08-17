@@ -4,7 +4,7 @@ import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsT
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Estudiante_clases }  from './Estudiante_clases.js'
-import { Responsables }  from './Responsables.js'
+import { Estudiantes_responsables_familias }  from './Estudiantes_responsables_familias.js'
 class Estudiantes extends EntityClass {
    /** @param {Partial<Estudiantes>} [props] */
    constructor(props) {
@@ -37,6 +37,6 @@ class Estudiantes extends EntityClass {
    /**@type {Number}*/ Recorrido_id;
    /**@type {Boolean}*/ Activo;
    /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
-   /**@type {Array<Responsables>} OneToMany*/ Responsables;
+   /**@type {Array<Estudiantes_responsables_familias>} OneToMany*/ Estudiantes_responsables_familias;
 }
 export { Estudiantes }

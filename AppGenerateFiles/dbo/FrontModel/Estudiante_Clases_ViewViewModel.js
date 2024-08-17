@@ -34,7 +34,7 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {}*/ Hora;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Porcentaje;
-   /**@type {String}*/ Nombre_asifnatura;
+   /**@type {String}*/ Nombre_asignatura;
    /**@type {String}*/ Nombre_corto_asignatura;
    /**@type {String}*/ Nombre_grado;
    /**@type {String}*/ Nombre_corto_nivel;
@@ -42,5 +42,6 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {Number}*/ Numero_grados;
    /**@type {Number}*/ Inicio_grado;
    /**@type {Number}*/ Grado;
+   /**@type {Number}*/ Clase_id;
 }
 export { Estudiante_Clases_View }

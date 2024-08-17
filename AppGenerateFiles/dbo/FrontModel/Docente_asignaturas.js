@@ -3,8 +3,8 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Docentes }  from './Docentes.js'
 import { Asignaturas }  from './Asignaturas.js'
+import { Docentes }  from './Docentes.js'
 class Docente_asignaturas extends EntityClass {
    /** @param {Partial<Docente_asignaturas>} [props] */
    constructor(props) {
@@ -18,7 +18,7 @@ class Docente_asignaturas extends EntityClass {
    /**@type {String}*/ Observaciones;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
-   /**@type {Docentes} ManyToOne*/ Docentes;
    /**@type {Asignaturas} ManyToOne*/ Asignaturas;
+   /**@type {Docentes} ManyToOne*/ Docentes;
 }
 export { Docente_asignaturas }

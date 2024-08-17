@@ -13,11 +13,11 @@ namespace DataBaseModel {
        public int? Docente_id { get; set; }
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
+       [ManyToOne(TableName = "Docentes", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
+       public Docentes? Docentes { get; set; }
        [ManyToOne(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Materia_id")]
        public Materias? Materias { get; set; }
        [ManyToOne(TableName = "Secciones", KeyColumn = "Id", ForeignKeyColumn = "Seccion_id")]
        public Secciones? Secciones { get; set; }
-       [ManyToOne(TableName = "Docentes", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
-       public Docentes? Docentes { get; set; }
    }
 }

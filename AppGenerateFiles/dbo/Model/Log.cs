@@ -12,6 +12,5 @@ namespace DataBaseModel {
        public DateTime? Fecha { get; set; }
        public string? Message { get; set; }
        public string? Body { get; set; }
-       public int? Id_User { get; set; }
    }
 }

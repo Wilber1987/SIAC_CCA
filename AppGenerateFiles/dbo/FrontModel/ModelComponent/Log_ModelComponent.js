@@ -16,6 +16,5 @@ class Log_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
    /**@type {ModelProperty}*/ Message = { type: 'text' };
    /**@type {ModelProperty}*/ Body = { type: 'text' };
-   /**@type {ModelProperty}*/ Id_User = { type: 'number' };
 }
 export { Log_ModelComponent }

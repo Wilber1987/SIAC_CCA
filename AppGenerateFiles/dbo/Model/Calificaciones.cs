@@ -18,11 +18,11 @@ namespace DataBaseModel {
        public int? Estudiante_clase_id { get; set; }
        public int? Materia_id { get; set; }
        public int? Periodo { get; set; }
-       [ManyToOne(TableName = "Tipo_notas", KeyColumn = "Id", ForeignKeyColumn = "Tipo_nota_id")]
-       public Tipo_notas? Tipo_notas { get; set; }
-       [ManyToOne(TableName = "Evaluaciones", KeyColumn = "Id", ForeignKeyColumn = "Evaluacion_id")]
-       public Evaluaciones? Evaluaciones { get; set; }
        [ManyToOne(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_clase_id")]
        public Estudiante_clases? Estudiante_clases { get; set; }
+       [ManyToOne(TableName = "Evaluaciones", KeyColumn = "Id", ForeignKeyColumn = "Evaluacion_id")]
+       public Evaluaciones? Evaluaciones { get; set; }
+       [ManyToOne(TableName = "Tipo_notas", KeyColumn = "Id", ForeignKeyColumn = "Tipo_nota_id")]
+       public Tipo_notas? Tipo_notas { get; set; }
    }
 }

@@ -32,7 +32,7 @@ namespace DataBaseModel {
        public bool? Activo { get; set; }
        [OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
        public List<Estudiante_clases>? Estudiante_clases { get; set; }
-       [OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-       public List<Responsables>? Responsables { get; set; }
+       [OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+       public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
    }
 }

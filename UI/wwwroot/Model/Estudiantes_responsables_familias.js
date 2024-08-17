@@ -3,9 +3,11 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Asignaturas }  from './Asignaturas.js'
-class Niveles extends EntityClass {
-   /** @param {Partial<Niveles>} [props] */
+import { Familias }  from './Familias.js'
+import { Estudiantes }  from './Estudiantes.js'
+import { Parientes }  from './Parientes.js'
+class Estudiantes_responsables_familias extends EntityClass {
+   /** @param {Partial<Estudiantes_responsables_familias>} [props] */
    constructor(props) {
        super(props, 'EntityDbo');
        for (const prop in props) {
@@ -13,16 +15,11 @@ class Niveles extends EntityClass {
        }
    }
    /**@type {Number}*/ Id;
-   /**@type {String}*/ Nombre;
-   /**@type {String}*/ Nombre_corto;
-   /**@type {String}*/ Nombre_grado;
-   /**@type {Number}*/ Numero_grados;
-   /**@type {String}*/ Observaciones;
-   /**@type {Boolean}*/ Habilitado;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
-   /**@type {Number}*/ Orden;
-   /**@type {Number}*/ Inicio_grado;
-   /**@type {Array<Asignaturas>} OneToMany*/ Asignaturas;
+   /**@type {String}*/ Parentesco;
+   /**@type {Familias} ManyToOne*/ Familias;
+   /**@type {Estudiantes} ManyToOne*/ Estudiantes;
+   /**@type {Parientes} ManyToOne*/ Parientes;
 }
-export { Niveles }
+export { Estudiantes_responsables_familias }

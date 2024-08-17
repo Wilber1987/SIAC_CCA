@@ -20,7 +20,5 @@ namespace DataBaseModel {
        public int? Inicio_grado { get; set; }
        [OneToMany(TableName = "Asignaturas", KeyColumn = "Id", ForeignKeyColumn = "Nivel_id")]
        public List<Asignaturas>? Asignaturas { get; set; }
-       [OneToMany(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Nivel_id")]
-       public List<Clases>? Clases { get; set; }
    }
 }

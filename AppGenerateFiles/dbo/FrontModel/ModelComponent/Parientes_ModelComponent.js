@@ -3,7 +3,7 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Responsables_ModelComponent }  from './Responsables_ModelComponent.js'
+import { Estudiantes_responsables_familias_ModelComponent }  from './Estudiantes_responsables_familias_ModelComponent.js'
 class Parientes_ModelComponent extends EntityClass {
    /** @param {Partial<Parientes_ModelComponent>} [props] */
    constructor(props) {
@@ -29,6 +29,9 @@ class Parientes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Religion_id = { type: 'number' };
    /**@type {ModelProperty}*/ Created_at = { type: 'date' };
    /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail',  ModelObject: ()=> new Responsables_ModelComponent()};
+   /**@type {ModelProperty}*/ Pais_id = { type: 'number' };
+   /**@type {ModelProperty}*/ Responsablepago = { type: 'checkbox' };
+   /**@type {ModelProperty}*/ Noidentificacion = { type: 'text' };
+   /**@type {ModelProperty}*/ Estudiantes_responsables_familias = { type: 'MasterDetail',  ModelObject: ()=> new Estudiantes_responsables_familias_ModelComponent()};
 }
 export { parientes_ModelComponent }

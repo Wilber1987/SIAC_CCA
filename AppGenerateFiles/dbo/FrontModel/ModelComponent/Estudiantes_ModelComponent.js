@@ -4,7 +4,7 @@ import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsT
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { Estudiante_clases_ModelComponent }  from './Estudiante_clases_ModelComponent.js'
-import { Responsables_ModelComponent }  from './Responsables_ModelComponent.js'
+import { Estudiantes_responsables_familias_ModelComponent }  from './Estudiantes_responsables_familias_ModelComponent.js'
 class Estudiantes_ModelComponent extends EntityClass {
    /** @param {Partial<Estudiantes_ModelComponent>} [props] */
    constructor(props) {
@@ -37,6 +37,6 @@ class Estudiantes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };
    /**@type {ModelProperty}*/ Activo = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail',  ModelObject: ()=> new Estudiante_clases_ModelComponent()};
-   /**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail',  ModelObject: ()=> new Responsables_ModelComponent()};
+   /**@type {ModelProperty}*/ Estudiantes_responsables_familias = { type: 'MasterDetail',  ModelObject: ()=> new Estudiantes_responsables_familias_ModelComponent()};
 }
 export { estudiantes_ModelComponent }

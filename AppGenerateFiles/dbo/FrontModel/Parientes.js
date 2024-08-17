@@ -3,7 +3,7 @@ import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
 import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Responsables }  from './Responsables.js'
+import { Estudiantes_responsables_familias }  from './Estudiantes_responsables_familias.js'
 class Parientes extends EntityClass {
    /** @param {Partial<Parientes>} [props] */
    constructor(props) {
@@ -29,6 +29,9 @@ class Parientes extends EntityClass {
    /**@type {Number}*/ Religion_id;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
-   /**@type {Array<Responsables>} OneToMany*/ Responsables;
+   /**@type {Number}*/ Pais_id;
+   /**@type {Boolean}*/ Responsablepago;
+   /**@type {String}*/ Noidentificacion;
+   /**@type {Array<Estudiantes_responsables_familias>} OneToMany*/ Estudiantes_responsables_familias;
 }
 export { Parientes }
