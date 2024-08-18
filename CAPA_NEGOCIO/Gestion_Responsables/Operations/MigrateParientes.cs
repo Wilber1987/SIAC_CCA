@@ -14,8 +14,7 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			//return MigrateParientes();
-			return false;
+			return MigrateParientesAndUsers();
 		}
 
 
@@ -29,6 +28,8 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				return false;
 			}
+
+			Security_Roles? responsableRol = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
 
 			var tipoNotas = new Tipo_notas();
 			tipoNotas.SetConnection(MySQLConnection.SQLM);
@@ -79,8 +80,20 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			try
 			{
-				Security_Roles? pariente = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
+				Security_Roles? responsableRol = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
+				if (responsableRol.Exists())
+				{
+					return true;
+				}
+				//no existe rol se inserta
+				Security_Roles nuevoRol = new Security_Roles
+				{
+					Descripcion = "PADRE_RESPONSABLE",
+					Estado = "ACT"
+				};
+				nuevoRol.Save();
 				return true;
+
 			}
 			catch (System.Exception ex)
 			{
