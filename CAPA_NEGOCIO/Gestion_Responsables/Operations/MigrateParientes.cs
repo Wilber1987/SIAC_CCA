@@ -24,10 +24,13 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->MigrateParientesAndUsers");
 			//si no eixiste el rol de pariente se debe crear para asignarselo al usuario de cada responsable 
 			// ya que se crea un usuario por cada miembro de falia que tenga el check de responsable
-			if (!validateRolPariente())
+			var rol = validateRolPariente();
+			if (rol == null)
 			{
 				return false;
 			}
+
+			
 
 			Security_Roles? responsableRol = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
 
@@ -76,14 +79,14 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool validateRolPariente()
+		public Security_Roles validateRolPariente()
 		{
 			try
 			{
 				Security_Roles? responsableRol = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
 				if (responsableRol.Exists())
 				{
-					return true;
+					return responsableRol;
 				}
 				//no existe rol se inserta
 				Security_Roles nuevoRol = new Security_Roles
@@ -91,14 +94,13 @@ namespace CAPA_NEGOCIO.Oparations
 					Descripcion = "PADRE_RESPONSABLE",
 					Estado = "ACT"
 				};
-				nuevoRol.Save();
-				return true;
+				return (Security_Roles)nuevoRol.Save();
 
 			}
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ADVERTENCIA: validateRolPariente - Error al verificar perfil de responsable.", ex);
-				return false;
+				return null;
 			}
 		}
 	}
