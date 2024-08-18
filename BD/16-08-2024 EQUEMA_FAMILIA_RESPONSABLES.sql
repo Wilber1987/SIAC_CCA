@@ -12,18 +12,19 @@ ALTER TABLE SIAC_CCA.dbo.parientes ADD noidentificacion varchar(100) NULL;
 
 
 CREATE TABLE SIAC_CCA.dbo.familias (
-	id int IDENTITY(1,1) PRIMARY KEY, 
-	descripcion varchar(200) NOT NULL,
-	estado bit NULL,
-	saldo float DEFAULT 0 NULL,
-	actualizado bit NULL,
-	aceptacion bit NULL,
-	periodo_aceptacion int NULL,
-	fecha_actualizacion date NULL,
-	fecha_ultima_notificacion varchar(100) NULL,
-	id_usuario int NULL, 
-	CONSTRAINT FK_familias_usuario FOREIGN KEY (id_usuario) REFERENCES security.Security_Users(Id_User)
+    id int PRIMARY KEY, 
+    descripcion varchar(200) NOT NULL,
+    estado bit NULL,
+    saldo float DEFAULT 0 NULL,
+    actualizado bit NULL,
+    aceptacion bit NULL,
+    periodo_aceptacion int NULL,
+    fecha_actualizacion date NULL,
+    fecha_ultima_notificacion varchar(100) NULL,
+    id_usuario int NULL, 
+    CONSTRAINT FK_familias_usuario FOREIGN KEY (id_usuario) REFERENCES security.Security_Users(Id_User)
 );
+
 
 ALTER TABLE SIAC_CCA.dbo.estudiantes_responsables_familias 
 ADD CONSTRAINT FK_estudiantes_responsables_familia_familias FOREIGN KEY (familia_id) REFERENCES SIAC_CCA.dbo.familias(id);
