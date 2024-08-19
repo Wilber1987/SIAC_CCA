@@ -11,9 +11,9 @@ namespace DataBaseModel {
        [PrimaryKey(Identity = false)]
        public int? Id_Permission { get; set; }
        public string? Estado { get; set; }
-       [ManyToOne(TableName = "Security_Roles", KeyColumn = "Id_Role", ForeignKeyColumn = "Id_Role")]
-       public Security_Roles? Security_Roles { get; set; }
        [ManyToOne(TableName = "Security_Permissions", KeyColumn = "Id_Permission", ForeignKeyColumn = "Id_Permission")]
        public Security_Permissions? Security_Permissions { get; set; }
+       [ManyToOne(TableName = "Security_Roles", KeyColumn = "Id_Role", ForeignKeyColumn = "Id_Role")]
+       public Security_Roles? Security_Roles { get; set; }
    }
 }

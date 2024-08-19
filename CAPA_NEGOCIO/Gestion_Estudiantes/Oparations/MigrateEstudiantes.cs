@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_DATOS.BDCore.Abstracts;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 
@@ -10,10 +11,10 @@ namespace CAPA_NEGOCIO.Oparations
 {
 	public class MigrateEstudiantes : TransactionalClass
 	{
+		
 		public bool Migrate()
-		{
-			return migrateEstudiantes() && migrateParientes() && migrateResponsables();
-			
+		{			
+			return migrateEstudiantes() && migrateParientes() && migrateResponsables();			
 		}
 		public bool migrateEstudiantes()
 		{

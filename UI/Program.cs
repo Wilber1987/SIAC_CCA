@@ -20,11 +20,16 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\MSSQLSERVER01", "SIAC_CC
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
-//Migraciones
-// new MigrateEstudiantes().Migrate();
-// new MigrateDocentes().Migrate();
-// new MigrateGestionCursos().Migrate();
-/*new MigrateNotas().migrateTipoNotas();*/
+
+// Migraciones
+/*new MigrateEstudiantes().Migrate();
+new MigrateDocentes().Migrate();
+new MigrateGestionCursos().Migrate();
+new MigrateNotas().Migrate();
+new MigrateNotas().Migrate();*/
+
+//new MigrateParientes.Migrate();
+
 
 var builder = WebApplication.CreateBuilder(args);
 

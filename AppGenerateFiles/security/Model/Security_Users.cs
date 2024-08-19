@@ -16,6 +16,8 @@ namespace DataBaseModel {
        public string? Token { get; set; }
        public DateTime? Token_Date { get; set; }
        public DateTime? Token_Expiration_Date { get; set; }
+       [OneToMany(TableName = "Familias", KeyColumn = "Id_User", ForeignKeyColumn = "Id_usuario")]
+       public List<Familias>? Familias { get; set; }
        [OneToMany(TableName = "Security_Users_Roles", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
        public List<Security_Users_Roles>? Security_Users_Roles { get; set; }
    }

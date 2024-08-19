@@ -346,5 +346,46 @@ namespace API.Controllers {
        public object updateLog(CAPA_DATOS.Log inst) {
            return inst.Update();
        }
+       //Estudiantes_responsables_familias
+       [HttpPost]
+       [AuthController]
+       public List<Estudiantes_responsables_familias> getEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
+           return Inst.Get<Estudiantes_responsables_familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public Estudiantes_responsables_familias findEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
+           return Inst.Find<Estudiantes_responsables_familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
+           return inst.Update();
+       }
+       [HttpPost]
+       [AuthController]
+       public List<Familias> getFamilias(Familias Inst) {
+           return Inst.Get<Familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public Familias findFamilias(Familias Inst) {
+           return Inst.Find<Familias>();
+       }
+       [HttpPost]
+       [AuthController]
+       public object saveFamilias(Familias inst) {
+           return inst.Save();
+       }
+       [HttpPost]
+       [AuthController]
+       public object updateFamilias(Familias inst) {
+           return inst.Update();
+       }
    }
 }

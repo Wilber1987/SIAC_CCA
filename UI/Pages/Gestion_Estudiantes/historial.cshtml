@@ -2,15 +2,16 @@
 @using API.Controllers;
 @using CAPA_DATOS.Security; 
 @{
-   
-    if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
+    string? identify = HttpContext?.Session.GetString("seassonKey");
+    if (!SecurityController.Auth(identify))
     {
-        Response.Redirect("./Security/Login");
+        Response.Redirect("/Security/Login");
         return;
     }
 
 }
 <script type="module" src="~/Gestion_Estudiantes/Historial.mjs"></script>
+<script src="~/js/html2pdf.js"></script>
 <script type="module" >
     import {HistorialView} from "/Gestion_Estudiantes/Historial.mjs";
     window.onload = ()=> {

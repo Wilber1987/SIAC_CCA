@@ -2,7 +2,7 @@
     padding: 30px;
 }
 
-#Main {
+#Main, .Main {
     background-color: var(--secundary-color);
     color: var(--font-fourth-color);
     border-radius: 0.3cm;
@@ -10,6 +10,7 @@
   /*   box-shadow: 0 0 5px 0 #b3b3b3; */
     margin: 20px 0px;
     padding: 20px;
+    display: block;
 }
 /*body {
     margin: 0px;
