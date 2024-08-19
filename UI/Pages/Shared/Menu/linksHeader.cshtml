@@ -1,9 +1,14 @@
+
 @using API.Controllers
 @using CAPA_DATOS.Security
+@using CAPA_DATOS
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
+    
+    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 4));
+    var avatarPhoto = pariente.Sexo == "m" ? "avatar.png" : "avatar_fem.png";
 }
 <div class="navbar-header">
     <div class="d-flex">
@@ -12,7 +17,7 @@
 
         <!-- start page title -->
         <div class="page-title-box align-self-center d-none d-md-block">
-            <h4 class="page-title mb-0">Hi, Welcome Back!</h4>
+            <h4 class="page-title mb-0">@pageConfig.TITULO</h4>
         </div>
         <!-- end page title -->
 
@@ -162,20 +167,19 @@
         <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item user text-start d-flex align-items-center"
                 id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-3.jpg"
-                    alt="Header Avatar">
-                <span class="d-none d-xl-inline-block ms-2 fw-medium font-size-15">Martin Gurley</span>
+                <img class="rounded-circle header-profile-user" src="/Media/img/@avatarPhoto"               alt="Header Avatar">
+                <span class="d-none d-xl-inline-block ms-2 fw-medium font-size-15">@pariente.Primer_nombre</span>
             </button>
             <div class="dropdown-menu dropdown-menu-end pt-0">
                 <div class="p-3 border-bottom">
-                    <h6 class="mb-0">Martin Gurley</h6>
-                    <p class="mb-0 font-size-11 text-muted">martin.gurley@email.com</p>
+                    <h6 class="mb-0"> @pariente.Primer_nombre @pariente.Primer_apellido</h6>
+                    <p class="mb-0 font-size-11 text-muted"> @pariente.Email</p>
                 </div>
                 @if (SecurityController.IsAdmin(identify))
                 {
-                    <a class="dropdown-item" href="~/Admin/Index"><i
+                    <a class="dropdown-item" href="~/Gestion_Usuarios/Perfil"><i
                             class="mdi mdi-account-circle text-muted font-size-16 align-middle me-2"></i> <span
-                            class="align-middle">Admin Panel</span></a>
+                            class="align-middle">Ver Perfil</span></a>
                 }
 
                 @* <a class="dropdown-item" href="apps-chat.html"><i
