@@ -27,6 +27,8 @@ namespace DataBaseModel
 		public int? Estado_civil_id { get; set; }
 		public int? Religion_id { get; set; }
 		public int? User_id { get; set; }
+		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
+
 		public DateTime? Created_at { get; set; }
 		public DateTime? Updated_at { get; set; }
 		[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]

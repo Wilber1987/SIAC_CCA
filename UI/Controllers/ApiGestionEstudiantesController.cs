@@ -50,6 +50,18 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+		public Clase_Group? GetClaseEstudianteConsolidado(Estudiante_Clases_View Inst)
+		{
+			return Estudiantes.GetClaseEstudianteConsolidado(Inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+		public Clase_Group? GetClaseEstudianteCompleta(Estudiante_Clases_View Inst)
+		{
+			return Estudiantes.GetClaseEstudianteCompleta(Inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
 		public object? saveEstudiantes(Estudiantes inst)
 		{
 			return inst.Save();

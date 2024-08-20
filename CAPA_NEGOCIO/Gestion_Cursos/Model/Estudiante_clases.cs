@@ -27,20 +27,26 @@ namespace DataBaseModel
         [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
         public Clases? Clases { get; set; }
 
-        [ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-        public Estudiantes? Estudiantes { get; set; }
+        //[ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+        //public Estudiantes? Estudiantes { get; set; }
         [ManyToOne(TableName = "Periodo_lectivos", KeyColumn = "Id", ForeignKeyColumn = "Periodo_lectivo_id")]
         public Periodo_lectivos? Periodo_lectivos { get; set; }
 
         [ManyToOne(TableName = "Secciones", KeyColumn = "Id", ForeignKeyColumn = "Seccion_id")]
         public Secciones? Secciones { get; set; }
 
-        [OneToMany(TableName = "Calificaciones", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_clase_id")]
-        public List<Calificaciones>? Calificaciones { get; set; }
+        //[OneToMany(TableName = "Calificaciones", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_clase_id")]
+        //public List<Calificaciones>? Calificaciones { get; set; }       
         public string? Descripcion
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion(this.Clases?.Grado ?? 0)} Grado"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion(this.Clases?.Grado ?? 0)} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
         }
+
+        private NivelesEnum? GetNivelName()
+        {
+            return Enum.IsDefined(typeof(NivelesEnum),  this.Clases?.Nivel_id - 1) ?  (NivelesEnum?)this.Clases?.Nivel_id - 1: null;
+        }
+
         public Object? Informe
         {
             get
@@ -70,10 +76,14 @@ namespace DataBaseModel
         {
             throw new NotImplementedException();
         }
+       
 
         public Estudiante_clases? FindEstudiante()
         {
             throw new NotImplementedException();
         }
+    }
+    public enum NivelesEnum {
+       SECUNDARIA,  PRIMARIA,  PREESCOLAR
     }
 }

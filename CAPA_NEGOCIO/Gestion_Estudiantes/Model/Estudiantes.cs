@@ -34,12 +34,12 @@ namespace DataBaseModel
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
 		public bool? Activo { get; set; }
-		//[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
 		//[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Responsables>? Responsables { get; set; }
 
-		[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_Clases_View>? Clases { get; set; }
 
 		public Estudiantes? FindEstudiante(string? identity)
@@ -65,17 +65,15 @@ namespace DataBaseModel
 			throw new Exception("No posee permisos");
 		}
 
-		private Estudiantes GetFullEstudiante()
+		public Estudiantes GetFullEstudiante()
 		{
 			var estudiante = Find<Estudiantes>();
 			if (estudiante != null)
 			{
-				estudiante.Estudiante_clases = new Estudiante_clases { Estudiante_id = estudiante.Id }
-					.Get<Estudiante_clases>();
-				/*estudiante.Estudiante_clases.ForEach(c =>
-				{
-					c.Calificaciones = new Calificaciones { Estudiante_clase_id = c.Clase_id }.Get<Calificaciones>();
-				});*/
+				/*var ClasesF = new Estudiante_Clases_View { 
+					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
+				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);*/
+				
 				estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
 					.Get<Responsables>();
 				return estudiante;
@@ -85,41 +83,21 @@ namespace DataBaseModel
 				throw new Exception("Estudiante no existe");
 			}
 		}
-		public List<Clase_Group>? Clase_Group
+		public static Clase_Group GetClaseEstudianteConsolidado(Estudiante_Clases_View estudiante_Clases_View)
 		{
-			get
-			{
-				return Clases?.Where(C => C.Nombre_nota != null).GroupBy(C => C.Descripcion)
-				   .Select(C => new Clase_Group
-				   {
-					   Id_Clase = C.First().Id,
-					   Descripcion = C.First().Descripcion,
-					   Asignaturas = C.GroupBy(A => A.Nombre_asignatura).Select(A =>
-					   {
-						   return new Asignatura_Group
-						   {
-							   Descripcion = A.First().Nombre_asignatura,
-							   Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
-							   Calificaciones = [.. A.Select(Calificacion =>
-							   {
-								   return new Calificacion_Group
-								   {
-									   Id = Calificacion.Id,
-									   Resultado = Calificacion.Resultado,
-									   Evaluacion = Calificacion.Evaluacion ?? "",
-									   Tipo = Calificacion.Tipo,
-									   Fecha = Calificacion.Fecha
-								   };
-							   }).OrderBy(c => c.Fecha)
-							   .ThenBy(c => c.Evaluacion.Contains("B") ? 1 :
-									c.Evaluacion.Contains("S") ? 2 :
-									c.Evaluacion.Contains("F") ? 3 : 4) // Ordenar por Evaluacion
-                               ]
-						   };
-					   }).ToList()
-				   }).ToList();
-			}
+
+			var ClasesF = estudiante_Clases_View.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
+			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
+			return clase_Group.First();
 		}
+		public static Clase_Group GetClaseEstudianteCompleta(Estudiante_Clases_View estudiante_Clases_View)
+		{
+
+			var ClasesF = estudiante_Clases_View.Get<Estudiante_Clases_View>();
+			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
+			return clase_Group.First();
+		}
+		public List<Clase_Group>? Clase_Group { get; set; }
 		public List<Estudiantes> UpdateOwEstudiantes(string? v)
 		{
 			throw new NotImplementedException();
@@ -133,6 +111,8 @@ namespace DataBaseModel
 		public required string Evaluacion { get; set; }
 		public string? Tipo { get; set; }
 		public DateTime? Fecha { get; set; }
+		public int? Periodo { get; set; }
+		public int? Order { get; set; }
 	}
 
 	public class Asignatura_Group
@@ -140,12 +120,18 @@ namespace DataBaseModel
 		public string? Descripcion { get; set; }
 		public List<string?>? Evaluaciones { get; set; }
 		public List<Calificacion_Group>? Calificaciones { get; set; }
+		public string? Docente { get; set; }
 	}
 
 	public class Clase_Group
 	{
-		public string? Descripcion { get; set; }
+		public string? Clase { get; set; }
+		public int? Id_Clase { get; set; }
+		public string? Guia { get; set; }
+		public string? Repite { get; set; }
+		public string? Nivel { get; set; }
+		public string? Seccion { get; set; }
 		public List<Asignatura_Group>? Asignaturas { get; set; }
-        public int? Id_Clase { get; internal set; }
-    }
+
+	}
 }

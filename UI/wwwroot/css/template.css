@@ -4,7 +4,7 @@
 
 #Main, .Main {
     background-color: var(--secundary-color);
-    color: var(--font-fourth-color);
+    color: #000;
     border-radius: 0.3cm;
     min-height: 500px;
   /*   box-shadow: 0 0 5px 0 #b3b3b3; */

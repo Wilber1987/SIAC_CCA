@@ -1,8 +1,7 @@
 //@ts-check
-import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
+import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 class Estudiante_Clases_View extends EntityClass {
    /** @param {Partial<Estudiante_Clases_View>} [props] */
    constructor(props) {
@@ -42,5 +41,11 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {Number}*/ Numero_grados;
    /**@type {Number}*/ Inicio_grado;
    /**@type {Number}*/ Grado;
+   /**DATOS DEL DOCENTE */
+   /**@type {String}*/ Primer_nombre;
+   /**@type {String}*/ Segundo_nombre;
+   /**@type {String}*/ Primer_apellido;
+   /**@type {String}*/ Segundo_apellido;
+   /**@type {String}*/ Nombre_Docente;
 }
 export { Estudiante_Clases_View }

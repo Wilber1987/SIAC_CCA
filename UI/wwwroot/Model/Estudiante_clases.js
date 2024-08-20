@@ -12,12 +12,13 @@ class Estudiante_clases extends EntityClass {
         super(props, 'EntityDbo');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
     }
    /**@type {Number}*/ Id;
    /**@type {Date}*/ Transferido;
    /**@type {Date}*/ Retirado;
    /**@type {String}*/ Observaciones;
+   /**@type {String}*/ Descripcion;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
    /**@type {Number}*/ Promedio;
@@ -36,6 +37,13 @@ class Estudiante_clases extends EntityClass {
    */
     async ExportClaseBoletin() {
         return await this.Post("Exporter/ExportClaseBoletin", this);
+    }
+    
+    async GetClaseEstudianteConsolidado() {
+        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteConsolidado");
+    }
+    async GetClaseEstudianteCompleta() {
+        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteCompleta");
     }
 }
 export { Estudiante_clases };

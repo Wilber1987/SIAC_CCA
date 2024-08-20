@@ -4,7 +4,6 @@ import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases } from './Estudiante_clases.js';
 import { Responsables } from './Responsables.js';
 class Estudiantes extends EntityClass {
-    
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
         super(props, 'GestionEstudiantes');
@@ -50,6 +49,27 @@ class Estudiantes extends EntityClass {
     GetNombreCompleto() {
         return `${this.Primer_nombre} ${this.Segundo_nombre ?? ''} ${this.Primer_apellido} ${this.Segundo_apellido ?? ''}`;
     }
+    /**
+    * @returns {Object}
+    */
+    GetMadre() {
+        const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "MADRE");
+        return {
+            Id: responsable?.Parientes?.Id,
+            Name: responsable?.Parientes?.Nombre_completo,
+        }
+    }
+    /**
+    * @returns {Object}
+    */
+    GetPadre() {
+        const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "PADRE");
+        return {
+            Id: responsable?.Parientes?.Id,
+            Name: responsable?.Parientes?.Nombre_completo,
+        }
+    }
+
 }
 export { Estudiantes };
 
@@ -57,7 +77,8 @@ class Calificacion_Group {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
+        this.Order = undefined;
     }
     /** @type {Number}*/
     Resultado;
@@ -82,6 +103,9 @@ class Asignatura_Group {
     /** @type {String[]}*/
     Evaluaciones;
 
+    /** @type {String}*/
+    Docente;
+
     /** @type {Calificacion_Group[]}*/
     Calificaciones;
     get Details() { return this.Calificaciones }
@@ -95,9 +119,16 @@ class Clase_Group {
     }
     /** @type {Number}*/
     Id_Clase;
-
     /** @type {String}*/
     Descripcion;
+    /** @type {String}*/
+    Repite;
+    /** @type {String}*/
+    Nivel;
+    /** @type {String}*/
+    Seccion;
+    /** @type {String}*/
+    Guia;
 
     /** @type {Asignatura_Group[]}*/
     Asignaturas;

@@ -12,33 +12,34 @@ class Estudiantes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-   /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-   /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
-   /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
-   /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date' };
-   /**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text' };
-   /**@type {ModelProperty}*/ Sexo = { type: 'text' };
-   /**@type {ModelProperty}*/ Codigo = { type: 'text' };
-   /**@type {ModelProperty}*/ Religion_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Madre_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Padre_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Foto = { type: 'img' };
-   /**@type {ModelProperty}*/ Peso = { type: 'number' };
-   /**@type {ModelProperty}*/ Altura = { type: 'number' };
-   /**@type {ModelProperty}*/ Tipo_sangre = { type: 'text' };
-   /**@type {ModelProperty}*/ Padecimientos = { type: 'text' };
-   /**@type {ModelProperty}*/ Alergias = { type: 'text' };
-   /**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Activo = { type: 'checkbox' };
-   /**@type {ModelProperty}*/ Direccion = { type: 'textarea' };
-   ///**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail', ModelObject: () => new Estudiante_clases_ModelComponent() };
-   /**@type {ModelProperty}*/ Clase_Group = { type: 'MasterDetail', ModelObject: () => new Clase_Group() };
-   /**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail', ModelObject: () => new Responsables_ModelComponent() };
-   
+    /**@type {ModelProperty}*/ Codigo = { type: 'text' };
+    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
+    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
+    /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
+    /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
+    /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date' };
+    /**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text' };
+    /**@type {ModelProperty}*/ Sexo = { type: 'text' };
+
+    ///**@type {ModelProperty}*/ Religion_id = { type: 'number' };
+    ///**@type {ModelProperty}*/ Madre_id = { type: 'number' };
+    ///**@type {ModelProperty}*/ Padre_id = { type: 'number' };
+    ///**@type {ModelProperty}*/ Created_at = { type: 'date' };
+    ///**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+    /**@type {ModelProperty}*/ Foto = { type: 'img' };
+    /**@type {ModelProperty}*/ Peso = { type: 'number' };
+    /**@type {ModelProperty}*/ Altura = { type: 'number' };
+    /**@type {ModelProperty}*/ Tipo_sangre = { type: 'text' };
+    /**@type {ModelProperty}*/ Padecimientos = { type: 'text' };
+    /**@type {ModelProperty}*/ Alergias = { type: 'text' };
+    ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };
+    /**@type {ModelProperty}*/ Activo = { type: 'checkbox' };
+    /**@type {ModelProperty}*/ Direccion = { type: 'textarea' };
+    ///**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail', ModelObject: () => new Estudiante_clases_ModelComponent() };
+    ///**@type {ModelProperty}*/ Clase_Group = { type: 'MasterDetail', ModelObject: () => new Clase_Group() };
+    ///**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail', ModelObject: () => new Responsables_ModelComponent() };
+
 
 }
 export { Estudiantes_ModelComponent }
@@ -86,6 +87,16 @@ class Clase_Group {
     }
     /** @type {ModelProperty}*/
     Descripcion = { type: 'text' };
+    /** @type {ModelProperty}*/
+    Clase = { type: 'text' };
+    /** @type {ModelProperty}*/
+    Repite = { type: 'text' };
+    /** @type {ModelProperty}*/
+    Nivel = { type: 'text' };
+    /** @type {ModelProperty}*/
+    Seccion = { type: 'text' };
+    /** @type {ModelProperty}*/
+    Guia = { type: 'text' };
 
     /** @type {ModelProperty}*/
     Asignaturas = { type: 'MasterDetail', ModelObject: () => new Asignatura_Group() };

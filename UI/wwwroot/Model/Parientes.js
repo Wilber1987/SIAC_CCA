@@ -27,6 +27,7 @@ class Parientes extends EntityClass {
    /**@type {Number}*/ Religion_id;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
+   /**@type {String}*/ Nombre_completo;
    /**@type {Array<Responsables>} OneToMany*/ Responsables;
 }
 export { Parientes };
