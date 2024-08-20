@@ -28,7 +28,7 @@ new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();
 new MigrateNotas().Migrate();*/
 
-//new MigrateParientes.Migrate();
+new MigrateParientes.Migrate();
 
 
 var builder = WebApplication.CreateBuilder(args);

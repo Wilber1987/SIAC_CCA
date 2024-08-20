@@ -24,23 +24,23 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->MigrateParientesAndUsers");
 			//si no eixiste el rol de pariente se debe crear para asignarselo al usuario de cada responsable 
 			// ya que se crea un usuario por cada miembro de falia que tenga el check de responsable
-			var rol = validateRolPariente();
-			if (rol == null)
+			var rolResponsable = validateRolPariente();
+			if (rolResponsable == null)
 			{
 				return false;
 			}
 
 			
 
-			Security_Roles? responsableRol = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
 
-			var tipoNotas = new Tipo_notas();
-			tipoNotas.SetConnection(MySQLConnection.SQLM);
-			var tipoNotasMsql = tipoNotas.Get<Tipo_notas>();
+
+			var familia = new Tbl_aca_familia();
+			familia.SetConnection(MySqlConnections.Bellacom);
+			var familiaMsql = familia.Get<Tbl_aca_familia>();
 			try
 			{
 				BeginGlobalTransaction();
-				tipoNotasMsql.ForEach(tn =>
+				familiaMsql.ForEach(tn =>
 				{
 					var existingNota = new Tipo_notas()
 					{

@@ -20,7 +20,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateEstudiantes");
 			var estudiante = new Estudiantes();
-			estudiante.SetConnection(MySQLConnection.SQLM);
+			estudiante.SetConnection(MySqlConnections.Bellacom);
 			var EstudiantesMsql = estudiante.Get<Estudiantes>(
 			//TODO ARREGLAR LO DEL PAGINADO
 			//new FilterData { FilterType = "limit", Values = ["10000"] },
