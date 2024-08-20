@@ -5,8 +5,7 @@
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
-    var pageConfig = Config.pageConfig();
-    
+    var pageConfig = Config.pageConfig();    
     var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 4));
     var avatarPhoto = pariente.Sexo == "m" ? "avatar.png" : "avatar_fem.png";
 }
@@ -175,11 +174,17 @@
                     <h6 class="mb-0"> @pariente.Primer_nombre @pariente.Primer_apellido</h6>
                     <p class="mb-0 font-size-11 text-muted"> @pariente.Email</p>
                 </div>
-                @if (SecurityController.IsAdmin(identify))
+                @if (SecurityController.HavePermission(identify, Permissions.PERFIL_ACCESS))
                 {
                     <a class="dropdown-item" href="~/Gestion_Usuarios/Perfil"><i
                             class="mdi mdi-account-circle text-muted font-size-16 align-middle me-2"></i> <span
                             class="align-middle">Ver Perfil</span></a>
+                }
+                @if (SecurityController.IsAdmin(identify))
+                {
+                    <a class="dropdown-item" href="~/Admin/Index"><i
+                            class="mdi mdi-account-circle text-muted font-size-16 align-middle me-2"></i> <span
+                            class="align-middle">Admin Panel</span></a>
                 }
 
                 @* <a class="dropdown-item" href="apps-chat.html"><i
