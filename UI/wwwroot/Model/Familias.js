@@ -1,10 +1,10 @@
 //@ts-check
-import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
+import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Security_Users }  from './Security_Users.js'
 import { Estudiantes_responsables_familias }  from './Estudiantes_responsables_familias.js'
+import { Security_Users }  from './Security_Users.js'
+
 class Familias extends EntityClass {
    /** @param {Partial<Familias>} [props] */
    constructor(props) {
@@ -14,6 +14,7 @@ class Familias extends EntityClass {
        }
    }
    /**@type {Number}*/ Id;
+   /**@type {String}*/ Idtfamilia;
    /**@type {String}*/ Descripcion;
    /**@type {Boolean}*/ Estado;
    /**@type {Number}*/ Saldo;

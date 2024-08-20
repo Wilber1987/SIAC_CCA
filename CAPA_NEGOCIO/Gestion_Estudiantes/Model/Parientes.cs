@@ -28,9 +28,11 @@ namespace DataBaseModel
 		public int? Religion_id { get; set; }
 		public int? User_id { get; set; }
 		public DateTime? Created_at { get; set; }
-		public DateTime? Updated_at { get; set; }
+
+		/*public DateTime? Updated_at { get; set; }
 		[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-		public List<Responsables>? Responsables { get; set; }
+
+		public List<Responsables>? Responsables { get; set; }*/
 		#endregion
 		
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
