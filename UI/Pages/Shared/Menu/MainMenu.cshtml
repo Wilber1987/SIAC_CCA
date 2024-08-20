@@ -21,21 +21,15 @@
                 <li class="menu-title" data-key="t-menu">Dashboard</li>
 
                 <li class="menuParentOption">
-                    <a class="has-arrow" href="javascript: void(0);">
+                    <a class="" href="javascript: void(0);">
                         <i class="bx bx-home-alt icon nav-icon"></i>
                         <span class="menu-item" data-key="t-inicio">Inicio</span>
-                        @* <span class="badge rounded-pill bg-primary">2</span> *@
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Sales</a></li>
-                    </ul>
                 </li>
                 <li class="menuParentOption">
-                    <a class="has-arrow" href="javascript: void(0);">
-                        <i class="bx bxs-book-content icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-boletin">Boletín en Línea</span>
-                        @* <span class="badge rounded-pill bg-primary">2</span> *@
+                    <a class="" href="~/Gestion_Usuarios/Perfil">
+                        <i class="bx bx-user icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-perfil">Mi Perfil</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         @if(SecurityController.HavePermission(Identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
@@ -45,28 +39,25 @@
                     </ul>
                 </li>
                 <li class="menuParentOption">
-                    <a class="has-arrow" href="javascript: void(0);">
-                        <i class="bx bx-calendar icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-calendario">Calendario</span>
-                        @* <span class="badge rounded-pill bg-primary">2</span> *@
+                    <a class="" href="javascript: void(0);">
+                        <i class="bx bxs-book-content icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-boletin">Boletín en Línea</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Sales</a></li>
-                    </ul>
                 </li>
                 <li class="menuParentOption">
-                    <a class="has-arrow" href="javascript: void(0);">
+                    <a class="" href="javascript: void(0);">
                         <i class="bx bx-message-rounded-dots icon nav-icon"></i>
                         <span class="menu-item" data-key="t-mensajes">Centro de Mensajes</span>
-                        @* <span class="badge rounded-pill bg-primary">2</span> *@
                     </a>
+<<<<<<< HEAD
+=======
                     <ul class="sub-menu" aria-expanded="false">
                         @if(SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
                         {
                             <li><a href="~/Mensajes/" data-key="t-ecommerce">Mensajes</a></li> 
                         }
                     </ul>
+>>>>>>> bae350b318c5fab15f4dc49212651aee3232ebbd
                 </li>
                 <li class="menuParentOption">
                     <a class="has-arrow" href="javascript: void(0);">

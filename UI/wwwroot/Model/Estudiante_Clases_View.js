@@ -30,7 +30,6 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {Number}*/ Orden;
    /**@type {Number}*/ Resultado;
    /**@type {String}*/ Tipo;
-   /**@type {}*/ Hora;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Porcentaje;
    /**@type {String}*/ Nombre_asifnatura;

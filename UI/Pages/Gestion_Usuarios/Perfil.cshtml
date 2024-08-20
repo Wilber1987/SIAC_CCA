@@ -1,0 +1,239 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS.Security;
+@using CAPA_DATOS;
+@using DataBaseModel;
+@{
+    string identify = HttpContext.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+    UserModel user = AuthNetCore.User(identify);
+    var perfil = user.UserData?.Get_Profile();
+    if (!SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+    {
+        Response.Redirect("./login");
+        return;
+    }
+    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 4));
+    var avatar = pariente.Sexo == "Masculino" ? "avatar.png" : "avatar_fem.png";
+}
+
+<div class="row">
+    <div class="col-xxl-5">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="user-profile-img">
+                    <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL"
+                        class="profile-img profile-foreground-img rounded-top" style="height: 120px;" alt="">
+                    <div class="overlay-content rounded-top">
+                        @* <div>
+                            <div class="user-nav p-3">
+                                <div class="d-flex justify-content-end">
+                                    <div class="dropdown">
+                                        <a class="text-muted dropdown-toggle font-size-16" href="#" role="button"
+                                            data-bs-toggle="dropdown" aria-haspopup="true">
+                                            <i class="bx bx-dots-vertical text-white font-size-20"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item" href="#">Edit</a>
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> *@
+                    </div>
+                </div>
+                <!-- end user-profile-img -->
+
+
+                <div class="p-4 pt-0">
+
+                    <div class="mt-n5 position-relative text-center border-bottom pb-3">
+                        <img src="/Media/img/@avatar" alt="CCA" class="avatar-xl rounded-circle img-thumbnail">
+                        <div class="mt-3">
+                            <h5 class="mb-1">
+                                @pariente.Primer_nombre @pariente.Primer_apellido
+                            </h5>
+                            @* <p class="text-muted mb-0">
+                                <i class="bx bxs-star text-warning font-size-14"></i>
+                                <i class="bx bxs-star text-warning font-size-14"></i>
+                                <i class="bx bxs-star text-warning font-size-14"></i>
+                                <i class="bx bxs-star text-warning font-size-14"></i>
+                                <i class="bx bxs-star-half text-warning font-size-14"></i>
+                            </p> *@
+                        </div>
+
+                    </div>
+
+                    <div class="table-responsive mt-3 border-bottom pb-3">
+                        <table class="table align-middle table-sm table-nowrap table-borderless table-centered mb-0">
+                            <tbody>
+                                <tr>
+                                    <th class="fw-bold">
+                                        Nombes :</th>
+                                    <td class="text-muted">
+                                        @pariente.Primer_nombre
+                                        @pariente.Segundo_nombre
+                                    </td>
+                                </tr>
+                                <!-- end tr -->
+                                <tr>
+                                    <th class="fw-bold">
+                                        Apellidos :</th>
+                                    <td class="text-muted">
+                                        @pariente.Primer_apellido
+                                        @pariente.Segundo_apellido
+                                    </td>
+                                </tr>
+                                <!-- end tr -->
+                                <tr>
+                                    <th class="fw-bold">
+                                        Dirección :</th>
+                                    <td class="text-muted">@pariente.Direccion</td>
+                                </tr>
+                                <!-- end tr -->
+                                <tr>
+                                    <th class="fw-bold">Profesión :</th>
+                                    <td class="text-muted">@pariente.Profesion</td>
+                                </tr>
+                                <!-- end tr -->
+
+                                <tr>
+                                    <th class="fw-bold">Teléfono :</th>
+                                    <td class="text-muted">@pariente.Telefono</td>
+                                </tr>
+                                <tr>
+                                    <th class="fw-bold">Celular :</th>
+                                    <td class="text-muted">@pariente.Celular</td>
+                                </tr>
+                                <!-- end tr -->
+
+                                <tr>
+                                    <th class="fw-bold">Correo:</th>
+                                    <td class="text-muted">@pariente.Email</td>
+                                </tr>
+                                <!-- end tr -->
+                            </tbody><!-- end tbody -->
+                        </table>
+                    </div>
+
+
+
+                    <div class="p-3 mt-3">
+                        <div class="row text-center">
+                            <div class="col-6 border-end">
+                                <div class="p-1">
+                                    <h5 class="mb-1">1,269</h5>
+                                    <p class="text-muted mb-0">Saldo Pendiente</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-1">
+                                    <h5 class="mb-1">5.2k</h5>
+                                    <p class="text-muted mb-0">Solvente</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 text-center pb-4">
+                        <a href="#" class="btn btn-primary waves-effect waves-light"> Configuración de perfil
+                            <i class="bx bx-cog ms-1 align-middle"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-7">
+        <div class="row">
+            <div class="col-xl-6 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <img src="assets/images/users/avatar-2.jpg" alt=""
+                                    class="avatar-md rounded-circle img-thumbnail">
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h5 class="font-size-16 mb-1"><a href="#" class="text-body">Phyllis Gatlin</a>
+                                </h5>
+                                <span class="badge bg-success-subtle text-success  mb-0">Full Stack
+                                    Developer</span>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mt-3 mb-0">Curabitur non magna lobortis tempus gravida ornare
+                            libero
+                            sed diam sed fringilla est.</p>
+
+                        <div class="mt-3 pt-1">
+                            <p class="mb-0"><i class="mdi mdi-phone font-size-15 align-middle pe-2 text-primary"></i>
+                                070 2860 5375</p>
+                            <p class="mb-0 mt-2"><i
+                                    class="mdi mdi-email font-size-15 align-middle pe-2 text-primary"></i>
+                                PhyllisGatlin@spy.com</p>
+                            <p class="mb-0 mt-2"><i
+                                    class="mdi mdi-google-maps font-size-15 align-middle pe-2 text-primary"></i>
+                                52 Ilchester MYBSTER 9WX</p>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-4">
+                            <button type="button" class="btn btn-subtle-primary btn-sm w-50"><i
+                                    class="bx bx-user me-1"></i> Profile</button>
+                            <button type="button" class="btn btn-primary btn-sm w-50"><i
+                                    class="bx bx-message-square-dots me-1"></i> Contact</button>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!-- end card -->
+            </div>
+
+            <div class="col-xl-6 col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-md">
+                                <div class="avatar-title bg-primary-subtle  text-primary display-6 m-0 rounded-circle">
+                                    <i class="bx bxs-user-circle"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h5 class="font-size-16 mb-1"><a href="#" class="text-body">William Swift</a>
+                                </h5>
+                                <span class="badge bg-warning-subtle text-warning mb-0">Backend Developer</span>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mt-3 mb-0">Curabitur non magna lobortis tempus gravida ornare
+                            libero
+                            sed diam sed fringilla est.</p>
+
+                        <div class="mt-3 pt-1">
+                            <p class="mb-0"><i class="mdi mdi-phone font-size-15 align-middle pe-2 text-primary"></i>
+                                012 6587 1236</p>
+                            <p class="mb-0 mt-2"><i
+                                    class="mdi mdi-email font-size-15 align-middle pe-2 text-primary"></i>
+                                WilliamSwift@spy.com</p>
+                            <p class="mb-0 mt-2"><i
+                                    class="mdi mdi-google-maps font-size-15 align-middle pe-2 text-primary"></i>
+                                80 South Street MONKW 7BR</p>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-4">
+                            <button type="button" class="btn btn-subtle-primary btn-sm w-50"><i
+                                    class="bx bx-user me-1"></i> Profile</button>
+                            <button type="button" class="btn btn-primary btn-sm w-50"><i
+                                    class="bx bx-message-square-dots me-1"></i> Contact</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card -->
+            </div>
+        </div>
+    </div>
+
+</div>

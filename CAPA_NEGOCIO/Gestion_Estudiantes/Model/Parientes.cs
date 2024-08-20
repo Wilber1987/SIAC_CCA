@@ -30,9 +30,11 @@ namespace DataBaseModel
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 
 		public DateTime? Created_at { get; set; }
-		public DateTime? Updated_at { get; set; }
+
+		/*public DateTime? Updated_at { get; set; }
 		[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-		public List<Responsables>? Responsables { get; set; }
+
+		public List<Responsables>? Responsables { get; set; }*/
 		#endregion
 		
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)

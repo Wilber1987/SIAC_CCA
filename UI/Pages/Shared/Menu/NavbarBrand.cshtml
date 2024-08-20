@@ -1,19 +1,27 @@
+@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string Identify = Context.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+}
+
 <div class="navbar-brand-box">
     <a href="javascript:void(0)" class="logo logo-dark">
         <span class="logo-sm">
-            <img src="/Media/img/LogotipoCCA_azul.png" alt="">
+            <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
         </span>
         <span class="logo-lg">
-            <img src="/Media/img/LogotipoCCA_azul.png" alt="">
+            <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
         </span>
     </a>
 
     <a href="javascript:void(0)" class="logo logo-light">
         <span class="logo-lg">
-            <img src="/Media/img/LogotipoCCA_azul.png" alt="">
+            <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
         </span>
         <span class="logo-sm">
-            <img src="/Media/img/LogotipoCCA_azul.png" alt="">
+            <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
         </span>
     </a>
 </div>
