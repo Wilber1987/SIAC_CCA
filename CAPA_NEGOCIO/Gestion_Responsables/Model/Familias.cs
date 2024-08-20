@@ -9,6 +9,7 @@ namespace DataBaseModel {
    public class Familias : EntityClass {
        [PrimaryKey(Identity = true)]
        public int? Id { get; set; }
+       public string? Idtfamilia { get; set; }
        public string? Descripcion { get; set; }
        public bool? Estado { get; set; }
        public Double? Saldo { get; set; }

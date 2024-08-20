@@ -30,7 +30,7 @@ namespace CAPA_NEGOCIO.Oparations
 				return false;
 			}
 
-			
+
 
 
 
@@ -72,6 +72,61 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+
+			return true;
+		}
+
+		public bool MigrateFamilia()
+		{
+
+			Console.Write("-->MigrateFamilia");			
+			var rol = validateRolPariente();
+			if (rol == null)
+			{
+				return false;
+			}
+
+			var familias = new Familias();
+			familias.SetConnection(MySqlConnections.Bellacom);
+			var familiasMsql = familias.Get<Familias>();
+			try
+			{
+				BeginGlobalTransaction();
+				familiasMsql.ForEach(tn =>
+				{
+					var existingFamilia = new Familias()
+					{
+						Id = tn.Id
+					}.Find<Familias>();
+					
+					if (existingFamilia != null && (existingFamilia.Fecha_ultima_notificacion != existingFamilia.Fecha_ultima_notificacion))
+					{
+						existingFamilia.Idtfamilia = tn.Idtfamilia;
+						existingFamilia.Descripcion = tn.Descripcion;
+						existingFamilia.Estado = tn.Estado;
+						existingFamilia.Saldo = tn.Saldo;
+						existingFamilia.Actualizado = tn.Actualizado;
+						existingFamilia.Aceptacion = tn.Aceptacion;
+						existingFamilia.Periodo_aceptacion = tn.Periodo_aceptacion;
+						existingFamilia.Fecha_actualizacion = tn.Fecha_actualizacion;
+						existingFamilia.Fecha_ultima_notificacion = tn.Fecha_ultima_notificacion;
+						existingFamilia.Update();
+
+					}
+					else if (existingFamilia == null)
+					{
+						tn.Save();
+					}
+
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}
