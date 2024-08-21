@@ -16,7 +16,7 @@ namespace DataBaseModel {
        public string? Sexo { get; set; }
        public DateTime? Fechanacimiento { get; set; }
        public int? Idtitulo { get; set; }
-       public ? Idestadocivil { get; set; }
+       public int? Idestadocivil { get; set; }
        public short? Idpais { get; set; }
        public short? Idregion { get; set; }
        public string? Direccion { get; set; }
@@ -26,7 +26,7 @@ namespace DataBaseModel {
        public string? Telefonotrabajo { get; set; }
        public string? Email { get; set; }
        public int? Idrelacionfamiliar { get; set; }
-       public ? Idreligion { get; set; }
+       public int? Idreligion { get; set; }
        public bool? Responsable { get; set; }
        public bool? Responsablepago { get; set; }
        public string? Exalumno { get; set; }
@@ -37,6 +37,6 @@ namespace DataBaseModel {
        public string? Usuariomodificacion { get; set; }
        public DateTime? Fechaactualizacion { get; set; }
        public bool? Actualizado { get; set; }
-       public ? Noresponsable { get; set; }
+       public int? Noresponsable { get; set; }
    }
 }

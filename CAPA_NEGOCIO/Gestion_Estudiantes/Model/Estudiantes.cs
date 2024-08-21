@@ -36,8 +36,10 @@ namespace DataBaseModel
 		public bool? Activo { get; set; }
 		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
-		//[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Responsables>? Responsables { get; set; }
+
+		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_Clases_View>? Clases { get; set; }
@@ -73,7 +75,7 @@ namespace DataBaseModel
 				/*var ClasesF = new Estudiante_Clases_View { 
 					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
 				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);*/
-				
+
 				estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
 					.Get<Responsables>();
 				return estudiante;
@@ -87,14 +89,14 @@ namespace DataBaseModel
 		{
 
 			var ClasesF = estudiante_Clases_View.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
+			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
 			return clase_Group.First();
 		}
 		public static Clase_Group GetClaseEstudianteCompleta(Estudiante_Clases_View estudiante_Clases_View)
 		{
 
 			var ClasesF = estudiante_Clases_View.Get<Estudiante_Clases_View>();
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
+			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
 			return clase_Group.First();
 		}
 		public List<Clase_Group>? Clase_Group { get; set; }

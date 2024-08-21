@@ -14,7 +14,7 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			return MigrateParientesAndUsers();
+			return MigrateFamilia() && MigrateParientesAndUsers();
 		}
 
 
@@ -31,39 +31,61 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 
-
-
-
-			var familia = new Tbl_aca_familia();
-			familia.SetConnection(MySqlConnections.Bellacom);
-			var familiaMsql = familia.Get<Tbl_aca_familia>();
+			var data = new Tbl_aca_tutor();
+			data.SetConnection(MySqlConnections.Bellacom);
+			var dataMsql = data.Get<Tbl_aca_tutor>();
 			try
 			{
 				BeginGlobalTransaction();
-				familiaMsql.ForEach(tn =>
+				dataMsql.ForEach(tn =>
 				{
-					var existingNota = new Tipo_notas()
+					var existing = new Parientes()
 					{
-						Id = tn.Id
-					}.Find<Tipo_notas>();
+						Id = tn.Idtutor
+					}.Find<Parientes>();
 
-					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
-					tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (existingNota != null && existingNota.Updated_at != tn.Updated_at)
+					tn.Fechagrabacion = DateUtil.ValidSqlDateTime(tn.Fechagrabacion.GetValueOrDefault());
+					tn.Fechamodificacion = DateUtil.ValidSqlDateTime(tn.Fechamodificacion.GetValueOrDefault());
+					tn.Fechaactualizacion = DateUtil.ValidSqlDateTime(tn.Fechaactualizacion.GetValueOrDefault());
+					tn.Fechanacimiento = DateUtil.ValidSqlDateTime(tn.Fechanacimiento.GetValueOrDefault());
+
+					if (existing != null && existing.Fecha_Modificacion != tn.Fechamodificacion)
 					{
-						existingNota.Nombre = tn.Nombre;
-						existingNota.Nombre_corto = tn.Nombre_corto;
-						existingNota.Periodo_lectivo_id = tn.Periodo_lectivo_id;
-						existingNota.Consolidado_id = tn.Consolidado_id;
-						existingNota.Numero_consolidados = tn.Numero_consolidados;
-						existingNota.Observaciones = tn.Observaciones;
-						existingNota.Orden = tn.Orden;
-						existingNota.Update();
+						existing.Primer_nombre = tn.Nombres;
+						//existing.Nombre_corto = tn.Nombre_corto;//todo
+						/*existing.Primer_apellido = tn.Primer_apellido;
+						existing.Segundo_apellido = tn.Segundo_apellido;*/
+						existing.Sexo = tn.Sexo;
+						//existing.Profesion = tn.Profesion;
+						existing.Direccion = tn.Direccion;
+						existing.Lugar_trabajo = tn.Lugartrabajo;
+						existing.Telefono = tn.Telefono;
+						existing.Celular = tn.Celular;
+						existing.Telefono_trabajo = tn.Telefonotrabajo;
+						existing.Email = tn.Email;
+						//existing.Estado_civil_id = tn.Estado_civil_id;//todo
+						existing.Religion_id = tn.Idreligion;
+						existing.Id_Titulo = tn.Idtitulo;
+						existing.Id_Region = tn.Idregion;
+						existing.Id_Estado_Civil = tn.Idestadocivil;
+						existing.Responsable_Pago = tn.Responsablepago;
+						existing.Ex_Alumno = tn.Exalumno;
+						existing.Fecha_Nacimiento = tn.Fechanacimiento;
+						existing.Created_at = tn.Fechagrabacion;
+						existing.Fecha_Modificacion = tn.Fechamodificacion;
+						existing.Usuario_Grabacion = tn.Usuariograbacion;
+						existing.Usuario_Edicion = tn.Usuariomodificacion;
+						existing.Ejercicio = tn.Ejercicio;
+						existing.Actualizado = tn.Actualizado;
+						existing.No_Responsable = tn.Noresponsable;	
+
+						existing.Update();
 
 					}
-					else if (existingNota == null)
-					{
+					else if (existing == null)
+					{						
 						tn.Save();
+						
 					}
 
 				});
@@ -82,7 +104,7 @@ namespace CAPA_NEGOCIO.Oparations
 		public bool MigrateFamilia()
 		{
 
-			Console.Write("-->MigrateFamilia");			
+			Console.Write("-->MigrateFamilia");
 			var rol = validateRolPariente();
 			if (rol == null)
 			{
@@ -101,7 +123,7 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						Id = tn.Id
 					}.Find<Familias>();
-					
+
 					if (existingFamilia != null && (existingFamilia.Fecha_ultima_notificacion != existingFamilia.Fecha_ultima_notificacion))
 					{
 						existingFamilia.Idtfamilia = tn.Idtfamilia;

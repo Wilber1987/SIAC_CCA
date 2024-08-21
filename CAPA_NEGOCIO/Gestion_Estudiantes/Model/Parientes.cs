@@ -29,24 +29,41 @@ namespace DataBaseModel
 		public int? User_id { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 
-		public DateTime? Created_at { get; set; }
+		public int? Id_Titulo { get; set; }
+		public int? Id_Region { get; set; }
+		public int? Id_Estado_Civil { get; set; }
 
-		public DateTime? Updated_at { get; set; }
-		[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
+		public bool? Responsable_Pago { get; set; }
 
-		public List<Responsables>? Responsables { get; set; }
+		public String? Ex_Alumno { get; set; }
+
+		public DateTime? Fecha_Nacimiento { get; set; }
+
+		public DateTime? Created_at { get; set; }// es fecha grabacion
+		public DateTime? Fecha_Modificacion { get; set; }// es fecha grabacion
+
+		public String? Usuario_Grabacion { get; set; }
+		public String? Usuario_Edicion { get; set; }
+
+		public Double? Ejercicio { get; set; }
+		public bool? Actualizado { get; set; }
+		public int? No_Responsable { get; set; }
+
+		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
+       public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+
 		#endregion
 		
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
-			UserModel user = AuthNetCore.User(identity);
+			/*UserModel user = AuthNetCore.User(identity);
 			Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
 			if (pariente?.Responsables != null)
 			{
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id",	pariente.Responsables?.Select(r => r.Estudiante_id).ToArray())
 				);
-			}
+			}*/
 			throw new Exception("No posee estudiantes asociados");
 		}
 	}

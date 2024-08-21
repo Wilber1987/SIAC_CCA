@@ -1,6 +1,6 @@
 EXEC SIAC_CCA.sys.sp_rename N'SIAC_CCA.dbo.responsables', N'estudiantes_responsables_familia', 'OBJECT';
 
-sp_rename 'SIAC_CCA.dbo.estudiantes_responsables_familia.pariente_id', 'responsable_id', 'COLUMN';
+EXEC sp_rename 'SIAC_CCA.dbo.estudiantes_responsables_familia.pariente_id', 'responsable_id', 'COLUMN';
 
 delete from SIAC_CCA.dbo.estudiantes_responsables_familia
 

@@ -5,20 +5,20 @@ using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
-MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+//MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA");
 
 // coneccion cesar
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 
 
-//AppGeneratorProgram.Main(); //generador de codigo
+AppGeneratorProgram.Main(); //generador de codigo
 
 
 // Migraciones
@@ -28,7 +28,7 @@ new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();
 new MigrateNotas().Migrate();*/
 
-new MigrateParientes.Migrate();
+//new MigrateParientes.Migrate();
 
 
 var builder = WebApplication.CreateBuilder(args);

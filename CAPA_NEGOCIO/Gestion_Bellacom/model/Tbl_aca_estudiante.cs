@@ -9,7 +9,7 @@ namespace DataBaseModel {
        [PrimaryKey(Identity = false)]
        public int? Idestudiante { get; set; }
        public string? Idtestudiante { get; set; }
-       public ? Idsociedad { get; set; }
+       public int? Idsociedad { get; set; }
        public int? Periodo { get; set; }
        public DateTime? Fechaingreso { get; set; }
        public int? Idfamilia { get; set; }
@@ -17,7 +17,7 @@ namespace DataBaseModel {
        public string? Apellidos { get; set; }
        public string? Sexo { get; set; }
        public DateTime? Fechanacimiento { get; set; }
-       public ? Idreligion { get; set; }
+       public int? Idreligion { get; set; }
        public string? Direccion { get; set; }
        public short? Idpais { get; set; }
        public short? Idregion { get; set; }
