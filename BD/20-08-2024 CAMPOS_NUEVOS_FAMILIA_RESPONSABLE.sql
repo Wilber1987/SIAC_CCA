@@ -9,6 +9,7 @@ ALTER TABLE Parientes ADD
     usuario_edicion NVARCHAR(50)  NULL,
     ejercicio FLOAT NULL,
     actualizado BIT NULL,
+    user_id int null,
     no_responsable INT NULL;
 
 ALTER TABLE Parientes

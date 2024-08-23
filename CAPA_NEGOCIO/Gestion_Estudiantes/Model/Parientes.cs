@@ -26,7 +26,6 @@ namespace DataBaseModel
 		public string? Email { get; set; }
 		public int? Estado_civil_id { get; set; }
 		public int? Religion_id { get; set; }
-		public int? User_id { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 
 		public int? Id_Titulo { get; set; }
@@ -49,11 +48,14 @@ namespace DataBaseModel
 		public bool? Actualizado { get; set; }
 		public int? No_Responsable { get; set; }
 
+		public int? User_id { get; set; }
+		// [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "User_id")]
+
 		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-       public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+		public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
 
 		#endregion
-		
+
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
 			/*UserModel user = AuthNetCore.User(identity);

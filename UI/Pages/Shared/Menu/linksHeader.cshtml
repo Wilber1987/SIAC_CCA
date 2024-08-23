@@ -6,7 +6,7 @@
 @{
     string identify = Context.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();    
-    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 4));
+    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 20000));
     var avatarPhoto = pariente.Sexo == "m" ? "avatar.png" : "avatar_fem.png";
 }
 <div class="navbar-header">

@@ -28,7 +28,7 @@ namespace DataBaseModel {
        public int? Idrelacionfamiliar { get; set; }
        public int? Idreligion { get; set; }
        public bool? Responsable { get; set; }
-       public bool? Responsablepago { get; set; }
+       public bool Responsablepago { get; set; }
        public string? Exalumno { get; set; }
        public int? Ejercicio { get; set; }
        public DateTime? Fechagrabacion { get; set; }

@@ -18,7 +18,7 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA")
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 
 
-AppGeneratorProgram.Main(); //generador de codigo
+//AppGeneratorProgram.Main(); //generador de codigo
 
 
 // Migraciones
@@ -28,7 +28,7 @@ new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();
 new MigrateNotas().Migrate();*/
 
-//new MigrateParientes.Migrate();
+new MigrateParientes().Migrate();
 
 
 var builder = WebApplication.CreateBuilder(args);

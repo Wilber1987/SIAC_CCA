@@ -26,7 +26,7 @@ CREATE TABLE SIAC_CCA.dbo.familias (
     aceptacion bit NULL,
     periodo_aceptacion int NULL,
     fecha_actualizacion date NULL,
-    fecha_ultima_notificacion varchar(100) NULL  
+    fecha_ultima_notificacion date NULL  
 );
 
 

@@ -89,9 +89,10 @@ namespace CAPA_NEGOCIO.Oparations
 						Id = est.Id
 					}.Find<Parientes>();
 
-					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
-					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
-					if (existingPariente != null && existingPariente.Updated_at != est.Updated_at)
+					// est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
+					// est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
+					
+					if (existingPariente != null /*&& existingPariente.Updated_at != est.Updated_at*/)
 					{
 						existingPariente.Primer_nombre = est.Primer_nombre;
 						existingPariente.Segundo_nombre = est.Segundo_nombre;

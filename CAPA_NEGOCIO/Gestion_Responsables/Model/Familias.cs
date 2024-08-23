@@ -17,7 +17,7 @@ namespace DataBaseModel {
        public bool? Aceptacion { get; set; }
        public int? Periodo_aceptacion { get; set; }
        public DateTime? Fecha_actualizacion { get; set; }
-       public string? Fecha_ultima_notificacion { get; set; }
+       public DateTime? Fecha_ultima_notificacion { get; set; }
        public int? Id_usuario { get; set; }
        [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_usuario")]
        public Security_Users? Security_Users { get; set; }

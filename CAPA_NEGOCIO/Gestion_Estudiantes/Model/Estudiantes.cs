@@ -55,10 +55,10 @@ namespace DataBaseModel
 			{
 				UserModel user = AuthNetCore.User(identity);
 				Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
-				if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
-				{
-					return GetFullEstudiante();
-				}
+				/*if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
+				{*/
+					if (true){return GetFullEstudiante();}
+				//}
 				else
 				{
 					throw new Exception("Estudiante no esta asignado a este usuario");
@@ -76,8 +76,8 @@ namespace DataBaseModel
 					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
 				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);*/
 
-				estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
-					.Get<Responsables>();
+				/*estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
+					.Get<Responsables>();*/
 				return estudiante;
 			}
 			else
