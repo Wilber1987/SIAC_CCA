@@ -189,6 +189,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		private static void buildPariente(Tbl_aca_tutor tn, Parientes? existing)
 		{
+			existing.Id = tn.Idtutor;
 			existing.Primer_nombre = StringUtil.GetNombres(tn.Nombres)[0];
 			existing.Segundo_nombre = StringUtil.GetNombres(tn.Nombres)[1];
 			existing.Primer_apellido = StringUtil.GetNombres(tn.Apellidos)[0];
