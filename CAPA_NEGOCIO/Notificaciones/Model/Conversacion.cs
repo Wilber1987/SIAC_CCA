@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_DATOS.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,19 +22,42 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Mensajes", KeyColumn = "Id_conversacion", ForeignKeyColumn = "Id_conversacion")]
 		public List<Mensajes>? Mensajes { get; set; }
 
-		public static List<Conversacion?> GetConversaciones(string? identity)
+		public static List<Conversacion> GetConversaciones(string? identity)
 		{
 			UserModel user = AuthNetCore.User(identity);
 			List<Conversacion_usuarios> Conversaciones_usuarios = new Conversacion_usuarios
-			{ Id_User = user.UserId }.Get<Conversacion_usuarios>();
+			{ Id_usuario = user.UserId }.Get<Conversacion_usuarios>();
 			return [.. Conversaciones_usuarios.Select(u => {
-                DateTime? last = u.Conversacion?.Mensajes.Select(m => m.Created_at).ToList().Max();
+                DateTime? last = u.Conversacion?.Mensajes?.Select(m => m.Created_at).ToList().Max();
                 if (u.Conversacion != null)
                 {
                     u.Conversacion.Fecha_Ultimo_Mensaje = last;
                 }                
                 return u.Conversacion;                
             }).OrderByDescending(c => c?.Fecha_Ultimo_Mensaje)];
+        }
+
+        public Conversacion? FindConversacion(string? identity)
+        {
+            UserModel user = AuthNetCore.User(identity);
+            List<Conversacion_usuarios> conversaciones_usuarios = new Conversacion_usuarios
+			{ Id_usuario = user.UserId }.Get<Conversacion_usuarios>();
+
+            List<Conversacion> conversaciones = new Conversacion{}.Where<Conversacion>(
+                FilterData.In("id_conversacion", conversaciones_usuarios.Select(cu => cu.Id_conversacion).ToArray())
+            );
+            Conversacion? conversacion = conversaciones.Find(c => c.Conversacion_usuarios?.Find(cu => cu.Id_usuario == user.UserId) != null );
+            if (conversacion != null)
+            { 
+                return conversacion;                
+            }
+           
+            var profile = new Security_Users {Id_User = Conversacion_usuarios?[0].Id_usuario}.Get_Profile();
+            Descripcion = profile?.GetNombreCompleto();
+            Conversacion_usuarios?.Add(new Conversacion_usuarios{
+                Id_usuario = user.UserId
+            });
+            return (Conversacion?)Save() ?? this;
         }
 
         public object? SaveConversacion(string? identity)
@@ -51,13 +75,13 @@ namespace DataBaseModel
             if (conversacion != null) { 
                 return conversacion;
             }
-            Conversacion_usuarios.Add(new Conversacion_usuarios { Id_User = user.UserId });
+            Conversacion_usuarios.Add(new Conversacion_usuarios { Id_usuario = user.UserId });
             return Save();
         }
 
         private bool UsuarioIncluidoEnConversacion(List<Conversacion_usuarios>? Conversacion_usuarios)
         {
-            return Conversacion_usuarios?.Find(cu => cu.Id_User == Conversacion_usuarios.First().Id_User) != null;
+            return Conversacion_usuarios?.Find(cu => cu.Id_usuario == Conversacion_usuarios.First().Id_usuario) != null;
         }
     }
 }

@@ -18,8 +18,8 @@ class Secciones_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Clase_id = { type: 'number' };
    /**@type {ModelProperty}*/ Docente_id = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Docente_materias = { type: 'MasterDetail',  ModelObject: ()=> new Docente_materias_ModelComponent()};
    /**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail',  ModelObject: ()=> new Estudiante_clases_ModelComponent()};
    /**@type {ModelProperty}*/ Evaluaciones = { type: 'MasterDetail',  ModelObject: ()=> new Evaluaciones_ModelComponent()};

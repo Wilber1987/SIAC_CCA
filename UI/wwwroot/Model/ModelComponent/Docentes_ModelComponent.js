@@ -28,8 +28,8 @@ class Docentes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Estado_civil_id = { type: 'number' };
    /**@type {ModelProperty}*/ Religion_id = { type: 'number' };
    /**@type {ModelProperty}*/ Foto = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Habilitado = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Cargo = { type: 'text' };
    /**@type {ModelProperty}*/ Escolaridades = { type: 'WSELECT',  ModelObject: ()=> new Escolaridades_ModelComponent(), ForeignKeyColumn: 'Escolaridad_id'};

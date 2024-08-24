@@ -44,7 +44,7 @@ namespace DataBaseModel
 
         private NivelesEnum? GetNivelName()
         {
-            return Enum.IsDefined(typeof(NivelesEnum),  this.Clases?.Nivel_id - 1) ?  (NivelesEnum?)this.Clases?.Nivel_id - 1: null;
+            return Enum.IsDefined(typeof(NivelesEnum),  (this.Clases?.Nivel_id - 1) ?? 0) ?  (NivelesEnum?)this.Clases?.Nivel_id - 1: null;
         }
 
         public Object? Informe

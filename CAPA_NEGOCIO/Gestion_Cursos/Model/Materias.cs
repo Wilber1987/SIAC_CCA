@@ -1,3 +1,4 @@
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Utility;
 using System;
@@ -19,10 +20,16 @@ namespace DataBaseModel
         public DateTime? Created_at { get; set; }
         public DateTime? Updated_at { get; set; }
         public int? Lock_version { get; set; }
+        public string? Descripcion { get { return $"{Asignaturas?.Nombre} {Clases?.Descripcion} "; } }
+
         [ManyToOne(TableName = "Asignaturas", KeyColumn = "Id", ForeignKeyColumn = "Asignatura_id")]
         public Asignaturas? Asignaturas { get; set; }
         [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
         public Clases? Clases { get; set; }
+
+        [OneToMany(TableName = "Docente_Materias", KeyColumn = "Id", ForeignKeyColumn = "Materia_id")]
+        public List<Docente_materias>? Docentes_materias { get; set; }
+        
         public MateriasConfig? ThisConfig
         {
             get
@@ -33,6 +40,19 @@ namespace DataBaseModel
                 }
                 return MateriasConfig;
             }
+        }
+
+
+        public static List<Materias> GetOwMaterias(string? identity, Materias inst)
+        {
+            UserModel user = AuthNetCore.User(identity);
+            Docentes? docente = new Docentes().Find<Docentes>(FilterData.Equal("email", user.mail));
+            if (docente != null)
+			{
+				return new Docente_materias{ Docente_id = docente.Id}
+                    .Where<Docente_materias>().Select(dm => dm.Materias ?? new Materias() ).ToList();
+			}
+			throw new Exception("No posee materias asociadas");
         }
     }
     public class MateriasConfig

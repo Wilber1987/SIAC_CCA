@@ -29,19 +29,35 @@ namespace CAPA_NEGOCIO.Notificaciones
 			}));
 			return notificaciones;
 		}
-        public List<Contacto> GetContactos(string? identity)
-        {
-            UserModel user = AuthNetCore.User(identity);
-            
-            return new Security_Users()
-				.Where<Security_Users>(FilterData.Distinc("Id_User", user.UserId))
-				.Select(u => new Contacto
+		public List<Contacto> GetContactos(string? identity, Contacto contacto)
+		{
+			UserModel user = AuthNetCore.User(identity);
+
+			return new Tbl_Profile()
+				.Where<Tbl_Profile>(
+					FilterData.Distinc("IdUser", user.UserId),
+					FilterData.Limit(50),
+					FilterData.Like("Nombre_Completo", contacto.Nombre_Completo)
+				)
+				.Select(u =>
 				{
-					Id_User = u.Id_User,
-					Nombre_Completo = u.Get_Profile()?.GetNombreCompleto() ?? u.Nombres,
-					Foto = u.Get_Profile()?.Foto
+					int count = new Mensajes
+					{
+						Id_User = u.IdUser,
+						Leido = false
+
+					}.Count(
+						FilterData.Like("Destinatarios", $"Id_User : {user.UserId}")//TODO REPARAR ESTE ERROR,FilterData.Equal("Leido", "0") 
+					);
+					return new Contacto
+					{
+						Id_User = u.IdUser,
+						Nombre_Completo = u.GetNombreCompleto() ?? u.Nombres,
+						Foto = u.Foto,
+						Mensajes = count
+					};
 				}).ToList();
-        }
-    }
+		}
+	}
 	public enum NotificacionType { MENSAJE, ALERTA, NOTICIA }
 }

@@ -6,7 +6,7 @@ import { Conversacion } from './Conversacion.js';
 class Mensajes extends EntityClass {
     /** @param {Partial<Mensajes>} [props] */
     constructor(props) {
-        super(props, 'EntityDbo');
+        super(props, 'MessageManager');
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -15,7 +15,7 @@ class Mensajes extends EntityClass {
     /**@type {String}*/ Remitente;
     /**@type {String}*/ Destinatarios;
     /**@type {String}*/ Asunto;
-    /**@type {String}*/ Mensaje;
+    /**@type {String}*/ Body;
     /**@type {Date}*/ Created_at;
     /**@type {Date}*/ Updated_at;
     /**@type {Boolean}*/ Enviado;

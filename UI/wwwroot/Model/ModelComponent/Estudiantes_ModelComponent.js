@@ -25,8 +25,8 @@ class Estudiantes_ModelComponent extends EntityClass {
     ///**@type {ModelProperty}*/ Religion_id = { type: 'number' };
     ///**@type {ModelProperty}*/ Madre_id = { type: 'number' };
     ///**@type {ModelProperty}*/ Padre_id = { type: 'number' };
-    ///**@type {ModelProperty}*/ Created_at = { type: 'date' };
-    ///**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+    ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+    ///**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
     /**@type {ModelProperty}*/ Foto = { type: 'img' };
     /**@type {ModelProperty}*/ Peso = { type: 'number' };
     /**@type {ModelProperty}*/ Altura = { type: 'number' };

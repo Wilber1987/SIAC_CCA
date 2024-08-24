@@ -13,8 +13,8 @@ class Responsables_ModelComponent extends EntityClass {
        }
    }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Parentesco = { type: 'text' };
    /**@type {ModelProperty}*/ Estudiantes = { type: 'WSELECT',  ModelObject: ()=> new Estudiantes_ModelComponent(), ForeignKeyColumn: 'Estudiante_id'};
    /**@type {ModelProperty}*/ Parientes = { type: 'WSELECT',  ModelObject: ()=> new Parientes_ModelComponent(), ForeignKeyColumn: 'Pariente_id'};

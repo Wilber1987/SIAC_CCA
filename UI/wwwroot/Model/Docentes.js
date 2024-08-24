@@ -10,13 +10,14 @@ class Docentes extends EntityClass {
        super(props, 'EntityDbo');
        for (const prop in props) {
            this[prop] = props[prop];
-       }
+       };       
    }
    /**@type {Number}*/ Id;
    /**@type {String}*/ Primer_nombre;
    /**@type {String}*/ Segundo_nombre;
    /**@type {String}*/ Primer_apellido;
    /**@type {String}*/ Segundo_apellido;
+   /**@type {String}*/ Nombre_completo;
    /**@type {String}*/ Sexo;
    /**@type {Date}*/ Fecha_nacimiento;
    /**@type {String}*/ Lugar_nacimiento;

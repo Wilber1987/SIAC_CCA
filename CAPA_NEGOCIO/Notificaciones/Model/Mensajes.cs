@@ -18,7 +18,7 @@ namespace DataBaseModel
         [JsonProp]
         public List<Destinatario>? Destinatarios { get; set; }
         public string? Asunto { get; set; }
-        public string? Mensaje { get; set; }
+        public string? Body { get; set; }
         public int? Id_conversacion { get; set; }
         public DateTime? Created_at { get; set; }
         public DateTime? Updated_at { get; set; }
@@ -79,10 +79,10 @@ namespace DataBaseModel
                 { Id_conversacion = Id_conversacion }
                    .Find<Conversacion>();
                 Destinatarios = conversacion?.Conversacion_usuarios
-                    .Where(C => C.Id_User != Id_User)
+                    .Where(C => C.Id_usuario != Id_User)
                     .Select(C => new Destinatario { 
                         Correo= C.Security_Users?.Mail,
-                        Id_User= C.Id_User,
+                        Id_User= C.Id_usuario,
                         Leido= false,
                         Enviado= false,
                         Nombre = $"{C.Security_Users?.Get_Profile()?.GetNombreCompleto()}"

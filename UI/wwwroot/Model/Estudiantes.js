@@ -4,6 +4,7 @@ import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases } from './Estudiante_clases.js';
 import { Responsables } from './Responsables.js';
 class Estudiantes extends EntityClass {
+   
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
         super(props, 'GestionEstudiantes');
@@ -68,6 +69,14 @@ class Estudiantes extends EntityClass {
             Id: responsable?.Parientes?.Id,
             Name: responsable?.Parientes?.Nombre_completo,
         }
+    }
+
+    /**
+     * @param {Estudiante_clases} Estudiante_clases
+     * @return {Promise<Array<Estudiantes>>} 
+     * */
+    GetBySectionClass(Estudiante_clases) {
+        throw new Error("Method not implemented.");
     }
 
 }

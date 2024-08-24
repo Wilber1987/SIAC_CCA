@@ -50,15 +50,6 @@ class EstudianteDetail extends HTMLElement {
                         ModelObject: new Clase_Group(),
                         Dataset: this.Estudiante.Estudiante_clases ?? []
                     });
-
-                    /*return new WTableComponent({
-                        Options: { Search: true, Show: true },
-                        ImageUrlPath: this.Config.ImageUrlPath,
-                        AddItemsFromApi: false,
-                        EntityModel: this.Config.EntityModel,
-                        ModelObject: Model[prop].ModelObject.__proto__ == Function.prototype ? Model[prop].ModelObject() : Model[prop].ModelObject,
-                        Dataset: ObjectDetail[prop] ?? []
-                    })*/
                 }
             }
         ];

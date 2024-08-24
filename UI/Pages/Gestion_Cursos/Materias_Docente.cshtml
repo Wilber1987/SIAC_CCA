@@ -5,7 +5,7 @@
 @using DataBaseModel;
 @{
     string? identify = HttpContext?.Session.GetString("seassonKey");
-     if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+     if (!SecurityController.HavePermission(identify, Permissions.GESTION_CLASES_ASIGNADAS))
     {
         Response.Redirect("/Security/Login");
         return;
@@ -14,9 +14,9 @@
 }
 <script src="~/js/html2pdf.js"></script>
 <script type="module" >
-    import {HistorialView} from "/Gestion_Estudiantes/HistorialView.mjs";
+    import {MateriasPropiasView} from "/Gestion_Cursos/MateriasPropiasView.js";
     window.onload = ()=> {
-        Main.append(new HistorialView());
+        Main.append(new MateriasPropiasView());
     }
 </script>
 <div id="Main" class="app-container"></div>

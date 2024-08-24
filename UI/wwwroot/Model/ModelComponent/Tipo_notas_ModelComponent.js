@@ -18,8 +18,8 @@ class Tipo_notas_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Consolidado_id = { type: 'number' };
    /**@type {ModelProperty}*/ Numero_consolidados = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Orden = { type: 'number' };
    /**@type {ModelProperty}*/ Calificaciones = { type: 'MasterDetail',  ModelObject: ()=> new Calificaciones_ModelComponent()};
 }

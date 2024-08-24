@@ -16,8 +16,8 @@ class Calificaciones_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Resultado = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Consolidado_id = { type: 'number' };
    /**@type {ModelProperty}*/ Materia_id = { type: 'number' };
    /**@type {ModelProperty}*/ Periodo = { type: 'number' };

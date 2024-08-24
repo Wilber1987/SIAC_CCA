@@ -1,16 +1,17 @@
 //@ts-check
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
-import { Estudiante_clases }  from './Estudiante_clases.js'
-import { Materias }  from './Materias.js'
+import { Estudiante_clases } from './Estudiante_clases.js'
+import { Materias } from './Materias.js'
 import { Niveles } from './Niveles.js';
 class Clases extends EntityClass {
-   /** @param {Partial<Clases>} [props] */
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+
+    /** @param {Partial<Clases>} [props] */
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id;
    /**@type {Number}*/ Grado;
    /**@type {Number}*/ Nivel_id;
@@ -21,5 +22,11 @@ class Clases extends EntityClass {
    /**@type {Date}*/ Updated_at;
    /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
    /**@type {Array<Materias>} OneToMany*/ Materias;
+    /**
+    * @returns {Promise<Array<Clases>>}
+    */
+    GetOwEstudiantes() {
+        throw new Error("Method not implemented.");
+    }
 }
 export { Clases }

@@ -14,8 +14,8 @@ class Docente_materias_ModelComponent extends EntityClass {
        }
    }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Docentes = { type: 'WSELECT',  ModelObject: ()=> new Docentes_ModelComponent(), ForeignKeyColumn: 'Docente_id'};
    /**@type {ModelProperty}*/ Materias = { type: 'WSELECT',  ModelObject: ()=> new Materias_ModelComponent(), ForeignKeyColumn: 'Materia_id'};
    /**@type {ModelProperty}*/ Secciones = { type: 'WSELECT',  ModelObject: ()=> new Secciones_ModelComponent(), ForeignKeyColumn: 'Seccion_id'};

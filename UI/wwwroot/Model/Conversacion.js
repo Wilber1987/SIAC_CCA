@@ -6,7 +6,7 @@ import { Mensajes } from './Mensajes.js';
 class Conversacion extends EntityClass {
     /** @param {Partial<Conversacion>} [props] */
     constructor(props) {
-        super(props, 'EntityDbo');
+        super(props, 'MessageManager');
         for (const prop in props) {
             this[prop] = props[prop];
         }

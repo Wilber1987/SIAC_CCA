@@ -21,6 +21,7 @@ namespace DataBaseModel {
 	   public DateTime? Created_at { get; set; }
 	   public DateTime? Updated_at { get; set; }
 	   public int? Orden { get; set; }
+	   
 	   [ManyToOne(TableName = "Niveles", KeyColumn = "Id", ForeignKeyColumn = "Nivel_id")]
 	   public Niveles? Niveles { get; set; }     
    }

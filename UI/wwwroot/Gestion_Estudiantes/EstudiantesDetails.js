@@ -2,24 +2,27 @@
 //@ts-check
 // @ts-ignore
 import { DocumentsData } from "../Model/DocumentsData.js";
-import { Clase_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Estudiante_clases } from "../Model/Estudiante_clases.js";
+import { Estudiantes } from "../Model/Estudiantes.js";
+import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { ClaseGroup } from "./ClasesDetails.js";
 import { EstudianteDetail } from "./EstudianteDetail.js";
 
 const route = location.origin
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
 /**
- * @typedef {Object} EstudiantesViewConfig 
+ * @typedef {Object} EstudiantesDetailsConfig 
     * @property {Array<Estudiantes>} Dataset
 **/
-class EstudiantesView extends HTMLElement {
+class EstudiantesDetails extends HTMLElement {
     /**
-    * @param {EstudiantesViewConfig} Config 
+    * @param {EstudiantesDetailsConfig} Config 
     */
     constructor(Config) {
         super();
@@ -44,7 +47,7 @@ class EstudiantesView extends HTMLElement {
                 ${new WPrintExportToolBar({ PrintAction: this.PrintAction, ExportPdfAction: this.ExportPdfAction })}
             </div>         
             <div class="alumnos-container">
-                <h6 class="text-muted text-uppercase mb-3">Today</h6>
+                <h6 class="text-uppercase mb-3">Estudiantes</h6>
                 ${this.BuildEstudiantes(this.Config.Dataset)}
             </div>
             ${this.TabContainer}
@@ -87,8 +90,10 @@ class EstudiantesView extends HTMLElement {
             title: "Imprimir informe clase",
             StyleForm: "columnX1",
             ModelObject: {
-                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => c.Descripcion) }
-            }, EditObject: {}, ObjectOptions: {
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion})) }
+            }, EditObject: {
+                Estudiante_id: this.EstudianteSeleccionado.Id,               
+            },  ObjectOptions: {
                 SaveFunction: async (object) => {
                     const body = await this.GetActa(object);
                     //this.append(body); return;
@@ -105,7 +110,7 @@ class EstudiantesView extends HTMLElement {
         }));
     };
     ExportPdfAction = () => {
-        if (!this.EstudianteSeleccionado) {
+        if (!this.EstudianteSeleccionado.Id) {
             this.append(ModalMessege("Seleccione un estudiante"));
             return;
         }
@@ -113,8 +118,10 @@ class EstudiantesView extends HTMLElement {
             title: "Imprimir informe clase",
             StyleForm: "columnX1",
             ModelObject: {
-                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => c.Descripcion) }
-            }, EditObject: {}, ObjectOptions: {
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion})) }
+            }, EditObject: {
+                Estudiante_id: this.EstudianteSeleccionado.Id,               
+            }, ObjectOptions: {
                 SaveFunction: async (object) => {
                     const body = await this.GetActa(object);
                     // @ts-ignore
@@ -126,67 +133,40 @@ class EstudiantesView extends HTMLElement {
     };
 
     async GetActa(object) {
-        const id = object.Seleccione?.toString().replaceAll(" ", "");
         /**@type {DocumentsData} */
         const documentsData = await new DocumentsData().GetBoletinDataFragments();
-        /**@type {EstudianteDetail} */
-        const detail = this.Manager.DomComponents.find(c => c.id === "EstDetail_" + this.EstudianteSeleccionado?.Id);
-        // @ts-ignore
-        const content = detail.ComponentTab?.Manager?.DomComponents[0];
-        const class_element = content.shadowRoot.querySelector(`#${id}`);
-        const body = class_element?.cloneNode(true);
-        // @ts-ignore
-        body.append(content.CustomStyle.cloneNode(true));
-        body.append(this.PrintStyle.cloneNode(true));
-        documentsData.Header.style.width = "100%"
-        const detailContent = html`<div class="detail-content">`;
-        class_element.querySelectorAll("w-asignatura-detail").forEach((asig, index) => {
-            if (index == 0) {
-                detailContent.append(asig.shadowRoot.querySelector(".container").cloneNode(true), asig.shadowRoot.querySelector("style").cloneNode(true))
-            } else {
-                detailContent.append(asig.shadowRoot.querySelector(".container").cloneNode(true))
-            }           
-        });      
-        body.append(detailContent)  
+
+        const response = await new Estudiante_clases({
+            Estudiante_id: object.Estudiante_id,
+            Clase_id: object.Seleccione.Seleccione
+        }).GetClaseEstudianteConsolidado();
+        const body = new ClaseGroup(response, {ModelObject: new Clase_Group()});
+
+        documentsData.Header.style.width = "100%";
+
         const data = html`<div class="page" style="position:relative">
             ${documentsData.Header}
-            ${body.innerHTML}
+            ${body.shadowRoot?.innerHTML}
             ${documentsData.WatherMark}
+            ${this.PrintStyle.cloneNode(true)}
             ${documentsData.Footer}
         </div>`; 
-        this.buildData(data, class_element.dataElement);        
+        // @ts-ignore
+        this.buildData(data, response);        
         return data;
-    }
-    /**<td>
-                <div>Estudiante: {{ nombre-completo }}</div>
-                <div>
-                    <label for="">Código: {{ codigo }}</label>
-                    <label for="">Repite: {{ repite }}</label>
-                    <label for="">Sexo: {{ sexo }}</label>
-                </div>
-                <div>
-                    <label for="">Nivel: {{ nivel }}</label>
-                    <label for="">Grado: {{ grado }}</label>
-                    <label for="">Sección: {{ seccion }}</label>
-                </div>
-            </td>
-            <td>
-                <div>Padre: {{ nombre-padre }}</div>
-                <div>Madre: {{ nombre-madre }}</div>
-                <div>Guía: {{ nombre-guia }}</div>
-            </td> */
+    }    
     CustomStyle = css`
         .Historial{
-        display: grid;
-        grid-template-columns: 300px calc(100% - 320px);
-        gap: 20px;
+            display: grid;
+            grid-template-columns: 300px calc(100% - 320px);
+            gap: 20px;
         }   
         .Historial .options-container {
             grid-column: span 2;
         }
         .estudiante-card-container {
             display: block;
-            border: 1px solid #ede9e9;
+            border: 1px solid #d6d6d6;;
             border-radius: 10px;
             cursor: pointer;
             padding: 10px;
@@ -197,7 +177,7 @@ class EstudiantesView extends HTMLElement {
             gap: 10px;
         }
         .TabContainer {
-            border-left: 1px solid #ede9e9;
+            border-left: 1px solid #d6d6d6;;
             padding-left: 20px;
             min-height: 400px;
         }
@@ -221,10 +201,8 @@ class EstudiantesView extends HTMLElement {
             }
         }
     `
-    PrintStyle = css`
-    
-    @import url(/css/variables.css);
-        *{ font-family:  Montserrat, sans-serif;}
+    PrintStyle = css`@import url(/css/variables.css);
+        *{ font-family:  Montserrat, sans-serif; color: #000 !important; }
         .page {   
             margin: 40px;
             display: flex;
@@ -232,71 +210,29 @@ class EstudiantesView extends HTMLElement {
             gap: 10px;
         }   
         .prop {
-            font-size: 12px !important;
+            font-size: 11px !important;
             margin-right: 10px;
         }               
                
         .detail-content .container {
             width: -webkit-fill-available;
             & .element-description {
-                font-size: 12px;
+                font-size: 11px;
             }
             & .element-details {
                 & .element-detail {
-                    font-size: 12px;
+                    font-size: 11px;
                 }
             }   
         }        
         .header {
             width: 100%;           
-            font-size: 12px;
+            font-size: 11px;
         }
         .value {            
-            font-size: 12px;
-        }    
-        .accordion-button {
-            cursor: pointer;
-            position: relative;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-align: center;
-            -ms-flex-align: center;
-            align-items: center;
-            padding: 20px 20px;
-            font-size: .925rem;
-            color: #282c2f;
-            text-align: left;
-            background-color: var(--bs-accordion-btn-bg);
-            border: 0;
-            border-radius: 0;
-            overflow-anchor: none;
-            -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
-            transition: var(--bs-accordion-transition);            
-            justify-content: space-between;
-            text-transform: uppercase;
-            font-weight: 600;
-            transition: all 0.5s;
-        }
-        .accordion-button::after {
-            -ms-flex-negative: 0;
-            flex-shrink: 0;
-            width: 14px;
-            height: 14px;
-            margin-left: auto;
-            content: "";
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23282c2f'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-size: 14px;
-            transition: all 0.5s;
-        }
+            font-size: 11px;
+        }   
         
-        .active-btn {
-            background-color: rgb(210, 222, 244);            
-        }
-        .active-btn::after {
-            transform: rotate(180deg)
-        }
         .detail-content { 
             display: flex;
             flex-direction: column;
@@ -306,6 +242,7 @@ class EstudiantesView extends HTMLElement {
             border-radius: 0.3cm;
             width: 100%;
         } 
+
         .element-content.active {           
             max-height: unset;
             padding: 20px 20px;
@@ -316,30 +253,9 @@ class EstudiantesView extends HTMLElement {
             border-radius: 20px;
             overflow: hidden;
         }
-        .accordion .accordion-button{
-            border-bottom: 1px solid #d2d2d2;
-        }
-        .prop {            
-            text-transform: capitalize;
-            font-size: 1rem;
-        }
-        
-        .element-content {
-            overflow: hidden;
-            max-height: 0px;
-            padding: 0px 20px;
-            transition: all 1s;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
         .hidden {
-            display: none;
-        }        
-       
-        .container:nth-of-type(even) {
-            background-color: #f8f8f8;
-        }    
+            display: none !important;
+        }       
         @media print{
             *{
                 -webkit-print-color-adjust: exact !important;
@@ -370,14 +286,14 @@ class EstudiantesView extends HTMLElement {
         data.innerHTML = data.innerHTML
             .replace("{{ nombre-completo }}", this.EstudianteSeleccionado.GetNombreCompleto())
             .replace("{{ codigo }}", this.EstudianteSeleccionado.Codigo)
-            .replace("{{ repite }}",info.Repite)
+            //.replace("{{ repite }}",info.Repite)
             .replace("{{ sexo }}", this.EstudianteSeleccionado.Sexo)
-            .replace("{{ nivel }}", info.Nivel)
-            .replace("{{ grado }}", info.Descripcion)
-            .replace("{{ seccion }}", info.Seccion)
+            //.replace("{{ nivel }}", info.Nivel)
+            //.replace("{{ grado }}", info.Descripcion)
+            //.replace("{{ seccion }}", info.Seccion)
             .replace("{{ nombre-padre }}", this.EstudianteSeleccionado.GetPadre().Name ?? "-")
             .replace("{{ nombre-madre }}", this.EstudianteSeleccionado.GetMadre().Name ?? "-")
-            .replace("{{ nombre-guia }}", info.Guia);
+            //.replace("{{ nombre-guia }}", info.Guia);
         const foto = data.querySelector(".foto");
         if (foto != null) {
             // @ts-ignore
@@ -385,6 +301,6 @@ class EstudiantesView extends HTMLElement {
         }
     }
 }
-customElements.define('w-estudiantes-view', EstudiantesView);
-export { EstudiantesView }
+customElements.define('w-estudiantes-view', EstudiantesDetails);
+export { EstudiantesDetails }
 

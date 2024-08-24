@@ -1,18 +1,20 @@
 //@ts-check
+import { Clases } from "../Model/Clases.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
+import { Materias } from "../Model/Materias.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
-import { EstudiantesDetails } from "./EstudiantesDetails.js";
+import { MateriasDetails } from "./MateriasDetails.js";
 
 
 /**
- * @typedef {Object} HistorialConfig
+ * @typedef {Object} MateriasPropiasConfig
  * * @property {Object} [propierty]
  */
-class HistorialView extends HTMLElement {
+class MateriasPropiasView extends HTMLElement {
     /**
      * 
-     * @param {HistorialConfig} props 
+     * @param {MateriasPropiasConfig} props 
      */
     constructor(props) {
         super();
@@ -29,12 +31,12 @@ class HistorialView extends HTMLElement {
     }
 
     async Draw() {
-        const entityModel = new Estudiantes();
-        const dataset = await entityModel.GetOwEstudiantes();
-        this.append(new EstudiantesDetails({ Dataset: dataset }));
+        const entityModel = new Materias();
+        const dataset = await entityModel.GetOw();
+        this.append(new MateriasDetails({ Dataset: dataset }));
     }
 
 }
-customElements.define('w-historial', HistorialView);
-export { HistorialView };
+customElements.define('w-materias-propios', MateriasPropiasView);
+export { MateriasPropiasView };
 

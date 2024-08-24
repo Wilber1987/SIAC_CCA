@@ -57,44 +57,16 @@ class ClasesDetails extends HTMLElement {
                 Clase_id: element.Clase_id
             }).GetClaseEstudianteConsolidado();
 
-            const classGroup = Object.keys(response).map(key => this.BuildPropiertyDetail(response, key))
+            const classGroup = new ClaseGroup(response, this.Config);
             // @ts-ignore
             content.dataElement = response;
             content.innerHTML = "";
-            classGroup.forEach(classO => {
-                content.append(classO)
-            });
+            content.append(classGroup);
         }
         ev.target.className = content.className.includes("active")
             ? "accordion-button" : "accordion-button active-btn";
         content.className = content.className.includes("active")
             ? "element-content" : "element-content active";
-    }
-
-    BuildPropiertyDetail(ObjectF, prop) {
-        //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
-
-        // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
-            case "MASTERDETAIL":
-                const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
-                //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
-                const maxDetails = ObjectF[prop].reduce((max, detail) => {
-                    const DetailsLength = new modelClass.constructor(detail).Details
-                        ? new modelClass.constructor(detail).Details.length : 0;
-                    return Math.max(max, DetailsLength);
-                }, 0);
-                return html`<div class="detail-content">${ObjectF[prop].map(element => {
-                    return new AsiganaturaDetail(modelClass, element, ObjectF, prop, maxDetails);
-                })}</div>`;
-            /*new WTableComponent({
-                Dataset: ObjectF[prop],
-                ModelObject: this.Config.ModelObject[prop].ModelObject,
-                Options: {}
-            })*/
-            default:
-                return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        }
     }
     update() {
         this.Draw();
@@ -143,34 +115,7 @@ class ClasesDetails extends HTMLElement {
         }
         .active-btn::after {
             transform: rotate(180deg)
-        }
-        .detail-content { 
-            display: flex;
-            flex-direction: column;
-            border-color: rgb(239, 240, 242);
-            border-style: solid;
-            border-width: 0.8px;
-            border-radius: 0.3cm;
-            width: 100%;
-        } 
-        .element-content.active {           
-            max-height: unset;
-            padding: 20px 20px;
-        }
-
-        .accordion {
-            border: 1px solid #d2d2d2;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .accordion .accordion-button{
-            border-bottom: 1px solid #d2d2d2;
-        }
-        .prop {            
-            text-transform: capitalize;
-            font-size: 1rem;
-        }
-        
+        }        
         .element-content {
             overflow: hidden;
             max-height: 0px;
@@ -179,25 +124,64 @@ class ClasesDetails extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 30px;
+        }        
+        .element-content.active {           
+            max-height: unset;
+            padding: 20px 20px;
         }
-        
+        .accordion {
+            border: 1px solid #d2d2d2;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .accordion .accordion-button{
+            border-bottom: 1px solid #d2d2d2;
+        }
        
-        w-asignatura-detail:nth-of-type(even) {
-            background-color: #f8f8f8;
-        }
      `
 }
 customElements.define('w-clases-details', ClasesDetails);
 export { ClasesDetails }
 
-class AsiganaturaDetail extends HTMLElement {
-    constructor(modelClass, element, ObjectF, prop, maxDetails) {
+class ClaseGroup extends HTMLElement {
+    constructor(response, Config) {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot?.append(this.CustomStyle);
-        this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
+        this.Config = Config;
+        //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
+        const propsData = Object.keys(response).map(prop => this.BuildPropiertyDetail(response, prop))
+        const dataContainer = html`<div class="data-container"></div>`
+        propsData.forEach(data => {
+            dataContainer.appendChild(data);
+        })
+        this.shadowRoot?.append(dataContainer);
     }
-    connectedCallback() { }   
+    connectedCallback() { }
+    BuildPropiertyDetail(ObjectF, prop) {
+        //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
+        // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
+        switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
+            case "MASTERDETAIL":
+                const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
+                //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
+                const maxDetails = ObjectF[prop].reduce((max, detail) => {
+                    const DetailsLength = new modelClass.constructor(detail).Details
+                        ? new modelClass.constructor(detail).Details.length : 0;
+                    return Math.max(max, DetailsLength);
+                }, 0);
+                return html`<div class="detail-content">${ObjectF[prop].map(element => {
+                    return this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
+                })}</div>`;
+            /*new WTableComponent({
+                Dataset: ObjectF[prop],
+                ModelObject: this.Config.ModelObject[prop].ModelObject,
+                Options: {}
+            })*/
+            default:
+                return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
+        }
+    }
     Builddetail(modelClass, element, ObjectF, prop, maxDetails) {
         /**@type {Asignatura_Group} */
         const instance = new modelClass.constructor(element);
@@ -281,8 +265,22 @@ class AsiganaturaDetail extends HTMLElement {
         </div>`;
     }
 
-    CustomStyle = css`        
-       
+    CustomStyle = css`   
+        .data-container {
+            display: flex;
+            row-gap: 20px;
+            column-gap: 25px;
+            flex-wrap: wrap;
+        }    
+        .detail-content { 
+            display: flex;
+            flex-direction: column;
+            border-color: rgb(239, 240, 242);
+            border-style: solid;
+            border-width: 0.8px;
+            border-radius: 0.3cm;
+            width: 100%;
+        } 
         .container {
             display: flex;
             flex: 1;
@@ -332,7 +330,15 @@ class AsiganaturaDetail extends HTMLElement {
         .hidden {
             display: none;
         }
-        
+        .prop {            
+            text-transform: capitalize;
+            font-size: 1rem;
+            font-weight: 600;
+
+        }
+        .container:nth-of-type(even) {
+            background-color: #f8f8f8;
+        }        
         @media (max-width: 800px) {
             .detail-content .container, .detail-content .element-details {
                 flex-direction: column;
@@ -359,5 +365,5 @@ class AsiganaturaDetail extends HTMLElement {
         }        
      `
 }
-customElements.define('w-asignatura-detail', AsiganaturaDetail);
-export { AsiganaturaDetail }
+customElements.define('w-class-detail', ClaseGroup);
+export { ClaseGroup }
