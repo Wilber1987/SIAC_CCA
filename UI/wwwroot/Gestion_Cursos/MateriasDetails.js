@@ -91,6 +91,13 @@ class MateriasDetails extends HTMLElement {
             flex-direction: column;
             gap: 10px;
         }
+        .Materias-container {
+            border-radius: 10px;            
+            max-height: 550px;
+            overflow-y: auto;
+            border: 1px solid #d6d6d6;
+            padding: 20px;
+        }
         .card-options {
             margin-left: 50px;
             padding: 10px;
@@ -99,7 +106,6 @@ class MateriasDetails extends HTMLElement {
             display: block;
             border: 1px solid #1f58c7;
             border-radius: 10px;
-            cursor: pointer;
             cursor: pointer;
         }
         .description {
@@ -114,6 +120,7 @@ class MateriasDetails extends HTMLElement {
             align-items: center;
             gap: 10px;
             color: #fff;
+            border-radius: 10px 10px 0px 0px;
         }
         .PREESCOLAR, .PREESCOLAR .description {
            border-color: rgb(40 183 101) !important;

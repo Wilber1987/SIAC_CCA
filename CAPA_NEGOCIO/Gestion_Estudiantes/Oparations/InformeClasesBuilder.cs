@@ -1,7 +1,59 @@
+
 namespace DataBaseModel
 {
     internal class InformeClasesBuilder
-    {
+    {      
+        //AGRUOADO POR DESCRIPCION (GRADO, NIVEL Y PERIODO)
+        public static List<Clase_Group>? BuildClaseGroupMateriaList(List<Estudiante_Clases_View>? Clases)
+        {
+            return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()
+                    .Where(C => C.Nombre_nota != null)
+                    .GroupBy(C => C.Codigo)
+                    .Select(C => BuildMateriaGroup(C)).ToList();
+        }
+        public static Clase_Group BuildMateriaGroup(IGrouping<string?, Estudiante_Clases_View> C)
+        {
+            var clase = C.First();
+            return new Clase_Group
+            {
+                Id_Clase = clase.Id,
+                Clase = clase.Descripcion?.ToUpper(),
+                Repite = clase.Repitente == true ? "SI" : "NO",
+                Nivel = clase.Nombre_nivel,
+                Seccion = clase.nombre_seccion,
+                Asignaturas = C.GroupBy(A => A.Nombre_asignatura)
+                    .Select(A => BuildEstudianteAsignaturaGroup(A)).ToList()
+            };
+        }
+
+        private static Asignatura_Group BuildEstudianteAsignaturaGroup(IGrouping<string, Estudiante_Clases_View> A)
+        {
+            var clase = A.First();
+            return new Asignatura_Group
+            {
+                Descripcion = clase.Nombre_asignatura,
+                Docente = clase.Nombre_Estudiantes,
+                Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
+                Calificaciones = [.. A.Select(Calificacion =>
+                {
+                    return new Calificacion_Group
+                    {
+                        Id = Calificacion.Id,
+                        Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
+                        Resultado = Calificacion.Resultado,
+                        Evaluacion = Calificacion.Evaluacion ?? "",
+                        Tipo = Calificacion.Tipo,
+                        Fecha = Calificacion.Fecha
+                     };
+                }).OrderBy(c => c.Fecha)
+                .ThenBy(c => c.Evaluacion.Contains("B") ? 1 :
+                    c.Evaluacion.Contains("S") ? 2 :
+                    c.Evaluacion.Contains("F") ? 3 : 4) // Ordenar por Evaluacion
+                ]
+            };
+        }
+
+        //AGRUOADO POR DESCRIPCION (GRADO, NIVEL Y PERIODO)
         public static List<Clase_Group>? BuildClaseGroupList(List<Estudiante_Clases_View>? Clases)
         {
             return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()

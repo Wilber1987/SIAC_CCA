@@ -15,6 +15,12 @@ namespace UI.Controllers
 		{
 			return Inst.Get<Estudiantes>();
 		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_CLASES_ASIGNADAS, Permissions.GESTION_CLASES)]
+		public List<Estudiantes> GetEstudianBySectionClass(Estudiante_clases Inst)
+		{
+			return Inst.GetEstudianBySectionClass();
+		}
 		//GESTION_ESTUDIANTES_PROPIOS
 
 		[HttpPost]
@@ -48,13 +54,13 @@ namespace UI.Controllers
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
 		public Clase_Group? GetClaseEstudianteConsolidado(Estudiante_Clases_View Inst)
 		{
-			return Estudiantes.GetClaseEstudianteConsolidado(Inst);
+			return Inst.GetClaseEstudianteConsolidado();
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
 		public Clase_Group? GetClaseEstudianteCompleta(Estudiante_Clases_View Inst)
 		{
-			return Estudiantes.GetClaseEstudianteCompleta(Inst);
+			return Inst.GetClaseEstudianteCompleta();
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]

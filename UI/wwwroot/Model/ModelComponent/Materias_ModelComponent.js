@@ -17,7 +17,7 @@ class Materias_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text', hiddenFilter: true };
    /**@type {ModelProperty}*/ Config = { type: 'text', hiddenFilter: true };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha" , hiddenFilter: true};
    /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Lock_version = { type: 'number', hiddenFilter: true };
    /**@type {ModelProperty}*/ Asignaturas = { type: 'WSELECT',  ModelObject: ()=> new Asignaturas_ModelComponent(), ForeignKeyColumn: 'Asignatura_id'};

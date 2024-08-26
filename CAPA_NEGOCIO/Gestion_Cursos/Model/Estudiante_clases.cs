@@ -27,8 +27,9 @@ namespace DataBaseModel
         [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
         public Clases? Clases { get; set; }
 
-        //[ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-        //public Estudiantes? Estudiantes { get; set; }
+        [ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+        public Estudiantes? Estudiantes { get; set; }
+
         [ManyToOne(TableName = "Periodo_lectivos", KeyColumn = "Id", ForeignKeyColumn = "Periodo_lectivo_id")]
         public Periodo_lectivos? Periodo_lectivos { get; set; }
 
@@ -71,6 +72,11 @@ namespace DataBaseModel
                     //.Select(g => g.Key).ToList();*/
             }
         }
+        
+        public List<Estudiantes> GetEstudianBySectionClass()
+        {
+            return Get<Estudiante_clases>().Select(c=> c.Estudiantes ?? new Estudiantes()).ToList();
+        }
 
         public ResponseService ExportClaseBoletin()
         {
@@ -82,6 +88,7 @@ namespace DataBaseModel
         {
             throw new NotImplementedException();
         }
+
     }
     public enum NivelesEnum {
        SECUNDARIA,  PRIMARIA,  PREESCOLAR

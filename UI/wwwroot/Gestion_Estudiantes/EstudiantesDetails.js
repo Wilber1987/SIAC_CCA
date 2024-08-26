@@ -3,6 +3,7 @@
 // @ts-ignore
 import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
+import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
 import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
@@ -136,10 +137,11 @@ class EstudiantesDetails extends HTMLElement {
         /**@type {DocumentsData} */
         const documentsData = await new DocumentsData().GetBoletinDataFragments();
 
-        const response = await new Estudiante_clases({
+        const response = await new Estudiante_Clases_View({
             Estudiante_id: object.Estudiante_id,
             Clase_id: object.Seleccione.Seleccione
         }).GetClaseEstudianteConsolidado();
+        
         const body = new ClaseGroup(response, {ModelObject: new Clase_Group()});
 
         documentsData.Header.style.width = "100%";

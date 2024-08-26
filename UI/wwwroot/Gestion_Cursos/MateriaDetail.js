@@ -1,7 +1,9 @@
 //@ts-check
 
+import { ClaseGroup } from "../Gestion_Estudiantes/ClasesDetails.js";
 import { Docente_materias } from "../Model/Docente_materias.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
+import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
 import { Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
@@ -12,6 +14,7 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 const route = location.origin
 const routeDocentes = location.origin + "/Media/Images/docentes"
+const routeEstudiantes = location.origin + "/Media/Images/estudiantes"
 
 /**
  * @typedef {Object} MateriaDetailConfig
@@ -39,7 +42,7 @@ class MateriaDetail extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.append(html`<div class="mt-3 mt-xl-3 ps-xl-5 detalles-container">
+        this.append(html`<div class="detalles-container">
             <h2 class="font-size-20 mb-3">${this.Docente_Materia?.Materias?.Descripcion?.toUpperCase()}</h2>   
             <h4 class="text-primary mt-4 py-2 mb-0">Seccion: ${this.Docente_Materia?.Secciones.Nombre.toUpperCase()}</h4>           
             <div class="detalles-data-container">             
@@ -87,18 +90,29 @@ class MateriaDetail extends HTMLElement {
         ];
     }
     async GetCalificaciones() {
-        throw new Error("Method not implemented.");
+        /**@type {Array<Estudiante_Clases_View>} */
+        const response = await new Estudiante_Clases_View({
+            Materia_id: this.Docente_Materia?.Materias?.Id,
+            Seccion_id: this.Docente_Materia?.Seccion_id
+        }).GetClaseMateriaConsolidado();
+        const classGroup = new ClaseGroup(response);
+        return classGroup;
     }
     async GetEstudiantes() {
-        /**@type {Array<Estudiante_clases>} */
-        const response = await new Estudiantes().GetBySectionClass({
+        /**@type {Array<Estudiantes>} */
+        const response = await new Estudiantes().GetEstudianBySectionClass(new Estudiante_clases({
             Clase_id: this.Docente_Materia?.Materias?.Clase_id,
             Seccion_id: this.Docente_Materia?.Seccion_id
-        });
+        }));
         return new WTableComponent({
             Dataset: response.map(e => e, Estudiantes),
             ModelObject: new Estudiantes_ModelComponent(),
-            Options: {}
+            EntityModel: new Estudiantes(),
+            ImageUrlPath: routeEstudiantes,
+            Options: {
+                Search: true,
+                UserActions: [{ name: "Ver detalles", action: () => { } }]
+            }
         })
     }
 
@@ -125,7 +139,10 @@ class MateriaDetail extends HTMLElement {
             gap: 20px;
             border-top: 1px solid #d6d6d6;
             padding: 20px;
-        }        
+        } 
+        w-app-navigator {
+            padding: 30px 0px;
+        }
     `
 }
 customElements.define('w-materia-detail', MateriaDetail);

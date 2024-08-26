@@ -3,7 +3,7 @@
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases } from './Estudiante_clases.js';
 import { Responsables } from './Responsables.js';
-class Estudiantes extends EntityClass {
+class Estudiantes extends EntityClass {   
    
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
@@ -13,6 +13,7 @@ class Estudiantes extends EntityClass {
         }
     }
     /**@type {Number}*/ Id;
+    /**@type {String}*/ Nombre_completo;
     /**@type {String}*/ Primer_nombre;
     /**@type {String}*/ Segundo_nombre;
     /**@type {String}*/ Primer_apellido;
@@ -75,9 +76,13 @@ class Estudiantes extends EntityClass {
      * @param {Estudiante_clases} Estudiante_clases
      * @return {Promise<Array<Estudiantes>>} 
      * */
-    GetBySectionClass(Estudiante_clases) {
-        throw new Error("Method not implemented.");
+    async GetEstudianBySectionClass(Estudiante_clases) {
+        const response = await this.Post("ApiGestionEstudiantes/GetEstudianBySectionClass", Estudiante_clases);
+        return response.map(dato => new Estudiantes(dato))
     }
+    /**@type {String}*/ get  Fotografia(){
+        return `/${this.Id}/${this.Foto}`;
+    };
 
 }
 export { Estudiantes };

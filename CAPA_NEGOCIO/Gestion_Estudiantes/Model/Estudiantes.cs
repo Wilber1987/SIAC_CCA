@@ -34,13 +34,15 @@ namespace DataBaseModel
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
 		public bool? Activo { get; set; }
+		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
+
 		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
 		//[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Responsables>? Responsables { get; set; }
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Estudiante_Clases_View>? Clases { get; set; }
+		//public List<Estudiante_Clases_View>? Clases { get; set; }
 
 		public Estudiantes? FindEstudiante(string? identity)
 		{
@@ -82,21 +84,7 @@ namespace DataBaseModel
 			{
 				throw new Exception("Estudiante no existe");
 			}
-		}
-		public static Clase_Group GetClaseEstudianteConsolidado(Estudiante_Clases_View estudiante_Clases_View)
-		{
-
-			var ClasesF = estudiante_Clases_View.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
-			return clase_Group.First();
-		}
-		public static Clase_Group GetClaseEstudianteCompleta(Estudiante_Clases_View estudiante_Clases_View)
-		{
-
-			var ClasesF = estudiante_Clases_View.Get<Estudiante_Clases_View>();
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);			
-			return clase_Group.First();
-		}
+		}		
 		public List<Clase_Group>? Clase_Group { get; set; }
 		public List<Estudiantes> UpdateOwEstudiantes(string? v)
 		{

@@ -40,5 +40,17 @@ namespace UI.Controllers
         {
             return Inst.Find<Docente_materias>();
         }
+        [HttpPost]
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+		public Clase_Group? GetClaseMateriaConsolidado(Estudiante_Clases_View Inst)
+		{
+			return Inst.GetClaseMateriaConsolidado();
+		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+		public Clase_Group? GetClaseMateriaCompleta(Estudiante_Clases_View Inst)
+		{
+			return Inst.GetClaseMateriaCompleta();
+		}
     }
 }

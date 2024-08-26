@@ -41,6 +41,8 @@ namespace DataBaseModel
         public int? Grado { get; set; }
         public int? Seccion_id { get; set; }
         public string? nombre_seccion { get; set; }
+        public string? Codigo { get; set; }
+        public string? Nombre_Estudiantes { get; set; }
         public string? Descripcion
         {
             get { return $"{NumberUtility.ObtenerEnumeracion(this.Grado ?? 0)} {Nombre_nivel} - {Nombre_corto_periodo}"; }
@@ -57,6 +59,54 @@ namespace DataBaseModel
                 }
                 return MateriasConfig;
             }
+        }
+        public Clase_Group GetClaseEstudianteConsolidado()
+		{
+            if (Estudiante_id == null || Clase_id == null)
+            {
+                //throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+            }
+			return GetConsolidado();
+		}
+		public Clase_Group GetClaseEstudianteCompleta()
+        {
+            if (Estudiante_id == null || Clase_id == null)
+            {
+                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+            }
+            return GetConsolidado();
+        }
+        private Clase_Group GetConsolidado()
+        {
+            var ClasesF = Get<Estudiante_Clases_View>();
+            var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
+            return clase_Group.First();
+        }
+
+
+        public Clase_Group? GetClaseMateriaConsolidado()
+        {
+            if (Materia_id == null || Seccion_id == null)
+            {
+                throw new ArgumentNullException("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
+            }
+            return GetConsolidadoMaterias();
+        }
+
+        public Clase_Group? GetClaseMateriaCompleta()
+        {
+            if (Materia_id == null || Seccion_id == null)
+            {
+                throw new ArgumentNullException("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
+            }
+            return GetConsolidadoMaterias();
+        }
+        
+        private Clase_Group GetConsolidadoMaterias()
+        {
+            var ClasesF = Get<Estudiante_Clases_View>();
+            var clase_Group = InformeClasesBuilder.BuildClaseGroupMateriaList(ClasesF);
+            return clase_Group.First();
         }
     }
 

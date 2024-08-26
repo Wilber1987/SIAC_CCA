@@ -20,13 +20,16 @@ namespace CAPA_NEGOCIO.Notificaciones
 			var conversaciones = Conversacion.GetConversaciones(identity);
 			var mensajesNoLeidos = conversaciones.SelectMany(x => x?.Mensajes ?? [])
 			.ToList().Where(m => m.IsMensajeNoLeido(user)).ToList();
+
 			List<Notificaciones> notificaciones = [];
+
 			mensajesNoLeidos.ForEach(m => notificaciones.Add(new Notificaciones
 			{
 				Type = NotificacionType.MENSAJE,
 				Date = m.Created_at,
 				Content = $"{m.Remitente}: {m.Asunto}"
 			}));
+			
 			return notificaciones;
 		}
 		public List<Contacto> GetContactos(string? identity, Contacto contacto)

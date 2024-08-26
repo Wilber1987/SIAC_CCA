@@ -13,7 +13,7 @@ namespace UI.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]/[action]")]
-	public class NotificacionesController : ControllerBase
+	public class ApiNotificacionesController : ControllerBase
 	{
 		//Conversaciones
 		[HttpPost]

@@ -39,13 +39,6 @@ class Estudiante_clases extends EntityClass {
     async ExportClaseBoletin() {
         return await this.Post("Exporter/ExportClaseBoletin", this);
     }
-
-    async GetClaseEstudianteConsolidado() {
-        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteConsolidado");
-    }
-    async GetClaseEstudianteCompleta() {
-        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteCompleta");
-    }
 }
 export { Estudiante_clases };
 

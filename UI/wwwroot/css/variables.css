@@ -30,7 +30,7 @@
     --bs-gray-dark: #1f2224;
     --bs-gray-100: #f8f9fa;
     --bs-gray-200: #f5f6f8;
-    --bs-gray-300: #eff0f2;
+    --bs-gray-300: #e4e4e5;
     --bs-gray-400: #e2e5e8;
     --bs-gray-500: #7d8287;
     --bs-gray-600: #a4a9b4;
@@ -117,7 +117,7 @@
     --bs-highlight-bg: #fcf8e3;
     --bs-border-width: 1px;
     --bs-border-style: solid;
-    --bs-border-color: #eff0f2;
+    --bs-border-color: #dddddd;
     --bs-border-color-translucent: #eff0f2;
     --bs-border-radius: 0.75rem;
     --bs-border-radius-sm: 0.5rem;

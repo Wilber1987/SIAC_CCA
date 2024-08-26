@@ -1,5 +1,6 @@
 //@ts-check
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
+import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Asignatura_Group, Calificacion_Group, Estudiantes } from "../Model/Estudiantes.js";
 import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
@@ -52,7 +53,7 @@ class ClasesDetails extends HTMLElement {
     async getClassGroup(ev, content, element) {
         // @ts-ignore
         if (!content.dataElement) {
-            const response = await new Estudiante_clases({
+            const response = await new Estudiante_Clases_View({
                 Estudiante_id: element.Estudiante_id,
                 Clase_id: element.Clase_id
             }).GetClaseEstudianteConsolidado();
@@ -148,7 +149,7 @@ class ClaseGroup extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot?.append(this.CustomStyle);
-        this.Config = Config;
+        this.Config = Config ?? { ModelObject: new Clase_Group() };
         //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
         const propsData = Object.keys(response).map(prop => this.BuildPropiertyDetail(response, prop))
         const dataContainer = html`<div class="data-container"></div>`
