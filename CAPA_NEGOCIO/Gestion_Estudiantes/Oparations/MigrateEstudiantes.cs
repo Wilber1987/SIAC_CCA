@@ -11,21 +11,18 @@ namespace CAPA_NEGOCIO.Oparations
 {
 	public class MigrateEstudiantes : TransactionalClass
 	{
-		
+
 		public bool Migrate()
-		{			
-			return migrateEstudiantes() && migrateParientes() && migrateResponsables();			
+		{
+			return migrateEstudiantes();// && migrateParientes() && migrateResponsables();
 		}
 		public bool migrateEstudiantes()
 		{
 			Console.Write("-->migrateEstudiantes");
-			var estudiante = new Estudiantes();
+			var estudiante = new Tbl_aca_estudiante();
 			estudiante.SetConnection(MySqlConnections.Bellacom);
-			var EstudiantesMsql = estudiante.Get<Estudiantes>(
-			//TODO ARREGLAR LO DEL PAGINADO
-			//new FilterData { FilterType = "limit", Values = ["10000"] },
-			// new FilterData { FilterType = "paginated", Values = ["1000"] }
-			);			
+			var EstudiantesMsql = estudiante.Get<Tbl_aca_estudiante>(
+			);
 			try
 			{
 				BeginGlobalTransaction();
@@ -33,31 +30,23 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					var existingEstudiante = new Estudiantes()
 					{
-						Id = est.Id
+						Id = est.Idestudiante
 					}.Find<Estudiantes>();
 
-					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
-					if (existingEstudiante != null && existingEstudiante.Updated_at != est.Updated_at)
+					est.Fechanacimiento = DateUtil.ValidSqlDateTime(est.Fechanacimiento.GetValueOrDefault());
+					est.Fechamodificacion = DateUtil.ValidSqlDateTime(est.Fechamodificacion.GetValueOrDefault());
+					est.Fechagrabacion = DateUtil.ValidSqlDateTime(est.Fechagrabacion.GetValueOrDefault());
+					if (existingEstudiante != null && existingEstudiante.Updated_at != est.Fechamodificacion)
+                    {
+                        buildEstudiante(est, existingEstudiante);
+
+                        existingEstudiante.Update();
+                    }
+                    else if (existingEstudiante == null)
 					{
-						existingEstudiante.Primer_nombre = est.Primer_nombre;
-						existingEstudiante.Segundo_nombre = est.Segundo_nombre;
-						existingEstudiante.Primer_apellido = est.Primer_apellido;
-						existingEstudiante.Segundo_apellido = est.Segundo_apellido;
-						existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
-						existingEstudiante.Lugar_nacimiento = est.Lugar_nacimiento;
-						existingEstudiante.Direccion = est.Direccion;
-						existingEstudiante.Codigo = est.Codigo;
-						existingEstudiante.Madre_id = est.Madre_id;
-						existingEstudiante.Padre_id = est.Padre_id;
-						existingEstudiante.Tipo_sangre = est.Tipo_sangre;
-						existingEstudiante.Padecimientos = est.Padecimientos;
-						existingEstudiante.Recorrido_id = est.Recorrido_id;
-						existingEstudiante.Activo = est.Activo;
-						existingEstudiante.Update();
-					}
-					else if (existingEstudiante == null )
-					{
-						est.Save();
+						Estudiantes newEstudiante = new Estudiantes();
+						buildEstudiante(est,newEstudiante);
+						newEstudiante.Save();
 					}
 
 				});
@@ -73,7 +62,72 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateParientes()
+        private static void buildEstudiante(Tbl_aca_estudiante est, Estudiantes? existingEstudiante)
+        {
+            var estudianteJoin = new Estudiantes();
+            estudianteJoin.SetConnection(MySqlConnections.Bellacom);
+            var otrosDatos = estudianteJoin.Where<Estudiantes>(FilterData.Equal("codigo", est.Idtestudiante)).FirstOrDefault();
+            if (otrosDatos != null)
+            {
+                existingEstudiante.Lugar_nacimiento = otrosDatos.Lugar_nacimiento;
+                existingEstudiante.Madre_id = otrosDatos.Madre_id;
+                existingEstudiante.Padre_id = otrosDatos.Padre_id;
+                existingEstudiante.Foto = otrosDatos.Foto;
+                existingEstudiante.Peso = otrosDatos.Peso;
+                existingEstudiante.Altura = otrosDatos.Altura;
+                existingEstudiante.Tipo_sangre = otrosDatos.Tipo_sangre;
+                existingEstudiante.Padecimientos = otrosDatos.Padecimientos;
+                existingEstudiante.Alergias = otrosDatos.Alergias;
+                existingEstudiante.Recorrido_id = otrosDatos.Recorrido_id;
+				existingEstudiante.Idtestudiante = otrosDatos.Idtestudiante;
+            }
+
+
+			existingEstudiante.Id = est.Idestudiante;			
+            existingEstudiante.Primer_nombre = StringUtil.GetNombres(est.Nombres)[0];
+            existingEstudiante.Segundo_nombre = StringUtil.GetNombres(est.Nombres)[1];
+            existingEstudiante.Primer_apellido = StringUtil.GetNombres(est.Apellidos)[0];
+            existingEstudiante.Segundo_apellido = StringUtil.GetNombres(est.Apellidos)[1];
+            existingEstudiante.Fecha_nacimiento = est.Fechanacimiento;
+            existingEstudiante.Sexo = est.Sexo;
+            existingEstudiante.Direccion = est.Direccion;
+            existingEstudiante.Codigo = est.Idtestudiante;
+            existingEstudiante.Created_at = est.Fechagrabacion;
+            existingEstudiante.Updated_at = est.Fechamodificacion;
+            existingEstudiante.Id_familia = est.Idfamilia;
+            existingEstudiante.Periodo = est.Periodo;
+            existingEstudiante.Fecha_ingreso = est.Fechaingreso;
+            existingEstudiante.Id_pais = est.Idpais;
+            existingEstudiante.Id_sociedad = est.Idsociedad;
+            existingEstudiante.Id_region = est.Idregion;
+            existingEstudiante.Solvencia = est.Solvencia;
+            existingEstudiante.Saldomd = est.Saldomd;
+            existingEstudiante.Estatus = est.Estatus;
+            existingEstudiante.Retenido = est.Retenido;
+            existingEstudiante.Referencia_estatus = est.Referenciaestatus;
+            existingEstudiante.Usuario_grabacion = est.Usuariograbacion;
+            existingEstudiante.Usuario_modificacion = est.Usuariomodificacion;
+            existingEstudiante.Id_old = est.Id_old;
+            existingEstudiante.Id_cliente = est.Idcliente;
+            existingEstudiante.Codigomed = est.Codigomed;
+            existingEstudiante.Ump = est.Ump;
+            existingEstudiante.Uep = est.Uep;
+            existingEstudiante.Colegio = est.Colegio;
+            existingEstudiante.Vivecon = est.Vivecon;
+            existingEstudiante.Sacramento = est.Sacramento;
+            existingEstudiante.Aniosacra = est.Aniosacra;
+            existingEstudiante.Fecha_aceptacion = est.Fechaaceptacion;
+            existingEstudiante.Usuario_aceptacion = est.Usuarioaceptacion;
+            existingEstudiante.Aceptacion = est.Aceptacion;
+            existingEstudiante.Periodo_aceptacion = est.Periodoaceptacion;
+            existingEstudiante.Fechaun = est.Fechaun;
+            existingEstudiante.Motivo = est.Motivo;
+            existingEstudiante.Comentario = est.Comentario;
+            existingEstudiante.Fecharetencion = est.Fecharetencion;
+            existingEstudiante.Saldoeamd = est.Saldoeamd;
+        }
+
+        public bool migrateParientes()
 		{
 			Console.Write("-->migrateParientes");
 			var Pariente = new Parientes();
@@ -91,7 +145,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					// est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 					// est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
-					
+
 					if (existingPariente != null /*&& existingPariente.Updated_at != est.Updated_at*/)
 					{
 						existingPariente.Primer_nombre = est.Primer_nombre;
@@ -109,7 +163,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingPariente.Religion_id = est.Religion_id;
 						existingPariente.Update();
 					}
-					else if (existingPariente == null )
+					else if (existingPariente == null)
 					{
 						est.Save();
 					}

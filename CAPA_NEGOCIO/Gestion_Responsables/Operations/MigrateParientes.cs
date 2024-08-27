@@ -27,14 +27,15 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				return false;
 			}
-
+			
 			var data = new Tbl_aca_tutor();
 			data.SetConnection(MySqlConnections.Bellacom);
-			var dataMsql = data.Get<Tbl_aca_tutor>();
+			var dataMsql = data.Get<Tbl_aca_tutor>();// data.Where<Tbl_aca_tutor>(FilterData.Equal("responsablepago", "1"));
+			
 			try
 			{
 				BeginGlobalTransaction();
-				dataMsql.ForEach(tn =>
+				dataMsql.ForEach(static tn =>
 				{
 					var existing = new Parientes()
 					{
@@ -56,28 +57,25 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						Parientes newPariente = new Parientes();
 						buildPariente(tn, newPariente);
-						if (tn.Responsablepago)
+						if (newPariente.Responsable_Pago == true && StringUtil.IsValidEmail(tn.Email))
 						{//se crea usuario ya que es responsable de pago y por ende de familia
-
 							var rolPadreResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
-
 							var user = (Security_Users?)new Security_Users
 							{
 								Nombres = tn.Nombres + " " + tn.Apellidos,
-								Estado = "ACT",
+								Estado = "ACTIVO",
 								Descripcion = tn.Nombres + " " + tn.Apellidos,
 								Password = StringUtil.GeneratePassword(tn.Email, tn.Nombres, tn.Apellidos),
-								Mail = tn.Email,
+								Mail = StringUtil.GenerateNickName(tn.Nombres, tn.Apellidos),
 								Token = null,
 								Security_Users_Roles = new List<Security_Users_Roles>
 									{
-										new Security_Users_Roles { Security_Role = rolPadreResponsable }
+										new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
 									}
 							}.Save_User(null);
 							newPariente.User_id = user.Id_User;
 						}
 						newPariente.Save();
-
 					}
 
 				});
@@ -102,7 +100,7 @@ namespace CAPA_NEGOCIO.Oparations
 				return false;
 			}
 
-		
+
 			var familias = new Tbl_aca_familia();
 			familias.SetConnection(MySqlConnections.Bellacom);
 			var familiasMsql = familias.Get<Tbl_aca_familia>();
@@ -129,24 +127,25 @@ namespace CAPA_NEGOCIO.Oparations
 						existingFamilia.Periodo_aceptacion = tn.Periodoaceptacion;
 						existingFamilia.Fecha_actualizacion = tn.Fechaactualizacion;
 						existingFamilia.Fecha_ultima_notificacion = tn.Fechaultimanotificacion;
-						existingFamilia.Update();					}
+						existingFamilia.Update();
+					}
 					else if (existingFamilia == null)
 					{
-                        Familias newFamilia = new Familias
-                        {
-                            Id = tn.Idfamilia,
-                            Idtfamilia = tn.Idtfamilia,
-                            Descripcion = tn.Texto,
-                            Estado = tn.Estatus,
-                            Saldo = tn.Saldomd,
-                            Fecha_actualizacion = tn.Fechaactualizacion,
-                            Fecha_ultima_notificacion = tn.Fechaultimanotificacion,
-                            Actualizado = tn.Actualizado,
-                            Aceptacion = tn.Aceptacion,
-                            Periodo_aceptacion = tn.Periodoaceptacion
-                        };
+						Familias newFamilia = new Familias
+						{
+							Id = tn.Idfamilia,
+							Idtfamilia = tn.Idtfamilia,
+							Descripcion = tn.Texto,
+							Estado = tn.Estatus,
+							Saldo = tn.Saldomd,
+							Fecha_actualizacion = tn.Fechaactualizacion,
+							Fecha_ultima_notificacion = tn.Fechaultimanotificacion,
+							Actualizado = tn.Actualizado,
+							Aceptacion = tn.Aceptacion,
+							Periodo_aceptacion = tn.Periodoaceptacion
+						};
 
-                        newFamilia.Save();
+						newFamilia.Save();
 					}
 
 				});
