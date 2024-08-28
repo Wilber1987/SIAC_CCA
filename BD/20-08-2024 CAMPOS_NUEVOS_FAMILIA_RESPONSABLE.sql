@@ -54,3 +54,12 @@ ALTER TABLE Estudiantes ADD fecha_retencion DATETIME NULL;
 ALTER TABLE Estudiantes ADD saldo_eamd DECIMAL(18, 2) NULL;
 
 
+
+ALTER TABLE Parientes ADD  id_familia INT;
+
+CREATE TABLE Parentesco (
+    Id INT NOT NULL,
+    Descripcion NVARCHAR(255) NOT NULL
+);
+
+ALTER TABLE Parientes ADD  id_relacion_familiar INT;

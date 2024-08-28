@@ -23,12 +23,12 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA")
 
 // Migraciones
 new MigrateEstudiantes().Migrate();
-new MigrateDocentes().Migrate();
+/*new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
-new MigrateNotas().Migrate();
+new MigrateNotas().Migrate();*/
 // new MigrateNotas().Migrate();*/
 
-//new MigrateParientes().Migrate();
+//new MigrateParientes().Migrate();//no utilizable
 
 
 var builder = WebApplication.CreateBuilder(args);
