@@ -11,6 +11,7 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
 		public int? Id { get; set; }
+        public string? Sigla { get; set; }
         public string? Descripcion { get; set; }
     }
 }

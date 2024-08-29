@@ -17,7 +17,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool Migrate()
 		{
-			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes() && MigrateParientesAndUsers() && migrateEstudiantesReponsablesFamilia();
+			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes() && MigrateParientesAndUsers() && 
+			 migrateEstudiantesReponsablesFamilia();
 		}
 
 		public bool MigrateParentesco()
@@ -33,21 +34,23 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					var existingParentesco = new Parentesco()
 					{
-						Id = tn.Id
+						Id = tn.idrelacionfamiliar
 					}.Find<Parentesco>();
 
 					if (existingParentesco != null)
 					{
-						existingParentesco.Id = tn.Id;
-						existingParentesco.Descripcion = tn.Texto;
+						existingParentesco.Id = tn.idrelacionfamiliar;
+						existingParentesco.Sigla = tn.idtrelacionfamiliar;
+						existingParentesco.Descripcion = tn.texto;
 						existingParentesco.Update();
 					}
 					else if (existingParentesco == null)
 					{
 						Parentesco newParentesco = new Parentesco
 						{
-							Id = tn.Id,
-							Descripcion = tn.Texto
+							Id = tn.idrelacionfamiliar,
+							Sigla = tn.idtrelacionfamiliar,
+							Descripcion = tn.texto
 						};
 
 						newParentesco.Save();
@@ -86,7 +89,7 @@ namespace CAPA_NEGOCIO.Oparations
 					est.Fechanacimiento = DateUtil.ValidSqlDateTime(est.Fechanacimiento.GetValueOrDefault());
 					est.Fechamodificacion = DateUtil.ValidSqlDateTime(est.Fechamodificacion.GetValueOrDefault());
 					est.Fechagrabacion = DateUtil.ValidSqlDateTime(est.Fechagrabacion.GetValueOrDefault());
-					if (existingEstudiante != null && existingEstudiante.Updated_at != est.Fechamodificacion)
+					if (existingEstudiante != null /*&& existingEstudiante.Updated_at != est.Fechamodificacion*/)
 					{
 						buildEstudiante(est, existingEstudiante);
 
@@ -212,7 +215,7 @@ namespace CAPA_NEGOCIO.Oparations
 					tn.Fechaactualizacion = DateUtil.ValidSqlDateTime(tn.Fechaactualizacion.GetValueOrDefault());
 					tn.Fechanacimiento = DateUtil.ValidSqlDateTime(tn.Fechanacimiento.GetValueOrDefault());
 
-					if (existing != null && existing.Fecha_Modificacion != tn.Fechamodificacion)
+					if (existing != null /*&& existing.Fecha_Modificacion != tn.Fechamodificacion*/)
 					{
 						buildPariente(tn, existing);
 						existing.Update();
@@ -266,8 +269,8 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				familiasMsql.ForEach(f =>
 				{
-					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", familia.Id));
-					var parientesFamilia = new Parientes().Where<Parientes>(FilterData.Equal("id_familia", familia.Id));
+					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", f.Id ));
+					var parientesFamilia = new Parientes().Where<Parientes>(FilterData.Equal("id_familia", f.Id));
 
 					foreach (var estudiante in estudiantesFamilia)
 					{
@@ -276,7 +279,7 @@ namespace CAPA_NEGOCIO.Oparations
 							var existeRelacion = new Estudiantes_responsables_familias().Where<Estudiantes_responsables_familias>(
 								FilterData.Equal("Estudiante_id", estudiante.Id),
 								FilterData.Equal("Pariente_id", pariente.Id),
-								FilterData.Equal("Familia_id", familia.Id)
+								FilterData.Equal("Familia_id", f.Id)
 							).FirstOrDefault();
 
 							if (existeRelacion == null)
@@ -289,7 +292,7 @@ namespace CAPA_NEGOCIO.Oparations
 								{
 									Estudiante_id = estudiante.Id,
 									Pariente_id = pariente.Id,
-									Familia_id = familia.Id,
+									Familia_id = f.Id,
 									Created_at = DateTime.Now,
 									Updated_at = DateTime.Now,
 									Parentesco_id = parentesco?.Id
@@ -375,6 +378,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Comentario = est.Comentario;
 			existingEstudiante.Fecharetencion = est.Fecharetencion;
 			existingEstudiante.Saldoeamd = est.Saldoeamd;
+			existingEstudiante.Id_familia = est.Idfamilia;
 		}
 
 		public Security_Roles validateRolPariente()
@@ -433,6 +437,8 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Ejercicio = tn.Ejercicio;
 			existing.Actualizado = tn.Actualizado;
 			existing.No_Responsable = tn.Noresponsable;
+			existing.Id_familia = tn.Idfamilia;
+			existing.Id_relacion_familiar = tn.Idrelacionfamiliar;
 		}
 
 	}

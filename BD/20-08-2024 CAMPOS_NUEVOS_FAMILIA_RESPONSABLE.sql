@@ -59,7 +59,19 @@ ALTER TABLE Parientes ADD  id_familia INT;
 
 CREATE TABLE Parentesco (
     Id INT NOT NULL,
-    Descripcion NVARCHAR(255) NOT NULL
+    Sigla NVARCHAR(100) NOT NULL,
+    Parentesco_id int null,
+    Descripcion NVARCHAR(100) NOT NULL
 );
 
 ALTER TABLE Parientes ADD  id_relacion_familiar INT;
+
+
+ALTER TABLE estudiantes_responsables_familias
+DROP CONSTRAINT PK__responsa__3213E83F886C0F8F;
+
+ALTER TABLE estudiantes_responsables_familias
+DROP COLUMN Id;
+
+ALTER TABLE estudiantes_responsables_familias
+ADD Id INT IDENTITY(1,1) PRIMARY KEY;

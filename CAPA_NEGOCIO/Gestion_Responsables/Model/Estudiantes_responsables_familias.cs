@@ -8,7 +8,7 @@ namespace DataBaseModel
 {
     public class Estudiantes_responsables_familias : EntityClass
     {
-        [PrimaryKey(Identity = false)]
+        [PrimaryKey(Identity = true)]
         public int? Id { get; set; }
         public int? Estudiante_id { get; set; }
         public int? Pariente_id { get; set; }
