@@ -26,7 +26,7 @@ namespace UI.Controllers
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public List<Mensajes> getMensajes(Conversacion Inst)
 		{
-			return new Mensajes{Id_conversacion = Inst.Id_conversacion}.GetMessage(HttpContext.Session.GetString("seassonKey"));
+			return new Mensajes().GetMessage(HttpContext.Session.GetString("seassonKey"), Inst);
 		}
         [HttpPost]
         [AuthController(Permissions.SEND_MESSAGE)]

@@ -7,11 +7,11 @@ namespace DataBaseModel
         public static List<Clase_Group>? BuildClaseGroupMateriaList(List<Estudiante_Clases_View>? Clases)
         {
             return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()
-                    .Where(C => C.Nombre_nota != null)
-                    .GroupBy(C => C.Codigo)
-                    .Select(C => BuildMateriaGroup(C)).ToList();
+                    //.Where(C => C.Nombre_nota != null)
+                    .GroupBy(C => C.Descripcion)
+                    .Select(C => BuildClaseMateriaGroup(C)).ToList();
         }
-        public static Clase_Group BuildMateriaGroup(IGrouping<string?, Estudiante_Clases_View> C)
+        public static Clase_Group BuildClaseMateriaGroup(IGrouping<string?, Estudiante_Clases_View> C)
         {
             var clase = C.First();
             return new Clase_Group
@@ -21,20 +21,19 @@ namespace DataBaseModel
                 Repite = clase.Repitente == true ? "SI" : "NO",
                 Nivel = clase.Nombre_nivel,
                 Seccion = clase.nombre_seccion,
-                Asignaturas = C.GroupBy(A => A.Nombre_asignatura)
-                    .Select(A => BuildEstudianteAsignaturaGroup(A)).ToList()
+                Estudiantes = C.GroupBy(E => E.Codigo)
+                   .Select(E => BuildEstudianteAsignaturaGroup(E)).ToList()
             };
         }
 
-        private static Asignatura_Group BuildEstudianteAsignaturaGroup(IGrouping<string, Estudiante_Clases_View> A)
+        private static Estudiante_Group BuildEstudianteAsignaturaGroup(IGrouping<string, Estudiante_Clases_View> E)
         {
-            var clase = A.First();
-            return new Asignatura_Group
+            var clase = E.First();
+            return new Estudiante_Group
             {
-                Descripcion = clase.Nombre_asignatura,
-                Docente = clase.Nombre_Estudiantes,
-                Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
-                Calificaciones = [.. A.Select(Calificacion =>
+                Descripcion = clase.Nombre_Estudiantes,
+                Evaluaciones = E.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
+                Calificaciones = [.. E.Select(Calificacion =>
                 {
                     return new Calificacion_Group
                     {
@@ -57,7 +56,7 @@ namespace DataBaseModel
         public static List<Clase_Group>? BuildClaseGroupList(List<Estudiante_Clases_View>? Clases)
         {
             return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()
-                    .Where(C => C.Nombre_nota != null)
+                    //.Where(C => C.Nombre_nota != null)
                     .GroupBy(C => C.Descripcion)
                     .Select(C => BuildClaseGroup(C)).ToList();
         }

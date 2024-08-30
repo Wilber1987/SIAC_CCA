@@ -23,7 +23,7 @@ class HistorialView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            this.OptionContainer
+            //this.OptionContainer
         );
         this.Draw();
     }

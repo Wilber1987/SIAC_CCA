@@ -3,7 +3,7 @@
 }
 
 #Main, .Main {
-    background-color: var(--secundary-color);
+   
     color: #000;
     border-radius: 0.3cm;
     min-height: 500px;
@@ -11,6 +11,23 @@
     margin: 20px 0px;
     padding: 20px;
     display: block;
+    
+}
+.TabContainer, .aside-container, .OptionContainer {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: rgb(212 212 212) 0 0 3px 0;
+}
+
+@media (max-width: 600px)  {
+    .TabContainer, .aside-container, .OptionContainer {
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .page-content {
+        padding: 75px 0;
+    }
 }
 /*body {
     margin: 0px;

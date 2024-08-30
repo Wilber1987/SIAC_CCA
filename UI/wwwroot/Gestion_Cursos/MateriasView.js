@@ -1,6 +1,4 @@
 //@ts-check
-import { Clases } from "../Model/Clases.js";
-import { Estudiantes } from "../Model/Estudiantes.js";
 import { Materias } from "../Model/Materias.js";
 import { Materias_ModelComponent } from "../Model/ModelComponent/Materias_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";

@@ -120,6 +120,13 @@ namespace DataBaseModel
 		public string? Nivel { get; set; }
 		public string? Seccion { get; set; }
 		public List<Asignatura_Group>? Asignaturas { get; set; }
+        public List<Estudiante_Group>? Estudiantes { get; set; }
+    }
 
-	}
+	public class Estudiante_Group
+    {
+        public string? Descripcion { get; set; }
+        public List<string?>? Evaluaciones { get; set; }
+        public List<Calificacion_Group>? Calificaciones { get; set; }
+    }
 }

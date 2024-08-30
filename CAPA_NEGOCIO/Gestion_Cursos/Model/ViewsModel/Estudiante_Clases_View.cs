@@ -64,8 +64,13 @@ namespace DataBaseModel
 		{
             if (Estudiante_id == null || Clase_id == null)
             {
-                //throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
             }
+            if (filterData == null)
+            {
+                filterData = [];
+            }
+            filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			return GetConsolidado();
 		}
 		public Clase_Group GetClaseEstudianteCompleta()
@@ -90,6 +95,11 @@ namespace DataBaseModel
             {
                 throw new ArgumentNullException("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
             }
+            if (filterData == null)
+            {
+                filterData = [];
+            }
+            filterData?.Add(FilterData.NotNull("Nombre_nota"));
             return GetConsolidadoMaterias();
         }
 

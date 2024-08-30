@@ -3,7 +3,7 @@
 //@ts-check
 
 import {  Estudiantes } from "../Model/Estudiantes.js";
-import { Clase_Group, Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Clase_Group_ModelComponent, Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -31,7 +31,7 @@ class EstudianteDetail extends HTMLElement {
     Draw = async () => {
         this.append(new WDetailObject({
             ObjectDetail: this.Estudiante,
-            ImageUrlPath: `${routeEstudiantes}/${this.Estudiante.Id}/`,
+            ImageUrlPath: `${routeEstudiantes}`,
             ModelObject: new Estudiantes_ModelComponent()
         }));
         this.ComponentTab = new WAppNavigator({
@@ -47,7 +47,7 @@ class EstudianteDetail extends HTMLElement {
                 Inicialize: true,
                 action: async (ev) => {                   
                     return new ClasesDetails({
-                        ModelObject: new Clase_Group(),
+                        ModelObject: new Clase_Group_ModelComponent(),
                         Dataset: this.Estudiante.Estudiante_clases ?? []
                     });
                 }

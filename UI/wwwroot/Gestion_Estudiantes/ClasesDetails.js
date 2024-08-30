@@ -1,14 +1,14 @@
 //@ts-check
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Asignatura_Group, Calificacion_Group, Estudiantes } from "../Model/Estudiantes.js";
-import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Asignatura_Group, Calificacion_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 /**
  * @typedef {Object} Config 
-    * @property {Clase_Group} ModelObject
+    * @property {Clase_Group_ModelComponent} ModelObject
     * @property {Function} [action]
     * @property {Array<Estudiante_clases>} [Dataset]
 **/
@@ -145,13 +145,19 @@ customElements.define('w-clases-details', ClasesDetails);
 export { ClasesDetails }
 
 class ClaseGroup extends HTMLElement {
+    /**
+     * @param {any[]} response
+     * @param {{ ModelObject?: Clase_Group_ModelComponent, GroupBy?: String }} Config
+     */
     constructor(response, Config) {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot?.append(this.CustomStyle);
-        this.Config = Config ?? { ModelObject: new Clase_Group() };
+        this.Config = Config ?? { ModelObject: new Clase_Group_ModelComponent() };
         //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
-        const propsData = Object.keys(response).map(prop => this.BuildPropiertyDetail(response, prop))
+        const propsData = Object.keys(response)
+            .filter(prop => response[prop] != null && response[prop] != undefined)
+            .map(prop => this.BuildPropiertyDetail(response, prop))
         const dataContainer = html`<div class="data-container"></div>`
         propsData.forEach(data => {
             dataContainer.appendChild(data);
@@ -162,8 +168,11 @@ class ClaseGroup extends HTMLElement {
     BuildPropiertyDetail(ObjectF, prop) {
         //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
         // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
+        // @ts-ignore
         switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
             case "MASTERDETAIL":
+                const isEstudiante = this.Config.GroupBy?.toUpperCase() == "ESTUDIANTE";
+                // @ts-ignore
                 const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
                 //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
                 const maxDetails = ObjectF[prop].reduce((max, detail) => {
@@ -172,13 +181,10 @@ class ClaseGroup extends HTMLElement {
                     return Math.max(max, DetailsLength);
                 }, 0);
                 return html`<div class="detail-content">${ObjectF[prop].map(element => {
-                    return this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
+                    return isEstudiante
+                        ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
+                        : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
                 })}</div>`;
-            /*new WTableComponent({
-                Dataset: ObjectF[prop],
-                ModelObject: this.Config.ModelObject[prop].ModelObject,
-                Options: {}
-            })*/
             default:
                 return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
         }
@@ -203,10 +209,26 @@ class ClaseGroup extends HTMLElement {
         })}</div>
         </div>`;
     }
+    BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
+        /**@type {Estudiante_Group} */
+        const instance = new modelClass.constructor(element);
+        this.UpdateCalificaciones(instance, maxDetails);
+        const index = ObjectF[prop].indexOf(element);
+        return html`<div class="container">
+            <div class="element-description">
+                ${index == 0 ? html`<span class="header">Estudiante</span>` : ""} 
+                <span class="value">${instance.Descripcion}</span>
+            </div>
+            <div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
+                ${instance.Details.map((detail, indexDetail) => {
+            return this.buildDetail(detail, indexDetail, maxDetails, index);
+        })}</div>
+        </div>`;
+    }
 
 
     /**
-     * @param {Asignatura_Group} instance
+     * @param {Asignatura_Group|Estudiante_Group} instance
      * @param {number} maxDetails
      */
     UpdateCalificaciones(instance, maxDetails) {
@@ -237,7 +259,9 @@ class ClaseGroup extends HTMLElement {
         const counters = {};
         // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
         const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
-            const letra = calificacion.Evaluacion;
+            const letra = calificacion.Evaluacion == null
+                || calificacion.Evaluacion == ""
+                || calificacion.Evaluacion == undefined ? "E" : calificacion.Evaluacion;
 
             // Incrementar el contador para la letra correspondiente
             if (!counters[letra]) {

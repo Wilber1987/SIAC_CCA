@@ -6,6 +6,7 @@ import { WSecurity } from "../WDevCore/Security/WSecurity.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WCommentsComponent } from "../WDevCore/WComponents/WCommentsComponent.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Contacto } from "./Contacto.js";
 const route = location.origin
 const routeContacto = location.origin + "/Media/Images/profile/"
@@ -30,7 +31,8 @@ class MensajesView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            this.OptionContainer
+            //this.OptionContainer,
+            this.CustomStyle
         );
         this.Draw();
     }
@@ -38,27 +40,27 @@ class MensajesView extends HTMLElement {
     async Draw() {
         /**@type {Array<Conversacion>} */
         const conversaciones = await new Conversacion().Get();
-        const conversacionesContact = html`<section class="contacts-container">  
+        const conversacionesContact = html`<section class="contacts-container aside-container">  
             <div class="options-container">            
             </div>         
             <div class="contact-container">
                 <h6 class="text-uppercase mb-3">Conversaciones</h6>
                 ${conversaciones.map(conversacion => this.BuildConversacion(conversacion))}
             </div>
-            ${this.TabContainer}
         </section>`;
         /**@type {Array<Contacto>} */
         const contactos = await new Contacto().Get();
-        const contentContact = html`<section class="contacts-container">  
+        const contentContact = html`<section class="contacts-container aside-container">  
             <div class="options-container">            
             </div>         
             <div class="contact-container">
                 <h6 class="text-uppercase mb-3">Contactos</h6>
                 ${contactos.map(contact => this.BuildContacto(contact))}
             </div>
-            ${this.TabContainer}
         </section>`;
-        this.append(conversacionesContact, contentContact);
+        this.append(html`<div class="main-container">${[conversacionesContact, this.TabContainer, contentContact ]}</div>`);
+        
+        this.VerConversacion(conversaciones[0])
 
     }
     /**
@@ -117,10 +119,34 @@ class MensajesView extends HTMLElement {
             UrlSearch: route + "/api/ApiMessageManager/getMensajes",
             UrlAdd: route + "/api/ApiMessageManager/saveMensajes",
             AddObject: true, 
-            UseDestinatarios: false
+            UseDestinatarios: false,
+            UseAttach: false
         });
         this.Manager.NavigateFunction("EstDetail_" + conversacion.Id_conversacion, commentsContainer);
     }
+    CustomStyle = css`
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px calc(100% - 330px);
+            grid-template-rows: 300px auto;
+            gap: 20px;
+        }
+        .TabContainer {
+            grid-row: span 2;
+            grid-column: span 2;
+            grid-column-start: 2;
+            min-height: 600px;
+            max-height: 700px;
+        }
+        
+        @media (max-width: 600px) {
+            .main-container {
+                display: flex;
+                flex-direction: column;
+              
+            }
+        }
+    `
 
 }
 customElements.define('w-historial', MensajesView);

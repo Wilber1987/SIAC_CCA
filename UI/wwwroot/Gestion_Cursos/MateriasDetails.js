@@ -43,7 +43,7 @@ class MateriasDetails extends HTMLElement {
         const content = html`<section class="Historial">  
             <div class="options-container">              
             </div>
-            <div class="Materias-container">
+            <div class="Materias-container aside-container">
                 <h6 class="text-uppercase mb-3">Materias</h6>
                 ${this.BuildMaterias(this.Config.Dataset)}
             </div>
@@ -91,11 +91,9 @@ class MateriasDetails extends HTMLElement {
             flex-direction: column;
             gap: 10px;
         }
-        .Materias-container {
-            border-radius: 10px;            
+        .Materias-container {           
             max-height: 550px;
             overflow-y: auto;
-            border: 1px solid #d6d6d6;
             padding: 20px;
         }
         .card-options {

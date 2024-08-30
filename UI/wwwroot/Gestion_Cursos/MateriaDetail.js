@@ -5,9 +5,10 @@ import { Docente_materias } from "../Model/Docente_materias.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
-import { Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Clase_Group_ModelComponent, Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -86,6 +87,10 @@ class MateriaDetail extends HTMLElement {
                 name: "Calificaciones", Inicialize: true, action: async () => {
                     return await this.GetCalificaciones()
                 }
+            }, {
+                name: "Evaluaciones", Inicialize: true, action: async () => {
+                    return await this.GetCalificacionesCompletas()
+                }
             }
         ];
     }
@@ -95,8 +100,49 @@ class MateriaDetail extends HTMLElement {
             Materia_id: this.Docente_Materia?.Materias?.Id,
             Seccion_id: this.Docente_Materia?.Seccion_id
         }).GetClaseMateriaConsolidado();
-        const classGroup = new ClaseGroup(response);
-        return classGroup;
+        const classGroup = new ClaseGroup(response, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
+        const optionsBar = this.buildOptionsBar(classGroup);
+        return html`<div style=" display: flex;
+            flex-direction: column;
+            gap: 10px;">${optionsBar}${classGroup}</div>`;
+    }
+
+    async GetCalificacionesCompletas() {
+        /**@type {Array<Estudiante_Clases_View>} */
+        const response = await new Estudiante_Clases_View({
+            Materia_id: this.Docente_Materia?.Materias?.Id,
+            Seccion_id: this.Docente_Materia?.Seccion_id
+        }).GetClaseMateriaCompleta();
+        const classGroup = new ClaseGroup(response, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
+        const optionsBar = this.buildOptionsBar(classGroup);
+        return html`<div style=" display: flex;
+            flex-direction: column;
+            gap: 10px;">${optionsBar}${classGroup}</div>`;
+    }
+    /**
+     * @param {ClaseGroup} classGroup
+     */
+    buildOptionsBar(classGroup) {
+        return new WPrintExportToolBar({
+            PrintAction: () => {
+                //const body = await this.GetActa(object);
+                //this.append(body); return;
+                const ventimp = window.open(' ', 'popimpr');
+                // @ts-ignore
+                ventimp?.document.write(classGroup.shadowRoot?.innerHTML);
+                ventimp?.focus();
+                setTimeout(() => {
+                    ventimp?.print();
+                    ventimp?.close();
+                }, 100)
+                return;
+            }, ExportPdfAction: () => {
+                //const body = await this.GetActa(object);
+                // @ts-ignore
+                html2pdf().from(html`<div>${classGroup.shadowRoot?.innerHTML}</div>`).save();
+                return;
+            }
+        });
     }
     async GetEstudiantes() {
         /**@type {Array<Estudiantes>} */
@@ -140,6 +186,11 @@ class MateriaDetail extends HTMLElement {
             border-top: 1px solid #d6d6d6;
             padding: 20px;
         } 
+        .informe-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         w-app-navigator {
             padding: 30px 0px;
         }

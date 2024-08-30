@@ -13,7 +13,7 @@ class Estudiantes_ModelComponent extends EntityClass {
         }
     }
     
-    /**@type {ModelProperty}*/ Foto = { type: 'img', hiddenInTable: true };
+    /**@type {ModelProperty}*/ Foto = { type: 'img', hidden: true };
     /**@type {ModelProperty}*/ Fotografia = { type: 'img'};
     /**@type {ModelProperty}*/ Codigo = { type: 'text' };
     /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
@@ -48,7 +48,7 @@ class Estudiantes_ModelComponent extends EntityClass {
 export { Estudiantes_ModelComponent }
 
 
-class Calificacion_Group {
+class Calificacion_Group_ModelComponent {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
@@ -63,9 +63,9 @@ class Calificacion_Group {
     /** @type {ModelProperty}*/
     Tipo = { type: 'text' };
 }
-export { Calificacion_Group };
+export { Calificacion_Group_ModelComponent };
 
-class Asignatura_Group {
+class Asignatura_Group_ModelComponent {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
@@ -75,14 +75,35 @@ class Asignatura_Group {
     Descripcion = { type: 'text' };
 
     /** @type {ModelProperty}*/
+    Docente = { type: 'text' };
+
+    /** @type {ModelProperty}*/
     Evaluaciones = { type: 'text' };
 
     /** @type {ModelProperty}*/
-    Calificaciones = { type: 'MasterDetail', ModelObject: () => new Calificacion_Group() };
+    Calificaciones = { type: 'MasterDetail', ModelObject: () => new Calificacion_Group_ModelComponent() };
     get Details() { return this.Calificaciones }
 }
-export { Asignatura_Group };
-class Clase_Group {
+export { Asignatura_Group_ModelComponent };
+
+class Estudiante_Group_ModelComponent {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {ModelProperty}*/
+    Descripcion = { type: 'text' };    
+
+    /** @type {ModelProperty}*/
+    Evaluaciones = { type: 'text' };
+
+    /** @type {ModelProperty}*/
+    Calificaciones = { type: 'MasterDetail', ModelObject: () => new Calificacion_Group_ModelComponent() };
+    get Details() { return this.Calificaciones }
+}
+export { Estudiante_Group_ModelComponent };
+class Clase_Group_ModelComponent {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
@@ -102,8 +123,10 @@ class Clase_Group {
     Guia = { type: 'text' };
 
     /** @type {ModelProperty}*/
-    Asignaturas = { type: 'MasterDetail', ModelObject: () => new Asignatura_Group() };
+    Asignaturas = { type: 'MasterDetail', ModelObject: () => new Asignatura_Group_ModelComponent() };
+    /** @type {ModelProperty}*/
+    Estudiantes = { type: 'MasterDetail', ModelObject: () => new Estudiante_Group_ModelComponent() };
     get Details() { return this.Asignaturas }
 }
-export { Clase_Group };
+export { Clase_Group_ModelComponent };
 

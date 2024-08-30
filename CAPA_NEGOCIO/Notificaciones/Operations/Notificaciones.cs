@@ -46,7 +46,7 @@ namespace CAPA_NEGOCIO.Notificaciones
 				{
 					int count = new Mensajes
 					{
-						Id_User = u.IdUser,
+						Usuario_id = u.IdUser,
 						Leido = false
 
 					}.Count(

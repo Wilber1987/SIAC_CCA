@@ -5,7 +5,7 @@ import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
-import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
@@ -37,18 +37,19 @@ class EstudiantesDetails extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            this.OptionContainer
+            //this.OptionContainer
         );
         this.Draw();
     }
     connectedCallback() { }
     Draw = async () => {
         const content = html`<section class="Historial">  
-            <div class="options-container">
+            <div class="options-container OptionContainer">
+                <h3 class="text-uppercase">Estudiantes</h3>
                 ${new WPrintExportToolBar({ PrintAction: this.PrintAction, ExportPdfAction: this.ExportPdfAction })}
             </div>         
-            <div class="alumnos-container">
-                <h6 class="text-uppercase mb-3">Estudiantes</h6>
+            <div class="alumnos-container aside-container">
+                
                 ${this.BuildEstudiantes(this.Config.Dataset)}
             </div>
             ${this.TabContainer}
@@ -142,7 +143,7 @@ class EstudiantesDetails extends HTMLElement {
             Clase_id: object.Seleccione.Seleccione
         }).GetClaseEstudianteConsolidado();
         
-        const body = new ClaseGroup(response, {ModelObject: new Clase_Group()});
+        const body = new ClaseGroup(response, {ModelObject: new Clase_Group_ModelComponent()});
 
         documentsData.Header.style.width = "100%";
 
@@ -164,6 +165,9 @@ class EstudiantesDetails extends HTMLElement {
             gap: 20px;
         }   
         .Historial .options-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             grid-column: span 2;
         }
         .estudiante-card-container {
@@ -280,7 +284,7 @@ class EstudiantesDetails extends HTMLElement {
     `
     /**
     * @param {HTMLElement} data 
-    * @param {Clase_Group} info
+    * @param {Clase_Group_ModelComponent} info
     */
     buildData(data, info) {
         //console.log(this.EstudianteSeleccionado);

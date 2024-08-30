@@ -125,6 +125,24 @@ class Asignatura_Group {
     get Details() { return this.Calificaciones }
 }
 export { Asignatura_Group };
+
+class Estudiante_Group {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {String} nombre del estudiante*/
+    Descripcion;
+
+    /** @type {String[]}*/
+    Evaluaciones;
+
+    /** @type {Calificacion_Group[]}*/
+    Calificaciones;
+    get Details() { return this.Calificaciones }
+}
+export { Estudiante_Group };
 class Clase_Group {
     constructor(props) {
         for (const prop in props) {
@@ -146,6 +164,9 @@ class Clase_Group {
 
     /** @type {Asignatura_Group[]}*/
     Asignaturas;
+
+    /** @type {Estudiante_Group[]}*/
+    Estudiantes;
     get Details() { return this.Asignaturas }
 }
 export { Clase_Group };
