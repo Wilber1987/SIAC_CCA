@@ -39,12 +39,28 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {String}*/ Nombre_nivel;
    /**@type {Number}*/ Numero_grados;
    /**@type {Number}*/ Inicio_grado;
-   /**@type {Number}*/ Grado;
+   /**@type {Number}*/ Grado;   
+   /**@type {Number}*/ Clase_id;
+   /**@type {Number}*/ Seccion_id
+   /**@type {Number}*/ Materia_id;
    /**DATOS DEL DOCENTE */
    /**@type {String}*/ Primer_nombre;
    /**@type {String}*/ Segundo_nombre;
    /**@type {String}*/ Primer_apellido;
    /**@type {String}*/ Segundo_apellido;
    /**@type {String}*/ Nombre_Docente;
+   
+    async GetClaseEstudianteConsolidado() {
+        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteConsolidado");
+    }    
+    async GetClaseEstudianteCompleta() {
+        return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteCompleta");
+    }
+    async GetClaseMateriaConsolidado() {
+        return await this.GetData("ApiGestionCursos/GetClaseMateriaConsolidado");
+    }    
+    async GetClaseMateriaCompleta() {
+        return await this.GetData("ApiGestionCursos/GetClaseMateriaCompleta");
+    }
 }
 export { Estudiante_Clases_View }

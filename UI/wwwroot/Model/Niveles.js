@@ -1,7 +1,7 @@
 //@ts-check
 // @ts-ignore
-import { ModelProperty } from '../../WDevCore/WModules/CommonModel.js';
-import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
+import { ModelProperty } from '../WDevCore/WModules/CommonModel.js';
+import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Asignaturas }  from './Asignaturas.js'
 class Niveles extends EntityClass {
    /** @param {Partial<Niveles>} [props] */

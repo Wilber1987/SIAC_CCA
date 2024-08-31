@@ -13,7 +13,7 @@ namespace UI.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]/[action]")]
-	public class NotificacionesController : ControllerBase
+	public class ApiNotificacionesController : ControllerBase
 	{
 		//Conversaciones
 		[HttpPost]
@@ -33,20 +33,7 @@ namespace UI.Controllers
         public object? saveConversacion(Conversacion Inst)
         {
             return Inst.SaveConversacion(HttpContext.Session.GetString("seassonKey"));
-        }
-        //Mensajes
-        [HttpPost]
-		[AuthController(Permissions.NOTIFICACIONES)]
-		public List<Mensajes> getMensajes(Conversacion Inst)
-		{
-			return new Mensajes{Id_conversacion = Inst.Id_conversacion}.GetMessage(HttpContext.Session.GetString("seassonKey"));
-		}
-        [HttpPost]
-        [AuthController(Permissions.NOTIFICACIONES)]
-        public ResponseService getMensajes(Mensajes Inst)
-        {
-            return Inst.SaveMessage(HttpContext.Session.GetString("seassonKey"));
-        }
+        }       
 		//Notificaciones
         [HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES)]
@@ -58,7 +45,7 @@ namespace UI.Controllers
         [AuthController(Permissions.NOTIFICACIONES)]
         public List<Contacto> getContactos(Contacto Inst)
         {
-            return new Notificaciones().GetContactos(HttpContext.Session.GetString("seassonKey"));
+            return new Notificaciones().GetContactos(HttpContext.Session.GetString("seassonKey"), Inst);
         }
     }
 }

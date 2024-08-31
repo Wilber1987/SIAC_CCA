@@ -19,8 +19,8 @@ class Evaluaciones_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Tipo = { type: 'text' };
    /**@type {ModelProperty}*/ Porcentaje = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Periodo = { type: 'number' };
    /**@type {ModelProperty}*/ Nota_maxima = { type: 'number' };
    /**@type {ModelProperty}*/ Materias = { type: 'WSELECT',  ModelObject: ()=> new Materias_ModelComponent(), ForeignKeyColumn: 'Materia_id'};

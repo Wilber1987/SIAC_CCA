@@ -3,7 +3,8 @@
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases } from './Estudiante_clases.js';
 import { Responsables } from './Responsables.js';
-class Estudiantes extends EntityClass {
+class Estudiantes extends EntityClass {   
+   
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
         super(props, 'GestionEstudiantes');
@@ -12,6 +13,7 @@ class Estudiantes extends EntityClass {
         }
     }
     /**@type {Number}*/ Id;
+    /**@type {String}*/ Nombre_completo;
     /**@type {String}*/ Primer_nombre;
     /**@type {String}*/ Segundo_nombre;
     /**@type {String}*/ Primer_apellido;
@@ -70,6 +72,18 @@ class Estudiantes extends EntityClass {
         }
     }
 
+    /**
+     * @param {Estudiante_clases} Estudiante_clases
+     * @return {Promise<Array<Estudiantes>>} 
+     * */
+    async GetEstudianBySectionClass(Estudiante_clases) {
+        const response = await this.Post("ApiGestionEstudiantes/GetEstudianBySectionClass", Estudiante_clases);
+        return response.map(dato => new Estudiantes(dato))
+    }
+    /**@type {String}*/ get  Fotografia(){
+        return `/${this.Id}/${this.Foto}`;
+    };
+
 }
 export { Estudiantes };
 
@@ -111,6 +125,24 @@ class Asignatura_Group {
     get Details() { return this.Calificaciones }
 }
 export { Asignatura_Group };
+
+class Estudiante_Group {
+    constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {String} nombre del estudiante*/
+    Descripcion;
+
+    /** @type {String[]}*/
+    Evaluaciones;
+
+    /** @type {Calificacion_Group[]}*/
+    Calificaciones;
+    get Details() { return this.Calificaciones }
+}
+export { Estudiante_Group };
 class Clase_Group {
     constructor(props) {
         for (const prop in props) {
@@ -132,6 +164,9 @@ class Clase_Group {
 
     /** @type {Asignatura_Group[]}*/
     Asignaturas;
+
+    /** @type {Estudiante_Group[]}*/
+    Estudiantes;
     get Details() { return this.Asignaturas }
 }
 export { Clase_Group };

@@ -19,8 +19,8 @@ class Asignaturas_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Nombre_corto = { type: 'text' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
    /**@type {ModelProperty}*/ Habilitado = { type: 'checkbox' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Orden = { type: 'number' };
    /**@type {ModelProperty}*/ Niveles = { type: 'WSELECT',  ModelObject: ()=> new Niveles_ModelComponent(), ForeignKeyColumn: 'Nivel_id'};
    /**@type {ModelProperty}*/ Docente_asignaturas = { type: 'MasterDetail',  ModelObject: ()=> new Docente_asignaturas_ModelComponent()};

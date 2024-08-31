@@ -1,13 +1,14 @@
 //@ts-check
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
-import { Asignatura_Group, Calificacion_Group, Estudiantes } from "../Model/Estudiantes.js";
-import { Clase_Group } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
+import { Asignatura_Group, Calificacion_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 /**
  * @typedef {Object} Config 
-    * @property {Clase_Group} ModelObject
+    * @property {Clase_Group_ModelComponent} ModelObject
     * @property {Function} [action]
     * @property {Array<Estudiante_clases>} [Dataset]
 **/
@@ -52,49 +53,21 @@ class ClasesDetails extends HTMLElement {
     async getClassGroup(ev, content, element) {
         // @ts-ignore
         if (!content.dataElement) {
-            const response = await new Estudiante_clases({
+            const response = await new Estudiante_Clases_View({
                 Estudiante_id: element.Estudiante_id,
                 Clase_id: element.Clase_id
             }).GetClaseEstudianteConsolidado();
 
-            const classGroup = Object.keys(response).map(key => this.BuildPropiertyDetail(response, key))
+            const classGroup = new ClaseGroup(response, this.Config);
             // @ts-ignore
             content.dataElement = response;
             content.innerHTML = "";
-            classGroup.forEach(classO => {
-                content.append(classO)
-            });
+            content.append(classGroup);
         }
         ev.target.className = content.className.includes("active")
             ? "accordion-button" : "accordion-button active-btn";
         content.className = content.className.includes("active")
             ? "element-content" : "element-content active";
-    }
-
-    BuildPropiertyDetail(ObjectF, prop) {
-        //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
-
-        // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
-            case "MASTERDETAIL":
-                const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
-                //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
-                const maxDetails = ObjectF[prop].reduce((max, detail) => {
-                    const DetailsLength = new modelClass.constructor(detail).Details
-                        ? new modelClass.constructor(detail).Details.length : 0;
-                    return Math.max(max, DetailsLength);
-                }, 0);
-                return html`<div class="detail-content">${ObjectF[prop].map(element => {
-                    return new AsiganaturaDetail(modelClass, element, ObjectF, prop, maxDetails);
-                })}</div>`;
-            /*new WTableComponent({
-                Dataset: ObjectF[prop],
-                ModelObject: this.Config.ModelObject[prop].ModelObject,
-                Options: {}
-            })*/
-            default:
-                return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        }
     }
     update() {
         this.Draw();
@@ -143,34 +116,7 @@ class ClasesDetails extends HTMLElement {
         }
         .active-btn::after {
             transform: rotate(180deg)
-        }
-        .detail-content { 
-            display: flex;
-            flex-direction: column;
-            border-color: rgb(239, 240, 242);
-            border-style: solid;
-            border-width: 0.8px;
-            border-radius: 0.3cm;
-            width: 100%;
-        } 
-        .element-content.active {           
-            max-height: unset;
-            padding: 20px 20px;
-        }
-
-        .accordion {
-            border: 1px solid #d2d2d2;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .accordion .accordion-button{
-            border-bottom: 1px solid #d2d2d2;
-        }
-        .prop {            
-            text-transform: capitalize;
-            font-size: 1rem;
-        }
-        
+        }        
         .element-content {
             overflow: hidden;
             max-height: 0px;
@@ -179,25 +125,70 @@ class ClasesDetails extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 30px;
+        }        
+        .element-content.active {           
+            max-height: unset;
+            padding: 20px 20px;
         }
-        
+        .accordion {
+            border: 1px solid #d2d2d2;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .accordion .accordion-button{
+            border-bottom: 1px solid #d2d2d2;
+        }
        
-        w-asignatura-detail:nth-of-type(even) {
-            background-color: #f8f8f8;
-        }
      `
 }
 customElements.define('w-clases-details', ClasesDetails);
 export { ClasesDetails }
 
-class AsiganaturaDetail extends HTMLElement {
-    constructor(modelClass, element, ObjectF, prop, maxDetails) {
+class ClaseGroup extends HTMLElement {
+    /**
+     * @param {any[]} response
+     * @param {{ ModelObject?: Clase_Group_ModelComponent, GroupBy?: String }} Config
+     */
+    constructor(response, Config) {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot?.append(this.CustomStyle);
-        this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
+        this.Config = Config ?? { ModelObject: new Clase_Group_ModelComponent() };
+        //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
+        const propsData = Object.keys(response)
+            .filter(prop => response[prop] != null && response[prop] != undefined)
+            .map(prop => this.BuildPropiertyDetail(response, prop))
+        const dataContainer = html`<div class="data-container"></div>`
+        propsData.forEach(data => {
+            dataContainer.appendChild(data);
+        })
+        this.shadowRoot?.append(dataContainer);
     }
-    connectedCallback() { }   
+    connectedCallback() { }
+    BuildPropiertyDetail(ObjectF, prop) {
+        //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
+        // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
+        // @ts-ignore
+        switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
+            case "MASTERDETAIL":
+                const isEstudiante = this.Config.GroupBy?.toUpperCase() == "ESTUDIANTE";
+                // @ts-ignore
+                const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
+                //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
+                const maxDetails = ObjectF[prop].reduce((max, detail) => {
+                    const DetailsLength = new modelClass.constructor(detail).Details
+                        ? new modelClass.constructor(detail).Details.length : 0;
+                    return Math.max(max, DetailsLength);
+                }, 0);
+                return html`<div class="detail-content">${ObjectF[prop].map(element => {
+                    return isEstudiante
+                        ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
+                        : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
+                })}</div>`;
+            default:
+                return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
+        }
+    }
     Builddetail(modelClass, element, ObjectF, prop, maxDetails) {
         /**@type {Asignatura_Group} */
         const instance = new modelClass.constructor(element);
@@ -218,10 +209,26 @@ class AsiganaturaDetail extends HTMLElement {
         })}</div>
         </div>`;
     }
+    BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
+        /**@type {Estudiante_Group} */
+        const instance = new modelClass.constructor(element);
+        this.UpdateCalificaciones(instance, maxDetails);
+        const index = ObjectF[prop].indexOf(element);
+        return html`<div class="container">
+            <div class="element-description">
+                ${index == 0 ? html`<span class="header">Estudiante</span>` : ""} 
+                <span class="value">${instance.Descripcion}</span>
+            </div>
+            <div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
+                ${instance.Details.map((detail, indexDetail) => {
+            return this.buildDetail(detail, indexDetail, maxDetails, index);
+        })}</div>
+        </div>`;
+    }
 
 
     /**
-     * @param {Asignatura_Group} instance
+     * @param {Asignatura_Group|Estudiante_Group} instance
      * @param {number} maxDetails
      */
     UpdateCalificaciones(instance, maxDetails) {
@@ -252,7 +259,9 @@ class AsiganaturaDetail extends HTMLElement {
         const counters = {};
         // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
         const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
-            const letra = calificacion.Evaluacion;
+            const letra = calificacion.Evaluacion == null
+                || calificacion.Evaluacion == ""
+                || calificacion.Evaluacion == undefined ? "E" : calificacion.Evaluacion;
 
             // Incrementar el contador para la letra correspondiente
             if (!counters[letra]) {
@@ -281,8 +290,22 @@ class AsiganaturaDetail extends HTMLElement {
         </div>`;
     }
 
-    CustomStyle = css`        
-       
+    CustomStyle = css`   
+        .data-container {
+            display: flex;
+            row-gap: 20px;
+            column-gap: 25px;
+            flex-wrap: wrap;
+        }    
+        .detail-content { 
+            display: flex;
+            flex-direction: column;
+            border-color: rgb(239, 240, 242);
+            border-style: solid;
+            border-width: 0.8px;
+            border-radius: 0.3cm;
+            width: 100%;
+        } 
         .container {
             display: flex;
             flex: 1;
@@ -332,7 +355,15 @@ class AsiganaturaDetail extends HTMLElement {
         .hidden {
             display: none;
         }
-        
+        .prop {            
+            text-transform: capitalize;
+            font-size: 1rem;
+            font-weight: 600;
+
+        }
+        .container:nth-of-type(even) {
+            background-color: #f8f8f8;
+        }        
         @media (max-width: 800px) {
             .detail-content .container, .detail-content .element-details {
                 flex-direction: column;
@@ -359,5 +390,5 @@ class AsiganaturaDetail extends HTMLElement {
         }        
      `
 }
-customElements.define('w-asignatura-detail', AsiganaturaDetail);
-export { AsiganaturaDetail }
+customElements.define('w-class-detail', ClaseGroup);
+export { ClaseGroup }

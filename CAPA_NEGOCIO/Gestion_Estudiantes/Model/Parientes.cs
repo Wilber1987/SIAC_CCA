@@ -22,6 +22,7 @@ namespace DataBaseModel
 		public string? Lugar_trabajo { get; set; }
 		public string? Telefono { get; set; }
 		public string? Celular { get; set; }
+		public string? Foto { get; set; }
 		public string? Telefono_trabajo { get; set; }
 		public string? Email { get; set; }
 		public int? Estado_civil_id { get; set; }

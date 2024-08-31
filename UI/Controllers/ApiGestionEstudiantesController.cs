@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS.Security;
 using DataBaseModel;
@@ -18,6 +14,12 @@ namespace UI.Controllers
 		public List<Estudiantes> GetEstudiantes(Estudiantes Inst)
 		{
 			return Inst.Get<Estudiantes>();
+		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_CLASES_ASIGNADAS, Permissions.GESTION_CLASES)]
+		public List<Estudiantes> GetEstudianBySectionClass(Estudiante_clases Inst)
+		{
+			return Inst.GetEstudianBySectionClass();
 		}
 		//GESTION_ESTUDIANTES_PROPIOS
 
@@ -52,13 +54,13 @@ namespace UI.Controllers
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
 		public Clase_Group? GetClaseEstudianteConsolidado(Estudiante_Clases_View Inst)
 		{
-			return Estudiantes.GetClaseEstudianteConsolidado(Inst);
+			return Inst.GetClaseEstudianteConsolidado();
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
 		public Clase_Group? GetClaseEstudianteCompleta(Estudiante_Clases_View Inst)
 		{
-			return Estudiantes.GetClaseEstudianteCompleta(Inst);
+			return Inst.GetClaseEstudianteCompleta();
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]

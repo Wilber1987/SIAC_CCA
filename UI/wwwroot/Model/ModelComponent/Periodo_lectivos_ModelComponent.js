@@ -18,8 +18,8 @@ class Periodo_lectivos_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Fin = { type: 'date' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
    /**@type {ModelProperty}*/ Config = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Abierto = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Oculto = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail',  ModelObject: ()=> new Estudiante_clases_ModelComponent()};

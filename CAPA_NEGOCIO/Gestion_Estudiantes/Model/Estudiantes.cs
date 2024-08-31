@@ -70,6 +70,8 @@ namespace DataBaseModel
 		/***new properties **/
 
 		public bool? Activo { get; set; }
+		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
+
 		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
 
@@ -78,7 +80,7 @@ namespace DataBaseModel
 
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Estudiante_Clases_View>? Clases { get; set; }
+		//public List<Estudiante_Clases_View>? Clases { get; set; }
 
 		public Estudiantes? FindEstudiante(string? identity)
 		{
@@ -120,21 +122,7 @@ namespace DataBaseModel
 			{
 				throw new Exception("Estudiante no existe");
 			}
-		}
-		public static Clase_Group GetClaseEstudianteConsolidado(Estudiante_Clases_View estudiante_Clases_View)
-		{
-
-			var ClasesF = estudiante_Clases_View.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
-			return clase_Group.First();
-		}
-		public static Clase_Group GetClaseEstudianteCompleta(Estudiante_Clases_View estudiante_Clases_View)
-		{
-
-			var ClasesF = estudiante_Clases_View.Get<Estudiante_Clases_View>();
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
-			return clase_Group.First();
-		}
+		}		
 		public List<Clase_Group>? Clase_Group { get; set; }
 		public List<Estudiantes> UpdateOwEstudiantes(string? v)
 		{
@@ -170,6 +158,13 @@ namespace DataBaseModel
 		public string? Nivel { get; set; }
 		public string? Seccion { get; set; }
 		public List<Asignatura_Group>? Asignaturas { get; set; }
+        public List<Estudiante_Group>? Estudiantes { get; set; }
+    }
 
-	}
+	public class Estudiante_Group
+    {
+        public string? Descripcion { get; set; }
+        public List<string?>? Evaluaciones { get; set; }
+        public List<Calificacion_Group>? Calificaciones { get; set; }
+    }
 }

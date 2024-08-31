@@ -19,8 +19,8 @@ class Estudiante_clases_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Transferido = { type: 'date' };
    /**@type {ModelProperty}*/ Retirado = { type: 'date' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Promedio = { type: 'number' };
    /**@type {ModelProperty}*/ Repitente = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Reprobadas = { type: 'number' };

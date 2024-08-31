@@ -5,7 +5,7 @@
 @using DataBaseModel;
 @{
     string? identify = HttpContext?.Session.GetString("seassonKey");
-    if (!SecurityController.Auth(identify))
+     if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
         Response.Redirect("/Security/Login");
         return;

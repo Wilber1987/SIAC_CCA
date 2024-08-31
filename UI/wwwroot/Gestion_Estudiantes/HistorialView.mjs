@@ -2,7 +2,7 @@
 import { Estudiantes } from "../Model/Estudiantes.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
-import { EstudiantesView } from "./EstudiantesView.js";
+import { EstudiantesDetails } from "./EstudiantesDetails.js";
 
 
 /**
@@ -23,7 +23,7 @@ class HistorialView extends HTMLElement {
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
             StylesControlsV3.cloneNode(true),
-            this.OptionContainer
+            //this.OptionContainer
         );
         this.Draw();
     }
@@ -31,7 +31,7 @@ class HistorialView extends HTMLElement {
     async Draw() {
         const entityModel = new Estudiantes();
         const dataset = await entityModel.GetOwEstudiantes();
-        this.append(new EstudiantesView({ Dataset: dataset }));
+        this.append(new EstudiantesDetails({ Dataset: dataset }));
     }
 
 }

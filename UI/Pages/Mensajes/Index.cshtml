@@ -12,6 +12,9 @@
     }
 }
 <script type="module">
-   
+   import {MensajesView} from "/Gestion_Mensajes/MensajesView.mjs";
+    window.onload = ()=> {
+        Main.append(new MensajesView());
+    }
 </script>
 <div id="Main"></div>

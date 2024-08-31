@@ -4,7 +4,7 @@ import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 class Mensaje_adjuntos extends EntityClass {
    /** @param {Partial<Mensaje_adjuntos>} [props] */
    constructor(props) {
-       super(props, 'EntityDbo');
+       super(props, 'MessageManager');
        for (const prop in props) {
            this[prop] = props[prop];
        }

@@ -3,9 +3,13 @@
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
+    if(identify == null){
+        Context.Response.Redirect("/Security/Login");
+    }
     var pageConfig = Config.pageConfig();
     UserModel user = AuthNetCore.User(identify);
     var perfil = user.UserData?.Get_Profile();
+    
 }
 <!DOCTYPE html>
 <html lang="en">

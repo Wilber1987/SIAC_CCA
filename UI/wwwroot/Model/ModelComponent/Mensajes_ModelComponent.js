@@ -15,10 +15,10 @@ class Mensajes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Usuario_id = { type: 'number' };
    /**@type {ModelProperty}*/ Destinatarios = { type: 'text' };
    /**@type {ModelProperty}*/ Asunto = { type: 'text' };
-   /**@type {ModelProperty}*/ Mensaje = { type: 'text' };
+   /**@type {ModelProperty}*/ Body = { type: 'text' };
    /**@type {ModelProperty}*/ Id_conversacion = { type: 'number' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    /**@type {ModelProperty}*/ Enviado = { type: 'checkbox' };
    /**@type {ModelProperty}*/ Leido = { type: 'checkbox' };
 }

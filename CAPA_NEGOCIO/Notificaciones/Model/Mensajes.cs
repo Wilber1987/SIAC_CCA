@@ -1,6 +1,7 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,13 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? Id_mensaje { get; set; }
+        public string? Foto { get; set; }
         public string? Remitente { get; set; }
-        public int? Id_User { get; set; }
+        public int? Usuario_id { get; set; }
         [JsonProp]
         public List<Destinatario>? Destinatarios { get; set; }
         public string? Asunto { get; set; }
-        public string? Mensaje { get; set; }
+        public string? Body { get; set; }
         public int? Id_conversacion { get; set; }
         public DateTime? Created_at { get; set; }
         public DateTime? Updated_at { get; set; }
@@ -30,28 +32,34 @@ namespace DataBaseModel
         public Conversacion? Conversacion { get; set; }
         [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_User")]
         public Security_Users? Security_Users { get; set; } */
-        public List<Mensajes> GetMessage(string? identity)
+        public List<Mensajes> GetMessage(string? identity, Conversacion inst)
         {
-            try
-            {
-                var Messages = Get<Mensajes>();
-                UserModel user = AuthNetCore.User(identity);
-                BeginGlobalTransaction();
-                Messages.ForEach(m =>
+            
+                try
                 {
-                    if (m.IsMensajeNoLeido(user))
+                    BeginGlobalTransaction();
+                    
+                    Id_conversacion = inst.Id_conversacion;
+                    filterData = inst.filterData;            
+                    var Messages = Get<Mensajes>();
+                    UserModel user = AuthNetCore.User(identity);
+                    //MyConnection?.Open();
+
+                    Messages.ForEach(m =>
                     {
-                        m.MarcarComoLeido(user);
-                    }
-                });
-                CommitGlobalTransaction();
-                return Messages;
-            }
-            catch (Exception)
-            {
-                RollBackGlobalTransaction();
-                throw;
-            }
+                        if (m.IsMensajeNoLeido(user))
+                        {
+                            m.MarcarComoLeido(user);
+                        }
+                    });
+                    CommitGlobalTransaction();
+                    return Messages;
+                }
+                catch (Exception)
+                {
+                    RollBackGlobalTransaction();
+                    throw;
+                }
 
         }
         public bool IsMensajeNoLeido(UserModel user)
@@ -73,20 +81,26 @@ namespace DataBaseModel
             {
                 BeginGlobalTransaction();
                 UserModel user = AuthNetCore.User(identity);
-                Id_User = user.UserId;
-                Remitente = user.UserData?.Nombres;
-                Conversacion? conversacion = new Conversacion
-                { Id_conversacion = Id_conversacion }
+                CAPA_NEGOCIO.Tbl_Profile profile = CAPA_NEGOCIO.Tbl_Profile.Get_Profile(user);
+
+                Usuario_id = user.UserId;
+                Remitente = profile.GetNombreCompleto();
+                Foto = profile.Foto;
+                Conversacion? conversacion = new Conversacion { Id_conversacion = Id_conversacion }
                    .Find<Conversacion>();
-                Destinatarios = conversacion?.Conversacion_usuarios
-                    .Where(C => C.Id_User != Id_User)
-                    .Select(C => new Destinatario { 
-                        Correo= C.Security_Users?.Mail,
-                        Id_User= C.Id_User,
-                        Leido= false,
-                        Enviado= false,
-                        Nombre = $"{C.Security_Users?.Get_Profile()?.GetNombreCompleto()}"
-                    }).ToList();
+
+                Destinatarios = conversacion?.Conversacion_usuarios.Where(C => C.Id_usuario != Usuario_id)
+                .Select(C => new Destinatario
+                {
+                    Correo = C.Security_Users?.Mail,
+                    Id_User = C.Id_usuario,
+                    Leido = false,
+                    Enviado = false,
+                    Nombre = $"{C.Security_Users?.Get_Profile().GetNombreCompleto()}"
+                }).ToList();
+
+                Created_at = DateTime.Now;
+                Updated_at = DateTime.Now;
                 Save();
                 CommitGlobalTransaction();
 
@@ -97,8 +111,6 @@ namespace DataBaseModel
                 RollBackGlobalTransaction();
                 throw;
             }
-
-
         }
     }
 

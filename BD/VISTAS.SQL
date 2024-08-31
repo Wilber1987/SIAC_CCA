@@ -1,4 +1,6 @@
 -- dbo.Estudiante_Clases_View source
+
+-- dbo.Estudiante_Clases_View source
 /* dbo.Estudiante_Clases_View source
  dbo.Estudiante_Clases_View source*/
 CREATE VIEW dbo.Estudiante_Clases_View AS
@@ -35,11 +37,14 @@ SELECT ec.transferido,
     c.grado,
     ec.clase_id,
     m.config,
-    m.MateriasConfig,
     m.id as materia_id,
+    m.MateriasConfig,
     s.nombre as nombre_seccion,
-    ec.seccion_id
+    ec.seccion_id,
+    CONCAT(e2.primer_nombre , ' ',e2.segundo_nombre, e2.primer_apellido  , ' ',e2.segundo_apellido) AS Nombre_Estudiantes,
+    e2.codigo 
 from dbo.estudiante_clases ec 
+INNER JOIN dbo.estudiantes e2 on ec.estudiante_id = e2.id 
 inner join dbo.clases c   on ec.clase_id  = c.id
 INNER JOIN dbo.secciones s ON ec.seccion_id = s.id
 INNER JOIN dbo.periodo_lectivos pl ON pl.id = ec.periodo_lectivo_id 
@@ -48,4 +53,4 @@ INNER JOIN dbo.materias m on c2.materia_id  = m.id
 INNER JOIN dbo.asignaturas a ON m.asignatura_id = a.id
 LEFT OUTER JOIN dbo.niveles n ON a.nivel_id = n.id
 LEFT OUTER JOIN dbo.evaluaciones e ON c2.evaluacion_id = e.id
-LEFT OUTER JOIN dbo.tipo_notas t ON c2.tipo_nota_id = t.id
+LEFT OUTER JOIN dbo.tipo_notas t ON c2.tipo_nota_id = t.id;

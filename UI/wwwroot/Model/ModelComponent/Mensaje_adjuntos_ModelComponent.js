@@ -13,7 +13,7 @@ class Mensaje_adjuntos_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Mensaje_id = { type: 'number' };
    /**@type {ModelProperty}*/ Archivo = { type: 'text' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' };
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date' };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
 }
 export { Mensaje_adjuntos_ModelComponent }
