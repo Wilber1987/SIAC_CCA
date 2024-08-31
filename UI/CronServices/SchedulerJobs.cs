@@ -3,7 +3,7 @@ using DataBaseModel;
 
 namespace BackgroundJob.Cron.Jobs
 {
-       public class DailyCronJob : CronBackgroundJob
+    public class DailyCronJob : CronBackgroundJob
     {
         private readonly ILogger<DailyCronJob> _log;
 
@@ -18,7 +18,7 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  DailyCronJob at {0}", DateTime.UtcNow);
             try
             {
-               
+
             }
             catch (System.Exception ex)
             {
