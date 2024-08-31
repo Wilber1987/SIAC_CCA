@@ -6,6 +6,7 @@ import { WSecurity } from "../WDevCore/Security/WSecurity.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WCommentsComponent } from "../WDevCore/WComponents/WCommentsComponent.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ControlBuilder } from "../WDevCore/WModules/WControlBuilder.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { Contacto } from "./Contacto.js";
 const route = location.origin
@@ -34,80 +35,63 @@ class MensajesView extends HTMLElement {
             //this.OptionContainer,
             this.CustomStyle
         );
+        this.SearchInput = ControlBuilder.BuildSearchInput(this.SearchContacto);
+        this.ConversacionesContact = html`<section class="contacts-container aside-container">
+        </section>`;
         this.Draw();
     }
 
     async Draw() {
+        const contentContact = html`<section class="contacts-container aside-container"> 
+             <div class="contact-container">
+                 <h6 class="text-uppercase">Mensajes</h6>                 
+             </div>
+         </section>`;
+        this.ConversacionesContact?.append(
+            html`<div class="options-container">  
+                <h6 class="text-uppercase">Conversaciones</h6>    
+                ${this.SearchInput}      
+            </div>`)
+        await this.SearchContacto();
+        this.append(html`<div class="main-container">${[contentContact, this.ConversacionesContact, this.TabContainer]}</div>`);
+    }
+    /**  */
+    SearchContacto = async (searcName = "") => {
         /**@type {Array<Conversacion>} */
-        const conversaciones = await new Conversacion().Get();
-        const conversacionesContact = html`<section class="contacts-container aside-container">  
-            <div class="options-container">            
-            </div>         
-            <div class="contact-container">
-                <h6 class="text-uppercase mb-3">Conversaciones</h6>
-                ${conversaciones.map(conversacion => this.BuildConversacion(conversacion))}
-            </div>
-        </section>`;
-        /**@type {Array<Contacto>} */
-        const contactos = await new Contacto().Get();
-        const contentContact = html`<section class="contacts-container aside-container">  
-            <div class="options-container">            
-            </div>         
-            <div class="contact-container">
-                <h6 class="text-uppercase mb-3">Contactos</h6>
-                ${contactos.map(contact => this.BuildContacto(contact))}
-            </div>
-        </section>`;
-        this.append(html`<div class="main-container">${[conversacionesContact, this.TabContainer, contentContact ]}</div>`);
-        
-        this.VerConversacion(conversaciones[0])
+        const conversaciones = await new Conversacion({ Nombre_Completo: searcName }).Get();
 
+        this.ConversacionesContact?.querySelector(".contact-container")?.remove();
+        this.ConversacionesContact?.append(
+            html`<div class="contact-container">${conversaciones.map(conversacion => this.BuildConversacion(conversacion))}</div>`
+        )
+        //this.VerConversacion(conversaciones[0]);
     }
     /**
      * @param {Conversacion} conversacion
      */
     BuildConversacion(conversacion) {
-        return html`<div class="conversacion-card-container" onclick="${() => this.VerConversacion(conversacion)}">            
-            <div class="d-flex title align-items-center">               
-                     <div class="flex-1 ms-2 ps-1">
-                     <h5 class="font-size-14 mb-0">${conversacion.Descripcion}</h5>
-                     <label class="text-muted text-uppercase font-size-12">${conversacion.Mensajes}</label>
-                     </div>
-                </div>
+        const conversacionUsuarios = conversacion.Conversacion_usuarios.filter(c => c.Id_usuario != WSecurity.UserData.UserId);
+        const conversacionCont = html`<div class="conversacion-card-container" onclick="${(/** @type {any} */ ev) => this.VerConversacion(conversacion, conversacionCont)}">            
+            ${conversacionUsuarios.map(c => html`<img class="avatar" src="${route + c.Avatar}"/>`)}                                              
+            <div class="data-conversacion-container">                    
+                <div class="data-name-container">${conversacionUsuarios.map(c => html`<h5 class="font-size-14 mb-0">${c.Name}</h5>`)}</div>
+                ${conversacion.MensajesPendientes > 0 ?
+                html`<span class="message-pendientes">${conversacion.MensajesPendientes}</span>`
+                : ""
+            }
+            </div>
         </div>`;
+        return conversacionCont
     }
+
     /**
-     * @param {Contacto} contacto
-     */
-    BuildContacto(contacto) {
-        return html`<div class="estudiante-card-container" onclick="${() => this.VerConversacionContacto(contacto)}">            
-            <div class="d-flex title align-items-center">
-                <img src="${contacto.Foto ? `${routeContacto}/${contacto.Id_User}/${contacto.Foto}`
-                : route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
-                     <div class="flex-1 ms-2 ps-1">
-                     <h5 class="font-size-14 mb-0">${contacto.Nombre_Completo}</h5>
-                     <label class="text-muted text-uppercase font-size-12">${contacto.Mensajes}</label>
-                     </div>
-                </div>
-        </div>`;
-    }
-    /**
-     * @param {Contacto} contacto
-     */
-    async VerConversacionContacto(contacto) {
-        this.ContactoSeleccionado = contacto;
-        /**@type {Conversacion} */
-        const conversacion = await new Conversacion({ Conversacion_usuarios : [
-           new Conversacion_usuarios({ Id_usuario: contacto.Id_User })
-        ]}).Find();
-        this.VerConversacion(conversacion)
-    }
-     /**
-     * @param {Conversacion} conversacion
-     */
-     async VerConversacion(conversacion) {
-        this.ContactoSeleccionado = conversacion;        
-      
+    * @param {Conversacion} conversacion
+    *  @param {HTMLElement} element
+    */
+    async VerConversacion(conversacion, element) {
+        element.querySelector(".message-pendientes")?.remove();
+        this.ContactoSeleccionado = conversacion;
+
         const mensajes = []
         const commentsContainer = new WCommentsComponent({
             Dataset: [],
@@ -118,25 +102,75 @@ class MensajesView extends HTMLElement {
             CommentsIdentifyName: "Id_conversacion",
             UrlSearch: route + "/api/ApiMessageManager/getMensajes",
             UrlAdd: route + "/api/ApiMessageManager/saveMensajes",
-            AddObject: true, 
+            AddObject: true,
             UseDestinatarios: false,
             UseAttach: false
         });
         this.Manager.NavigateFunction("EstDetail_" + conversacion.Id_conversacion, commentsContainer);
     }
+    connectedCallback() {
+        this.Interval = setInterval(async () => {
+            this.SearchContacto(this.SearchInput.querySelector("input")?.value);
+        }, 10000)
+    }
+    disconnectedCallback() {
+        this.Interval = null;        
+    }
+
     CustomStyle = css`
         .main-container {
             display: grid;
-            grid-template-columns: 300px calc(100% - 330px);
-            grid-template-rows: 300px auto;
+            grid-template-columns: 400px calc(100% - 430px);
+            grid-template-rows: 120px 560px;
             gap: 20px;
         }
         .TabContainer {
             grid-row: span 2;
             grid-column: span 2;
             grid-column-start: 2;
-            min-height: 600px;
+            grid-row-start: 1;
+            min-height: 700px;
             max-height: 700px;
+        }
+        .options-container {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .contact-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .conversacion-card-container {
+            padding: 10px;
+            border-radius: 15px;
+            border: solid 1px #e2e2e2;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .data-conversacion-container {
+            display: flex;
+            flex: 1;
+        }
+        .data-name-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        .message-pendientes {
+            color: #fff;
+            padding: 10px;
+            background-color: #039a08;
+            border-radius: 50%;
+            height: 30px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         @media (max-width: 600px) {
