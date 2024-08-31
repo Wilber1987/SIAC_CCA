@@ -13,7 +13,10 @@ class Conversacion extends EntityClass {
     }
     /**@type {Number}*/ Id_conversacion;
     /**@type {String}*/ Descripcion;
+    /**@type {Number}*/ MensajesPendientes;
+    /**@type {Date}*/ Fecha_Ultimo_Mensaje;
     /**@type {Array<Conversacion_usuarios>} OneToMany*/ Conversacion_usuarios;
     /**@type {Array<Mensajes>} OneToMany*/ Mensajes;
+    /**@type {String}*/ Nombre_Completo;
  }
  export { Conversacion }

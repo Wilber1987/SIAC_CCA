@@ -18,9 +18,9 @@ namespace UI.Controllers
 		//Conversaciones
 		[HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES)]
-		public List<Conversacion?> getConversacion(Conversacion Inst)
+		public List<Conversacion> getConversacion(Contacto Inst)
 		{
-			return Conversacion.GetConversaciones(HttpContext.Session.GetString("seassonKey"));
+			return Conversacion.GetConversaciones(HttpContext.Session.GetString("seassonKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES)]
@@ -45,7 +45,7 @@ namespace UI.Controllers
         [AuthController(Permissions.NOTIFICACIONES)]
         public List<Contacto> getContactos(Contacto Inst)
         {
-            return new Notificaciones().GetContactos(HttpContext.Session.GetString("seassonKey"), Inst);
+            return new Conversacion().GetContactos(HttpContext.Session.GetString("seassonKey"), Inst);
         }
     }
 }

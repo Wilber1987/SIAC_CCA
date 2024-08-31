@@ -15,7 +15,7 @@ namespace CAPA_NEGOCIO
 
         public new Tbl_Profile Get_Profile()
         {
-            return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault());
+            return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault(), this);
         }
     }
     public class Tbl_Profile : CAPA_DATOS.Security.Tbl_Profile
@@ -23,28 +23,36 @@ namespace CAPA_NEGOCIO
         public ProfileType ProfileType { get; set; }
         public static Tbl_Profile Get_Profile(UserModel User)
         {
-            return Get_Profile(User.UserId.GetValueOrDefault());
+            return Get_Profile(User.UserId.GetValueOrDefault(), User.UserData);
         }
 
-        public static Tbl_Profile Get_Profile(int UserId)
+        public static Tbl_Profile Get_Profile(int UserId, CAPA_DATOS.Security.Security_Users user)
         {
-            Docentes? docente = new Docentes { Id_User = UserId }.Find<Docentes>();
-            Parientes? pariente = new Parientes { User_id = UserId }.Find<Parientes>();
+            Docentes? docente = new Docentes { Id_User = UserId }.SimpleFind<Docentes>();
+            Parientes? pariente = new Parientes { Id_User = UserId }.SimpleFind<Parientes>();
 
             return new Tbl_Profile
             {
-                ProfileType = docente != null ? ProfileType.DOCENTE : ProfileType.PARIENTE,
-                Nombres = docente != null ? docente.Nombre_completo : (pariente?.Nombre_completo),
-                Foto = docente == null && docente == null ? null
-                    : (docente != null ? $"/Media/Images/maestros/{docente.Id}/{docente.Foto}"
-                        : $"/Media/Images/parientes/{pariente?.Id}/{pariente?.Foto}")
+                ProfileType = docente != null ? ProfileType.DOCENTE : (pariente != null ? ProfileType.PARIENTE : ProfileType.USER),
+                Nombres = docente != null ? docente.Nombre_completo : pariente?.Nombre_completo ?? user.Nombres,
+                Foto = GetAvatar(docente, pariente)
             };
+        }
+
+        private static string GetAvatar(Docentes? docente, Parientes? pariente)
+        {
+            return docente == null && pariente == null
+            ? "/media/img/avatar.png"
+            : ( docente != null 
+                ? $"/Media/Images/maestros/{docente.Id}/{docente.Foto}"
+                : $"/Media/Images/parientes/{pariente?.Id}/{pariente?.Foto}" );
         }
     }
 
 
     public enum ProfileType
     {
-        DOCENTE, ESTUDIANTE, PARIENTE
+        DOCENTE, ESTUDIANTE, PARIENTE,
+        USER
     }
 }
