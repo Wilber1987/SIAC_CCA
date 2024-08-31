@@ -12,6 +12,7 @@ namespace DataBaseModel
 	{
 		[PrimaryKey(Identity = true)]
 		public int? Id { get; set; }
+		public int? Idtestudiante { get; set; }
 		public string? Primer_nombre { get; set; }
 		public string? Segundo_nombre { get; set; }
 		public string? Primer_apellido { get; set; }
@@ -33,13 +34,50 @@ namespace DataBaseModel
 		public string? Padecimientos { get; set; }
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
+		public int? Id_familia { get; set; }
+
+		/***new properties **/
+		public int? Periodo { get; set; }
+		public DateTime? Fecha_ingreso { get; set; }
+		public int? Id_pais { get; set; }
+		public int? Id_sociedad { get; set; }
+		public int? Id_region { get; set; }
+		public string? Solvencia { get; set; }
+		public Double? Saldomd { get; set; }
+		public string? Estatus { get; set; }
+		public bool? Retenido { get; set; }
+		public string? Referencia_estatus { get; set; }
+		public string? Usuario_grabacion { get; set; }
+		public string? Usuario_modificacion { get; set; }
+		public string? Id_old { get; set; }
+		public int? Id_cliente { get; set; }
+		public string? Codigomed { get; set; }
+		public int? Ump { get; set; }
+		public int? Uep { get; set; }
+		public string? Colegio { get; set; }
+		public string? Vivecon { get; set; }
+		public string? Sacramento { get; set; }
+		public int? Aniosacra { get; set; }
+		public DateTime? Fecha_aceptacion { get; set; }
+		public string? Usuario_aceptacion { get; set; }
+		public bool? Aceptacion { get; set; }
+		public int? Periodo_aceptacion { get; set; }
+		public DateTime? Fechaun { get; set; }
+		public string? Motivo { get; set; }
+		public string? Comentario { get; set; }
+		public DateTime? Fecharetencion { get; set; }
+		public Double? Saldoeamd { get; set; }
+		/***new properties **/
+
 		public bool? Activo { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 
 		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
-		//[OneToMany(TableName = "Responsables", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Responsables>? Responsables { get; set; }
+
+		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		//public List<Estudiante_Clases_View>? Clases { get; set; }
@@ -55,10 +93,10 @@ namespace DataBaseModel
 			{
 				UserModel user = AuthNetCore.User(identity);
 				Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
-				if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
-				{
-					return GetFullEstudiante();
-				}
+				/*if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
+				{*/
+				if (true) { return GetFullEstudiante(); }
+				//}
 				else
 				{
 					throw new Exception("Estudiante no esta asignado a este usuario");
@@ -75,9 +113,9 @@ namespace DataBaseModel
 				/*var ClasesF = new Estudiante_Clases_View { 
 					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
 				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);*/
-				
-				estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
-					.Get<Responsables>();
+
+				/*estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
+					.Get<Responsables>();*/
 				return estudiante;
 			}
 			else

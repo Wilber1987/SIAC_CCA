@@ -4,6 +4,9 @@ using CAPA_DATOS;
 using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 
+using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio de nombres
+using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
+
 //coneccion wilber
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
@@ -22,13 +25,13 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA")
 
 
 // Migraciones
-/*new MigrateEstudiantes().Migrate();
-new MigrateDocentes().Migrate();
+//new MigrateEstudiantes().Migrate();
+/*new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
-new MigrateNotas().Migrate();
 new MigrateNotas().Migrate();*/
+// new MigrateNotas().Migrate();*/
 
-//new MigrateParientes.Migrate();
+//new MigrateParientes().Migrate();//no utilizable
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +48,9 @@ builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromMinutes(40);
 });
-//CRONJOB
+
+builder.Services.AddSingleton<WhatsAppService>(); // Aquí se registra el servicio
+												  //CRONJOB
 
 builder.Services.AddCronJob<DailyCronJob>(options =>
 {
