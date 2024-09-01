@@ -256,28 +256,7 @@ namespace API.Controllers {
        [AuthController(Permissions.ADMIN_ACCESS)]
        public object? updatePeriodo_lectivos(Periodo_lectivos inst) {
            return inst.Update();
-       }
-       //Responsables
-       [HttpPost]
-       [AuthController]
-       public List<Responsables> getResponsables(Responsables Inst) {
-           return Inst.Where<Responsables>(FilterData.Limit(30));
-       }
-       [HttpPost]
-       [AuthController]
-       public Responsables? findResponsables(Responsables Inst) {
-           return Inst.Find<Responsables>();
-       }
-       [HttpPost]
-       [AuthController(Permissions.ADMIN_ACCESS)]
-       public object? saveResponsables(Responsables inst) {
-           return inst.Save();
-       }
-       [HttpPost]
-       [AuthController(Permissions.ADMIN_ACCESS)]
-       public object? updateResponsables(Responsables inst) {
-           return inst.Update();
-       }
+       }       
        //Secciones
        [HttpPost]
        [AuthController]

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 public class TwilioSettings
 {
-    public string AccountSid { get; set; }
-    public string AuthToken { get; set; }
-    public string FromWhatsAppNumber { get; set; }
+    public string? AccountSid { get; set; }
+    public string? AuthToken { get; set; }
+    public string? FromWhatsAppNumber { get; set; }
 }
