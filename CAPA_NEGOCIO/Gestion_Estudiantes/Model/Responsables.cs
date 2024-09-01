@@ -6,16 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 namespace DataBaseModel {
    public class Responsables : EntityClass {
-       [PrimaryKey(Identity = true)]
-       public int? Id { get; set; }
-       public int? Estudiante_id { get; set; }
-       public int? Pariente_id { get; set; }
-       public DateTime? Created_at { get; set; }
-       public DateTime? Updated_at { get; set; }
-       public string? Parentesco { get; set; }
-       [ManyToOne(TableName = "Estudiantes", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-       public Estudiantes? Estudiantes { get; set; }
-       [ManyToOne(TableName = "Parientes", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-       public Parientes? Parientes { get; set; }
+       public required string Mensaje { get; set; }
+       public string? MediaURL { get; set; }
+       public required string ParamType { get; set; }
+       public bool? EsResponsable { get; set; }
+       public List<int>? Padres { get; set; }
+       public List<int>? Niveles { get; set; }
+       public List<int>? Clases { get; set; }
+       public List<int>? Secciones { get; set; }
    }
+
+
+    /*
+        NIVEL => PRIMARIA, SECUNDARIA, PREESCOLAR
+        CLASE => 1, 2, 3 (PRIMERO,SEGUNDO,TERCERO)
+        SECCION => A,B,C
+    */
+    public enum ParamType
+   {
+        NIVEL, CLASE, SECCION, PADRES  
+   }
+
+
 }

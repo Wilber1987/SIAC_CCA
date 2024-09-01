@@ -170,11 +170,7 @@
    at System.Data.SqlClient.SqlInternalTransaction.Commit()
    at System.Data.SqlClient.SqlTransaction.Commit()
    at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
-<<<<<<< HEAD
-[8/29/2024 9:20:10 PM] Error committing transaction: The transaction operation cannot be performed because there are pending requests working on this transaction.
-=======
 [30/08/2024 11:42:33] Error committing transaction: No se puede realizar la operación de la transacción porque hay otras solicitudes pendientes en ejecución en esta transacción.
->>>>>>> 8fd5746839ab08dd7dd5c1db967be55c5ccab90f
    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
    at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
    at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
@@ -185,74 +181,6 @@
    at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransaction(TransactionRequest transactionRequest, String name, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
    at System.Data.SqlClient.SqlInternalTransaction.Commit()
    at System.Data.SqlClient.SqlTransaction.Commit()
-<<<<<<< HEAD
-   at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
-[8/29/2024 9:21:42 PM] Error committing transaction: The transaction operation cannot be performed because there are pending requests working on this transaction.
-   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
-   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
-   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
-   at System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransactionYukon(TransactionRequest transactionRequest, String transactionName, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalTransaction.Commit()
-   at System.Data.SqlClient.SqlTransaction.Commit()
-   at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
-[8/29/2024 9:21:44 PM] ERROR: Save entity: The transaction operation cannot be performed because there are pending requests working on this transaction.
-   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
-   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
-   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
-   at System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransactionYukon(TransactionRequest transactionRequest, String transactionName, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalTransaction.Commit()
-   at System.Data.SqlClient.SqlTransaction.Commit()
-   at CAPA_DATOS.GDatosAbstract.CommitTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 111
-   at CAPA_DATOS.EntityClass.Save() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\EntityStructure\EntityClass.cs:line 178
-[8/29/2024 9:21:44 PM] Failed to log error to the database: The transaction operation cannot be performed because there are pending requests working on this transaction.
-   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
-   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
-   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
-   at System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransactionYukon(TransactionRequest transactionRequest, String transactionName, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalTransaction.Commit()
-   at System.Data.SqlClient.SqlTransaction.Commit()
-   at CAPA_DATOS.GDatosAbstract.CommitTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 111
-   at CAPA_DATOS.EntityClass.Save() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\EntityStructure\EntityClass.cs:line 178
-   at CAPA_DATOS.LoggerServices.AddMessageError(String message, Exception ex) in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\LoggerServices.cs:line 78
-[8/29/2024 9:21:44 PM] Failed to log error to the database: Unable to cast object of type 'System.Data.ProviderBase.DbConnectionClosedConnecting' to type 'System.Data.SqlClient.SqlInternalConnectionTds'.
-   at System.Data.SqlClient.SqlConnection.Open()
-   at CAPA_DATOS.GDatosAbstract.BeginTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 97
-   at CAPA_DATOS.EntityClass.Save() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\EntityStructure\EntityClass.cs:line 174
-   at CAPA_DATOS.LoggerServices.AddMessageError(String message, Exception ex) in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\LoggerServices.cs:line 78
-[8/29/2024 9:39:59 PM] Error committing transaction: The transaction operation cannot be performed because there are pending requests working on this transaction.
-   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
-   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
-   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
-   at System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransactionYukon(TransactionRequest transactionRequest, String transactionName, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransaction(TransactionRequest transactionRequest, String name, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalTransaction.Commit()
-   at System.Data.SqlClient.SqlTransaction.Commit()
-   at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
-[8/29/2024 9:40:32 PM] Error committing transaction: The transaction operation cannot be performed because there are pending requests working on this transaction.
-   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
-   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
-   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
-   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
-   at System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransactionYukon(TransactionRequest transactionRequest, String transactionName, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalConnectionTds.ExecuteTransaction(TransactionRequest transactionRequest, String name, IsolationLevel iso, SqlInternalTransaction internalTransaction, Boolean isDelegateControlRequest)
-   at System.Data.SqlClient.SqlInternalTransaction.Commit()
-   at System.Data.SqlClient.SqlTransaction.Commit()
-   at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\wilbe\repos\NETCORE\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
-=======
    at CAPA_DATOS.GDatosAbstract.CommitGlobalTransaction() in C:\Users\Alder\Documents\Colegio Centro America\Proyecto para muestra\SIAC_CCA\CAPA_DATOS\BDCore\Abstracts\GDatosAbstract.cs:line 169
 [30/08/2024 11:43:08] Failed to log error to the database: ExecuteScalar requires an open and available Connection. The connection's current state is closed.
    at System.Data.SqlClient.SqlCommand.ValidateCommand(Boolean async, String method)
@@ -265,4 +193,3 @@
    at CAPA_DATOS.BDCore.Abstracts.WDataMapper.InsertObject(EntityClass entity) in C:\Users\Alder\Documents\Colegio Centro America\Proyecto para muestra\SIAC_CCA\CAPA_DATOS\BDCore\DataMapper.cs:line 51
    at CAPA_DATOS.EntityClass.Save() in C:\Users\Alder\Documents\Colegio Centro America\Proyecto para muestra\SIAC_CCA\CAPA_DATOS\EntityStructure\EntityClass.cs:line 176
    at CAPA_DATOS.LoggerServices.AddMessageError(String message, Exception ex) in C:\Users\Alder\Documents\Colegio Centro America\Proyecto para muestra\SIAC_CCA\CAPA_DATOS\LoggerServices.cs:line 78
->>>>>>> 8fd5746839ab08dd7dd5c1db967be55c5ccab90f
