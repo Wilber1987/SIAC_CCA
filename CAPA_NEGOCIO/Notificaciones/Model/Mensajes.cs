@@ -34,32 +34,35 @@ namespace DataBaseModel
         public Security_Users? Security_Users { get; set; } */
         public List<Mensajes> GetMessage(string? identity, Conversacion inst)
         {
-            
-                try
-                {
-                    BeginGlobalTransaction();
-                    
-                    Id_conversacion = inst.Id_conversacion;
-                    filterData = inst.filterData;            
-                    var Messages = Get<Mensajes>();
-                    UserModel user = AuthNetCore.User(identity);
-                    //MyConnection?.Open();
 
-                    Messages.ForEach(m =>
-                    {
-                        if (m.IsMensajeNoLeido(user))
-                        {
-                            m.MarcarComoLeido(user);
-                        }
-                    });
-                    CommitGlobalTransaction();
-                    return Messages;
-                }
-                catch (Exception)
+            try
+            {
+                BeginGlobalTransaction();
+                if (inst.Id_conversacion == null)
                 {
-                    RollBackGlobalTransaction();
-                    throw;
+                    throw new Exception("error al recuperar la conversación");
                 }
+                Id_conversacion = inst.Id_conversacion;
+                filterData = inst.filterData;
+                var Messages = Get<Mensajes>();
+                UserModel user = AuthNetCore.User(identity);
+                //MyConnection?.Open();
+
+                Messages.ForEach(m =>
+                {
+                    if (m.IsMensajeNoLeido(user))
+                    {
+                        m.MarcarComoLeido(user);
+                    }
+                });
+                CommitGlobalTransaction();
+                return Messages;
+            }
+            catch (Exception)
+            {                
+                RollBackGlobalTransaction();
+                throw new Exception("error al recuperar la conversación");
+            }
 
         }
         public bool IsMensajeNoLeido(UserModel user)

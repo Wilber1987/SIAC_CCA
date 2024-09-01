@@ -90,7 +90,7 @@ namespace DataBaseModel
                 if (u.Conversacion != null)
                 {
                     u.Conversacion.Fecha_Ultimo_Mensaje = last;
-                    u.Conversacion.MensajesPendientes = u.Conversacion?.Mensajes
+                    u.Conversacion.MensajesPendientes = u.Conversacion?.Mensajes?
                         .SelectMany(m => m.Destinatarios ?? [])
                         .Where(r =>r.Id_User == user.UserId && r.Leido != true).ToList().Count;
                     u.Conversacion!.Mensajes = null;

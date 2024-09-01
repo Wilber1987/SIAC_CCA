@@ -83,7 +83,10 @@ class EstudiantesDetails extends HTMLElement {
         this.EstudianteSeleccionado = await Estudiante.Find();
         this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id, new EstudianteDetail(this.EstudianteSeleccionado));
     }
-    PrintAction = () => {
+    /**
+    * @param {WPrintExportToolBar} toolBar 
+    */
+    PrintAction = (toolBar) => {
         if (!this.EstudianteSeleccionado.Id) {
             this.append(ModalMessege("Seleccione un estudiante"));
             return;
@@ -98,20 +101,16 @@ class EstudiantesDetails extends HTMLElement {
             },  ObjectOptions: {
                 SaveFunction: async (object) => {
                     const body = await this.GetActa(object);
-                    //this.append(body); return;
-                    const ventimp = window.open(' ', 'popimpr');
-                    ventimp?.document.write(body.innerHTML);
-                    ventimp?.focus();
-                    setTimeout(() => {
-                        ventimp?.print();
-                        ventimp?.close();
-                    }, 100)
+                    toolBar.Print(body);                    
                     return;
                 }
             }
         }));
     };
-    ExportPdfAction = () => {
+    /**
+    * @param {WPrintExportToolBar} toolBar 
+    */
+    ExportPdfAction = (toolBar) => {
         if (!this.EstudianteSeleccionado.Id) {
             this.append(ModalMessege("Seleccione un estudiante"));
             return;
@@ -125,9 +124,8 @@ class EstudiantesDetails extends HTMLElement {
                 Estudiante_id: this.EstudianteSeleccionado.Id,               
             }, ObjectOptions: {
                 SaveFunction: async (object) => {
-                    const body = await this.GetActa(object);
-                    // @ts-ignore
-                    html2pdf().from(body).save();
+                    const body = await this.GetActa(object); 
+                    toolBar.ExportPdf(body); 
                     return;
                 }
             }

@@ -101,6 +101,9 @@ class Calificacion_Group {
     Evaluacion;
 
     /** @type {String}*/
+    EvaluacionCompleta;
+
+    /** @type {String}*/
     Tipo;
 }
 export { Calificacion_Group };

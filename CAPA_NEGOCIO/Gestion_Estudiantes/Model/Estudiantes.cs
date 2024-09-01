@@ -101,7 +101,8 @@ namespace DataBaseModel
 		public DateTime? Fecha { get; set; }
 		public int? Periodo { get; set; }
 		public int? Order { get; set; }
-	}
+        public string? EvaluacionCompleta { get;  set; }
+    }
 
 	public class Asignatura_Group
 	{

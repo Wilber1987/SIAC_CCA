@@ -90,15 +90,20 @@ class MensajesView extends HTMLElement {
     */
     async VerConversacion(conversacion, element) {
         element.querySelector(".message-pendientes")?.remove();
-        this.ContactoSeleccionado = conversacion;
 
-        const mensajes = []
+        this.ConversacionSeleccionado = conversacion;
+        if (this.ConversacionSeleccionado.Id_conversacion == null) {
+            /**@type {Conversacion} */
+            const conversacionF = await conversacion.Find();
+            this.ConversacionSeleccionado = conversacionF;
+        }
+
         const commentsContainer = new WCommentsComponent({
             Dataset: [],
             ModelObject: new Mensajes_ModelComponent(),
             User: WSecurity.UserData,
             UserIdProp: "Id_User",
-            CommentsIdentify: conversacion.Id_conversacion,
+            CommentsIdentify: this.ConversacionSeleccionado.Id_conversacion,
             CommentsIdentifyName: "Id_conversacion",
             UrlSearch: route + "/api/ApiMessageManager/getMensajes",
             UrlAdd: route + "/api/ApiMessageManager/saveMensajes",
@@ -106,7 +111,7 @@ class MensajesView extends HTMLElement {
             UseDestinatarios: false,
             UseAttach: false
         });
-        this.Manager.NavigateFunction("EstDetail_" + conversacion.Id_conversacion, commentsContainer);
+        this.Manager.NavigateFunction("EstDetail_" +  this.ConversacionSeleccionado.Id_conversacion, commentsContainer);
     }
     connectedCallback() {
         this.Interval = setInterval(async () => {
@@ -114,7 +119,7 @@ class MensajesView extends HTMLElement {
         }, 10000)
     }
     disconnectedCallback() {
-        this.Interval = null;        
+        this.Interval = null;
     }
 
     CustomStyle = css`

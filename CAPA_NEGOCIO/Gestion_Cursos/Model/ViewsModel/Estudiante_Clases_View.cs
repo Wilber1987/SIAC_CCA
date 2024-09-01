@@ -48,6 +48,7 @@ namespace DataBaseModel
             get { return $"{NumberUtility.ObtenerEnumeracion(this.Grado ?? 0)} {Nombre_nivel} - {Nombre_corto_periodo}"; }
         }
         public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
+        public string? EvaluacionCompleta { get { return $"{Nombre_nota}"; } }
         //public string? Nombre_Docente { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
         public MateriasConfig? ThisConfig
         {
@@ -64,7 +65,7 @@ namespace DataBaseModel
 		{
             if (Estudiante_id == null || Clase_id == null)
             {
-                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+                //throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
             }
             if (filterData == null)
             {

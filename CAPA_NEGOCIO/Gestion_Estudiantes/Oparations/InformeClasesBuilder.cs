@@ -41,6 +41,7 @@ namespace DataBaseModel
                         Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
                         Resultado = Calificacion.Resultado,
                         Evaluacion = Calificacion.Evaluacion ?? "",
+                        EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha
                      };
@@ -95,6 +96,7 @@ namespace DataBaseModel
                         Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
                         Resultado = Calificacion.Resultado,
                         Evaluacion = Calificacion.Evaluacion ?? "",
+                        EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha
                      };

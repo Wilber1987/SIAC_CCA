@@ -3,6 +3,7 @@ import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Asignatura_Group, Calificacion_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
 import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -180,19 +181,44 @@ class ClaseGroup extends HTMLElement {
                         ? new modelClass.constructor(detail).Details.length : 0;
                     return Math.max(max, DetailsLength);
                 }, 0);
-                return html`<div class="detail-content">${ObjectF[prop].map(element => {
-                    return isEstudiante
-                        ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
-                        : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
-                })}</div>`;
+
+                this.UpdateCalificaciones(ObjectF[prop], maxDetails);
+                return html`<div class="detail-content">                   
+                    ${ObjectF[prop].map(element => {
+                        return isEstudiante
+                            ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
+                            : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
+                    })}
+                    <span class="break-page"></span>
+                    ${this.BuildConsolidado(ObjectF[prop])}
+                </div>`;
             default:
                 return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
         }
     }
+    BuildConsolidado(Dataset) {
+        const consolidado = WArrayF.GroupBy(Dataset.flatMap(c => c.Calificaciones), "EvaluacionCompleta", "Resultado")
+        const consolidadoContainer = html`<div class="consolidado-container"></div>`;
+        consolidado.forEach(element => {
+            if (element.EvalProperty.toUpperCase().includes("EVA") || element.EvalProperty.length < 3) {
+                return;
+            }
+            consolidadoContainer.append(html`<div class="consolidado-detail">
+                <div class="eval-prop">${element.EvalProperty}</div>
+                <div class="eval-result">
+                    <div class="detail"><span class="title">Promedio: </span><span class="value-consolidado">${element.avg.toFixed(2)}</span></div>
+                    <div class="detail"><span class="title">Nota máxima: </span><span class="value-consolidado">${element.Max}</span></div>
+                    <div class="detail"><span class="title">Nota mínima: </span><span class="value-consolidado">${element.Min}</span></div>
+                </div>               
+            </div>`)
+        });
+        return consolidadoContainer;
+    }
+   
     Builddetail(modelClass, element, ObjectF, prop, maxDetails) {
-        /**@type {Asignatura_Group} */
+        ///**@type {Asignatura_Group} */
         const instance = new modelClass.constructor(element);
-        this.UpdateCalificaciones(instance, maxDetails);
+        //this.UpdateCalificaciones(instance, maxDetails);
         const index = ObjectF[prop].indexOf(element);
         return html`<div class="container">
             <div class="element-description">
@@ -212,7 +238,6 @@ class ClaseGroup extends HTMLElement {
     BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
         /**@type {Estudiante_Group} */
         const instance = new modelClass.constructor(element);
-        this.UpdateCalificaciones(instance, maxDetails);
         const index = ObjectF[prop].indexOf(element);
         return html`<div class="container">
             <div class="element-description">
@@ -228,62 +253,69 @@ class ClaseGroup extends HTMLElement {
 
 
     /**
-     * @param {Asignatura_Group|Estudiante_Group} instance
+     * @param {Array< Asignatura_Group|Estudiante_Group>} Dataset
      * @param {number} maxDetails
      */
-    UpdateCalificaciones(instance, maxDetails) {
+    UpdateCalificaciones(Dataset, maxDetails) {
         //console.log(instance.Calificaciones.length, maxDetails);  
-        if (instance.Calificaciones.length < maxDetails) {
-            let isFirstOrder = instance.Calificaciones[0].Order == 1
-            for (let index = 0; index <= (maxDetails - instance.Calificaciones.length + 1); index++) {
-                if (isFirstOrder) {
-                    instance.Calificaciones.push(new Calificacion_Group({ Evaluacion: "", Resultado: "-" }));
-                } else {
-                    instance.Calificaciones.unshift(new Calificacion_Group({ Evaluacion: "", Resultado: "-" }));
+        Dataset.forEach(instance => {
+            if (instance.Calificaciones.length < maxDetails) {
+                let isFirstOrder = instance.Calificaciones[0].Order == 1
+                for (let index = 0; index <= (maxDetails - instance.Calificaciones.length + 1); index++) {
+                    if (isFirstOrder) {
+                        instance.Calificaciones.push(new Calificacion_Group({ Evaluacion: "", Resultado: "-" }));
+                    } else {
+                        instance.Calificaciones.unshift(new Calificacion_Group({ Evaluacion: "", Resultado: "-" }));
+                    }
+                }
+                const indexF = instance.Calificaciones.findIndex(calificacion => calificacion.Evaluacion === "F");
+
+                if (indexF !== -1) {
+                    // Sacar el objeto del array
+                    const objetoF = instance.Calificaciones.splice(indexF, 1)[0];
+                    // Insertar el objeto al final del array
+                    instance.Calificaciones.push(objetoF);
                 }
             }
-            const indexF = instance.Calificaciones.findIndex(calificacion => calificacion.Evaluacion === "F");
-
-            if (indexF !== -1) {
-                // Sacar el objeto del array
-                const objetoF = instance.Calificaciones.splice(indexF, 1)[0];
-                // Insertar el objeto al final del array
-                instance.Calificaciones.push(objetoF);
-            }
-        }
-        function toRoman(num) {
-            const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-            return roman[num - 1];
-        }
-
-        const counters = {};
-        // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
-        const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
-            const letra = calificacion.Evaluacion == null
-                || calificacion.Evaluacion == ""
-                || calificacion.Evaluacion == undefined ? "E" : calificacion.Evaluacion;
-
-            // Incrementar el contador para la letra correspondiente
-            if (!counters[letra]) {
-                counters[letra] = 1;
-            } else {
-                counters[letra]++;
+            function toRoman(num) {
+                const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+                return roman[num - 1];
             }
 
-            // Actualizar la evaluación con el número romano
-            const numeroRomano = toRoman(counters[letra]);
-            if (letra.toUpperCase() != "F") {
-                calificacion.Evaluacion = `${numeroRomano}${letra}`;
-            }
-            return calificacion;
+            const counters = {};
+            // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
+            const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
+                const letra = calificacion.Evaluacion == null
+                    || calificacion.Evaluacion == ""
+                    || calificacion.Evaluacion == undefined ? "E" : calificacion.Evaluacion;
+
+                // Incrementar el contador para la letra correspondiente
+                if (!counters[letra]) {
+                    counters[letra] = 1;
+                } else {
+                    counters[letra]++;
+                }
+
+                // Actualizar la evaluación con el número romano
+                const numeroRomano = toRoman(counters[letra]);
+                if (letra.toUpperCase() != "F") {
+                    calificacion.Evaluacion = `${numeroRomano}${letra}`;
+                    calificacion.EvaluacionCompleta = `${numeroRomano} ${calificacion.EvaluacionCompleta ?? "Evaluación"}`;
+                }
+                return calificacion;
+            });
+            instance.Calificaciones = updatedCalificaciones;
         });
-        instance.Calificaciones = updatedCalificaciones;
+
+
     }
 
     buildDetail(detail, indexDetail, maxDetails, index) {
         let columStyle = detail.Order == 1
             ? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
+
         columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
+
         return html`<div class="element-detail" style="">
             <span class="header ${index == 0 ? "" : "hidden"}"><span>${detail.Evaluacion}</span></span>
             <span class="value">${detail.Resultado}</span>
@@ -363,7 +395,50 @@ class ClaseGroup extends HTMLElement {
         }
         .container:nth-of-type(even) {
             background-color: #f8f8f8;
-        }        
+        }  
+        .consolidado-container { 
+            display: grid;
+            flex-direction: column;
+            grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px;
+            & .consolidado-detail {
+                width: 100%;
+                max-width: 600px;                  
+                text-transform: uppercase;
+                display: grid;
+                grid-template-columns:  200px calc(100% - 200px);             
+                & .eval-prop {     
+                    border: solid 1px #eee;  
+                    padding: 5px 10px;         
+                }
+                & .eval-result { 
+                    display: flex;
+                    flex-direction: column;  
+                    border: solid 1px #eee;
+                    & .detail {
+                        border-bottom: solid 1px #eee; 
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;  
+                        & .title { 
+                            padding: 5px 10px;
+                        }                     
+                        & .value-consolidado {
+                            text-align: right;  
+                            padding: 5px 10px;                          
+                        }
+                    }                     
+                }                
+            }
+           
+        }
+        
+        .break-page {
+            page-break-after: always;
+        }
+            
         @media (max-width: 800px) {
             .detail-content .container, .detail-content .element-details {
                 flex-direction: column;
@@ -387,7 +462,11 @@ class ClaseGroup extends HTMLElement {
                     border: solid 1px rgb(239, 240, 242);
                 }
             }
-        }        
+            .page .hidden{                
+                display: none !important;
+            }  
+        } 
+             
      `
 }
 customElements.define('w-class-detail', ClaseGroup);

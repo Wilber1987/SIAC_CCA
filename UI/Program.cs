@@ -5,13 +5,13 @@ using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 
 //coneccion wilber
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA");
+//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA");
 
 // coneccion cesar
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);

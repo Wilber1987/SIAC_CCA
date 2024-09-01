@@ -79,28 +79,33 @@ class MateriaDetail extends HTMLElement {
     TabElements() {
         return [
             {
-                name: "Estudiantes", Inicialize: true, action: async () => {
+                name: "Estudiantes", action: async () => {
                     return await this.GetEstudiantes()
                 }
             },
             {
-                name: "Calificaciones", Inicialize: true, action: async () => {
+                name: "Calificaciones", action: async () => {
                     return await this.GetCalificaciones()
                 }
             }, {
-                name: "Evaluaciones", Inicialize: true, action: async () => {
+                name: "Evaluaciones", action: async () => {
                     return await this.GetCalificacionesCompletas()
                 }
             }
         ];
     }
     async GetCalificaciones() {
-        /**@type {Array<Estudiante_Clases_View>} */
-        const response = await new Estudiante_Clases_View({
-            Materia_id: this.Docente_Materia?.Materias?.Id,
-            Seccion_id: this.Docente_Materia?.Seccion_id
-        }).GetClaseMateriaConsolidado();
-        const classGroup = new ClaseGroup(response, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
+        if (this.Docente_Materia?.Materias?.Id == undefined) {
+            return;
+        }
+        if (!this.calificacionesResponse) {
+            /**@type {Array<Estudiante_Clases_View>} */
+            this.calificacionesResponse = await new Estudiante_Clases_View({
+                Materia_id: this.Docente_Materia?.Materias?.Id,
+                Seccion_id: this.Docente_Materia?.Seccion_id
+            }).GetClaseMateriaConsolidado();
+        }
+        const classGroup = new ClaseGroup(this.calificacionesResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
         const optionsBar = this.buildOptionsBar(classGroup);
         return html`<div style=" display: flex;
             flex-direction: column;
@@ -108,12 +113,17 @@ class MateriaDetail extends HTMLElement {
     }
 
     async GetCalificacionesCompletas() {
-        /**@type {Array<Estudiante_Clases_View>} */
-        const response = await new Estudiante_Clases_View({
-            Materia_id: this.Docente_Materia?.Materias?.Id,
-            Seccion_id: this.Docente_Materia?.Seccion_id
-        }).GetClaseMateriaCompleta();
-        const classGroup = new ClaseGroup(response, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
+        if (this.Docente_Materia?.Materias?.Id == undefined) {
+            return;
+        }
+        if (!this.calificacionesCompletasResponse) {
+            /**@type {Array<Estudiante_Clases_View>} */
+            this.calificacionesCompletasResponse = await new Estudiante_Clases_View({
+                Materia_id: this.Docente_Materia?.Materias?.Id,
+                Seccion_id: this.Docente_Materia?.Seccion_id
+            }).GetClaseMateriaCompleta();
+        }
+        const classGroup = new ClaseGroup(this.calificacionesCompletasResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
         const optionsBar = this.buildOptionsBar(classGroup);
         return html`<div style=" display: flex;
             flex-direction: column;
@@ -129,7 +139,7 @@ class MateriaDetail extends HTMLElement {
                 //this.append(body); return;
                 const ventimp = window.open(' ', 'popimpr');
                 // @ts-ignore
-                ventimp?.document.write(classGroup.shadowRoot?.innerHTML);
+                ventimp?.document.write(html`<div class="page">${classGroup.shadowRoot?.innerHTML}</div>`.innerHTML);
                 ventimp?.focus();
                 setTimeout(() => {
                     ventimp?.print();
@@ -139,19 +149,25 @@ class MateriaDetail extends HTMLElement {
             }, ExportPdfAction: () => {
                 //const body = await this.GetActa(object);
                 // @ts-ignore
-                html2pdf().from(html`<div>${classGroup.shadowRoot?.innerHTML}</div>`).save();
+                html2pdf().from(html`<div class="page">${classGroup.shadowRoot?.innerHTML}</div>`).save();
                 return;
             }
         });
     }
     async GetEstudiantes() {
-        /**@type {Array<Estudiantes>} */
-        const response = await new Estudiantes().GetEstudianBySectionClass(new Estudiante_clases({
-            Clase_id: this.Docente_Materia?.Materias?.Clase_id,
-            Seccion_id: this.Docente_Materia?.Seccion_id
-        }));
+        if (this.Docente_Materia?.Materias?.Clase_id == undefined) {
+            return;
+        }
+        if (!this.response) {
+            /**@type {Array<Estudiantes>} */
+            this.response = await new Estudiantes().GetEstudianBySectionClass(new Estudiante_clases({
+                Clase_id: this.Docente_Materia?.Materias?.Clase_id,
+                Seccion_id: this.Docente_Materia?.Seccion_id
+            }));
+        }
+
         return new WTableComponent({
-            Dataset: response.map(e => e, Estudiantes),
+            Dataset: this.response?.map(e => e, Estudiantes),
             ModelObject: new Estudiantes_ModelComponent(),
             EntityModel: new Estudiantes(),
             ImageUrlPath: routeEstudiantes,
