@@ -75,3 +75,8 @@ DROP COLUMN Id;
 
 ALTER TABLE estudiantes_responsables_familias
 ADD Id INT IDENTITY(1,1) PRIMARY KEY;
+
+
+EXEC SIAC_CCA.sys.sp_rename N'SIAC_CCA.dbo.estudiantes_responsables_familias.responsable_id' , N'pariente_id', 'COLUMN';
+EXEC SIAC_CCA.sys.sp_rename N'SIAC_CCA.dbo.estudiantes_responsables_familias.parentesco' , N'Parentesco_id', 'COLUMN';
+

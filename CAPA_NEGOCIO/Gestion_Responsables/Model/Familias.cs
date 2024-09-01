@@ -18,9 +18,7 @@ namespace DataBaseModel {
        public int? Periodo_aceptacion { get; set; }
        public DateTime? Fecha_actualizacion { get; set; }
        public DateTime? Fecha_ultima_notificacion { get; set; }
-       public int? Id_usuario { get; set; }
-       [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "Id_usuario")]
-       public Security_Users? Security_Users { get; set; }
+
        [OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Familia_id")]
        public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
    }

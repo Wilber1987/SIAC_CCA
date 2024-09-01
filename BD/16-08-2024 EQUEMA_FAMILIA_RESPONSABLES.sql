@@ -38,3 +38,4 @@ ADD id_usuario int NULL;
 
 ALTER TABLE SIAC_CCA.dbo.parientes
 ADD CONSTRAINT FK_parientes_usuario FOREIGN KEY (id_usuario) REFERENCES security.Security_Users(Id_User);
+
