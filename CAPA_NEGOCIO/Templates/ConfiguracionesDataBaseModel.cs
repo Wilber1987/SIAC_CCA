@@ -86,7 +86,10 @@ namespace DataBaseModel
 	{
 		TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL, LOGO, MEDIA_IMG_PATH,
         VERSION,
-        WATHERMARK
+        WATHERMARK,
+		TWILLIO_ACCOUNT,
+		TWILLIO_TOKEN,
+		TWILLIO_NUMBER
     }
 
 	public class Config
@@ -96,5 +99,33 @@ namespace DataBaseModel
 			return new PageConfig();
 		}
 	}
+
+	public class TwillioConfig
+	{
+		public string TWILLIO_ACCOUNT = "";
+		public string TWILLIO_TOKEN = "";
+		public string TWILLIO_NUMBER = "";	
+		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
+
+			
+		public TwillioConfig()
+		{
+			configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
+
+			TWILLIO_ACCOUNT = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_ACCOUNT.ToString()))?.Valor ?? TWILLIO_ACCOUNT;
+			TWILLIO_TOKEN = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_TOKEN.ToString()))?.Valor ?? TWILLIO_TOKEN;
+			TWILLIO_NUMBER = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_NUMBER.ToString()))?.Valor ?? TWILLIO_NUMBER;			
+
+
+		}		
+
+		public static TwillioConfig getTwillioConfig()
+		{			
+			return new TwillioConfig();
+		}
+    }
 
 }
