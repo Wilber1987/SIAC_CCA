@@ -8,6 +8,7 @@ using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using CAPA_DATOS.Security;
 using Microsoft.Identity.Client;
+using Twilio.Exceptions;
 
 
 namespace CAPA_NEGOCIO.Oparations
@@ -17,7 +18,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool Migrate()
 		{
-			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes() && MigrateParientesAndUsers() && 
+			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes() && MigrateParientesAndUsers() &&
 			 migrateEstudiantesReponsablesFamilia();
 		}
 
@@ -269,7 +270,7 @@ namespace CAPA_NEGOCIO.Oparations
 				BeginGlobalTransaction();
 				familiasMsql.ForEach(f =>
 				{
-					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", f.Id ));
+					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", f.Id));
 					var parientesFamilia = new Parientes().Where<Parientes>(FilterData.Equal("id_familia", f.Id));
 
 					foreach (var estudiante in estudiantesFamilia)
@@ -379,6 +380,18 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Fecharetencion = est.Fecharetencion;
 			existingEstudiante.Saldoeamd = est.Saldoeamd;
 			existingEstudiante.Id_familia = est.Idfamilia;
+
+			if (existingEstudiante.Foto == "" || existingEstudiante.Foto == null)
+			{
+				var estudianteSiac = new Estudiantes();
+				estudianteSiac.SetConnection(MySqlConnections.Siac);
+				var existeRelacion = new Estudiantes().Where<Estudiantes>(FilterData.Equal("codigo", existingEstudiante.Codigo)).FirstOrDefault();
+
+				if (existeRelacion != null)
+				{
+					existingEstudiante.Foto = existeRelacion.Foto;
+				}
+			}
 		}
 
 		public Security_Roles validateRolPariente()
