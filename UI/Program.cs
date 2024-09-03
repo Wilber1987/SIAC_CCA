@@ -14,7 +14,7 @@ using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
 // coneccion cesar
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
@@ -25,7 +25,7 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA")
 
 
 // Migraciones
-new MigrateEstudiantes().Migrate();
+//new MigrateEstudiantes().Migrate();
 new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();
@@ -52,15 +52,13 @@ builder.Services.AddSingleton<WhatsAppService>(); // Aquí se registra el servic
 
 //CRONJOB
 builder.Services.AddCronJob<DailyCronJob>(options =>
-{
-	// Corre cada minuto
-	//options.CronExpression = "0 0 13 1/1 * ? *";//ejecucion diaria a las 1 de la mañana
+{	
 	options.CronExpression = "0 12 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
 /***cron jobs de migracion***/
-builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
+/*builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
@@ -82,7 +80,7 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 
 var app = builder.Build();
 

@@ -22,7 +22,7 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateEscolaridad");
 
 			var escolaridad = new Escolaridades();
-		 	escolaridad.SetConnection(MySQLConnection.SQLM);
+		 	escolaridad.SetConnection(MySqlConnections.Siac);
 			var escolaridadMsql = escolaridad.Get<Escolaridades>();
 			try
 			{
@@ -62,7 +62,7 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateDocentes");
 
 			var docentes = new Docentes();
-		 	docentes.SetConnection(MySQLConnection.SQLM);
+		 	docentes.SetConnection(MySqlConnections.Siac);
 			var docentesMsql = docentes.Get<Docentes>();
 			try
 			{
