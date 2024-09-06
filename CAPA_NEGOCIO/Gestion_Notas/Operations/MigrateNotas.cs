@@ -12,14 +12,15 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
+			return migrateEvaluaciones();
+			//return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
 		}
 
 		public bool migrateTipoNotas()
 		{
 			Console.Write("-->migrateTipoNotas");
 			var tipoNotas = new Tipo_notas();
-			tipoNotas.SetConnection(MySQLConnection.SQLM);
+			tipoNotas.SetConnection(MySqlConnections.Siac);
 			var tipoNotasMsql = tipoNotas.Get<Tipo_notas>();
 			try
 			{
@@ -55,8 +56,8 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
-				RollBackGlobalTransaction();
+				//LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
+				//RollBackGlobalTransaction();
 				throw;
 			}
 
@@ -67,8 +68,11 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateCalificaciones");
 			var calificacion = new Calificaciones();
-			calificacion.SetConnection(MySQLConnection.SQLM);
-			var calificacionMsql = calificacion.Get<Calificaciones>();
+			calificacion.SetConnection(MySqlConnections.Siac);
+			//var calificacionMsql = calificacion.Get<Calificaciones>();
+			
+			var calificacionMsql = calificacion.Where<Calificaciones>(FilterData.GreaterEqual("created_at", new DateTime(2022, 01, 01)), FilterData.Limit(20));
+
 			try
 			{
 				BeginGlobalTransaction();
@@ -99,20 +103,31 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 						else if (existingCalificacion == null)
 						{
-							tn.Save();
+							/*var evaluacion = new Evaluaciones { Id = tn.Evaluacion_id }.Find<Evaluaciones>();
+							if (evaluacion != null)
+							{
+								var estudianteClase = new Estudiante_clases { Id = tn.Estudiante_clase_id }.Find<Estudiante_clases>();
+								if (estudianteClase != null)
+								{*/
+									tn.Save();
+								/*}
+							}
+							else
+							{
+								LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Evaluacion_id no existe para la calificación con ID: " + tn.Id,null);
+							}*/
 						}
 					}
 					catch (System.Data.SqlClient.SqlException sqlEx)
 					{
-						if (sqlEx.Number == 547) // 547 es el código de error para violación de restricción de clave externa
+						/*if (sqlEx.Number == 547) // 547 es el código de error para violación de restricción de clave externa
 						{
 							LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error de clave externa ignorado.", sqlEx);
 						}
 						else
 						{
 							LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error desconocido ignorado, Codigo: " + sqlEx.Number.ToString(), sqlEx);
-
-						}
+						}*/
 					}
 				});
 				CommitGlobalTransaction();
@@ -132,11 +147,20 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateEvaluaciones");
 			var Evaluacion = new Evaluaciones();
-			Evaluacion.SetConnection(MySQLConnection.SQLM);
-			var EvaluacionMsql = Evaluacion.Get<Evaluaciones>();
+			Evaluacion.SetConnection(MySqlConnections.Siac);
+			//var EvaluacionMsql = Evaluacion.Get<Evaluaciones>();
+
+			var filter = new FilterData
+				{
+					PropName = "created_at",
+					FilterType = ">=",  
+					Values = new List<string?> { "2022-01-01 00:00:00" } 
+				};
+			var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
+
 			try
 			{
-				BeginGlobalTransaction();
+				//BeginGlobalTransaction();
 				EvaluacionMsql.ForEach(evaluacion =>
 				{
 					var existingEvaluacion = new Evaluaciones()
@@ -167,12 +191,12 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 
 				});
-				CommitGlobalTransaction();
+				//CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
-				RollBackGlobalTransaction();
+				//LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
+				//RollBackGlobalTransaction();
 				throw;
 			}
 

@@ -12,19 +12,21 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			return
-				migrateNiveles() &&
+			return migrateEstudiantesClases();
+				/*migrateNiveles() &&
 				migrateSecciones() &&
 				migratePeriodosLectivos() &&
-				migrateAsignaturas() && migrateClases() && migrateMateria() && migrateEstudiantesClases() && migrateDocentesAsignaturas()
-				&& migrateDocentesMaterias();
+				migrateAsignaturas() && migrateClases() && migrateMateria()
+				 && migrateEstudiantesClases() 
+				 && migrateDocentesAsignaturas()
+				&& migrateDocentesMaterias();*/
 		}
 
 		public bool migrateNiveles()
 		{
 			Console.Write("-->migrateNiveles");
 			var nivel = new Niveles();
-			nivel.SetConnection(MySQLConnection.SQLM);
+			nivel.SetConnection(MySqlConnections.Siac);
 			var nivelsMsql = nivel.Get<Niveles>();
 			try
 			{
@@ -72,7 +74,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateSecciones");
 			var seccion = new Secciones();
-			seccion.SetConnection(MySQLConnection.SQLM);
+			seccion.SetConnection(MySqlConnections.Siac);
 			var seccionsMsql = seccion.Get<Secciones>();
 			try
 			{
@@ -115,7 +117,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migratePeriodosLectivos");
 			var periodo = new Periodo_lectivos();
-			periodo.SetConnection(MySQLConnection.SQLM);
+			periodo.SetConnection(MySqlConnections.Siac);
 			var periodosMsql = periodo.Get<Periodo_lectivos>();
 			try
 			{
@@ -159,7 +161,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateAsignaturas");
 			var asig = new Asignaturas();
-			asig.SetConnection(MySQLConnection.SQLM);
+			asig.SetConnection(MySqlConnections.Siac);
 			var asigsMsql = asig.Get<Asignaturas>();
 			try
 			{
@@ -207,7 +209,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateMateria");
 			var mat = new Materias();
-			mat.SetConnection(MySQLConnection.SQLM);
+			mat.SetConnection(MySqlConnections.Siac);
 			var matsMsql = mat.Get<Materias>();
 			try
 			{
@@ -252,7 +254,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateClases");
 			var clase = new Clases();
-			clase.SetConnection(MySQLConnection.SQLM);
+			clase.SetConnection(MySqlConnections.Siac);
 			var clasesMsql = clase.Get<Clases>();
 			try
 			{
@@ -297,14 +299,13 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateEstudiantesClases");
 			var clase = new Estudiante_clases();
-			clase.SetConnection(MySQLConnection.SQLM);
+			clase.SetConnection(MySqlConnections.Siac);
 			var clasesMsql = clase.Get<Estudiante_clases>();
 			try
 			{
 				BeginGlobalTransaction();
 				clasesMsql.ForEach(clase =>
 				{
-
 					var existingClase = new Estudiante_clases()
 					{
 						Id = clase.Id
@@ -312,6 +313,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
 					clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
+
 					if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
 					{
 						existingClase.Estudiante_id = clase.Estudiante_id;
@@ -328,7 +330,8 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 					else if (existingClase == null)
 					{
-						clase.Save();
+						// Verificar si el estudiante existe antes de guardar la clase					
+						clase.Save();						
 					}
 				});
 				CommitGlobalTransaction();
@@ -343,11 +346,12 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
+
 		public bool migrateDocentesAsignaturas()
 		{
 			Console.Write("-->migrateDocentesAsignaturas");
 			var docAsig = new Docente_asignaturas();
-			docAsig.SetConnection(MySQLConnection.SQLM);
+			docAsig.SetConnection(MySqlConnections.Siac);
 			var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
 			try
 			{
@@ -392,7 +396,7 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateDocentesMaterias");
 			var docMat = new Docente_materias();
-			docMat.SetConnection(MySQLConnection.SQLM);
+			docMat.SetConnection(MySqlConnections.Siac);
 			var docMatsMsql = docMat.Get<Docente_materias>();
 			try
 			{

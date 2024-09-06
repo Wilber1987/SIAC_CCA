@@ -320,25 +320,25 @@ namespace API.Controllers {
        public object? updateLog(CAPA_DATOS.Log inst) {
            return inst.Update();
        }
-       //Estudiantes_responsables_familias
+       //Estudiantes_responsables_familia
        [HttpPost]
        [AuthController]
-       public List<Estudiantes_responsables_familias> getEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
-           return Inst.Where<Estudiantes_responsables_familias>(FilterData.Limit(30));
+       public List<Estudiantes_responsables_familia> getEstudiantes_responsables_familia(Estudiantes_responsables_familia Inst) {
+           return Inst.Where<Estudiantes_responsables_familia>(FilterData.Limit(30));
        }
        [HttpPost]
        [AuthController]
-       public Estudiantes_responsables_familias? findEstudiantes_responsables_familias(Estudiantes_responsables_familias Inst) {
-           return Inst.Find<Estudiantes_responsables_familias>();
+       public Estudiantes_responsables_familia? findEstudiantes_responsables_familia(Estudiantes_responsables_familia Inst) {
+           return Inst.Find<Estudiantes_responsables_familia>();
        }
        [HttpPost]
        [AuthController(Permissions.ADMIN_ACCESS)]
-       public object? saveEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
+       public object? saveEstudiantes_responsables_familia(Estudiantes_responsables_familia inst) {
            return inst.Save();
        }
        [HttpPost]
        [AuthController(Permissions.ADMIN_ACCESS)]
-       public object? updateEstudiantes_responsables_familias(Estudiantes_responsables_familias inst) {
+       public object? updateEstudiantes_responsables_familia(Estudiantes_responsables_familia inst) {
            return inst.Update();
        }
        [HttpPost]

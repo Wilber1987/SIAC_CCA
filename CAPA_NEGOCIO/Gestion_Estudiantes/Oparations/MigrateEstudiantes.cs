@@ -18,7 +18,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool Migrate()
 		{
-			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes() && MigrateParientesAndUsers() &&
+			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes(MySqlConnections.Bellacom) /*&& migrateEstudiantes(MySqlConnections.Siac)*/
+			 && MigrateParientesAndUsers() &&
 			 migrateEstudiantesReponsablesFamilia();
 		}
 
@@ -70,13 +71,12 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateEstudiantes()
+		public bool migrateEstudiantes(WDataMapper? connection)
 		{
 			Console.Write("-->migrateEstudiantes");
 			var estudiante = new Tbl_aca_estudiante();
-			estudiante.SetConnection(MySqlConnections.Bellacom);
-			var EstudiantesMsql = estudiante.Get<Tbl_aca_estudiante>(
-			);
+			estudiante.SetConnection(connection);
+			var EstudiantesMsql = estudiante.Get<Tbl_aca_estudiante>();
 			try
 			{
 				BeginGlobalTransaction();
@@ -178,8 +178,8 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
-				RollBackGlobalTransaction();
+				//LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
+				//RollBackGlobalTransaction();
 				throw;
 			}
 
@@ -252,8 +252,8 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
-				RollBackGlobalTransaction();
+				//LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
+				//RollBackGlobalTransaction();
 				throw;
 			}
 			return true;
@@ -277,7 +277,7 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						foreach (var pariente in parientesFamilia)
 						{
-							var existeRelacion = new Estudiantes_responsables_familias().Where<Estudiantes_responsables_familias>(
+							var existeRelacion = new Estudiantes_responsables_familia().Where<Estudiantes_responsables_familia>(
 								FilterData.Equal("Estudiante_id", estudiante.Id),
 								FilterData.Equal("Pariente_id", pariente.Id),
 								FilterData.Equal("Familia_id", f.Id)
@@ -289,7 +289,7 @@ namespace CAPA_NEGOCIO.Oparations
 									FilterData.Equal("Id", pariente.Id_relacion_familiar)
 								).FirstOrDefault();
 
-								var nuevaRelacion = new Estudiantes_responsables_familias
+								var nuevaRelacion = new Estudiantes_responsables_familia
 								{
 									Estudiante_id = estudiante.Id,
 									Pariente_id = pariente.Id,
@@ -310,8 +310,8 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				LoggerServices.AddMessageError("ERROR: migrateEstudiantesReponsablesFamilia.", ex);
-				RollBackGlobalTransaction();
+				//LoggerServices.AddMessageError("ERROR: migrateEstudiantesReponsablesFamilia.", ex);
+				//RollBackGlobalTransaction();
 				throw;
 			}
 			return true;

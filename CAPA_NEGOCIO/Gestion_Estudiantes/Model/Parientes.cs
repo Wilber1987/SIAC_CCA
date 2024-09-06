@@ -47,21 +47,21 @@ namespace DataBaseModel
 		public int? User_id { get; set; }
 		// [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "User_id")]
 
-		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
-		public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
+		public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
 
 		#endregion
 
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
-			/*UserModel user = AuthNetCore.User(identity);
+			UserModel user = AuthNetCore.User(identity);
 			Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
-			if (pariente?.Responsables != null)
+			if (pariente?.Estudiantes_responsables_familia != null)
 			{
 				return estudiante.Where<Estudiantes>(
-					FilterData.In("Id",	pariente.Responsables?.Select(r => r.Estudiante_id).ToArray())
+					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				);
-			}*/
+			}
 			throw new Exception("No posee estudiantes asociados");
 		}
 	}

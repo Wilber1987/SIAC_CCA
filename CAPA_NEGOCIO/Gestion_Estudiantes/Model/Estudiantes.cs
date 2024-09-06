@@ -75,8 +75,8 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Estudiante_clases", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiante_clases>? Estudiante_clases { get; set; }
 
-		[OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
-		public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
+		public List<Estudiantes_responsables_familia>? Responsables { get; set; }
 
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
@@ -110,12 +110,12 @@ namespace DataBaseModel
 			var estudiante = Find<Estudiantes>();
 			if (estudiante != null)
 			{
-				/*var ClasesF = new Estudiante_Clases_View { 
+				var ClasesF = new Estudiante_Clases_View { 
 					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
-				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);*/
+				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
 
-				/*estudiante.Responsables = new Responsables { Estudiante_id = estudiante.Id }
-					.Get<Responsables>();*/
+				estudiante.Responsables = new Estudiantes_responsables_familia { Estudiante_id = estudiante.Id }
+					.Get<Estudiantes_responsables_familia>();
 				return estudiante;
 			}
 			else

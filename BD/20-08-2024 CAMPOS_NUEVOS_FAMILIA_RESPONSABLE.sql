@@ -67,16 +67,17 @@ CREATE TABLE Parentesco (
 ALTER TABLE Parientes ADD  id_relacion_familiar INT;
 
 
-ALTER TABLE estudiantes_responsables_familias
+ALTER TABLE estudiantes_responsables_familia
 DROP CONSTRAINT PK__responsa__3213E83F886C0F8F;
 
-ALTER TABLE estudiantes_responsables_familias
+ALTER TABLE estudiantes_responsables_familia
 DROP COLUMN Id;
 
-ALTER TABLE estudiantes_responsables_familias
+ALTER TABLE estudiantes_responsables_familia
 ADD Id INT IDENTITY(1,1) PRIMARY KEY;
 
 
-EXEC SIAC_CCA.sys.sp_rename N'SIAC_CCA.dbo.estudiantes_responsables_familias.responsable_id' , N'pariente_id', 'COLUMN';
-EXEC SIAC_CCA.sys.sp_rename N'SIAC_CCA.dbo.estudiantes_responsables_familias.parentesco' , N'Parentesco_id', 'COLUMN';
+EXEC sys.sp_rename N'dbo.estudiantes_responsables_familia.responsable_id' , N'pariente_id', 'COLUMN';
+EXEC sys.sp_rename N'dbo.estudiantes_responsables_familia.parentesco' , N'Parentesco_id', 'COLUMN';
 
+EXEC sp_rename 'Parientes.user_id', 'id_user', 'COLUMN';

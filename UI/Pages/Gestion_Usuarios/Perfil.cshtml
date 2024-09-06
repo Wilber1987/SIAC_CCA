@@ -13,7 +13,7 @@
         Response.Redirect("./login");
         return;
     }
-    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id", 4));
+    var pariente = new Parientes().Find<Parientes>(FilterData.Equal("Id_User", user.UserId));
     var avatar = pariente.Sexo == "Masculino" ? "avatar.png" : "avatar_fem.png";
 }
 

@@ -14,10 +14,10 @@ using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
 
 // coneccion cesar
-SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 //PostgresADOConexion.IniciarConexion("postgres", "zaxscd", "localhost", "pst", 5432);
 
@@ -27,10 +27,10 @@ SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC
 
 // Migraciones
 //new MigrateEstudiantes().Migrate();
-new MigrateDocentes().Migrate();
-new MigrateGestionCursos().Migrate();
-new MigrateNotas().Migrate();
-// new MigrateNotas().Migrate();
+//new MigrateDocentes().Migrate();
+//new MigrateGestionCursos().Migrate();
+//new MigrateNotas().Migrate();
+
 
 
 var builder = WebApplication.CreateBuilder(args);

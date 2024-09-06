@@ -2,7 +2,7 @@
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
-import { Estudiantes_responsables_familias }  from './Estudiantes_responsables_familias.js'
+import { Estudiantes_responsables_familia }  from './Estudiantes_responsables_familia.js'
 import { Security_Users }  from './Security_Users.js'
 
 class Familias extends EntityClass {
@@ -24,6 +24,6 @@ class Familias extends EntityClass {
    /**@type {Date}*/ Fecha_actualizacion;
    /**@type {String}*/ Fecha_ultima_notificacion;
    /**@type {Security_Users} ManyToOne*/ Security_Users;
-   /**@type {Array<Estudiantes_responsables_familias>} OneToMany*/ Estudiantes_responsables_familias;
+   /**@type {Array<Estudiantes_responsables_familia>} OneToMany*/ Estudiantes_responsables_familia;
 }
 export { Familias }

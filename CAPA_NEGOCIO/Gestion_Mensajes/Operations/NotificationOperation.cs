@@ -32,7 +32,7 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 //hacer consultas para obtener el telefono
                 var idsList = new List<int>();
 
-                if (request.ParamType == "RESPONSABLE") { 
+                if (request.ParamType == NotificationTypeEnum.RESPONSABLE) { 
                     foreach (var item in request.Responsables ?? [])
                     {
                         idsList.Add(item);
@@ -51,7 +51,7 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                               Media = request.MediaUrl,
                               Enviado = false,
                               Leido = false,
-                              Tipo = request.ParamType,
+                              Tipo = request.ParamType.ToString(),
                               Telefono = item.Telefono,
                               Email = item.Email
                         };

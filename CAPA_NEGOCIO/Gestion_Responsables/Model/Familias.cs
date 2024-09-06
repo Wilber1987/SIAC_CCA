@@ -19,7 +19,7 @@ namespace DataBaseModel {
        public DateTime? Fecha_actualizacion { get; set; }
        public DateTime? Fecha_ultima_notificacion { get; set; }
 
-       [OneToMany(TableName = "Estudiantes_responsables_familias", KeyColumn = "Id", ForeignKeyColumn = "Familia_id")]
-       public List<Estudiantes_responsables_familias>? Estudiantes_responsables_familias { get; set; }
+       [OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Familia_id")]
+       public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
    }
 }

@@ -10,7 +10,7 @@ using CAPA_NEGOCIO.Gestion_Mensajes.Operations;
 namespace TwilioWhatsAppDemo.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class NotificacionesMensajesController : ControllerBase
     {
         private readonly WhatsAppService _whatsAppService;
@@ -20,7 +20,7 @@ namespace TwilioWhatsAppDemo.Controllers
             _whatsAppService = whatsAppService;
         }*/
 
-        [HttpPost("saveNotification")]
+        [HttpPost]
         public object? SaveNotification(NotificationRequest request)
         {
             if (request is null)
