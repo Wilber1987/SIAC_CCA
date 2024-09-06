@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using DataBaseModel;
 
 namespace TwilioWhatsAppDemo.Services
 {
@@ -15,9 +16,12 @@ namespace TwilioWhatsAppDemo.Services
 
         public WhatsAppService(IConfiguration configuration)
         {
-            _accountSid = configuration["Twilio:AccountSid"];
-            _authToken = configuration["Twilio:AuthToken"];
-            _fromNumber = configuration["Twilio:FromWhatsAppNumber"];
+
+            var twilio = new TwillioConfig();
+            //todo tomar del metodo: var pinky = new TwillioConfig().getTwillioConfig(); piiny.TWILLIO_ACCOUNT 
+            _accountSid = twilio.TWILLIO_ACCOUNT;// configuration["Twilio:Accou-ntSid"];//todo quitar esto del archivo de configuration
+            _authToken = twilio.TWILLIO_TOKEN;// configuration["Twilio:AuthToken"];//todo quitar esto del archivo de configuration
+            _fromNumber = twilio.TWILLIO_NUMBER;// configuration["Twilio:FromWhatsAppNumber"];//todo quitar esto del archivo de configuration
 
             // Inicializa el cliente de Twilio con las credenciales
             TwilioClient.Init(_accountSid, _authToken);
