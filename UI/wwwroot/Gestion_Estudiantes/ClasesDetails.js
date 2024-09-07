@@ -342,7 +342,7 @@ class ClaseGroup extends HTMLElement {
             display: flex;
             flex: 1;
             & .element-description {
-                width: 30%;
+                width: 29%;
                 display: grid;
                 grid-template-rows: 50% 50%;
             }
@@ -403,6 +403,7 @@ class ClaseGroup extends HTMLElement {
             gap: 10px;
             margin-top: 20px;
             padding: 20px;
+            width: 90%;
             & .consolidado-detail {
                 width: 100%;
                 max-width: 600px;                  
