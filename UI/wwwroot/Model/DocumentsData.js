@@ -18,4 +18,7 @@ export class DocumentsData extends EntityClass {
     async GetBoletinDataFragments() {
         return new DocumentsData(await this.Post("ApiDocumentsData/GetBoletinDataFragments"));
     }
+    async GetDataFragments() {
+        return new DocumentsData(await this.Post("ApiDocumentsData/GetDataFragments"));
+    }
 }

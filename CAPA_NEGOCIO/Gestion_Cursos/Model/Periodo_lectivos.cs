@@ -17,6 +17,13 @@ namespace DataBaseModel {
        public DateTime? Created_at { get; set; }
        public DateTime? Updated_at { get; set; }
        public bool? Abierto { get; set; }
-       public bool? Oculto { get; set; }      
+       public bool? Oculto { get; set; } 
+       public static Periodo_lectivos? PeriodoActivo(){
+            return new Periodo_lectivos{ 
+                Nombre_corto = DateTime.Now.Year.ToString() 
+            }.Find<Periodo_lectivos>() ?? new Periodo_lectivos{ 
+                Nombre_corto = (DateTime.Now.Year - 1).ToString() 
+            }.Find<Periodo_lectivos>();
+       }   
    }
 }

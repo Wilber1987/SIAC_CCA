@@ -87,7 +87,7 @@ namespace DataBaseModel
 
 			if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES))
 			{
-				return GetFullEstudiante();
+				return GetFullEstudiante(false);
 			}
 			else if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES_PROPIOS))
 			{
@@ -105,13 +105,20 @@ namespace DataBaseModel
 			throw new Exception("No posee permisos");
 		}
 
-		public Estudiantes GetFullEstudiante()
+		public Estudiantes GetFullEstudiante(bool getFullData = true)
 		{
 			var estudiante = Find<Estudiantes>();
 			if (estudiante != null)
-			{				
+			{
 				estudiante.Responsables = new Estudiantes_responsables_familia { Estudiante_id = estudiante.Id }
 					.Get<Estudiantes_responsables_familia>();
+				if (!getFullData)
+				{
+					var PeriodoActivo = Periodo_lectivos.PeriodoActivo();
+					estudiante.Estudiante_clases =
+						estudiante.Estudiante_clases.Where(clase => clase.Periodo_lectivo_id
+						== Periodo_lectivos.PeriodoActivo()?.Id).ToList();
+				}
 				return estudiante;
 			}
 			else

@@ -329,6 +329,7 @@ class ClaseGroup extends HTMLElement {
             column-gap: 25px;
             flex-wrap: wrap;
             width: 100%;
+            position: relative;
         }    
         .detail-content { 
             display: flex;
@@ -441,6 +442,17 @@ class ClaseGroup extends HTMLElement {
         .break-page {
             page-break-after: always;
         }
+        .page {   
+            margin: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 10px !important;
+            & .prop {
+                font-size: 11px !important;
+                margin-right: 10px;
+            }
+        } 
             
         @media (max-width: 800px) {
             .detail-content .container, .detail-content .element-details {

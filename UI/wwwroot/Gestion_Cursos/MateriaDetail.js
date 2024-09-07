@@ -2,6 +2,7 @@
 
 import { ClaseGroup } from "../Gestion_Estudiantes/ClasesDetails.js";
 import { Docente_materias } from "../Model/Docente_materias.js";
+import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
 import { Estudiantes } from "../Model/Estudiantes.js";
@@ -29,8 +30,8 @@ class MateriaDetail extends HTMLElement {
     constructor(Docente_Materia) {
         super();
         this.Docente_Materia = Docente_Materia;
-        this.OptionContainer = WRender.Create({ className: "OptionContainer" });
-        this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
+        this.OptionContainer = WRender.Create({ className: "" });
+        this.TabContainer = WRender.Create({ className: "", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.append(this.CustomStyle);
         this.append(
@@ -106,7 +107,7 @@ class MateriaDetail extends HTMLElement {
             }).GetClaseMateriaConsolidado();
         }
         const classGroup = new ClaseGroup(this.calificacionesResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
-        const optionsBar = this.buildOptionsBar(classGroup);
+        const optionsBar = await this.buildOptionsBar(classGroup);
         return html`<div style=" display: flex;
             flex-direction: column;
             gap: 10px;">${optionsBar}${classGroup}</div>`;
@@ -124,7 +125,7 @@ class MateriaDetail extends HTMLElement {
             }).GetClaseMateriaCompleta();
         }
         const classGroup = new ClaseGroup(this.calificacionesCompletasResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
-        const optionsBar = this.buildOptionsBar(classGroup);
+        const optionsBar = await this.buildOptionsBar(classGroup);
         return html`<div style=" display: flex;
             flex-direction: column;
             gap: 10px;">${optionsBar}${classGroup}</div>`;
@@ -132,26 +133,31 @@ class MateriaDetail extends HTMLElement {
     /**
      * @param {ClaseGroup} classGroup
      */
-    buildOptionsBar(classGroup) {
+    async buildOptionsBar(classGroup) {
+        /**@type {DocumentsData} */
+        const documentsData = await new DocumentsData().GetDataFragments();
+        documentsData.Header.style.width = "100%";
         return new WPrintExportToolBar({
-            PrintAction: () => {
-                //const body = await this.GetActa(object);
-                //this.append(body); return;
-                const ventimp = window.open(' ', 'popimpr');
-                // @ts-ignore
-                ventimp?.document.write(html`<div class="page">${classGroup.shadowRoot?.innerHTML}</div>`.innerHTML);
-                ventimp?.focus();
-                setTimeout(() => {
-                    ventimp?.print();
-                    ventimp?.close();
-                }, 100)
+            PrintAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+                 toolBar.Print(html`<div class="page">
+                    ${documentsData.Header}   
+                    ${documentsData.WatherMark}
+                    ${classGroup.shadowRoot?.innerHTML}
+                    ${documentsData.Footer}         
+                </div>`);
                 return;
-            }, ExportPdfAction: () => {
-                //const body = await this.GetActa(object);
-                // @ts-ignore
-                html2pdf().from(html`<div class="page">${classGroup.shadowRoot?.innerHTML}</div>`).save();
+            }, ExportPdfAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+               const body = html`<div class="page" style="position:relative">
+                    ${documentsData.Header}                    
+                    ${classGroup.shadowRoot?.innerHTML}
+                    ${documentsData.WatherMark}
+                    ${documentsData.Footer}
+                </div>`
+                
+                
+                toolBar.ExportPdf(body);
                 return;
-            }
+            },
         });
     }
     async GetEstudiantes() {

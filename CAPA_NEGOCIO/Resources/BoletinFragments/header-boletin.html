@@ -1,0 +1,55 @@
+<div>
+    <style>
+        .header-table .logo,
+        .header-table .foto {
+            height: 130px !important;
+            width: 130px !important;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+        .header-table {
+            margin-bottom: 10px;
+        }
+        .second {
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .detalles-estudiantes-header {
+            display: flex;
+        } .detalles-estudiantes-header label{
+            flex: 1;
+        }
+    </style>
+    <table class="header-table first" style="width:100%;">
+        <tr>
+            <td><img class="logo" src="{{ logo }}" /></td>
+            <td style="text-align: center; font-size: 16px; font-weight: bold">
+                <div style="text-align: center;">{{ titulo }}</div>
+                <div style="text-align: center;">{{ sub-titulo }}</div>
+            </td>
+            <td style="text-align: right;"><img class="foto" src="{{ foto }}" /></td>
+        </tr>
+    </table>
+    <table class="header-table second" style="width:100%;">
+        <tr>
+            <td>
+                <div>Estudiante: {{ nombre-completo }}</div>
+                <div class="detalles-estudiantes-header">
+                    <label for="">Código: {{ codigo }}</label>
+                    <!-- <label for="">Repite: {{ repite }}</label> -->
+                    <label for="">Sexo: {{ sexo }}</label>
+                </div>
+                <!-- <div>
+                    <label for="">Nivel: {{ nivel }}</label>
+                    <label for="">Grado: {{ grado }}</label>
+                    <label for="">Sección: {{ seccion }}</label>
+                </div> -->
+            </td>
+            <td>
+                <div>Padre: {{ nombre-padre }}</div>
+                <div>Madre: {{ nombre-madre }}</div>
+                <!-- <div>Guía: {{ nombre-guia }}</div> -->
+            </td>
+        </tr>
+    </table>
+</div>

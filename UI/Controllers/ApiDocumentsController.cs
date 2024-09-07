@@ -18,5 +18,11 @@ namespace UI.Controllers
         {           
             return Inst.GetBoletinDataFragments();
         }   
+         [HttpPost]
+        [AuthController]
+        public object GetDataFragments(DocumentsData Inst)
+        {           
+            return Inst.GetDataFragments();
+        }   
     }
 }
