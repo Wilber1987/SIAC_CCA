@@ -1,8 +1,7 @@
 //@ts-check
-import { EntityClass } from "../../../WDevCore/WModules/EntityClass.js";
-import { WAjaxTools, BasicStates } from "../../../WDevCore/WModules/WComponentsTools.js";
+import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 //@ts-ignore
-import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
+import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { Familias }  from './Familias.js'
 import { Estudiantes }  from './Estudiantes.js'
 import { Parientes }  from './Parientes.js'

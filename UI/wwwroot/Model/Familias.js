@@ -1,9 +1,9 @@
 //@ts-check
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 //@ts-ignore
-import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
+import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { Estudiantes_responsables_familia }  from './Estudiantes_responsables_familia.js'
-import { Security_Users }  from './Security_Users.js'
+//import { Security_Users }  from './Security_Users.js'
 
 class Familias extends EntityClass {
    /** @param {Partial<Familias>} [props] */
@@ -23,7 +23,7 @@ class Familias extends EntityClass {
    /**@type {Number}*/ Periodo_aceptacion;
    /**@type {Date}*/ Fecha_actualizacion;
    /**@type {String}*/ Fecha_ultima_notificacion;
-   /**@type {Security_Users} ManyToOne*/ Security_Users;
+   //**@type {Security_Users} ManyToOne*/ Security_Users;
    /**@type {Array<Estudiantes_responsables_familia>} OneToMany*/ Estudiantes_responsables_familia;
 }
 export { Familias }
