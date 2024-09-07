@@ -27,7 +27,6 @@ namespace DataBaseModel
 		public string? Email { get; set; }
 		public int? Estado_civil_id { get; set; }
 		public int? Religion_id { get; set; }
-		public int? Id_User { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 		public int? Id_Titulo { get; set; }
 		public int? Id_Region { get; set; }
@@ -55,7 +54,7 @@ namespace DataBaseModel
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
 			UserModel user = AuthNetCore.User(identity);
-			Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
+			Parientes? pariente = new Parientes{User_id = user.UserId}.Find<Parientes>();
 			if (pariente?.Estudiantes_responsables_familia != null)
 			{
 				return estudiante.Where<Estudiantes>(

@@ -8,13 +8,13 @@ using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio 
 using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 
 //coneccion wilber
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
 
 // coneccion cesar
 //SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");

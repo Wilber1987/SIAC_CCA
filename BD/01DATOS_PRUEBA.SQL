@@ -6,19 +6,20 @@ VALUES(20000, 'Papa', 'Prueba', 'Prueba', 'Prueba', 'Masculino', '-', 'jinotepe'
 '8888-8888', '8888-8888', '8888-8888', 'admin@admin.net', null, null, '2000-01-01', '2000-01-01');
 
 
-INSERT INTO SIAC_CCA.dbo.responsables
-(id, estudiante_id, pariente_id, created_at, updated_at, parentesco)
-VALUES(20000, 701, 20000, '', '', 'padre');
-INSERT INTO SIAC_CCA.dbo.responsables
-(id, estudiante_id, pariente_id, created_at, updated_at, parentesco)
-VALUES(20001, 1693, 20000, '', '', 'padre');
+INSERT INTO SIAC_CCA.dbo.estudiantes_responsables_familia
+(id, estudiante_id, pariente_id, created_at, updated_at, Parentesco_id, familia_id)
+VALUES(20000,701 , 298, '2013-07-26 00:44:14.000', '2013-07-26 00:44:14.000', 1, NULL);
+INSERT INTO SIAC_CCA.dbo.estudiantes_responsables_familia
+(id, estudiante_id, pariente_id, created_at, updated_at, Parentesco_id, familia_id)
+VALUES(20001, 1693	, 298, '2013-07-26 00:44:14.000', '2013-07-26 00:44:14.000', 1, NULL);
+INSERT INTO SIAC_CCA.dbo.estudiantes_responsables_familia
+(id, estudiante_id, pariente_id, created_at, updated_at, Parentesco_id, familia_id)
+VALUES(20002,2000 , 298, '2013-07-26 00:44:14.000', '2013-07-26 00:44:14.000', 1, NULL);
+INSERT INTO SIAC_CCA.dbo.estudiantes_responsables_familia
+(id, estudiante_id, pariente_id, created_at, updated_at, Parentesco_id, familia_id)
+VALUES(20003,4000 , 298, '2013-07-26 00:44:14.000', '2013-07-26 00:44:14.000', 1, NULL);
 
-INSERT INTO SIAC_CCA.dbo.responsables
-(id, estudiante_id, pariente_id, created_at, updated_at, parentesco)
-VALUES(20002, 2000, 20000, '', '', 'padre');
-INSERT INTO SIAC_CCA.dbo.responsables
-(id, estudiante_id, pariente_id, created_at, updated_at, parentesco)
-VALUES(20003, 4000, 20000, '', '', 'padre');
+
 
 
 

@@ -18,9 +18,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public bool Migrate()
 		{
-			return MigrateParentesco() && MigrateFamilia() && migrateEstudiantes(MySqlConnections.Bellacom) /*&& migrateEstudiantes(MySqlConnections.Siac)*/
-			 && MigrateParientesAndUsers() &&
-			 migrateEstudiantesReponsablesFamilia();
+			return MigrateParentesco() 
+			&& MigrateFamilia() 
+			&& migrateEstudiantes(MySqlConnections.Bellacom) /*&& migrateEstudiantes(MySqlConnections.Siac)*/
+			&& MigrateParientesAndUsers() 
+			&& migrateEstudiantesReponsablesFamilia();
 		}
 
 		public bool MigrateParentesco()

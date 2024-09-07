@@ -29,7 +29,7 @@ namespace CAPA_NEGOCIO
         public static Tbl_Profile Get_Profile(int UserId, CAPA_DATOS.Security.Security_Users user)
         {
             Docentes? docente = new Docentes { Id_User = UserId }.SimpleFind<Docentes>();
-            Parientes? pariente = new Parientes { Id_User = UserId }.SimpleFind<Parientes>();
+            Parientes? pariente = new Parientes { User_id = UserId }.SimpleFind<Parientes>();
 
             return new Tbl_Profile
             {

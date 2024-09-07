@@ -92,11 +92,11 @@ namespace DataBaseModel
 			else if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES_PROPIOS))
 			{
 				UserModel user = AuthNetCore.User(identity);
-				Parientes? pariente = new Parientes().Find<Parientes>(FilterData.Equal("email", user.mail));
-				/*if (pariente?.Responsables?.Find(r => r.Estudiante_id == Id) != null)
-				{*/
-				if (true) { return GetFullEstudiante(); }
-				//}
+				Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
+				if (pariente?.Estudiantes_responsables_familia?.Find(r => r.Estudiante_id == Id) != null)
+				{
+					return GetFullEstudiante();
+				}
 				else
 				{
 					throw new Exception("Estudiante no esta asignado a este usuario");
@@ -109,11 +109,7 @@ namespace DataBaseModel
 		{
 			var estudiante = Find<Estudiantes>();
 			if (estudiante != null)
-			{
-				var ClasesF = new Estudiante_Clases_View { 
-					Estudiante_id = estudiante.Id }.Where<Estudiante_Clases_View>(FilterData.NotNull("Nombre_nota"));
-				estudiante.Clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
-
+			{				
 				estudiante.Responsables = new Estudiantes_responsables_familia { Estudiante_id = estudiante.Id }
 					.Get<Estudiantes_responsables_familia>();
 				return estudiante;
@@ -122,7 +118,7 @@ namespace DataBaseModel
 			{
 				throw new Exception("Estudiante no existe");
 			}
-		}		
+		}
 		public List<Clase_Group>? Clase_Group { get; set; }
 		public List<Estudiantes> UpdateOwEstudiantes(string? v)
 		{
@@ -139,8 +135,8 @@ namespace DataBaseModel
 		public DateTime? Fecha { get; set; }
 		public int? Periodo { get; set; }
 		public int? Order { get; set; }
-        public string? EvaluacionCompleta { get;  set; }
-    }
+		public string? EvaluacionCompleta { get; set; }
+	}
 
 	public class Asignatura_Group
 	{
@@ -159,13 +155,13 @@ namespace DataBaseModel
 		public string? Nivel { get; set; }
 		public string? Seccion { get; set; }
 		public List<Asignatura_Group>? Asignaturas { get; set; }
-        public List<Estudiante_Group>? Estudiantes { get; set; }
-    }
+		public List<Estudiante_Group>? Estudiantes { get; set; }
+	}
 
 	public class Estudiante_Group
-    {
-        public string? Descripcion { get; set; }
-        public List<string?>? Evaluaciones { get; set; }
-        public List<Calificacion_Group>? Calificaciones { get; set; }
-    }
+	{
+		public string? Descripcion { get; set; }
+		public List<string?>? Evaluaciones { get; set; }
+		public List<Calificacion_Group>? Calificaciones { get; set; }
+	}
 }

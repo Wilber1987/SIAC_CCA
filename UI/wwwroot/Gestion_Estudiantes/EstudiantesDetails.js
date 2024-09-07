@@ -212,6 +212,7 @@ class EstudiantesDetails extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            font-size: 10px !important;
         }   
         .prop {
             font-size: 11px !important;
