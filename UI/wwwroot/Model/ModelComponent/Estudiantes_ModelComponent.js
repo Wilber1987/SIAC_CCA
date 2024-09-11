@@ -78,6 +78,9 @@ class Asignatura_Group_ModelComponent {
     Descripcion = { type: 'text' };
 
     /** @type {ModelProperty}*/
+    Descripcion_corta = { type: 'text' };
+
+    /** @type {ModelProperty}*/
     Docente = { type: 'text' };
 
     /** @type {ModelProperty}*/
@@ -103,6 +106,11 @@ class Estudiante_Group_ModelComponent {
 
     /** @type {ModelProperty}*/
     Calificaciones = { type: 'MasterDetail', ModelObject: () => new Calificacion_Group_ModelComponent() };
+
+    /** @type {ModelProperty}*/
+    Asignaturas = { type: 'MasterDetail', ModelObject: () => new Asignatura_Group_ModelComponent() };
+
+
     get Details() { return this.Calificaciones }
 }
 export { Estudiante_Group_ModelComponent };

@@ -52,5 +52,12 @@ namespace UI.Controllers
 		{
 			return Inst.GetClaseMateriaCompleta();
 		}
+
+        [HttpPost]
+		[AuthController(Permissions.GESTION_CLASES)]
+		public List<Clase_Group>? GetClasesCompleta(Estudiante_Clases_View Inst)
+		{
+			return Inst.GetClaseCompleta();
+		}
     }
 }

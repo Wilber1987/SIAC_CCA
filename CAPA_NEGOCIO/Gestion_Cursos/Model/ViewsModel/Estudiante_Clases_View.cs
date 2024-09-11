@@ -35,7 +35,7 @@ namespace DataBaseModel
         public string? Nombre_corto_nivel { get; set; }
         public string? Nombre_nivel { get; set; }
         public int? Numero_grados { get; set; }
-        public int? Inicio_grado { get; set; }       
+        public int? Inicio_grado { get; set; }
         public string? Config { get; set; }
         public MateriasConfig? MateriasConfig { get; set; }
         public int? Grado { get; set; }
@@ -43,6 +43,9 @@ namespace DataBaseModel
         public string? nombre_seccion { get; set; }
         public string? Codigo { get; set; }
         public string? Nombre_Estudiantes { get; set; }
+        public string? Sexo { get; set; }
+        public string? Estado { get; set; }
+
         public string? Descripcion
         {
             get { return $"{NumberUtility.ObtenerEnumeracion(this.Grado ?? 0)} {Nombre_nivel} - {Nombre_corto_periodo}"; }
@@ -62,7 +65,7 @@ namespace DataBaseModel
             }
         }
         public Clase_Group GetClaseEstudianteConsolidado()
-		{
+        {
             if (Estudiante_id == null || Clase_id == null)
             {
                 //throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
@@ -72,9 +75,9 @@ namespace DataBaseModel
                 filterData = [];
             }
             filterData?.Add(FilterData.NotNull("Nombre_nota"));
-			return GetConsolidado();
-		}
-		public Clase_Group GetClaseEstudianteCompleta()
+            return GetConsolidado();
+        }
+        public Clase_Group GetClaseEstudianteCompleta()
         {
             if (Estudiante_id == null || Clase_id == null)
             {
@@ -112,12 +115,28 @@ namespace DataBaseModel
             }
             return GetConsolidadoMaterias();
         }
-        
+
         private Clase_Group GetConsolidadoMaterias()
         {
             var ClasesF = Get<Estudiante_Clases_View>();
             var clase_Group = InformeClasesBuilder.BuildClaseGroupMateriaList(ClasesF);
             return clase_Group.First();
+        }
+
+        public List<Clase_Group>? GetClaseCompleta()
+        {
+            if (Nombre_corto_periodo == null || Grado == null)
+            {
+                throw new ArgumentNullException("El Nombre_corto_periodo y Grado requerido no puede ser nulo o vacío.");
+            }
+            if (filterData == null)
+            {
+                filterData = [];
+            }
+            filterData?.Add(FilterData.NotNull("Nombre_nota"));
+            var ClasesF = Get<Estudiante_Clases_View>();
+            var clase_Group = InformeClasesBuilder.BuildClaseList(ClasesF);
+            return clase_Group;
         }
     }
 

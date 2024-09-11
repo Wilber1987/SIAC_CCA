@@ -17,9 +17,13 @@ namespace DataBaseModel
         public string? Observaciones { get; set; }
         public DateTime? Created_at { get; set; }
         public DateTime? Updated_at { get; set; }
+        public string? Nombre_Grado
+        {
+            get { return $"{NumberUtility.ObtenerEnumeracion(Grado ?? 0).ToUpper()}"; }
+        }
         public string? Descripcion
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion(Grado ?? 0)} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion(Grado ?? 0).ToUpper()} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
         }
         private NivelesEnum? GetNivelName()
         {

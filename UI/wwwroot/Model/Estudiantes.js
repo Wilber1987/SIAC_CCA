@@ -3,8 +3,8 @@
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiante_clases } from './Estudiante_clases.js';
 import { Responsables } from './Responsables.js';
-class Estudiantes extends EntityClass {   
-   
+class Estudiantes extends EntityClass {
+
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
         super(props, 'GestionEstudiantes');
@@ -80,7 +80,7 @@ class Estudiantes extends EntityClass {
         const response = await this.Post("ApiGestionEstudiantes/GetEstudianBySectionClass", Estudiante_clases);
         return response.map(dato => new Estudiantes(dato))
     }
-    /**@type {String}*/ get  Fotografia(){
+    /**@type {String}*/ get Fotografia() {
         return `/${this.Id}/${this.Foto}`;
     };
 
@@ -117,6 +117,9 @@ class Asignatura_Group {
     /** @type {String}*/
     Descripcion;
 
+    /** @type {String}*/
+    Descripcion_Corta;
+
     /** @type {String[]}*/
     Evaluaciones;
 
@@ -133,16 +136,26 @@ class Estudiante_Group {
     constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
+
     }
+    /** @type {String}*/
+    Seccion;
     /** @type {String} nombre del estudiante*/
     Descripcion;
-
+    /** @type {String}*/
+    Sexo;
+    /** @type {String}*/
+    Estado;
     /** @type {String[]}*/
     Evaluaciones;
 
     /** @type {Calificacion_Group[]}*/
     Calificaciones;
+
+    /** @type {Asignatura_Group[]}*/
+    Asignaturas;
+
     get Details() { return this.Calificaciones }
 }
 export { Estudiante_Group };

@@ -2,6 +2,7 @@
 //@ts-ignore
 import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
+import { Clase_Group } from "./Estudiantes.js";
 class Estudiante_Clases_View extends EntityClass {
    /** @param {Partial<Estudiante_Clases_View>} [props] */
    constructor(props) {
@@ -61,6 +62,13 @@ class Estudiante_Clases_View extends EntityClass {
     }    
     async GetClaseMateriaCompleta() {
         return await this.GetData("ApiGestionCursos/GetClaseMateriaCompleta");
+    }
+    /**
+    * @returns {Promise<Array<Clase_Group>>}
+    */
+    async GetClasesCompleta() {
+        // @ts-ignore
+        return await this.GetData("ApiGestionCursos/GetClasesCompleta");
     }
 }
 export { Estudiante_Clases_View }

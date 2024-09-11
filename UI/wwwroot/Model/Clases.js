@@ -19,6 +19,8 @@ class Clases extends EntityClass {
     /**@type {Number}*/ Nivel_id;
     /**@type {Number}*/ Periodo_lectivo_id;
     /**@type {String}*/ Observaciones;
+    /**@type {String}*/ Nombre_Grado;
+    /**@type {String}*/ Descripcion;
     /**@type {Niveles} ManyToOne*/ Niveles;
     /**@type {Date}*/ Created_at;
     /**@type {Date}*/ Updated_at;

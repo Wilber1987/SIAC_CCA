@@ -137,7 +137,7 @@ namespace DataBaseModel
 	{
 		public int? Id { get; set; }
 		public double? Resultado { get; set; }
-		public required string Evaluacion { get; set; }
+		public string? Evaluacion { get; set; }
 		public string? Tipo { get; set; }
 		public DateTime? Fecha { get; set; }
 		public int? Periodo { get; set; }
@@ -151,7 +151,8 @@ namespace DataBaseModel
 		public List<string?>? Evaluaciones { get; set; }
 		public List<Calificacion_Group>? Calificaciones { get; set; }
 		public string? Docente { get; set; }
-	}
+        public string? Descripcion_Corta { get;  set; }
+    }
 
 	public class Clase_Group
 	{
@@ -170,5 +171,8 @@ namespace DataBaseModel
 		public string? Descripcion { get; set; }
 		public List<string?>? Evaluaciones { get; set; }
 		public List<Calificacion_Group>? Calificaciones { get; set; }
-	}
+        public List<Asignatura_Group>? Asignaturas { get; internal set; }
+        public string? Estado { get;  set; }
+        public string? Sexo { get;  set; }
+    }
 }
