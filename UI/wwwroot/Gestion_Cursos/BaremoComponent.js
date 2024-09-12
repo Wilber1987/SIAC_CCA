@@ -32,11 +32,16 @@ class BaremoComponent extends HTMLElement {
         const data = []
         //HEADER
         this.OptionContainer.append(html`<div class="header-container">
-            <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>
-            ${new WPrintExportToolBar({ ExportCvsAction: (tool) => this.ExportCvsAction(tool, data) })}
+            <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>          
             <div class="header-detail"><label class="detail">Nivel:</label><label  class="value">${this.Config.Clase.Niveles.Nombre}</label></div>
             <div class="header-detail"><label class="detail">Grado:</label><label  class="value">${this.Config.Clase.Nombre_Grado}</label></div>
+            ${new WPrintExportToolBar({ ExportXlsAction: (tool) => this.ExportXlsAction(tool, data) })}
         </div>`);
+        this.header = html`<div class="header-container">
+            <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>           
+            <div class="header-detail"><label class="detail">Nivel:</label><label  class="value">${this.Config.Clase.Niveles.Nombre}</label></div>
+            <div class="header-detail"><label class="detail">Grado:</label><label  class="value">${this.Config.Clase.Nombre_Grado}</label></div>
+        </div>`;
 
         //BODY
         const containerEstudiante = html`<div class="baremo-estudiante"></div>`
@@ -48,6 +53,9 @@ class BaremoComponent extends HTMLElement {
         const containerBaremo1 = html`<div class="container-baremo baremo1" style="${repeatColumns}"></div>`
         const containerBaremo2 = html`<div class="container-baremo baremo2" style="${repeatColumns}"></div>`
         const containerBaremoResult = html`<div class="container-baremo baremo-result" style="${repeatColumns}"></div>`
+        const containerBaremoConsolidado = html`<div class="container-baremo baremo-consolidado">
+            <label class="header-name">-</label>
+        </div>`
         //botones
         const btnDesplegarB1 = html`<button class="vertical-acordeon-btn" onclick="${(ev) => displayVerticalAcordeon(ev)}">Desplegar</button>`;
         const btnDesplegarB2 = html`<button class="vertical-acordeon-btn" onclick="${(ev) => displayVerticalAcordeon(ev)}">Desplegar</button>`;
@@ -61,6 +69,7 @@ class BaremoComponent extends HTMLElement {
             ${containerBaremo1}
             ${containerBaremo2}
             ${containerBaremoResult}
+            ${containerBaremoConsolidado}
         </div>`
         this.Config.Dataset?.forEach((clase_Group, groupIndex) => {
 
@@ -69,12 +78,17 @@ class BaremoComponent extends HTMLElement {
                 const headersB1 = []
                 const headersB2 = []
                 const headersBR = []
-                if (groupIndex == 0) {
-                    containerEstudiante.append(html`<label class="estudiante-header">Sección</label>`)
-                    headers.push({ value: "Sección" });
-                    headers.push({ value: "Nombre y apellidos" });
-                    headers.push({ value: "Sexo" });
-                    headers.push({ value: "Estado" });
+                if (groupIndex == 0 && estudianteIndex == 0) {
+                    containerEstudiante.append(html`<div class="estudiante-name">
+                        <label class="header-name">SECCIÓN</label>
+                        <label class="header-name">ESTUDIANTE</label>
+                        <label class="header-name">SEXO</label>
+                        <label class="header-name">ESTADO</label>
+                    </div>`)
+                    headers.push({ value: "SECCIÓN" });
+                    headers.push({ value: "ESTUDIANTE" });
+                    headers.push({ value: "SEXO" });
+                    headers.push({ value: "ESTADO" });
 
                 }
                 const row = []
@@ -106,9 +120,9 @@ class BaremoComponent extends HTMLElement {
                     const calificacion = this.GetBaremoCal(asignatura);
 
                     if (estudianteIndex == 0 && groupIndex == 0) {
-                        asignaturaColumnB1.append(html`<label class="asig-name">${asignatura.Descripcion_Corta}</label>`)
-                        asignaturaColumnB2.append(html`<label class="asig-name">${asignatura.Descripcion_Corta}</label>`)
-                        asignaturaColumnB3.append(html`<label class="asig-name">${asignatura.Descripcion_Corta}</label>`)
+                        asignaturaColumnB1.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
+                        asignaturaColumnB2.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
+                        asignaturaColumnB3.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
                         headersB1.push({ value: asignatura.Descripcion_Corta });
                         headersB2.push({ value: asignatura.Descripcion_Corta });
                         headersBR.push({ value: asignatura.Descripcion_Corta });
@@ -118,16 +132,21 @@ class BaremoComponent extends HTMLElement {
                         }
                     }
                     if (calificacion.length == 2) {
-                        const result = -2 * (calificacion[0].Resultado + (calificacion[1].Resultado / 2) - (120))
-                        asignaturaColumnB1.append(html`<label class="asig-value ${styleLabel} ${asignatura.Descripcion_Corta} ${calificacion[0].Resultado >= 60 ? "aprob" : "reprob"}">
+                        const result = -2 * (calificacion[0].Resultado + (calificacion[1].Resultado / 2) - (120));
+
+                        const style1 = calificacion[0].Resultado >= 60 ? "" : "color: red;";
+                        const style2 = calificacion[1].Resultado >= 60 ? "" : "color: red;";
+                        const styleR = result >= 60 ? "background-color: #f5caca;" : "";
+
+                        asignaturaColumnB1.append(html`<label class="asig-value ${styleLabel} ${asignatura.Descripcion_Corta}" style="${style1}">
                             ${calificacion[0].Resultado}</label>`)
-                        asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}  ${calificacion[1].Resultado >= 60 ? "aprob" : "reprob"}">
+                        asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}" style="${style2}">
                             ${calificacion[1].Resultado}</label>`)
-                        asignaturaColumnB3.append(html`<label class="asig-value br ${styleLabel} ${asignatura.Descripcion_Corta} ${result >= 60 ? "resultMayor60" : "resultMenor60"}">
+                        asignaturaColumnB3.append(html`<label class="asig-value br ${styleLabel} ${asignatura.Descripcion_Corta}" style="${styleR}">
                             ${result}</label>`)
-                        rowB1.push({ value: calificacion[0].Resultado })
-                        rowB2.push({ value: calificacion[1].Resultado })
-                        rowBR.push({ value: result })
+                        rowB1.push({ value: calificacion[0].Resultado, style: style1 })
+                        rowB2.push({ value: calificacion[1].Resultado, style: style2 })
+                        rowBR.push({ value: result, style: styleR })
                     } else if (calificacion.length == 1) {
                         asignaturaColumnB1.append(html`<label class="asig-value ${styleLabel} ${asignatura.Descripcion_Corta}">${calificacion[0].Resultado}</label>`)
                         asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}">-</label>`)
@@ -153,13 +172,15 @@ class BaremoComponent extends HTMLElement {
                     ...headersB2,
                     ...headersBR])
                 }
+                const resultConsolidadoMayor60 = rowBR.filter(x => x.value != "-" && x.value >= 60).length;
+                containerBaremoConsolidado.append(html`<label class="asig-value">${resultConsolidadoMayor60 == 0 ? "-": resultConsolidadoMayor60}</label>`)
                 data.push([...row,
                 ...rowB1,
                 ...rowB2,
                 ...rowBR])
             });
         })
-        console.log(data);
+        //console.log(data);
 
         this.append(container);
 
@@ -192,8 +213,9 @@ class BaremoComponent extends HTMLElement {
      * @param {WPrintExportToolBar} tool
      * @param {Array} data
      */
-    ExportCvsAction(tool, data) {
-        tool.exportToCsv("classReport", data)
+    ExportXlsAction(tool, data) {
+        // @ts-ignore
+        tool.exportToXls(data, this.header)
     }
 
     update() {
@@ -216,16 +238,15 @@ class BaremoComponent extends HTMLElement {
             & label.resultMayor60 {
                 background-color: #f5caca;
             }  
-            & .baremo-header {
-                border-bottom: solid 1px #999;
-            }
+            
         }  
         
         .baremo-container {
             display: grid;
-            grid-template-columns: repeat(4,auto);
+            grid-template-columns: repeat(5,auto);
             min-height: 400px;
             width: max-content;
+            border: solid 1px #999;
         } 
         .baremo-estudiante {
             display: flex;
@@ -234,8 +255,7 @@ class BaremoComponent extends HTMLElement {
         } 
         .estudiante-name {
             display: grid;
-            grid-template-columns: 30px calc(100% - 100px) 30px 30px;
-            gap: 10px;
+            grid-template-columns: 50px calc(100% - 150px) 50px 50px;
             box-sizing: border-box;
             width: auto;
             min-width: 100%;
@@ -260,10 +280,10 @@ class BaremoComponent extends HTMLElement {
            
             display: flex;
             flex-direction: column;
-            & .asig-name {
-                background-color: #005ea1;
-                color: #fff;
-            }
+        }
+        .header-name {
+            background-color: #005ea1;
+            color: #fff;
         }
      `
 }
