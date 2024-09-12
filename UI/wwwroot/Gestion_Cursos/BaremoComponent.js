@@ -13,8 +13,6 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
     * @property {Clases} Clase
 **/
 class BaremoComponent extends HTMLElement {
-
-
     /**
     * @param {BaremoComponentConfig} Config 
     */
@@ -180,14 +178,7 @@ class BaremoComponent extends HTMLElement {
                 ...rowBR])
             });
         })
-        //console.log(data);
-
         this.append(container);
-
-        // @ts-ignore
-        //const estudiantes = Object.groupBy(this.Config.Dataset?.Estudiantes, (groupData) => groupData.Descripcion)
-        //console.log(estudiantes);
-
     }
     /**
      * @param {import("../Model/Estudiantes.js").Asignatura_Group} asignatura
