@@ -21,7 +21,7 @@
                 <li class="menu-title" data-key="t-menu">Dashboard</li>
 
                 <li class="menuParentOption">
-                    <a class="" href="javascript: void(0);">
+                    <a class="/">
                         <i class="bx bx-home-alt icon nav-icon"></i>
                         <span class="menu-item" data-key="t-inicio">Inicio</span>
                     </a>
@@ -37,10 +37,6 @@
                             @if (SecurityController.HavePermission(Identify, Permissions.PERFIL_ACCESS))
                             {
                                 <li><a href="~/Gestion_Usuarios/Perfil" data-key="t-ecommerce">Mi Perfil</a></li>
-                            }
-                            @if (SecurityController.HavePermission(Identify, Permissions.PERFIL_MANAGER))
-                            {
-                                <li><a href="~/Gestion_Usuarios/Perfil" data-key="t-ecommerce">Editar</a></li>
                             }
                         </ul>
                     </li>

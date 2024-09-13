@@ -26,6 +26,9 @@ class EstudianteDetail extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.Estudiante = Estudiante;
+        this.append(
+            this.CustomStyle
+        )
         this.Draw();
     }
     Draw = async () => {
@@ -61,7 +64,10 @@ class EstudianteDetail extends HTMLElement {
     CustomStyle = css`
         .component{
            display: block;
-        }           
+        }       
+        w-view-detail{
+            text-transform: lowercase !important;
+        }    
     `
 }
 customElements.define('w-estudiante-detail', EstudianteDetail);

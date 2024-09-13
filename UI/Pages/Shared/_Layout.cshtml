@@ -7,8 +7,6 @@
         Context.Response.Redirect("/Security/Login");
     }
     var pageConfig = Config.pageConfig();
-    UserModel user = AuthNetCore.User(identify);
-    var perfil = user.UserData?.Get_Profile();
     
 }
 <!DOCTYPE html>
@@ -22,9 +20,7 @@
     <link rel="stylesheet" href="~/css/app.css">
     <link rel="stylesheet" href="~/css/site.css">
     <title>@ViewData["Title"] </title>
-
-    @*
-    <link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
+    @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
             const logout = () => {

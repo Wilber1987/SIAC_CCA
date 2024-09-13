@@ -3,7 +3,7 @@ using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS;
 using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
-
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio de nombres
 using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 
@@ -40,7 +40,30 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 		JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
-		
+
+#region CONFIGURACIONES PARA API
+builder.Services.AddControllers()
+	.AddJsonOptions(JsonOptions => JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null)// retorna los nombres reales de las propiedades
+	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false);// Desactiva la indentación
+
+builder.Services.AddResponseCompression(options =>
+{
+	options.EnableForHttps = true; // Activa la compresión también para HTTPS
+	options.Providers.Add<GzipCompressionProvider>(); // Usar Gzip
+	options.Providers.Add<BrotliCompressionProvider>(); // Usar Brotli (más eficiente)
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+	options.Level = System.IO.Compression.CompressionLevel.Fastest; // Puedes ajustar la compresión
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+	options.Level = System.IO.Compression.CompressionLevel.Fastest; // Nivel de compresión para Brotli
+});
+
+#endregion
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession(options =>
@@ -51,7 +74,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<WhatsAppService>(); // Aquí se registra el servicio
 
 
-//CRONJOB
+#region CRONJOB
 builder.Services.AddCronJob<DailyCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";
@@ -83,6 +106,8 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 	options.TimeZone = TimeZoneInfo.Local;
 });*/
 
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -96,6 +121,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseDefaultFiles();
+app.UseResponseCompression(); // Usa la compresión en la aplicación
 
 app.UseRouting();
 app.UseSession();
