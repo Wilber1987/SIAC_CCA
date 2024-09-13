@@ -20,6 +20,10 @@ namespace CAPA_NEGOCIO
     }
     public class Tbl_Profile : CAPA_DATOS.Security.Tbl_Profile
     {
+        public string? Direccion { get; set; }
+        public string? Profesion { get; set; }
+        public string? Telefono { get; set; }
+        public string? Celular { get; set; }
         public ProfileType ProfileType { get; set; }
         public static Tbl_Profile Get_Profile(UserModel User)
         {
@@ -35,7 +39,12 @@ namespace CAPA_NEGOCIO
             {
                 ProfileType = docente != null ? ProfileType.DOCENTE : (pariente != null ? ProfileType.PARIENTE : ProfileType.USER),
                 Nombres = docente != null ? docente.Nombre_completo : pariente?.Nombre_completo ?? user.Nombres,
-                Foto = GetAvatar(docente, pariente)
+                Foto = GetAvatar(docente, pariente),
+                Direccion = docente != null ? docente.Direccion : pariente?.Direccion,
+                Correo_institucional = docente != null ? docente.Email : pariente?.Email,
+                Profesion = docente != null ? docente.Escolaridades?.Nombre : pariente?.Profesion,
+                Telefono = docente != null ? docente.Telefono : pariente?.Telefono,
+                Celular = docente != null ? docente.Celular : pariente?.Celular
             };
         }
 
@@ -43,9 +52,9 @@ namespace CAPA_NEGOCIO
         {
             return docente == null && pariente == null
             ? "/media/img/avatar.png"
-            : ( docente != null 
+            : (docente != null
                 ? $"/Media/Images/maestros/{docente.Id}/{docente.Foto}"
-                : $"/Media/Images/parientes/{pariente?.Id}/{pariente?.Foto}" );
+                : $"/Media/Images/parientes/{pariente?.Id}/{pariente?.Foto}");
         }
     }
 
