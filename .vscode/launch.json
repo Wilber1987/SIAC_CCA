@@ -25,7 +25,7 @@
         "name": "Launch Edge and Debug JavaScript",
         "type": "pwa-msedge",
         "request": "launch",
-        "url": "https://localhost:10000",  // Cambia la URL si es necesario
+        "url": "https://localhost:10001",  // Cambia la URL si es necesario
         "webRoot": "${workspaceFolder}",
         "sourceMaps": true,
         "skipFiles": ["<node_internals>/**"]

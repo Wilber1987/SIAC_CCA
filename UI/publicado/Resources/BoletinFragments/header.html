@@ -1,0 +1,28 @@
+<div >
+    <style>
+        .header-table .logo 
+        {
+            height: 130px !important;
+            width: 130px !important;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+        .header-table {
+            margin-bottom: 10px;
+            width: 100%;
+        }        
+      
+    </style>
+    <table class="header-table first" style="width:100%;">
+        <tr>
+            <td><img class="logo" src="{{ logo }}" /></td>
+            <td style="text-align: center; font-size: 16px; font-weight: bold">
+                <div style="text-align: center;">{{ titulo }}</div>
+                <div style="text-align: center;">{{ sub-titulo }}</div>
+            </td>
+            <td style="text-align: right;">
+                <img class="logo" src="{{ logo }}" />
+            </td>
+        </tr>
+    </table>   
+</div>
