@@ -115,9 +115,8 @@ namespace DataBaseModel
 				if (!getFullData)
 				{
 					var PeriodoActivo = Periodo_lectivos.PeriodoActivo();
-					estudiante.Estudiante_clases =
-						estudiante.Estudiante_clases.Where(clase => clase.Periodo_lectivo_id
-						== Periodo_lectivos.PeriodoActivo()?.Id).ToList();
+					estudiante.Estudiante_clases = estudiante.Estudiante_clases;
+						//.Where(clase => clase.Periodo_lectivo_id == Periodo_lectivos.PeriodoActivo()?.Id).ToList();
 				}
 				return estudiante;
 			}

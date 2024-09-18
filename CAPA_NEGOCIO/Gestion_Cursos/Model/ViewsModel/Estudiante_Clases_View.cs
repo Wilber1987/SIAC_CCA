@@ -51,7 +51,7 @@ namespace DataBaseModel
             get { return $"{NumberUtility.ObtenerEnumeracion(this.Grado ?? 0)} {Nombre_nivel} - {Nombre_corto_periodo}"; }
         }
         public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
-        public string? EvaluacionCompleta { get { return $"{Nombre_nota}"; } }
+        public string? EvaluacionCompleta { get { return $"{Nombre_nota} {Tipo}"; } }
         //public string? Nombre_Docente { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
         public MateriasConfig? ThisConfig
         {

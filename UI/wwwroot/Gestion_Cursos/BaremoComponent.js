@@ -286,6 +286,6 @@ export { BaremoComponent }
  */
 function displayVerticalAcordeon(ev) {
     const parentNode = ev.target.parentNode;
-    ev.target.className = ev.target.className.includes("btnactive") ? "vertical-acordeon-btn" : "vertical-acordeon-btn btnactive";
+    ev.target.className = ev.target.className.includes("active-btn") ? "vertical-acordeon-btn" : "vertical-acordeon-btn active-btn";
     parentNode.style.maxWidth = parentNode.style.maxWidth.includes("150px") ? "max-content" : "150px";
 }

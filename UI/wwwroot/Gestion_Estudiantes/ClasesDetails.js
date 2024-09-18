@@ -158,13 +158,19 @@ class ClaseGroup extends HTMLElement {
         this.Config = Config ?? { ModelObject: new Clase_Group_ModelComponent() };
         //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
         const propsData = Object.keys(response)
-            .filter(prop => response[prop] != null && response[prop] != undefined)
+            .filter(prop => response[prop] != null && response[prop] != undefined && this.isDrawable(response, prop))
             .map(prop => this.BuildPropiertyDetail(response, prop))
         const dataContainer = html`<div class="data-container"></div>`
         propsData.forEach(data => {
             dataContainer.appendChild(data);
         })
         this.shadowRoot?.append(dataContainer);
+    }
+    isDrawable(response, prop) {
+        if (prop.toUpperCase() == "REPITE" || prop.toUpperCase() == "NIVEL") {
+            return false;
+        }
+        return true;
     }
     connectedCallback() { }
     BuildPropiertyDetail(ObjectF, prop) {
@@ -261,7 +267,10 @@ class ClaseGroup extends HTMLElement {
         columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
 
         return html`<div class="element-detail" style="">
-            <span class="header ${index == 0 ? "" : "hidden"}"><span>${detail.Evaluacion}</span></span>
+            <span class="header ${index == 0 ? "" : "hidden"}">
+                <span class="tooltip">${detail.EvaluacionCompleta}</span>
+                <span>${detail.Evaluacion}</span>
+            </span>
             <span class="value">${detail.Resultado}</span>
         </div>`;
     }
@@ -325,6 +334,23 @@ class ClaseGroup extends HTMLElement {
                 display: flex;
                 justify-content: center;
             }*/
+        }
+       
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 0.8rem;
+            display: none;
+            transform: translateY(100%);
+            width: 150px;
+            text-align: center;
+        }
+        
+        .header:hover .tooltip {
+            display: block;
         }
         .value {
             flex: 1;
