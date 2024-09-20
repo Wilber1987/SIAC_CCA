@@ -44,7 +44,8 @@ namespace DataBaseModel
         public string? Codigo { get; set; }
         public string? Nombre_Estudiantes { get; set; }
         public string? Sexo { get; set; }
-        public string? Estado { get; set; }
+        public string? Estado { get; set; }        
+        public string? Observaciones { get;  set; }
 
         public string? Descripcion
         {
@@ -64,11 +65,13 @@ namespace DataBaseModel
                 return MateriasConfig;
             }
         }
+
+
         public Clase_Group GetClaseEstudianteConsolidado()
         {
             if (Estudiante_id == null || Clase_id == null)
             {
-                //throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
             }
             if (filterData == null)
             {

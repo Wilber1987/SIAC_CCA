@@ -55,16 +55,18 @@ class Calificacion_Group_ModelComponent {
         }
     }
     /** @type {ModelProperty}*/
-    Resultado = { type: 'number' };;
-
-    /** @type {ModelProperty}*/
     Evaluacion = { type: 'text' };
-
+    /** @type {ModelProperty}*/
+    EvaluacionCompleta = { type: 'text' , label: "Nombre de la evaluación"};
     /** @type {ModelProperty}*/
     Tipo = { type: 'text' };
-
     /** @type {ModelProperty}*/
-    EvaluacionCompleta = { type: 'text' };
+    Resultado = { type: 'number' };
+    /** @type {ModelProperty}*/
+    Fecha = { type: 'Date' };
+    /** @type {ModelProperty}*/
+    Observaciones = { type: 'textarea' };
+   
 }
 export { Calificacion_Group_ModelComponent };
 

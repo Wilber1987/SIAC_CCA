@@ -33,7 +33,7 @@ class Estudiante_Clases_View_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Hora = { type: '' };
    /**@type {ModelProperty}*/ Fecha = { type: 'date' };
    /**@type {ModelProperty}*/ Porcentaje = { type: 'number' };
-   /**@type {ModelProperty}*/ Nombre_asifnatura = { type: 'text' };
+   /**@type {ModelProperty}*/ Nombre_asignatura = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_corto_asignatura = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_grado = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_corto_nivel = { type: 'text' };

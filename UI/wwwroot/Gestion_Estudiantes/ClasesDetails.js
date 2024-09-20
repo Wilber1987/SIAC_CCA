@@ -1,8 +1,12 @@
 //@ts-check
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Asignatura_Group, Calificacion_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
-import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { Asignatura_Group, Calificacion_Group, Clase_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Calificaciones_ModelComponent } from "../Model/ModelComponent/Calificaciones_ModelComponent.js";
+import { Calificacion_Group_ModelComponent, Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
@@ -12,6 +16,9 @@ import { CalificacionesUtil } from "./CalificacionesUtil.js";
  * @typedef {Object} Config 
     * @property {Clase_Group_ModelComponent} ModelObject
     * @property {Function} [action]
+    * @property {Estudiante_clases} [Estudiante_Clase_Seleccionado]
+    * @property {boolean} [FullEvaluation]
+    * @property {boolean} [WithoutDocente]
     * @property {Array<Estudiante_clases>} [Dataset]
 **/
 class ClasesDetails extends HTMLElement {
@@ -55,19 +62,27 @@ class ClasesDetails extends HTMLElement {
     async getClassGroup(ev, content, element) {
         // @ts-ignore
         if (!content.dataElement) {
-            const response = await new Estudiante_Clases_View({
-                Estudiante_id: element.Estudiante_id,
-                Clase_id: element.Clase_id
-            }).GetClaseEstudianteConsolidado();
-
+            let response = new Clase_Group();
+            if (this.Config.FullEvaluation != true) {
+                response = await new Estudiante_Clases_View({
+                    Estudiante_id: element.Estudiante_id,
+                    Clase_id: element.Clase_id
+                }).GetClaseEstudianteConsolidado();
+            } else {
+                response = await new Estudiante_Clases_View({
+                    Estudiante_id: element.Estudiante_id, Clase_id: element.Clase_id
+                }).GetClaseEstudianteCompleta();
+            }
+            this.Config.Estudiante_Clase_Seleccionado = element;
             const classGroup = new ClaseGroup(response, this.Config);
             // @ts-ignore
             content.dataElement = response;
             content.innerHTML = "";
             content.append(classGroup);
         }
-        ev.target.className = content.className.includes("active")
+        ev.target.className = ev.target.className.includes("active-btn")
             ? "accordion-button" : "accordion-button active-btn";
+
         content.className = content.className.includes("active")
             ? "element-content" : "element-content active";
     }
@@ -148,8 +163,13 @@ export { ClasesDetails }
 
 class ClaseGroup extends HTMLElement {
     /**
-     * @param {any[]} response
-     * @param {{ ModelObject?: Clase_Group_ModelComponent, GroupBy?: String }} Config
+     * @param {Clase_Group} response
+     * @param {{ 
+     *  ModelObject?: Clase_Group_ModelComponent, 
+     *  GroupBy?: String,
+     *  WithoutDocente?: Boolean; 
+     * Estudiante_Clase_Seleccionado?: Estudiante_clases
+     * }} Config
      */
     constructor(response, Config) {
         super();
@@ -164,6 +184,7 @@ class ClaseGroup extends HTMLElement {
         propsData.forEach(data => {
             dataContainer.appendChild(data);
         })
+        this.shadowRoot?.append(StylesControlsV2.cloneNode(true));
         this.shadowRoot?.append(dataContainer);
     }
     isDrawable(response, prop) {
@@ -192,13 +213,13 @@ class ClaseGroup extends HTMLElement {
                 CalificacionesUtil.UpdateCalificaciones(ObjectF[prop], maxDetails);
                 return html`<div class="detail-content">                   
                     ${ObjectF[prop].map(element => {
-                        return isEstudiante
-                            ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
-                            : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
-                    })}
-                    <span class="break-page"></span>
-                    ${this.BuildConsolidado(ObjectF[prop])}
+                    return isEstudiante
+                        ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
+                        : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
+                })}
+                <!-- <span class="break-page"></span>-->                    
                 </div>`;
+            //${this.BuildConsolidado(ObjectF[prop])} TODO REVISAR A POSTERIORI
             default:
                 return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
         }
@@ -221,7 +242,7 @@ class ClaseGroup extends HTMLElement {
         });
         return consolidadoContainer;
     }
-   
+
     Builddetail(modelClass, element, ObjectF, prop, maxDetails) {
         ///**@type {Asignatura_Group} */
         const instance = new modelClass.constructor(element);
@@ -231,17 +252,53 @@ class ClaseGroup extends HTMLElement {
             <div class="element-description">
                 ${index == 0 ? html`<span class="header">Asignatura</span>` : ""} 
                 <span class="value">${instance.Descripcion}</span>
+                <label class="Btn-Mini detalle-btn" onclick="${() => this.ShowDetails(element)}">Detalle</label>                
             </div>
-            <div class="element-description">
-                ${index == 0 ? html`<span class="header">Docente</span>` : ""} 
-                <span class="value">${instance.Docente ?? "--"}</span>
-            </div>
-            <div class="element-details" style=" grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
+            ${this.AddTeacherDetail(index, instance)}          
+            <div class="element-details" style="${this.Config.WithoutDocente == true ? "width: 70%;" : ""} grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
                 ${instance.Details.map((detail, indexDetail) => {
             return this.buildDetail(detail, indexDetail, maxDetails, index);
         })}</div>
         </div>`;
     }
+    /**
+     * @param {Asignatura_Group} instance
+     */
+    async ShowDetails(instance) {
+        console.log(instance);
+
+        const response = await new Estudiante_Clases_View({
+            Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
+            Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
+            Nombre_asignatura: instance.Descripcion
+        }).GetClaseEstudianteCompleta();
+        
+        const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
+        response.Asignaturas.forEach(asignatura => {
+            MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
+            MateriaDetailEvaluations.append(new WTableComponent({
+                Dataset: asignatura.Calificaciones,
+                ModelObject: new Calificacion_Group_ModelComponent(),
+                maxElementByPage: 100,
+                isActiveSorts: false,
+                CustomStyle: css`.WTable td label {
+                    text-transform: uppercase;
+                }`,
+                Options: {}
+            }))
+            document.body.append(new WModalForm({
+                title: asignatura.Descripcion,
+                ObjectModal: MateriaDetailEvaluations
+            }));
+        })
+    }
+    AddTeacherDetail(index, instance) {
+        return this.Config.WithoutDocente == true ? "" : (html`<div class="element-description">
+                ${index == 0 ? html`<span class="header">Docente</span>` : ""} 
+                <span class="value">${instance.Docente ?? "--"}</span>
+            </div>`);
+    }
+
     BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
         /**@type {Estudiante_Group} */
         const instance = new modelClass.constructor(element);
@@ -259,7 +316,7 @@ class ClaseGroup extends HTMLElement {
     }
 
 
-    
+
     buildDetail(detail, indexDetail, maxDetails, index) {
         let columStyle = detail.Order == 1
             ? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
@@ -293,6 +350,18 @@ class ClaseGroup extends HTMLElement {
             border-radius: 0.3cm;
             width: 100%;
         } 
+        .detalle-btn {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            height: 15px;
+            font-weight: 500 !important;
+            font-size: 10px !important;
+            padding: 5px 5px !important;
+            text-transform: capitalize;
+            cursor: pointer;
+        }
+        
         .container {
             display: flex;
             flex: 1;
@@ -300,6 +369,7 @@ class ClaseGroup extends HTMLElement {
                 width: 30%;
                 display: grid;
                 grid-template-rows: 50% 50%;
+                position: relative;
             }
             & .element-details {
                 display: grid;
@@ -312,6 +382,7 @@ class ClaseGroup extends HTMLElement {
                     border-right: solid 1px rgb(239, 240, 242);
                     border-left: solid 1px rgb(239, 240, 242);
                     & .value {
+                        position: relative;
                         text-align: right;
                     }
                 }
@@ -421,6 +492,9 @@ class ClaseGroup extends HTMLElement {
             & .prop {
                 font-size: 11px !important;
                 margin-right: 10px;
+            }
+            & .detalle-btn {
+                display: none  ;
             }
         } 
             

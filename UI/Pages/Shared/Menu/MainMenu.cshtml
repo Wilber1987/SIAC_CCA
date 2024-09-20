@@ -38,6 +38,10 @@
                             {
                                 <li><a href="~/Gestion_Usuarios/Perfil" data-key="t-ecommerce">Mi Perfil</a></li>
                             }
+                            @if (SecurityController.HavePermission(Identify, Permissions.ADMINISTRAR_USUARIOS))
+                            {
+                                <li><a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">Solicitudes de actualización</a></li>
+                            }
                         </ul>
                     </li>
                 }

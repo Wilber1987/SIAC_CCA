@@ -43,6 +43,7 @@ class GradosManagerView extends HTMLElement {
         const MainTable = new WTableComponent({
             ModelObject: new Clases_ModelComponent(),
             EntityModel: new Clases(),
+            isActiveSorts: false,
             Options: {
                 Filter: true,
                 AutoSetDate: false,
@@ -52,15 +53,12 @@ class GradosManagerView extends HTMLElement {
                         name: "Baremo", action: async (/** @type {Clases} */ Clases) => {
                             if (this.Manager.DomComponents.find(c => c.id == `Clase${Clases.Id}`)) {
                                 this.Manager.NavigateFunction(`Clase${Clases.Id}`);
-                            }                           
-                            const loadinModal = new LoadinModal();
-                            this.append(loadinModal);
+                            }          
                             this.claseResponse = await new Estudiante_Clases_View({
                                 Grado: Clases.Grado,
                                 Nombre_corto_periodo: Clases.Periodo_lectivos.Nombre_corto,
                                 Nombre_corto_nivel: Clases.Niveles.Nombre_corto
-                            }).GetClasesCompleta();
-                            loadinModal.close();                            
+                            }).GetClasesCompleta();                                                    
                             this.Manager.NavigateFunction(`Clase${Clases.Id}`, new BaremoComponent({ Clase: Clases ,  Dataset: this.claseResponse }));
                         }
                     }

@@ -91,12 +91,13 @@
                             </div>
                         </div>
                     </div>
-                    @if (!SecurityController.HavePermission(identify, Permissions.PERFIL_MANAGER))
+                    @if (SecurityController.HavePermission(identify, Permissions.PERFIL_MANAGER))
                     {
                         <div class="pt-2 text-center pb-4">
-                            <a href="#" class="btn btn-primary waves-effect waves-light"> Configuración de perfil
+                            <a href="#" class="btn btn-primary waves-effect waves-light" id="editBtn"> Configuración de perfil
                                 <i class="bx bx-cog ms-1 align-middle"></i></a>
                         </div>
+                        <script src="/Gestion_Perfil/EditPerfil.js"  type="module"></script>
                     }
                 </div>
             </div>

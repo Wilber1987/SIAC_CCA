@@ -54,7 +54,18 @@ class EstudianteDetail extends HTMLElement {
                         Dataset: this.Estudiante.Estudiante_clases ?? []
                     });
                 }
-            }
+            }/*,  {
+                name: "Evaluaciones",
+                NavStyle: "tab",
+                action: async (ev) => {                   
+                    return new ClasesDetails({
+                        FullEvaluation: true,
+                        WithoutDocente: true,
+                        ModelObject: new Clase_Group_ModelComponent(),
+                        Dataset: this.Estudiante.Estudiante_clases ?? []
+                    });
+                }
+            }*/
         ];
     }
 

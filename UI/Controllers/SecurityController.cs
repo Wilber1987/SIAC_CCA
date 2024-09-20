@@ -11,7 +11,7 @@ namespace API.Controllers
         public object Login(UserModel Inst)
         {
             HttpContext.Session.SetString("seassonKey", Guid.NewGuid().ToString());
-            return AuthNetCore.loginIN(Inst.mail, Inst.password, HttpContext.Session.GetString("seassonKey"));
+            return CAPA_NEGOCIO.Security_Users.Login(Inst, HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         public object LogOut()
