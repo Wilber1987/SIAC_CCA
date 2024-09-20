@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Gestion_Mensajeria;
+using CAPA_NEGOCIO.Gestion_Mensajes.Operations;
 using DataBaseModel;
 using DatabaseModelNotificaciones;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +18,19 @@ namespace UI.Controllers
 	public class ApiNotificacionesController : ControllerBase
 	{
 		[HttpPost]
-		[AuthController(Permissions.SEND_MESSAGE)]
+		[AuthController(Permissions.NOTIFICACIONES_READER)]
 		public List<Notificaciones> getNotificaciones()
 		{
-			return new Notificaciones().Get(HttpContext.Session.GetString("seassonKey"));
+			return NotificationOperation.GetNotificaciones(HttpContext.Session.GetString("seassonKey"));
 		}
+
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public ResponseService SaveNotificaciones(NotificationRequest notificationRequest)
+		{
+			return new NotificationOperation().SaveNotificacion(HttpContext.Session.GetString("seassonKey"), notificationRequest);
+		}
+        
         
 
 		
@@ -30,6 +40,7 @@ namespace UI.Controllers
         [AuthController(Permissions.SEND_MESSAGE)]
         public List<Contacto> getContactos(Contacto Inst)
         {
+			throw new NotImplementedException();
             return new Conversacion().GetContactos(HttpContext.Session.GetString("seassonKey"), Inst);
         }
 		[HttpPost]

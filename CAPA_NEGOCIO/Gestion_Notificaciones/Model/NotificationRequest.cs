@@ -15,7 +15,7 @@ namespace DataBaseModel
         public string? MediaUrl { get; set; }//creo que no se va utilizar
         public string? Mensaje { get; set; }
         public List<ModelFiles>? Files { get; set; }
-        public NotificationTypeEnum? ParamType { get; set; }
+        public NotificationTypeEnum? NotificationType { get; set; }
         public bool? EsResponsable { get; set; }
         public List<int>? Responsables { get; set; }
         public List<int>? Niveles { get; set; }

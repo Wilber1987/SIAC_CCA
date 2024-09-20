@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
-using CAPA_NEGOCIO.Notificaciones;
+using CAPA_NEGOCIO.Gestion_Mensajeria;
 using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
 

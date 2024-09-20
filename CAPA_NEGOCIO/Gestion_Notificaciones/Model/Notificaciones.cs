@@ -14,7 +14,7 @@ namespace DatabaseModelNotificaciones
     {
         [PrimaryKey(Identity = true)]
         public int? Id { get; set; }
-        public int? Id_Pariente { get; set; }
+        public int? Id_User { get; set; }
         public string? Mensaje { get; set; }
         public DateTime? Fecha { get; set; }
         public string? Media { get; set; }
@@ -22,10 +22,11 @@ namespace DatabaseModelNotificaciones
         public bool? Leido { get; set; }
         public string? Tipo { get; set; }
         public string? Telefono { get; set; }
+        public string? Estado { get; set; }
         public string? Email { get; set; }
         
     }
-
-    
-
+    public enum NotificacionesStates {
+        ACTIVA, INACTIVA, VENCIDA
+    }    
 }

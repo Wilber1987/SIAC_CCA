@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using DataBaseModel;
 using DatabaseModelNotificaciones;
-using Npgsql.Replication.PgOutput.Messages;
 
 namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
 {
     public class NotificationOperation : TransactionalClass
     {
-        
-        public object? SaveNotificacion(string identity, NotificationRequest request)
+
+        public ResponseService SaveNotificacion(string identity, NotificationRequest request)
         {
+            UserModel user = AuthNetCore.User(identity);
 
             //1- CREAR UNA TABLA EN BD PARA ALMACENAR NOTIFICACIONES (CREAR EL SCRIPT EN LA CARPETA DE LOS SQL)
             //2- IMPLEMENTAR LOGICA PARA GUARDAR NOTIFICACIONES, ARCHIVOS DE LAS NOTIFICACIONES.
@@ -27,37 +24,30 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                     file.Value = Response?.Value;
                     file.Type = Response?.Type;
                 }
-
-
                 //hacer consultas para obtener el telefono
                 var idsList = new List<int>();
-
-                if (request.ParamType == NotificationTypeEnum.RESPONSABLE) { 
+                if (request.NotificationType == NotificationTypeEnum.RESPONSABLE)
+                {
                     foreach (var item in request.Responsables ?? [])
                     {
                         idsList.Add(item);
                     }
-
                     string result = string.Join(",", idsList);
-
                     var parientesFiltrados = new Parientes().Where<Parientes>(FilterData.In("Id", (result)));
-
                     foreach (var item in parientesFiltrados)
                     {
-                       var newNotificaciones = new DatabaseModelNotificaciones.Notificaciones
+                        var newNotificaciones = new Notificaciones
                         {
-                              Id_Pariente = item.Id,
-                              Mensaje = request.Mensaje,
-                              Media = request.MediaUrl,
-                              Enviado = false,
-                              Leido = false,
-                              Tipo = request.ParamType.ToString(),
-                              Telefono = item.Telefono,
-                              Email = item.Email
+                            Id_User = item.Id,
+                            Mensaje = request.Mensaje,
+                            Media = request.MediaUrl,
+                            Enviado = false,
+                            Leido = false,
+                            Tipo = request.NotificationType.ToString(),
+                            Telefono = item.Telefono,
+                            Email = item.Email
                         };
-
                         newNotificaciones.Save();
-
                     }
                 }
 
@@ -69,7 +59,11 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 //sendWhatsapp();
 
                 //CommitGlobalTransaction();
-                return this;
+                LoggerServices.AddMessageInfo($"El usuario con id = {user.UserId} envio una notificación");
+                return new ResponseService {
+                    status = 200,
+                    message = "Notificacion enviada"
+                };
             }
             catch (System.Exception)
             {
@@ -77,19 +71,26 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 throw;
             }
         }
-    }
 
-   /* public bool enviarWhatsapp(){
-        //enviar whatsapp consultado los registros de notificaciones donde el campo enviado sea false 
-        
-        var notificacionesSinLeer = new Notificaciones().Find<Notificaciones>(FilterData.Equal("enviado", false));
-        foreach (var notificacion in notificacionesSinLeer)
+        public static List<Notificaciones> GetNotificaciones(string identity)
         {
-            //codigo para enviar whatsapp aqui
-            notificacion.Enviado = true;
-            notificacion.Update();
+            UserModel user = AuthNetCore.User(identity);
+            return new Notificaciones { Id_User = user.UserId }.Get<Notificaciones>();
         }
 
-        return true;
-    }*/
+    }
+
+    /* public bool enviarWhatsapp(){
+         //enviar whatsapp consultado los registros de notificaciones donde el campo enviado sea false 
+
+         var notificacionesSinLeer = new Notificaciones().Find<Notificaciones>(FilterData.Equal("enviado", false));
+         foreach (var notificacion in notificacionesSinLeer)
+         {
+             //codigo para enviar whatsapp aqui
+             notificacion.Enviado = true;
+             notificacion.Update();
+         }
+
+         return true;
+     }*/
 }

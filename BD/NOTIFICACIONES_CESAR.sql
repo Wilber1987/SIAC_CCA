@@ -42,11 +42,12 @@ GO
 CREATE TABLE [dbo].[notificaciones]
 (
     [Id] [int] IDENTITY(1,1) NOT NULL,
-    [Id_Pariente] [int] NULL,
+    [Id_User] [int] NULL,
     [Mensaje] [nvarchar](max) NULL,
     [Fecha] [datetime] NULL,
     [Media] [nvarchar](max) NULL,
     [Tipo] [nvarchar](50) NULL,
+    [Estado] [nvarchar](50) NULL,
     [Enviado] [bit] NULL,
     [Leido] [bit] NULL,
     [Telefono] [nvarchar](20) NULL,
