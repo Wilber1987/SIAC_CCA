@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio 
 using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "172.18.200.33", "OLIMPO");
+SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
 
 
 
