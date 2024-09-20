@@ -88,9 +88,13 @@
                         <span class="menu-item" data-key="t-mensajes">Centro de Mensajes</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
+                        @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER))
+                        {
+                            <li><a href="~/Mensajes/Notificaciones" data-key="t-ecommerce">Mensajes</a></li>
+                        }
                         @if (SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
                         {
-                            <li><a href="~/Mensajes/" data-key="t-ecommerce">Mensajes</a></li>
+                            <li><a href="~/Mensajes/NotificacionesManager" data-key="t-ecommerce">Mensajes</a></li>
                         }
                     </ul>
                 </li>

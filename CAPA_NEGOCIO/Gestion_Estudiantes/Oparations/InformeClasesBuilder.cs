@@ -99,8 +99,7 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha,
-                        Observaciones = Calificacion.Observaciones
+                        Fecha = Calificacion.Fecha
                      };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :

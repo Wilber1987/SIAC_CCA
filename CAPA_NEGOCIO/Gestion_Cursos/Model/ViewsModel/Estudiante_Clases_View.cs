@@ -67,11 +67,11 @@ namespace DataBaseModel
         }
 
 
-        public Clase_Group GetClaseEstudianteConsolidado()
+        public Clase_Group? GetClaseEstudianteConsolidado()
         {
             if (Estudiante_id == null || Clase_id == null)
             {
-                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+                throw new Exception("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
             }
             if (filterData == null)
             {
@@ -80,19 +80,20 @@ namespace DataBaseModel
             filterData?.Add(FilterData.NotNull("Nombre_nota"));
             return GetConsolidado();
         }
-        public Clase_Group GetClaseEstudianteCompleta()
+        public Clase_Group? GetClaseEstudianteCompleta()
         {
             if (Estudiante_id == null || Clase_id == null)
             {
-                throw new ArgumentNullException("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+                throw new Exception("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
             }
             return GetConsolidado();
         }
-        private Clase_Group GetConsolidado()
+        private Clase_Group? GetConsolidado()
         {
             var ClasesF = Get<Estudiante_Clases_View>();
+            if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
             var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
-            return clase_Group.First();
+            return clase_Group?.First();
         }
 
 
@@ -100,7 +101,7 @@ namespace DataBaseModel
         {
             if (Materia_id == null || Seccion_id == null)
             {
-                throw new ArgumentNullException("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
+                throw new Exception("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
             }
             if (filterData == null)
             {
@@ -114,23 +115,24 @@ namespace DataBaseModel
         {
             if (Materia_id == null || Seccion_id == null)
             {
-                throw new ArgumentNullException("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
+                throw new Exception("El Materia_id y Seccion_id requerido no puede ser nulo o vacío.");
             }
             return GetConsolidadoMaterias();
         }
 
-        private Clase_Group GetConsolidadoMaterias()
+        private Clase_Group? GetConsolidadoMaterias()
         {
             var ClasesF = Get<Estudiante_Clases_View>();
+            if (ClasesF.Count == 0) throw new Exception("Sin calificaciones para mostrar.");
             var clase_Group = InformeClasesBuilder.BuildClaseGroupMateriaList(ClasesF);
-            return clase_Group.First();
+            return clase_Group?.First();
         }
 
         public List<Clase_Group>? GetClaseCompleta()
         {
             if (Nombre_corto_periodo == null || Grado == null)
             {
-                throw new ArgumentNullException("El Nombre_corto_periodo y Grado requerido no puede ser nulo o vacío.");
+                throw new Exception("El Nombre_corto_periodo y Grado requerido no puede ser nulo o vacío.");
             }
             if (filterData == null)
             {
@@ -138,6 +140,7 @@ namespace DataBaseModel
             }
             filterData?.Add(FilterData.NotNull("Nombre_nota"));
             var ClasesF = Get<Estudiante_Clases_View>();
+             if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
             var clase_Group = InformeClasesBuilder.BuildClaseList(ClasesF);
             return clase_Group;
         }

@@ -5,16 +5,16 @@
 @{
     string? identify = HttpContext?.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
-    if (!SecurityController.HavePermission(identify, Permissions.SEND_MESSAGE))
+    if (!SecurityController.HavePermission(identify, Permissions.NOTIFICACIONES_READER))
     {
-        Response.Redirect("/");
+        Response.Redirect("./");
         return;
     }
 }
 <script type="module">
-   @* import {MensajesView} from "/Gestion_Mensajes/MensajesView.mjs";
+    import {NotificacionesView} from "/Gestion_Mensajes/NotificacionesView.mjs";
     window.onload = ()=> {
-        Main.append(new MensajesView());
-    } *@
+        Main.append(new NotificacionesView());
+    } 
 </script>
 <div id="Main"></div>

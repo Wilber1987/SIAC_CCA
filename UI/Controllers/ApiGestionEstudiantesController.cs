@@ -8,7 +8,7 @@ namespace UI.Controllers
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class ApiGestionEstudiantesController : ControllerBase
-	{		
+	{
 		[HttpPost]
 		[AuthController(Permissions.GESTION_CLASES_ASIGNADAS, Permissions.GESTION_CLASES)]
 		public List<Estudiantes> GetEstudianBySectionClass(Estudiante_clases Inst)
@@ -40,9 +40,17 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
-		public Estudiantes? findEstudiantes(Estudiantes Inst)
+		public IActionResult findEstudiantes(Estudiantes Inst)
 		{
-			return Inst.FindEstudiante(HttpContext.Session.GetString("seassonKey"));
+			try
+			{
+				return Ok(Inst.FindEstudiante(HttpContext.Session.GetString("seassonKey")));
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(403, ex.Message);				
+			}
+
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]

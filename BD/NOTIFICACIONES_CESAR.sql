@@ -37,7 +37,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
+DROP TABLE [dbo].[notificaciones]
+GO
 CREATE TABLE [dbo].[notificaciones]
 (
     [Id] [int] IDENTITY(1,1) NOT NULL,
