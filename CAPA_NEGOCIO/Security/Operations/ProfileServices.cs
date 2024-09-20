@@ -92,7 +92,7 @@ namespace CAPA_NEGOCIO.Security.Operations
             {
                 //RollBackGlobalTransaction();
                 LoggerServices.AddMessageError("Error al registrar el perfil", ex);
-                throw new Exception("Error al registrar el perfil");
+                return new ResponseService() { status = 500, message = "Error al registrar el perfil" };// throw new Exception("Error al registrar el perfil");
             }
         }
         public static List<ProfileRequest> GetProfileRequestParientes()
@@ -114,7 +114,7 @@ namespace CAPA_NEGOCIO.Security.Operations
             }
             if (!AuthNetCore.HavePermission(identity, CAPA_DATOS.Security.Permissions.ADMINISTRAR_USUARIOS))
             {
-                throw new Exception("No tiene permisos para realizar esta accion");
+               return new ResponseService { status = 403, message = "No tiene permisos para realizar esta accion" };// throw new Exception("No tiene permisos para realizar esta accion");
             }
             UserModel user = AuthNetCore.User(identity);
             var pariente = new Parientes().Find<Parientes>(
@@ -137,7 +137,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                 LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
                 return new ResponseService { status = 200, message = "solicitud actualizada" };
             }
-            throw new Exception("Solicitud no existe");
+            return new ResponseService { status = 400, message = "solicitud no existe" }; //throw new Exception("Solicitud no existe");
         }
     }
 }

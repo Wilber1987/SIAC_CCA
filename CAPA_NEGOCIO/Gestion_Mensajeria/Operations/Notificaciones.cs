@@ -7,23 +7,23 @@ using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using DataBaseModel;
 
-namespace CAPA_NEGOCIO.Notificaciones
+namespace CAPA_NEGOCIO.Gestion_Mensajeria
 {
-	public class Notificaciones
+	public class NotificacionesMensajes
 	{
 		public DateTime? Date { get; set; }
 		public string? Content { get; set; }
 		public NotificacionType? Type { get; set; }
-		public List<Notificaciones> Get(string? identity)
+		public List<NotificacionesMensajes> Get(string? identity)
 		{
 			UserModel user = AuthNetCore.User(identity);
 			var conversaciones = Conversacion.GetConversaciones(identity);
 			var mensajesNoLeidos = conversaciones.SelectMany(x => x?.Mensajes ?? [])
 			.ToList().Where(m => m.IsMensajeNoLeido(user)).ToList();
 
-			List<Notificaciones> notificaciones = [];
+			List<NotificacionesMensajes> notificaciones = [];
 
-			mensajesNoLeidos.ForEach(m => notificaciones.Add(new Notificaciones
+			mensajesNoLeidos.ForEach(m => notificaciones.Add(new NotificacionesMensajes
 			{
 				Type = NotificacionType.MENSAJE,
 				Date = m.Created_at,

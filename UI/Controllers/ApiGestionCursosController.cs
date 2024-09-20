@@ -16,9 +16,16 @@ namespace UI.Controllers
     {
         [HttpPost]
         [AuthController(Permissions.GESTION_CLASES_ASIGNADAS)]
-        public List<Materias> GetOwMaterias(Materias Inst)
+        public IActionResult GetOwMaterias(Materias Inst)
         {
-            return Materias.GetOwMaterias(HttpContext.Session.GetString("seassonKey"), Inst);
+            try
+            {
+                return Ok(Materias.GetOwMaterias(HttpContext.Session.GetString("seassonKey"), Inst));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
         }
         //Materias
         [HttpPost]
@@ -41,23 +48,44 @@ namespace UI.Controllers
             return Inst.Find<Docente_materias>();
         }
         [HttpPost]
-		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
-		public Clase_Group? GetClaseMateriaConsolidado(Estudiante_Clases_View Inst)
-		{
-			return Inst.GetClaseMateriaConsolidado();
-		}
-		[HttpPost]
-		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
-		public Clase_Group? GetClaseMateriaCompleta(Estudiante_Clases_View Inst)
-		{
-			return Inst.GetClaseMateriaCompleta();
-		}
+        [AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+        public IActionResult GetClaseMateriaConsolidado(Estudiante_Clases_View Inst)
+        {
+            try
+            {
+                return Ok(Inst.GetClaseMateriaConsolidado());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+        }
+        [HttpPost]
+        [AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS, Permissions.GESTION_ESTUDIANTES)]
+        public IActionResult GetClaseMateriaCompleta(Estudiante_Clases_View Inst)
+        {
+            try
+            {
+                return Ok(Inst.GetClaseMateriaCompleta());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+        }
 
         [HttpPost]
-		[AuthController(Permissions.GESTION_CLASES)]
-		public List<Clase_Group>? GetClasesCompleta(Estudiante_Clases_View Inst)
-		{
-			return Inst.GetClaseCompleta();
-		}
+        [AuthController(Permissions.GESTION_CLASES)]
+        public IActionResult GetClasesCompleta(Estudiante_Clases_View Inst)
+        {
+            try
+            {
+                return Ok(Inst.GetClaseCompleta());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+        }
     }
 }

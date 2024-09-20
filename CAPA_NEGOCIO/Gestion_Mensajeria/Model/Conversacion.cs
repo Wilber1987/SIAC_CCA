@@ -1,7 +1,7 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_NEGOCIO;
-using CAPA_NEGOCIO.Notificaciones;
+using CAPA_NEGOCIO.Gestion_Mensajeria;
 using System;
 using System.Collections.Generic;
 using System.Linq;

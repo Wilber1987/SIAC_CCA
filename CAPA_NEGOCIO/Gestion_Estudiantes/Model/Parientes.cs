@@ -67,7 +67,8 @@ namespace DataBaseModel
 					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				);
 			}
-			throw new Exception("No posee estudiantes asociados");
+			//throw new Exception("No posee estudiantes asociados");
+			return [];
 		}
 	}
 }

@@ -3,7 +3,7 @@ using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using DataBaseModel;
 
-namespace CAPA_NEGOCIO.Notificaciones
+namespace CAPA_NEGOCIO.Gestion_Mensajeria
 {
     public class Contacto
     {

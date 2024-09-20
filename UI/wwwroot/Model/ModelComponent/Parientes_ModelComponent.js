@@ -16,18 +16,18 @@ class Parientes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
    /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
    /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
-   /**@type {ModelProperty}*/ Sexo = { type: 'text' };
-   /**@type {ModelProperty}*/ Profesion = { type: 'text' };
+   /**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+   /**@type {ModelProperty}*/ Profesion = { type: 'text' , hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Direccion = { type: 'text' };
-   /**@type {ModelProperty}*/ Lugar_trabajo = { type: 'text' };
+   /**@type {ModelProperty}*/ Lugar_trabajo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Telefono = { type: 'text' };
    /**@type {ModelProperty}*/ Celular = { type: 'text' };
    /**@type {ModelProperty}*/ Telefono_trabajo = { type: 'text' };
    /**@type {ModelProperty}*/ Email = { type: 'text' };
-   /**@type {ModelProperty}*/ Estado_civil_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Religion_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
+   /**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+   /**@type {ModelProperty}*/ Religion_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true, hiddenFilter: true};
+   /**@type {ModelProperty}*/ Updated_at = { type: 'date',  hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail',  ModelObject: ()=> new Responsables_ModelComponent()};
 }
 export { Parientes_ModelComponent }
