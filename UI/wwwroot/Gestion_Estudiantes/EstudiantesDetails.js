@@ -134,11 +134,13 @@ class EstudiantesDetails extends HTMLElement {
 
     async GetActa(object) {
         /**@type {DocumentsData} */
-        const documentsData = await new DocumentsData().GetBoletinDataFragments();
+        const documentsData = await new DocumentsData().GetBoletinDataFragments();      
+        console.log(object);
+         
 
         const response = await new Estudiante_Clases_View({
             Estudiante_id: object.Estudiante_id,
-            Clase_id: object.Seleccione.Seleccione
+            Clase_id: object.Seleccione
         }).GetClaseEstudianteConsolidado();
         
         const body = new ClaseGroup(response, {ModelObject: new Clase_Group_ModelComponent()});

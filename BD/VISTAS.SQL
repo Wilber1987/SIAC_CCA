@@ -3,6 +3,8 @@
 -- dbo.Estudiante_Clases_View source
 
 -- dbo.Estudiante_Clases_View source
+
+-- dbo.Estudiante_Clases_View source
 /* dbo.Estudiante_Clases_View source
  dbo.Estudiante_Clases_View source*/
 alter VIEW dbo.Estudiante_Clases_View AS
@@ -46,7 +48,8 @@ SELECT ec.transferido,
     CONCAT(e2.primer_nombre , ' ',e2.segundo_nombre, ' ', e2.primer_apellido  , ' ',e2.segundo_apellido) AS Nombre_Estudiantes,
     e2.codigo, 
     e2.sexo,
-    e2.estatus as estado
+    e2.estatus as estado,
+    c2.observaciones
 from dbo.estudiante_clases ec 
 INNER JOIN dbo.estudiantes e2 on ec.estudiante_id = e2.id 
 inner join dbo.clases c   on ec.clase_id  = c.id

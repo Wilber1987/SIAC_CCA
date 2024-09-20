@@ -98,12 +98,12 @@ class BaremoComponent extends HTMLElement {
                 containerEstudiante.append(html`<div class="estudiante-name ${styleLabel}">
                     <label>${clase_Group.Seccion}</label> 
                     <label>${estudiante.Descripcion}</label> 
-                    <label>${estudiante.Sexo.toUpperCase()}</label> 
+                    <label>${estudiante.Sexo?.toUpperCase()}</label> 
                     <label>${estudiante.Estado}</label> 
                 </div>`);
                 row.push({ value: clase_Group.Seccion })
                 row.push({ value: estudiante.Descripcion })
-                row.push({ value: estudiante.Sexo.toUpperCase() })
+                row.push({ value: estudiante.Sexo?.toUpperCase() })
                 row.push({ value: estudiante.Estado })
 
                 CalificacionesUtil.UpdateCalificaciones(estudiante.Asignaturas);

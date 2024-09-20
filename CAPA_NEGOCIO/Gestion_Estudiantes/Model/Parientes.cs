@@ -1,5 +1,6 @@
 using API.Controllers;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,14 +45,19 @@ namespace DataBaseModel
 		public int? Id_familia { get; set; }	
        	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
+		
+		[JsonProp]
+		public List<ProfileRequest>? ProfileRequest { get; internal set; }
+
 		// [ManyToOne(TableName = "Security_Users", KeyColumn = "Id_User", ForeignKeyColumn = "User_id")]
 
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
 		public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
+        
+		
+        #endregion
 
-		#endregion
-
-		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
+        public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
 			UserModel user = AuthNetCore.User(identity);
 			Parientes? pariente = new Parientes{User_id = user.UserId}.Find<Parientes>();

@@ -10,8 +10,6 @@ using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 //coneccion wilber
 SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
 
-
-
 //AppGeneratorProgram.Main(); //generador de codigo
 
 

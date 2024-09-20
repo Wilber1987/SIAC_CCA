@@ -4,13 +4,13 @@ import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { Clase_Group } from "./Estudiantes.js";
 class Estudiante_Clases_View extends EntityClass {
-   /** @param {Partial<Estudiante_Clases_View>} [props] */
-   constructor(props) {
-       super(props, 'ViewDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+    /** @param {Partial<Estudiante_Clases_View>} [props] */
+    constructor(props) {
+        super(props, 'ViewDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Date}*/ Transferido;
    /**@type {Number}*/ Estudiante_id;
    /**@type {Number}*/ Id;
@@ -33,14 +33,14 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {String}*/ Tipo;
    /**@type {Date}*/ Fecha;
    /**@type {Number}*/ Porcentaje;
-   /**@type {String}*/ Nombre_asifnatura;
+   /**@type {String}*/ Nombre_asignatura;
    /**@type {String}*/ Nombre_corto_asignatura;
    /**@type {String}*/ Nombre_grado;
    /**@type {String}*/ Nombre_corto_nivel;
    /**@type {String}*/ Nombre_nivel;
    /**@type {Number}*/ Numero_grados;
    /**@type {Number}*/ Inicio_grado;
-   /**@type {Number}*/ Grado;   
+   /**@type {Number}*/ Grado;
    /**@type {Number}*/ Clase_id;
    /**@type {Number}*/ Seccion_id
    /**@type {Number}*/ Materia_id;
@@ -50,16 +50,28 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {String}*/ Primer_apellido;
    /**@type {String}*/ Segundo_apellido;
    /**@type {String}*/ Nombre_Docente;
-   
+
+    /**
+    * @returns {Promise<Clase_Group>}
+    */
     async GetClaseEstudianteConsolidado() {
+        // @ts-ignore
         return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteConsolidado");
-    }    
+    }
+     /**
+    * @returns {Promise<Clase_Group>}
+    */
     async GetClaseEstudianteCompleta() {
+        // @ts-ignore
         return await this.GetData("ApiGestionEstudiantes/GetClaseEstudianteCompleta");
     }
+    /**
+    * @returns {Promise<Clase_Group>}
+    */
     async GetClaseMateriaConsolidado() {
+        // @ts-ignore
         return await this.GetData("ApiGestionCursos/GetClaseMateriaConsolidado");
-    }    
+    }
     async GetClaseMateriaCompleta() {
         return await this.GetData("ApiGestionCursos/GetClaseMateriaCompleta");
     }

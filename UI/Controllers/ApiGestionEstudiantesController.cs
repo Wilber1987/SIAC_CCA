@@ -8,13 +8,7 @@ namespace UI.Controllers
 	[ApiController]
 	[Route("api/[controller]/[action]")]
 	public class ApiGestionEstudiantesController : ControllerBase
-	{
-		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
-		public List<Estudiantes> GetEstudiantes(Estudiantes Inst)
-		{
-			return Inst.Get<Estudiantes>();
-		}
+	{		
 		[HttpPost]
 		[AuthController(Permissions.GESTION_CLASES_ASIGNADAS, Permissions.GESTION_CLASES)]
 		public List<Estudiantes> GetEstudianBySectionClass(Estudiante_clases Inst)
