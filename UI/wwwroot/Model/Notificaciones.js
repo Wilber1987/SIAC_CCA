@@ -20,5 +20,8 @@ class Notificaciones extends EntityClass {
    /**@type {boolean}*/ Enviado;
    /**@type {boolean}*/ Leido;
    /**@type {string}*/ Tipo;
+    MarcarComoLeido = async () => {
+        return await this.GetData("ApiNotificaciones/MarcarComoLeido");
+    }
 }
-export {Notificaciones}
+export { Notificaciones }

@@ -19,9 +19,9 @@ namespace UI.Controllers
 	{
 		[HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES_READER)]
-		public List<Notificaciones> getNotificaciones()
+		public List<Notificaciones> getNotificaciones(Notificaciones Inst)
 		{
-			return NotificationOperation.GetNotificaciones(HttpContext.Session.GetString("seassonKey"));
+			return NotificationOperation.GetNotificaciones(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
 
 		[HttpPost]
@@ -29,7 +29,14 @@ namespace UI.Controllers
 		public ResponseService SaveNotificationRequest(NotificationRequest notificationRequest)
 		{
 			return new NotificationOperation().SaveNotificacion(HttpContext.Session.GetString("seassonKey"), notificationRequest);
-		}              
+		}    
+
+		[HttpPost]
+		[AuthController(Permissions.NOTIFICACIONES_READER)] 
+		public ResponseService MarcarComoLeido(Notificaciones notificationRequest)
+        {
+            return notificationRequest.MarcarComoLeido();
+        }         
 		#region  CHAT
 		//Conversaciones
 		[HttpPost]

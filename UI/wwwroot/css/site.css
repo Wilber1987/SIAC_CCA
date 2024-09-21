@@ -53,3 +53,13 @@
 .main-content{
     margin-top: 2vh !important;
 }
+.notification-item {
+    cursor: pointer;
+    & .notification-item-body .mb-0 {
+        max-width: 300px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        
+    }
+}

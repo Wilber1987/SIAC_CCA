@@ -111,10 +111,11 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
             }
         }
 
-        public static List<Notificaciones> GetNotificaciones(string identity)
+        public static List<Notificaciones> GetNotificaciones(Notificaciones Inst, string identity)
         {
             UserModel user = AuthNetCore.User(identity);
-            return new Notificaciones { Id_User = user.UserId }.Get<Notificaciones>();
+            Inst.Id_User = user.UserId;
+            return Inst.Get<Notificaciones>();
         }
 
     }

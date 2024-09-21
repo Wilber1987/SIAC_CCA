@@ -136,6 +136,7 @@ class NotificacionesManagerView extends HTMLElement {
         const modal = new WModalForm({
             ModelObject: new NotificationRequest_ModelComponent(), 
             title: "NUEVA NOTIFICACIÓN",
+            StyleForm: "columnX1",
             ObjectOptions: {
                 SaveFunction: async (/**@type {NotificationRequest} */ entity) => {
                     let mensaje = ""
@@ -161,9 +162,6 @@ class NotificacionesManagerView extends HTMLElement {
                         mensaje =  entity.Responsables.length == 0 ? "a todas los responsables" : "a los responsables selecionadas";
 
                     }
-                    console.log(mensaje);
-                    
-
                     document.body.appendChild(ModalVericateAction(async () => {
                         const response = await new NotificationRequest(entity).Save();
                         document.body.appendChild(ModalMessege(response.message, undefined, true));

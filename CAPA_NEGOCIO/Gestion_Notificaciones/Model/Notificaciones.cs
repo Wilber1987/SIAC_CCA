@@ -27,7 +27,15 @@ namespace DatabaseModelNotificaciones
         public string? Telefono { get; set; }
         public string? Estado { get; set; }
         public string? Email { get; set; }
-        
+
+        public ResponseService MarcarComoLeido()
+        {
+            new Notificaciones{ Id = Id, Leido = true }.Update();
+            return new ResponseService{
+                status = 200,
+                message = "leido"
+            };
+        }
     }
     public enum NotificacionesStates {
         ACTIVA, INACTIVA, VENCIDA

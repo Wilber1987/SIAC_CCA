@@ -11,8 +11,8 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 class NotificacionesView extends HTMLElement {
     constructor() {
         super();
-        //this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: "TabContainer" } });
-        //this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer });
+        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: "TabContainer" } });
+        this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
         this.NotificationsNav = new WAppNavigator({
             NavStyle: "tab",
             Inicialize: true,
@@ -22,7 +22,7 @@ class NotificacionesView extends HTMLElement {
             this.Style,
             StylesControlsV2.cloneNode(true),
             this.NotificationsNav,
-            //this.TabContainer
+            this.TabContainer
         );
     }
     NavElements() {
@@ -30,14 +30,33 @@ class NotificacionesView extends HTMLElement {
             {
                 name: "PARTICIPACIÓN EN EVENTOS", url: "#",
                 action: async (ev) => {
-                    return new NotificacionesElements();
+                    return new NotificacionesElements({ DOMManager: this.DOMManager });
                 }
             }
         ];
     }
 
     connectedCallback() { }
-    Style = css``
+    Style = css`
+        w-notificaciones-view{
+            display: grid;
+            grid-template-columns: 500px calc(100% - 520px);
+            gap: 20px;            
+        }
+        w-app-navigator {
+            display: block;
+            max-height: calc(100vh - 220px);
+            overflow-y: auto;
+        }
+        
+        @media (max-width: 600px) {
+            w-notificaciones-view{
+                display: grid;
+                grid-template-columns: 100%;
+                gap: 20px;
+            }
+        }
+    `
 }
 customElements.define('w-notificaciones-view', NotificacionesView);
 export { NotificacionesView }
@@ -45,9 +64,13 @@ export { NotificacionesView }
 
 
 class NotificacionesReader extends HTMLElement {
-    constructor() {
+    /**
+     * @param {{ Leidas?: boolean }} Config
+     */
+    constructor(Config) {
         super();
-        this.NotificacionesElements = new NotificacionesElements();
+        this.Config = Config;
+        this.NotificacionesElements = new NotificacionesElements({ Leidas: this.Config?.Leidas });
         this.append(
             this.Style,
             StylesControlsV2.cloneNode(true)
@@ -71,8 +94,15 @@ customElements.define('w-notificaciones-reader', NotificacionesReader);
 export { NotificacionesReader }
 
 class NotificacionesElements extends HTMLElement {
-    constructor() {
+    /**
+     * @param {{ 
+     * DOMManager?: ComponentsManager;
+     * Leidas?: boolean;
+     *  }} [Config]
+     */
+    constructor(Config) {
         super();
+        this.Config = Config;
         this.append(
             this.Style,
             StylesControlsV2.cloneNode(true),
@@ -83,7 +113,9 @@ class NotificacionesElements extends HTMLElement {
         this.NavElements();
     }
     async NavElements() {
-        this.Notificaciones = await new Notificaciones_ModelComponent().Get();
+        this.Notificaciones = await new Notificaciones_ModelComponent({
+            Leido: this.Config?.Leidas
+        }).Get();
         // @ts-ignore
         const Notifications = this.Notificaciones.sort((a, b) => a.Leido - b.Leido).map(Notificacion => {
             return {
@@ -138,32 +170,31 @@ class NotificacionesElements extends HTMLElement {
     }
 
     VerDetalle(Notificacion) {
-        const attachs = WRender.Create({ className: "attachs", style: "text-align: center" });
-        Notificacion.Media?.forEach(attach => {
-            if (attach.Type.toUpperCase().includes("JPG") || attach.Type.toUpperCase().includes("JPEG") || attach.Type.toUpperCase().includes("PNG")) {
-                attachs.append(WRender.Create({
-                    tagName: "img", src: attach.Value.replace("wwwroot", ""), style: {
-                        width: "auto",
-                        objectFit: "cover",
-                        height: "calc(100% - 20px)",
-                        maxWidth: "100%",
-                        overflow: "hidden",
-                        borderRadius: "20px"
-                    }
-                }));
-            } else if (attach.Type.toUpperCase().includes("PDF")) {
-                attachs.append(WRender.Create({
-                    tagName: "iframe", src: attach.Value.replace("wwwroot", ""), style: {
-                        height: "-webkit-fill-available",
-                        width: "100%",
-                        minHeight: "500px"
-                    }
-                }));
-            }
-        });
-
-        document.body.appendChild(new WModalForm({
-            ObjectModal: html`<div class="notification-viewer">
+        try {
+            const attachs = WRender.Create({ className: "attachs", style: "text-align: center" });
+            Notificacion.Media?.forEach(attach => {
+                if (attach.Type.toUpperCase().includes("JPG") || attach.Type.toUpperCase().includes("JPEG") || attach.Type.toUpperCase().includes("PNG")) {
+                    attachs.append(WRender.Create({
+                        tagName: "img", src: attach.Value.replace("wwwroot", ""), style: {
+                            width: "auto",
+                            objectFit: "cover",
+                            height: "calc(100% - 20px)",
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                            borderRadius: "20px"
+                        }
+                    }));
+                } else if (attach.Type.toUpperCase().includes("PDF")) {
+                    attachs.append(WRender.Create({
+                        tagName: "iframe", src: attach.Value.replace("wwwroot", ""), style: {
+                            height: "-webkit-fill-available",
+                            width: "100%",
+                            minHeight: "500px"
+                        }
+                    }));
+                }
+            });
+            const notificacionContainer = html`<div class="notification-viewer">
                 ${this.StyleNotifications.cloneNode(true)}
                 ${this.BuildNotificationDetail({
                 TextAction: Notificacion.Estado,
@@ -173,8 +204,20 @@ class NotificacionesElements extends HTMLElement {
                 Fecha: Notificacion.Fecha,
                 Leido: Notificacion.Leido
             })}
-            ${attachs}
-        </div>`}))
+                ${attachs}
+            </div>`;
+            if (this.Config?.DOMManager) {
+                this.Config.DOMManager.NavigateFunction("notif"+Notificacion.Id, notificacionContainer);
+                return;
+            }
+            document.body.appendChild(new WModalForm({
+                ObjectModal: notificacionContainer}))
+        } catch (error) {
+            console.log(error);
+        } finally {
+            new Notificaciones({ Id: Notificacion.Id }).MarcarComoLeido();
+        }
+
     }
     StyleNotifications = css`
         .NotificationContainer{
@@ -192,6 +235,9 @@ class NotificacionesElements extends HTMLElement {
             font-size: 20px;
             font-weight: 500;
             color: #335888;   
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
         
         .fecha{
@@ -208,6 +254,7 @@ class NotificacionesElements extends HTMLElement {
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
+            height: 20px;
         } 
         .notification-viewer {
             & .NotificationContainer {
@@ -220,7 +267,12 @@ class NotificacionesElements extends HTMLElement {
                     white-space: unset;
                     text-overflow: unset;
                     overflow: unset;
+                    height: auto;
                 }
+            }
+            & .Leido 
+            {
+                background-color: unset;
             }
             & .titulo {
                 font-size: 30px;
@@ -267,6 +319,10 @@ class NotificacionesElements extends HTMLElement {
             font-size: 11px;
             padding: 8px;
             width: 200px;
+        }
+        .ContainerFormWModal {
+            display: grid;
+            grid-template-rows: 10px calc(100% - 10px);           
         }
     `
     Style = css`
