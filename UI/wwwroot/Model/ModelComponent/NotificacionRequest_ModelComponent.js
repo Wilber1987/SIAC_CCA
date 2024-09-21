@@ -1,7 +1,7 @@
 //@ts-check
 
 //@ts-ignore
-import { ModelProperty } from "../../../WDevCore/WModules/CommonModel.js";
+import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 class NotificationRequest_ModelComponent extends EntityClass {
     /** @param {Partial<NotificationRequest_ModelComponent>} [props] */
@@ -12,8 +12,9 @@ class NotificationRequest_ModelComponent extends EntityClass {
         }
     }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
+   /**@type {ModelProperty}*/ Titulo = { type: 'text' };
    /**@type {ModelProperty}*/ Mensaje = { type: 'richtext' };
-   /**@type {ModelProperty}*/ Files = { type: 'file' };
+   /**@type {ModelProperty}*/ Files = { type: 'file' , require: false};
    /**@type {ModelProperty}*/ NotificationType = { type: 'text', hidden: true };
    /**@type {ModelProperty}*/ Responsables = { type: 'multiselect', hidden: true  };
    /**@type {ModelProperty}*/ Niveles = { type: 'multiselect', hidden: true };

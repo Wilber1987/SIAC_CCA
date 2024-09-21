@@ -4,8 +4,8 @@
 import { ModelProperty } from "../../WDevCore/WModules/CommonModel.js";
 import { ModelFiles } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
-class NotificationRequest extends EntityClass {
-    /** @param {Partial<NotificationRequest>} [props] */
+class Notificaciones extends EntityClass {
+    /** @param {Partial<Notificaciones>} [props] */
     constructor(props) {
         super(props, 'Notificaciones');
         for (const prop in props) {
@@ -15,15 +15,10 @@ class NotificationRequest extends EntityClass {
    /**@type {Number}*/ Id;
    /**@type {String}*/ Titulo;
    /**@type {String}*/ Mensaje;
-   /**@type {Array<ModelFiles>}*/ Files;
-   /**@type {String}*/ NotificationType;
-   /**@type {Array<Number>}*/ Responsables;
-   /**@type {Array<Number>}*/ Niveles;
-   /**@type {Array<Number>}*/ Clases;
-   /**@type {Array<Number>}*/ Secciones;
-   /**@type {Array<Number>}*/ Periodos;
-   /**@type {String}*/ NotificationsServicesEnum;
-
+   /**@type {Date}*/ Fecha;
+   /**@type {Array<ModelFiles>}*/ Media;
+   /**@type {boolean}*/ Enviado;
+   /**@type {boolean}*/ Leido;
+   /**@type {string}*/ Tipo;
 }
-
-export { NotificationRequest }
+export {Notificaciones}

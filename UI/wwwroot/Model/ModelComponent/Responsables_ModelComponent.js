@@ -12,11 +12,15 @@ class Responsables_ModelComponent extends EntityClass {
            this[prop] = props[prop];
        }
    }
-   /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
-   /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
-   /**@type {ModelProperty}*/ Parentesco = { type: 'text' };
-   /**@type {ModelProperty}*/ Estudiantes = { type: 'WSELECT',  ModelObject: ()=> new Estudiantes_ModelComponent(), ForeignKeyColumn: 'Estudiante_id'};
-   /**@type {ModelProperty}*/ Parientes = { type: 'WSELECT',  ModelObject: ()=> new Parientes_ModelComponent(), ForeignKeyColumn: 'Pariente_id'};
+    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
+    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
+    /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
+    /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
+    /**@type {ModelProperty}*/ Telefono = { type: 'text' };
+    /**@type {ModelProperty}*/ Celular = { type: 'text' };
+    /**@type {ModelProperty}*/ Telefono_trabajo = { type: 'text' };
+    /**@type {ModelProperty}*/ Email = { type: 'text' };
+    /**@type {ModelProperty}*/ User_id = { type: 'number', primary: true };
 }
 export { Responsables_ModelComponent }

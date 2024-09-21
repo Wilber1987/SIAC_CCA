@@ -21,7 +21,7 @@ namespace TwilioWhatsAppDemo.Controllers
         }*/
 
         [HttpPost]
-        public object? SaveNotification(NotificationRequest request)
+        public object? saveNotificationRequest(NotificationRequest request)
         {
             if (request is null)
             {

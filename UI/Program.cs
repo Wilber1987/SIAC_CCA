@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AppGenerate;
 using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS;
@@ -43,8 +44,9 @@ builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 #region CONFIGURACIONES PARA API
 builder.Services.AddControllers()
 	.AddJsonOptions(JsonOptions => JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null)// retorna los nombres reales de las propiedades
-	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false);// Desactiva la indentación
-
+	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false)// Desactiva la indentación
+	.AddJsonOptions(options =>  options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+	
 builder.Services.AddResponseCompression(options =>
 {
 	options.EnableForHttps = true; // Activa la compresión también para HTTPS

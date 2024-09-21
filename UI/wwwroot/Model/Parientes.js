@@ -25,6 +25,7 @@ class Parientes extends EntityClass {
    /**@type {String}*/ Email;
    /**@type {Number}*/ Estado_civil_id;
    /**@type {Number}*/ Religion_id;
+   /**@type {Boolean}*/ Resoponsable_pago;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;
    /**@type {String}*/ Nombre_completo;

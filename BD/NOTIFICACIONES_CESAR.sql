@@ -43,6 +43,7 @@ CREATE TABLE [dbo].[notificaciones]
 (
     [Id] [int] IDENTITY(1,1) NOT NULL,
     [Id_User] [int] NULL,
+    [Titulo] [nvarchar](max) NULL,
     [Mensaje] [nvarchar](max) NULL,
     [Fecha] [datetime] NULL,
     [Media] [nvarchar](max) NULL,

@@ -12,11 +12,17 @@ class Responsables extends EntityClass {
        }
    }
    /**@type {Number}*/ Id;
-   /**@type {Date}*/ Created_at;
-   /**@type {Date}*/ Updated_at;
-   /**@type {String}*/ Parentesco;
-   /**@type {Estudiantes} ManyToOne*/ Estudiantes;
-   /**@type {Parientes} ManyToOne*/ Parientes;
+   /**@type {String}*/ Primer_nombre;
+   /**@type {String}*/ Segundo_nombre;
+   /**@type {String}*/ Primer_apellido;
+   /**@type {String}*/ Segundo_apellido;
+   /**@type {String}*/ Sexo;
+   /**@type {String}*/ Telefono;
+   /**@type {String}*/ Celular;
+   /**@type {String}*/ Telefono_trabajo;
+   /**@type {String}*/ Email;
+   /**@type {Number}*/ User_id;
+
 }
 export { Responsables };
 

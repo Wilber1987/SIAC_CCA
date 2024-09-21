@@ -1,63 +1,114 @@
 //@ts-check
 import { Notificaciones_ModelComponent } from "../Model/ModelComponent/Notificacion_ModelComponent.js";
+import { Notificaciones } from "../Model/Notificaciones.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
-import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 class NotificacionesView extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
-        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: "TabContainer" } });
-        this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer });
-        this.shadowRoot?.append(
+        //this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: "TabContainer" } });
+        //this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer });
+        this.NotificationsNav = new WAppNavigator({
+            NavStyle: "tab",
+            Inicialize: true,
+            Elements: this.NavElements()
+        })
+        this.append(
             this.Style,
             StylesControlsV2.cloneNode(true),
             this.NotificationsNav,
-            this.TabContainer
+            //this.TabContainer
         );
-        this.DrawNotificacionesView();
     }
-    connectedCallback() { }
-    DrawNotificacionesView = async () => { }
-    NotificationsNav = new WAppNavigator({
-        NavStyle: "tab",
-        Inicialize: true,
-        Elements: [ {
+    NavElements() {
+        return [
+            {
                 name: "PARTICIPACIÓN EN EVENTOS", url: "#",
                 action: async (ev) => {
-                    const Events = await new Notificaciones_ModelComponent().Get();
-                    const Notifications = Events.filter(E => E.Leido == true).map(E => {
-                        return {
-                            TextAction: E.Estado,
-                            Object: E,
-                            Titulo: `Notificación de ${E.Tipo}`,
-                            Descripcion: E.Mensaje,
-                            Fecha: E.Fecha,
-                            Actions: [
-                                /*{
-                                    TextAction: "Aceptar",  class: "btn", Action: async (Event) => {
-                                        this.append(ModalVericateAction(async () => {
-                                            const Events = await WAjaxTools.PostRequest("../api/Events/AprobarParticipacion", Event);
-                                        }))                                       
-                                    }
-                                }, {
-                                    TextAction: "Rechazar",  class: "btn-alert", Action: async (Event) => {
-                                        this.append(ModalVericateAction(async () => {
-                                            const Events = await WAjaxTools.PostRequest("../api/Events/RechazarParticipacion", Event);
-                                        }))    
-                                    }
-                                }*/
-                            ]
-                        }
-                    });
-                    this.DOMManager.NavigateFunction("Tab-eventos", this.DrawNotificaciones(Notifications));
+                    return new NotificacionesElements();
                 }
             }
-        ]
-    })
+        ];
+    }
+
+    connectedCallback() { }
+    Style = css``
+}
+customElements.define('w-notificaciones-view', NotificacionesView);
+export { NotificacionesView }
+
+
+
+class NotificacionesReader extends HTMLElement {
+    constructor() {
+        super();
+        this.NotificacionesElements = new NotificacionesElements();
+        this.append(
+            this.Style,
+            StylesControlsV2.cloneNode(true)
+        );
+    }
+    connectedCallback() {
+        setTimeout(() => {
+            this.NotificacionesElements.Notificaciones
+                .filter(notificacion => notificacion.Leido == false)
+                .forEach((notificacion, index) => {
+                    if (index == 0) {
+                        this.NotificacionesElements.VerDetalle(notificacion)
+                    }
+                })
+        }, 1000);
+
+    }
+    Style = css``
+}
+customElements.define('w-notificaciones-reader', NotificacionesReader);
+export { NotificacionesReader }
+
+class NotificacionesElements extends HTMLElement {
+    constructor() {
+        super();
+        this.append(
+            this.Style,
+            StylesControlsV2.cloneNode(true),
+            this.StyleNotifications,
+        );
+        /**@type {Array<Notificaciones>} */
+        this.Notificaciones = [];
+        this.NavElements();
+    }
+    async NavElements() {
+        this.Notificaciones = await new Notificaciones_ModelComponent().Get();
+        // @ts-ignore
+        const Notifications = this.Notificaciones.sort((a, b) => a.Leido - b.Leido).map(Notificacion => {
+            return {
+                Object: Notificacion,
+                Titulo: Notificacion.Titulo ?? `Notificación de ${Notificacion.Tipo}`,
+                Descripcion: Notificacion.Mensaje,
+                Fecha: Notificacion.Fecha,
+                Leido: Notificacion.Leido,
+                Actions: [
+                    { TextAction: "Ver", class: "BtnMini", Action: async (Event) => this.VerDetalle(Notificacion) },
+                    /* {
+                        TextAction: "Rechazar",  class: "btn-alert", Action: async (Event) => {
+                            this.append(ModalVericateAction(async () => {
+                                const Events = await WAjaxTools.PostRequest("../api/Events/RechazarParticipacion", Event);
+                            }))
+                        }
+                    }*/
+                ]
+            };
+        });
+        this.append(this.DrawNotificaciones(Notifications));
+    }
+
+    connectedCallback() { }
+
     DrawNotificaciones = (Dataset = []) => {
         return WRender.Create({
             className: "GroupDiv", children: Dataset.map(n => {
@@ -66,21 +117,66 @@ class NotificacionesView extends HTMLElement {
         })
     }
     CreateNotificacion = (Notificacion) => {
-        const NotificacionContainer = WRender.Create({
-            className: "NotificationContainer", children: [
-                { tagName: 'label', className: "titulo", innerText: Notificacion.Titulo },
-                { tagName: 'label',className: "fecha", innerText: Notificacion.Fecha },
-                { tagName: 'p', innerText: Notificacion.Descripcion },
-                Notificacion.Actions.map(a => ({
-                    tagName: 'input', type: 'button', className: a.class, value: a.TextAction, onclick: async () => {
-                        await a.Action(Notificacion.Object)
-                    }
-                }))
-            ]
-        })
+        const NotificacionContainer = this.BuildNotificationDetail(Notificacion)
+        NotificacionContainer.appendChild(WRender.Create({
+            className: "options", children: Notificacion.Actions.map(a => ({
+                tagName: 'input', type: 'button', className: a.class, value: a.TextAction, onclick: async () => {
+                    await a.Action(Notificacion.Object)
+                }
+            }))
+        }))
         return NotificacionContainer;
     }
-    Style = css`
+    BuildNotificationDetail(Notificacion) {
+        return WRender.Create({
+            className: "NotificationContainer " + (Notificacion.Leido == true ? "Leido" : "NoLeido"), children: [
+                { tagName: 'label', className: "titulo", innerText: Notificacion.Titulo },
+                { tagName: 'label', className: "fecha", innerText: Notificacion.Fecha?.toDateFormatEs() ?? "" },
+                { tagName: 'p', innerHTML: Notificacion.Descripcion }
+            ]
+        });
+    }
+
+    VerDetalle(Notificacion) {
+        const attachs = WRender.Create({ className: "attachs", style: "text-align: center" });
+        Notificacion.Media?.forEach(attach => {
+            if (attach.Type.toUpperCase().includes("JPG") || attach.Type.toUpperCase().includes("JPEG") || attach.Type.toUpperCase().includes("PNG")) {
+                attachs.append(WRender.Create({
+                    tagName: "img", src: attach.Value.replace("wwwroot", ""), style: {
+                        width: "auto",
+                        objectFit: "cover",
+                        height: "calc(100% - 20px)",
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        borderRadius: "20px"
+                    }
+                }));
+            } else if (attach.Type.toUpperCase().includes("PDF")) {
+                attachs.append(WRender.Create({
+                    tagName: "iframe", src: attach.Value.replace("wwwroot", ""), style: {
+                        height: "-webkit-fill-available",
+                        width: "100%",
+                        minHeight: "500px"
+                    }
+                }));
+            }
+        });
+
+        document.body.appendChild(new WModalForm({
+            ObjectModal: html`<div class="notification-viewer">
+                ${this.StyleNotifications.cloneNode(true)}
+                ${this.BuildNotificationDetail({
+                TextAction: Notificacion.Estado,
+                Object: Notificacion,
+                Titulo: Notificacion.Titulo ?? `Notificación de ${Notificacion.Tipo}`,
+                Descripcion: Notificacion.Mensaje,
+                Fecha: Notificacion.Fecha,
+                Leido: Notificacion.Leido
+            })}
+            ${attachs}
+        </div>`}))
+    }
+    StyleNotifications = css`
         .NotificationContainer{
             padding: 20px;
             border-radius: 0.3cm;
@@ -91,35 +187,97 @@ class NotificacionesView extends HTMLElement {
             margin: 10px; 
             color: #444;   
         }        
+        
         .titulo{
             font-size: 20px;
             font-weight: 500;
             color: #335888;   
         }
+        
         .fecha{
             padding: 10px 0px;
             font-size: 12px;
-            border-bottom: 1px solid #9999;
+            border-bottom: 1px solid #f0f0f0;
 
         }
         .NotificationContainer p{
             padding: 10px 0px;
             margin: 0px;
-            border-bottom: 1px solid #9999;
+            border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         } 
-        .NotificationContainer div{
+        .notification-viewer {
+            & .NotificationContainer {
+                padding: 0px;
+                box-shadow: unset;
+                & .fecha{
+                    border-bottom: unset;
+                }
+                & p {
+                    white-space: unset;
+                    text-overflow: unset;
+                    overflow: unset;
+                }
+            }
+            & .titulo {
+                font-size: 30px;
+                text-align: center;
+            }
+        }
+        .NotificationContainer .options{
             display: flex;
             justify-content: flex-end;
             margin-top: 10px;
         } 
+        .options {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .Leido {
+            background-color: rgb(248, 249, 250)
+        }
+        .NoLeido {
+            position: relative;
+        }
+        .NoLeido::after {
+            display: block;
+            content: " ";
+            width: 30px;
+            height: 10px;
+            position: absolute;
+            background-color: rgb(40, 183, 101);
+            border-radius: 5px;
+            top: 20px;
+            right: 20px;
+        }
+        .BtnMini {
+            background-color: #1c4786;
+            border: none;
+            outline: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            margin: 0px;
+            margin-right: 5px;
+            cursor: pointer;
+            transition: 0.5s;
+            font-size: 11px;
+            padding: 8px;
+            width: 200px;
+        }
+    `
+    Style = css`
+        
     `
     GetDescription(E) {
         return `${E.Tbl_Evento?.Tbl_InvestigatorProfile?.Nombres} ${E.Tbl_Evento?.Tbl_InvestigatorProfile?.Apellidos} Indico que participarias en el evento ${E.Tbl_Evento?.Nombre} que se realizara de forma ${E.Tbl_Evento?.Modalidad}, con el rol de ${E.Cat_Tipo_Participacion_Eventos?.Descripcion} de ${E.Titulo} el ${E.Fecha_Participacion?.toDateFormatEs()}.
         
         ¿Desea confirmar su participación?`;
     }
-    
+
 }
-customElements.define('w-notificaciones-view', NotificacionesView);
-export { NotificacionesView }
+customElements.define('w-notificaciones-elements', NotificacionesElements);
+export { NotificacionesElements }

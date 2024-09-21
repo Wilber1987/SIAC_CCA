@@ -1,6 +1,7 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_DATOS.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,11 @@ namespace DatabaseModelNotificaciones
         [PrimaryKey(Identity = true)]
         public int? Id { get; set; }
         public int? Id_User { get; set; }
+        public string? Titulo { get; set; }
         public string? Mensaje { get; set; }
         public DateTime? Fecha { get; set; }
-        public string? Media { get; set; }
+        [JsonProp]
+        public List<ModelFiles>? Media { get; set; }
         public bool? Enviado { get; set; }
         public bool? Leido { get; set; }
         public string? Tipo { get; set; }

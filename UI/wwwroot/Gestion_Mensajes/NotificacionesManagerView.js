@@ -4,9 +4,11 @@ import { Clases } from "../Model/Clases.js";
 import { Clases_ModelComponent } from "../Model/ModelComponent/Clases_ModelComponent.js";
 import { NotificationRequest_ModelComponent, NotificationTypeEnum } from "../Model/ModelComponent/NotificacionRequest_ModelComponent.js";
 import { Parientes_ModelComponent } from "../Model/ModelComponent/Parientes_ModelComponent.js";
+import { Responsables_ModelComponent } from "../Model/ModelComponent/Responsables_ModelComponent.js";
 import { Secciones_ModelComponent } from "../Model/ModelComponent/Secciones_ModelComponent.js";
 import { NotificationRequest } from "../Model/NotificationRequest.js";
 import { Parientes } from "../Model/Parientes.js";
+import { Responsables } from "../Model/Responsables.js";
 import { Secciones } from "../Model/Secciones.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
@@ -46,7 +48,7 @@ class NotificacionesManagerView extends HTMLElement {
 
     async SetOption() {
         this.OptionContainer.append(WRender.Create({
-            tagName: 'button', className: 'Block-Primary', innerText: 'Enviar Solicitud',
+            tagName: 'button', className: 'Block-Primary', innerText: 'NUEVA NOTIFICACIÓN',
             onclick: async () => this.ProcessRequest()
         }))
         this.Navigator = new WAppNavigator({
@@ -111,8 +113,8 @@ class NotificacionesManagerView extends HTMLElement {
         this.NotificationType = NotificationTypeEnum.RESPONSABLE;
         if (!this.ResponsableComponent) {
             this.ResponsableComponent = new WTableComponent({
-                ModelObject: new Parientes_ModelComponent(),
-                EntityModel: new Parientes(),
+                ModelObject: new Responsables_ModelComponent(),
+                EntityModel: new Responsables(),
                 AutoSave: true,
                 Options: {
                     Filter: true,
@@ -133,33 +135,37 @@ class NotificacionesManagerView extends HTMLElement {
     ProcessRequest = () => {
         const modal = new WModalForm({
             ModelObject: new NotificationRequest_ModelComponent(), 
-            title: "Solicitud de perfil",
+            title: "NUEVA NOTIFICACIÓN",
             ObjectOptions: {
                 SaveFunction: async (/**@type {NotificationRequest} */ entity) => {
                     let mensaje = ""
-                    if (this.NotificationType = NotificationTypeEnum.SECCION) {
+                    console.log(this.NotificationType);
+                    
+                    if (this.NotificationType == NotificationTypeEnum.SECCION) {
                         entity.NotificationType = NotificationTypeEnum.SECCION;
                         // @ts-ignore
-                        entity.Secciones = this.SeccionComponent?.selectedItems.map(s => s.id );
+                        entity.Secciones = this.SeccionComponent?.selectedItems.map(s => s.Id );
                         mensaje =  entity.Secciones.length == 0 ? "a todas las secciones" : "a las secciones selecionadas";
 
 
-                    } else if  (this.NotificationType = NotificationTypeEnum.CLASE) {
+                    } else if  (this.NotificationType == NotificationTypeEnum.CLASE) {
                         entity.NotificationType = NotificationTypeEnum.CLASE;
                         // @ts-ignore
-                        entity.Clases = this.ClaseComponent?.selectedItems.map(s => s.id );
-                        mensaje =  entity.Secciones.length == 0 ? "a todas las clases" : "a las clases selecionadas";
+                        entity.Clases = this.ClaseComponent?.selectedItems.map(s => s.Id );
+                        mensaje =  entity.Clases.length == 0 ? "a todas las clases" : "a las clases selecionadas";
 
-                    } else if  (this.NotificationType = NotificationTypeEnum.RESPONSABLE) {
+                    } else if  (this.NotificationType == NotificationTypeEnum.RESPONSABLE) {
                         entity.NotificationType = NotificationTypeEnum.RESPONSABLE;
                         // @ts-ignore
-                        entity.Responsables = this.ResponsableComponent?.selectedItems.map(s => s.id );
-                        mensaje =  entity.Secciones.length == 0 ? "a todas los responsables" : "a los responsables selecionadas";
+                        entity.Responsables = this.ResponsableComponent?.selectedItems.map(s => s.User_id );
+                        mensaje =  entity.Responsables.length == 0 ? "a todas los responsables" : "a los responsables selecionadas";
 
                     }
+                    console.log(mensaje);
+                    
 
                     document.body.appendChild(ModalVericateAction(async () => {
-                        const response = await entity.Save();
+                        const response = await new NotificationRequest(entity).Save();
                         document.body.appendChild(ModalMessege(response.message, undefined, true));
                         modal.close();
                     }, `¿Desea enviar la notificación`));

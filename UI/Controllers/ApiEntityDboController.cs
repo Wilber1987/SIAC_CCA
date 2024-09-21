@@ -256,6 +256,13 @@ namespace API.Controllers
         {
             return Inst.Where<Parientes>(FilterData.Limit(30));
         }
+        //Parientes
+        [HttpPost]
+        [AuthController]
+        public object getResponsables(Parientes Inst)
+        {
+            return Inst.GetResponsables();
+        }
         [HttpPost]
         [AuthController]
         public Parientes? findParientes(Parientes Inst)

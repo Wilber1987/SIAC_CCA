@@ -26,14 +26,10 @@ namespace UI.Controllers
 
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public ResponseService SaveNotificaciones(NotificationRequest notificationRequest)
+		public ResponseService SaveNotificationRequest(NotificationRequest notificationRequest)
 		{
 			return new NotificationOperation().SaveNotificacion(HttpContext.Session.GetString("seassonKey"), notificationRequest);
-		}
-        
-        
-
-		
+		}              
 		#region  CHAT
 		//Conversaciones
 		[HttpPost]
