@@ -316,7 +316,7 @@ class NotificacionesElements extends HTMLElement {
             margin-right: 5px;
             cursor: pointer;
             transition: 0.5s;
-            font-size: 11px;
+            font-size: 12px;
             padding: 8px;
             width: 200px;
         }

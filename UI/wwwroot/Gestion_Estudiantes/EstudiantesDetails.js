@@ -214,30 +214,30 @@ class EstudiantesDetails extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            font-size: 10px !important;
+            font-size: 12px !important;
         }   
         .prop {
-            font-size: 11px !important;
+            font-size: 12px !important;
             margin-right: 10px;
         }               
                
         .detail-content .container {
             width: -webkit-fill-available;
             & .element-description {
-                font-size: 11px;
+                font-size: 12px;
             }
             & .element-details {
                 & .element-detail {
-                    font-size: 11px;
+                    font-size: 12px;
                 }
             }   
         }        
         .header {
             width: 100%;           
-            font-size: 11px;
+            font-size: 12px;
         }
         .value {            
-            font-size: 11px;
+            font-size: 12px;
         }   
         
         .detail-content { 

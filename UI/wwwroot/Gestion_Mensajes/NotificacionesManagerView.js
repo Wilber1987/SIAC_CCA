@@ -159,14 +159,14 @@ class NotificacionesManagerView extends HTMLElement {
                         entity.NotificationType = NotificationTypeEnum.RESPONSABLE;
                         // @ts-ignore
                         entity.Responsables = this.ResponsableComponent?.selectedItems.map(s => s.User_id );
-                        mensaje =  entity.Responsables.length == 0 ? "a todas los responsables" : "a los responsables selecionadas";
+                        mensaje =  entity.Responsables.length == 0 ? "a todos los responsables" : "a los responsables selecionados";
 
                     }
                     document.body.appendChild(ModalVericateAction(async () => {
                         const response = await new NotificationRequest(entity).Save();
                         document.body.appendChild(ModalMessege(response.message, undefined, true));
                         modal.close();
-                    }, `¿Desea enviar la notificación`));
+                    }, `¿Desea enviar la notificación ${mensaje}?`));
                 }
             }
         });
