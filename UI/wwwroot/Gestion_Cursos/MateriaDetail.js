@@ -138,7 +138,7 @@ class MateriaDetail extends HTMLElement {
         const documentsData = await new DocumentsData().GetDataFragments();
         documentsData.Header.style.width = "100%";
         return new WPrintExportToolBar({
-            PrintAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+            /*PrintAction: ( toolBar) => {
                  toolBar.Print(html`<div class="page">
                     ${documentsData.Header}   
                     ${documentsData.WatherMark}
@@ -146,7 +146,7 @@ class MateriaDetail extends HTMLElement {
                     ${documentsData.Footer}         
                 </div>`);
                 return;
-            }, ExportPdfAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
+            }, */ExportPdfAction: (/** @type {WPrintExportToolBar} */ toolBar) => {
                const body = html`<div class="page" style="position:relative">
                     ${documentsData.Header}                    
                     ${classGroup.shadowRoot?.innerHTML}

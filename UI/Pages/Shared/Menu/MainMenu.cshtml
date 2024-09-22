@@ -40,12 +40,14 @@
                             }
                             @if (SecurityController.HavePermission(Identify, Permissions.ADMINISTRAR_USUARIOS))
                             {
-                                <li><a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">Solicitudes de actualización</a></li>
+                                <li><a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">Solicitudes de
+                                        actualización</a></li>
                             }
                         </ul>
                     </li>
                 }
-                @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES, Permissions.GESTION_CLASES_ASIGNADAS))
+                @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES,
+                Permissions.GESTION_CLASES_ASIGNADAS))
                 {
                     <li class="menuParentOption">
                         <a class="" href="javascript: void(0);">
@@ -68,36 +70,38 @@
                         </ul>
                     </li>
                 }
-                @if (SecurityController.HavePermission(Identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+                @if (!SecurityController.IsAdmin(Identify) && SecurityController.HavePermission(Identify,
+                Permissions.GESTION_ESTUDIANTES_PROPIOS))
                 {
                     <li class="menuParentOption">
-                        <a class="" href="javascript: void(0);">
+                        <a href="~/Gestion_Estudiantes/Historial" href="javascript: void(0);">
                             <i class="bx bxs-book-content icon nav-icon"></i>
                             <span class="menu-item" data-key="t-boletin">Boletín en Línea</span>
                         </a>
+                    </li>
+                }
+                @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER,
+                Permissions.SEND_MESSAGE))
+                {
+                    <li class="menuParentOption">
+                        <a class="" href="javascript: void(0);">
+                            <i class="bx bx-message-rounded-dots icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-mensajes">Centro de Notificaciones</span>
+                        </a>
                         <ul class="sub-menu" aria-expanded="false">
-
-                            <li><a href="~/Gestion_Estudiantes/Historial" data-key="t-ecommerce">Boletín</a></li>
-
+                            @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER))
+                            {
+                                <li><a href="~/Mensajes/Notificaciones" data-key="t-ecommerce">Notificaciones</a></li>
+                            }
+                            @if (SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
+                            {
+                                <li><a href="~/Mensajes/NotificacionesManager" data-key="t-ecommerce">Administrador de
+                                        notificaciones</a></li>
+                            }
                         </ul>
                     </li>
                 }
-                <li class="menuParentOption">
-                    <a class="" href="javascript: void(0);">
-                        <i class="bx bx-message-rounded-dots icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-mensajes">Centro de Mensajes</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER))
-                        {
-                            <li><a href="~/Mensajes/Notificaciones" data-key="t-ecommerce">Notificaciones</a></li>
-                        }
-                        @if (SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
-                        {
-                            <li><a href="~/Mensajes/NotificacionesManager" data-key="t-ecommerce">Administrador de notificaciones</a></li>
-                        }
-                    </ul>
-                </li>
+
                 <li class="menuParentOption">
                     <a class="has-arrow" href="javascript: void(0);">
                         <i class="bx bxs-credit-card-alt icon nav-icon"></i>

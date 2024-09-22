@@ -46,7 +46,7 @@ class EstudiantesDetails extends HTMLElement {
         const content = html`<section class="Historial">  
             <div class="options-container OptionContainer">
                 <h3 class="text-uppercase">Estudiantes</h3>
-                ${new WPrintExportToolBar({ PrintAction: this.PrintAction, ExportPdfAction: this.ExportPdfAction })}
+                ${new WPrintExportToolBar({ ExportPdfAction: this.ExportPdfAction })}
             </div>         
             <div class="alumnos-container aside-container">
                 
