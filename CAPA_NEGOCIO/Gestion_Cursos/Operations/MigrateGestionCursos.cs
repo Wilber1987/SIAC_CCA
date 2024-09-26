@@ -11,15 +11,16 @@ namespace CAPA_NEGOCIO.Oparations
 	public class MigrateGestionCursos : TransactionalClass
 	{
 		public bool Migrate()
-		{
-			return migrateEstudiantesClases();
-				/*migrateNiveles() &&
+		{			
+			//return migrateEstudiantesClases();
+
+			return	migrateNiveles() &&
 				migrateSecciones() &&
 				migratePeriodosLectivos() &&
 				migrateAsignaturas() && migrateClases() && migrateMateria()
-				 && migrateEstudiantesClases() 
-				 && migrateDocentesAsignaturas()
-				&& migrateDocentesMaterias();*/
+				&& migrateEstudiantesClases() 
+				&& migrateDocentesAsignaturas()
+				&& migrateDocentesMaterias();
 		}
 
 		public bool migrateNiveles()
@@ -300,7 +301,17 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateEstudiantesClases");
 			var clase = new Estudiante_clases();
 			clase.SetConnection(MySqlConnections.Siac);
-			var clasesMsql = clase.Get<Estudiante_clases>();
+			//var clasesMsql = clase.Get<Estudiante_clases>();
+
+			var filter = new FilterData
+			{
+				PropName = "created_at",
+				FilterType = ">=",
+				Values = new List<string?> { "2022-01-01 00:00:00" }
+			};
+			var clasesMsql = clase.Where<Estudiante_clases>(filter);
+
+
 			try
 			{
 				BeginGlobalTransaction();
@@ -330,8 +341,13 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 					else if (existingClase == null)
 					{
-						// Verificar si el estudiante existe antes de guardar la clase					
-						clase.Save();						
+						/*var estExists = new Estudiantes();
+						var exists = estExists.Where<Estudiantes>(FilterData.Equal("Id", clase.Estudiante_id));
+						// Verificar si el estudiante existe antes de guardar la clase		
+						if (exists.Count()>0)
+						{*/
+							clase.Save();
+						//}
 					}
 				});
 				CommitGlobalTransaction();
