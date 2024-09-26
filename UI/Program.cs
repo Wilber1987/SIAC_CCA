@@ -12,7 +12,7 @@ using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA_TEST");
+// SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA_TEST");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
@@ -20,7 +20,7 @@ SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA_TEST");
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
 
 // coneccion cesar
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS02", "SIAC_CCA_BEFORE_DEMO");
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
