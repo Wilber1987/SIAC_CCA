@@ -20,7 +20,7 @@ SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "SIAC_CCA_TEST");
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
 
 // coneccion cesar
-//SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
