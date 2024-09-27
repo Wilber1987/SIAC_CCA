@@ -101,18 +101,22 @@
                         </ul>
                     </li>
                 }
+                @if (SecurityController.HavePermission(Identify,
+                Permissions.GESTION_ESTUDIANTES_PROPIOS))
+                {
 
-                <li class="menuParentOption">
-                    <a class="has-arrow" href="javascript: void(0);">
-                        <i class="bx bxs-credit-card-alt icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-pagos">Pagos</span>
-                        @* <span class="badge rounded-pill bg-primary">2</span> *@
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Sales</a></li>
-                    </ul>
-                </li>
+                    <li class="menuParentOption">
+                        <a class="has-arrow" href="javascript: void(0);">
+                            <i class="bx bxs-credit-card-alt icon nav-icon"></i>
+                            <span class="menu-item" data-key="t-pagos">Pagos</span>
+                            @* <span class="badge rounded-pill bg-primary">2</span> *@
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="~/Gestion_Pagos/Pagos_Pendientes" data-key="t-ecommerce">Pagos pendientes</a></li>
+                            <li><a href="~/Gestion_Pagos/Historial_Pagos" data-key="t-sales">Sales</a></li>
+                        </ul>
+                    </li>
+                }
             </ul>
         </div>
         <!-- Sidebar -->
