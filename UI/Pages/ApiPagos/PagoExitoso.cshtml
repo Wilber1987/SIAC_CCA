@@ -1,0 +1,43 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS.Security;
+@using CAPA_DATOS;
+@using CAPA_DATOS.Services
+@using CAPA_NEGOCIO.Gestion_Pagos.Model
+@using CAPA_NEGOCIO.Gestion_Pagos.Operations
+@using DataBaseModel;
+@{
+    string? identify = HttpContext?.Session.GetString("seassonKey");
+    if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+    {
+        Response.Redirect("/Security/Login");
+        return;
+    }
+    double pagoTotal = 0;
+    PagosRequest? pagosRequest = PagosOperation.GetPagoARealizar(identify);
+}
+
+<script type="module">
+</script>
+<div id="Main" class="tpv-container">
+    <div class="TabContainer">        
+        <h3>PAGO EXITOSO</h3>
+    </div>
+    <div class="TabContainer detail-pago-container">
+        <h3>DETALLES DEL PAGO</h3>
+        @foreach (var pago in pagosRequest?.Pagos ?? [])
+        {
+            pagoTotal += pago.Monto.GetValueOrDefault();
+            <div class="detail">
+                <label for="">@pago.Estudiante?.Nombre_completo</label>
+                <label for="">@pago.Mes</label>
+                <label for="" class="pago-monto">@(pago.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
+            </div>
+        }
+        <div class="detail pago-total">
+            <label for="">Total</label>
+            <label for=""></label>
+            <label for="" class="pago-monto-max">@(pagosRequest?.Pagos?[0].Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pagoTotal)</label>
+        </div>
+    </div>
+</div>
