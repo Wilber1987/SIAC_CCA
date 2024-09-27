@@ -32,4 +32,47 @@ namespace CAPA_NEGOCIO.Util
 		}
 
 	}
+
+	public static class MigrationDates
+	{
+		// Retorna el inicio del año actual
+		public static DateTime GetStartOfCurrentYear()
+		{
+			return new DateTime(DateTime.Now.Year, 1, 1);
+		}
+
+		// Retorna el fin del año actual
+		public static DateTime GetEndOfCurrentYear()
+		{
+			return new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59);
+		}
+
+		// Retorna la fecha de inicio de un mes específico restando n meses desde la fecha actual
+		public static DateTime GetStartOfMonthSubtractingMonths(int monthsToSubtract)
+		{
+			DateTime currentDate = DateTime.Now;
+			DateTime targetDate = currentDate.AddMonths(-monthsToSubtract);
+			return new DateTime(targetDate.Year, targetDate.Month, 1);
+		}
+
+		// Retorna el inicio de un año específico
+		public static DateTime GetStartOfYear(int year)
+		{
+			return new DateTime(year, 1, 1);
+		}
+		// Retornar le inicio del año pasado
+		public static DateTime GetStartOfLastYear()
+		{
+			int lastYear = DateTime.Now.Year - 1;
+			return new DateTime(lastYear, 1, 1);
+		}
+
+
+		// Retorna el fin de un año específico
+		public static DateTime GetEndOfYear(int year)
+		{
+			return new DateTime(year, 12, 31, 23, 59, 59);
+		}
+	}
+
 }

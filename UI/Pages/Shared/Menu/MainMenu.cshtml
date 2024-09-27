@@ -5,7 +5,6 @@
     string? Identify = Context.Session?.GetString("seassonKey");
     var PageConfig = Config.pageConfig();
 }
-
 <!-- ========== Left Sidebar Start ========== -->
 <div class="vertical-menu">
 
@@ -15,11 +14,9 @@
     <div data-simplebar class="sidebar-menu-scroll">
 
         <!--- Sidemenu -->
-        <div id="sidebar-menu">
+        <div  id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
-                <li class="menu-title" data-key="t-menu">Dashboard</li>
-
                 <li class="menuParentOption">
                     <a class="/">
                         <i class="bx bx-home-alt icon nav-icon"></i>
@@ -33,18 +30,16 @@
                             <i class="bx bx-user icon nav-icon"></i>
                             <span class="menu-item" data-key="t-perfil">Mi Perfil</span>
                         </a>
-                        <ul class="sub-menu" aria-expanded="false">
-                            @if (SecurityController.HavePermission(Identify, Permissions.PERFIL_ACCESS))
-                            {
-                                <li><a href="~/Gestion_Usuarios/Perfil" data-key="t-ecommerce">Mi Perfil</a></li>
-                            }
-                            @if (SecurityController.HavePermission(Identify, Permissions.ADMINISTRAR_USUARIOS))
-                            {
-                                <li><a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">Solicitudes de
-                                        actualización</a></li>
-                            }
-                        </ul>
                     </li>
+                    @if (SecurityController.HavePermission(Identify, Permissions.ADMINISTRAR_USUARIOS))
+                    {
+                        <li class="menuParentOption">
+                            <a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">
+                                <i class="bx bx-loader icon nav-icon"></i>
+                                <span>Solicitudes de actualización</span>
+                            </a>
+                        </li>
+                    }
                 }
                 @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES,
                 Permissions.GESTION_CLASES_ASIGNADAS))
@@ -101,7 +96,9 @@
                         </ul>
                     </li>
                 }
-
+                @if (SecurityController.HavePermission(Identify,
+                Permissions.GESTION_ESTUDIANTES_PROPIOS))
+                {
                 <li class="menuParentOption">
                     <a class="has-arrow" href="javascript: void(0);">
                         <i class="bx bxs-credit-card-alt icon nav-icon"></i>
@@ -109,10 +106,11 @@
                         @* <span class="badge rounded-pill bg-primary">2</span> *@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index.html" data-key="t-ecommerce">Historial</a></li>
-                        <li><a href="dashboard-sales.html" data-key="t-sales">Pagos Pendientes</a></li>
+                        <li><a href="~/Gestion_Pagos/Pagos_Pendientes" data-key="t-ecommerce">Historial</a></li>
+                            <li><a href="~/Gestion_Pagos/Historial_Pagos" data-key="t-sales">Pagos Pendientes</a></li>
                     </ul>
                 </li>
+                }
             </ul>
         </div>
         <!-- Sidebar -->

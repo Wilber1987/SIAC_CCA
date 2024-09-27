@@ -28,7 +28,7 @@ class NotificacionesView extends HTMLElement {
     NavElements() {
         return [
             {
-                name: "PARTICIPACIÓN EN EVENTOS", url: "#",
+                name: "Notificaciones", url: "#",
                 action: async (ev) => {
                     return new NotificacionesElements({ DOMManager: this.DOMManager });
                 }

@@ -20,7 +20,7 @@ SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO"
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
 
 // coneccion cesar
-//SqlADOConexion.IniciarConexion("sa", "123", "DESKTOP-GJQ59U2\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS02", "SIAC_CCA_BEFORE_DEMO");
 
 //AppGeneratorProgram.Main(); //generador de codigo
 

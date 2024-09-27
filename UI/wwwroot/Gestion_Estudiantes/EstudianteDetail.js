@@ -74,10 +74,10 @@ class EstudianteDetail extends HTMLElement {
 
     CustomStyle = css`
         .component{
-           display: block;
+            display: block;
         }       
         w-view-detail{
-            text-transform: lowercase !important;
+            text-transform: uppercase !important;
         }    
     `
 }
