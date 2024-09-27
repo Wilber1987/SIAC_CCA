@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AppGenerate;
 using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS;
@@ -8,7 +9,19 @@ using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio 
 using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
+
+//coneccion wilber
+
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+//MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
+
+//coneccion alder
+//SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER3", "SIAC_CCA");
+//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_DEMO");
+
+// coneccion cesar
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS02", "SIAC_CCA_BEFORE_DEMO");
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
@@ -32,8 +45,9 @@ builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 #region CONFIGURACIONES PARA API
 builder.Services.AddControllers()
 	.AddJsonOptions(JsonOptions => JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null)// retorna los nombres reales de las propiedades
-	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false);// Desactiva la indentación
-
+	.AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = false)// Desactiva la indentación
+	.AddJsonOptions(options =>  options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+	
 builder.Services.AddResponseCompression(options =>
 {
 	options.EnableForHttps = true; // Activa la compresión también para HTTPS

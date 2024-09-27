@@ -13,15 +13,16 @@ namespace DataBaseModel
     public class NotificationRequest
     {
         public string? MediaUrl { get; set; }//creo que no se va utilizar
+        public string? Titulo { get; set; }
         public string? Mensaje { get; set; }
         public List<ModelFiles>? Files { get; set; }
         public NotificationTypeEnum? NotificationType { get; set; }
         public bool? EsResponsable { get; set; }
-        public List<int>? Responsables { get; set; }
-        public List<int>? Niveles { get; set; }
-        public List<int>? Clases { get; set; }
-        public List<int>? Secciones { get; set; }
-        public List<int>? Periodos { get; set; }
+        public List<int?>? Responsables { get; set; }
+        public List<int?>? Niveles { get; set; }
+        public List<int?>? Clases { get; set; }
+        public List<int?>? Secciones { get; set; }
+        public List<int?>? Periodos { get; set; }
         public List<NotificationsServicesEnum>? NotificationsServices { get; set; }
     }
     public enum NotificationsServicesEnum

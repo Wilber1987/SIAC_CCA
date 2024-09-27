@@ -215,7 +215,7 @@ class BaremoComponent extends HTMLElement {
     CustomStyle = css`
         w-baremo-component {           
             display: block;
-            font-size: 11px;
+            font-size: 12px;
             width: 100%;
             box-sizing: border-box;
             overflow-x: auto;

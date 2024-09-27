@@ -46,7 +46,7 @@ class EstudiantesDetails extends HTMLElement {
         const content = html`<section class="Historial">  
             <div class="options-container OptionContainer">
                 <h3 class="text-uppercase">Estudiantes</h3>
-                ${new WPrintExportToolBar({ PrintAction: this.PrintAction, ExportPdfAction: this.ExportPdfAction })}
+                ${new WPrintExportToolBar({ ExportPdfAction: this.ExportPdfAction })}
             </div>         
             <div class="alumnos-container aside-container">
                 
@@ -65,15 +65,15 @@ class EstudiantesDetails extends HTMLElement {
     BuildEstudiantes(dataset) {
         return dataset.map((/** @type {Estudiantes} */ Estudiante) =>
             html`<div class="estudiante-card-container" onclick="${() => this.VerEstudianteDetalles(Estudiante)}">            
-                 <div class="d-flex title align-items-center">
-                     <img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
-                    : route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
-                     <div class="flex-1 ms-2 ps-1">
-                     <h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
-                     <label class="text-muted text-uppercase font-size-12">${Estudiante.Codigo}</label>
+                     <div class="estudiante-card">
+                         <img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
+                        : route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
+                         <div class="flex-1 ms-2 ps-1">
+                           <h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
+                           <label class="text-muted text-uppercase font-size-12">${Estudiante.Codigo}</label>
+                         </div>
                      </div>
-                 </div>
-             </div>`);
+                 </div>`);
     }
     /**
     * @param {Estudiantes} Estudiante 
@@ -95,13 +95,13 @@ class EstudiantesDetails extends HTMLElement {
             title: "Imprimir informe clase",
             StyleForm: "columnX1",
             ModelObject: {
-                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion})) }
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion })) }
             }, EditObject: {
-                Estudiante_id: this.EstudianteSeleccionado.Id,               
-            },  ObjectOptions: {
+                Estudiante_id: this.EstudianteSeleccionado.Id,
+            }, ObjectOptions: {
                 SaveFunction: async (object) => {
                     const body = await this.GetActa(object);
-                    toolBar.Print(body);                    
+                    toolBar.Print(body);
                     return;
                 }
             }
@@ -119,13 +119,13 @@ class EstudiantesDetails extends HTMLElement {
             title: "Imprimir informe clase",
             StyleForm: "columnX1",
             ModelObject: {
-                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion})) }
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion })) }
             }, EditObject: {
-                Estudiante_id: this.EstudianteSeleccionado.Id,               
+                Estudiante_id: this.EstudianteSeleccionado.Id,
             }, ObjectOptions: {
                 SaveFunction: async (object) => {
-                    const body = await this.GetActa(object); 
-                    toolBar.ExportPdf(body); 
+                    const body = await this.GetActa(object);
+                    toolBar.ExportPdf(body);
                     return;
                 }
             }
@@ -134,16 +134,16 @@ class EstudiantesDetails extends HTMLElement {
 
     async GetActa(object) {
         /**@type {DocumentsData} */
-        const documentsData = await new DocumentsData().GetBoletinDataFragments();      
+        const documentsData = await new DocumentsData().GetBoletinDataFragments();
         console.log(object);
-         
+
 
         const response = await new Estudiante_Clases_View({
             Estudiante_id: object.Estudiante_id,
             Clase_id: object.Seleccione
         }).GetClaseEstudianteConsolidado();
-        
-        const body = new ClaseGroup(response, {ModelObject: new Clase_Group_ModelComponent()});
+
+        const body = new ClaseGroup(response, { ModelObject: new Clase_Group_ModelComponent() });
 
         documentsData.Header.style.width = "100%";
 
@@ -153,15 +153,15 @@ class EstudiantesDetails extends HTMLElement {
             ${documentsData.WatherMark}
             ${this.PrintStyle.cloneNode(true)}
             ${documentsData.Footer}
-        </div>`; 
+        </div>`;
         // @ts-ignore
-        this.buildData(data, response);        
+        this.buildData(data, response);
         return data;
-    }    
+    }
     CustomStyle = css`
         .Historial{
-            display: grid;
-            grid-template-columns: 300px calc(100% - 320px);
+            display: flex;
+            flex-direction: column;            
             gap: 20px;
         }   
         .Historial .options-container {
@@ -171,11 +171,18 @@ class EstudiantesDetails extends HTMLElement {
             grid-column: span 2;
         }
         .estudiante-card-container {
-            display: block;
+            display: flex;
             border: 1px solid #d6d6d6;;
             border-radius: 10px;
             cursor: pointer;
             padding: 10px;
+            max-width: 400px; 
+        }
+        .estudiante-card {
+            display: flex;         
+            gap: 10px;
+            min-width: 400px;
+            align-items: center;
         }
         .alumnos-container {
             display: flex;
@@ -214,30 +221,30 @@ class EstudiantesDetails extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            font-size: 10px !important;
+            font-size: 12px !important;
         }   
         .prop {
-            font-size: 11px !important;
+            font-size: 12px !important;
             margin-right: 10px;
         }               
                
         .detail-content .container {
             width: -webkit-fill-available;
             & .element-description {
-                font-size: 11px;
+                font-size: 12px;
             }
             & .element-details {
                 & .element-detail {
-                    font-size: 11px;
+                    font-size: 12px;
                 }
             }   
         }        
         .header {
             width: 100%;           
-            font-size: 11px;
+            font-size: 12px;
         }
         .value {            
-            font-size: 11px;
+            font-size: 12px;
         }   
         
         .detail-content { 
@@ -289,7 +296,7 @@ class EstudiantesDetails extends HTMLElement {
     */
     buildData(data, info) {
         //console.log(this.EstudianteSeleccionado);
-        
+
         data.innerHTML = data.innerHTML
             .replace("{{ nombre-completo }}", this.EstudianteSeleccionado.GetNombreCompleto())
             .replace("{{ codigo }}", this.EstudianteSeleccionado.Codigo)
@@ -300,7 +307,7 @@ class EstudiantesDetails extends HTMLElement {
             //.replace("{{ seccion }}", info.Seccion)
             .replace("{{ nombre-padre }}", this.EstudianteSeleccionado.GetPadre().Name ?? "-")
             .replace("{{ nombre-madre }}", this.EstudianteSeleccionado.GetMadre().Name ?? "-")
-            //.replace("{{ nombre-guia }}", info.Guia);
+        //.replace("{{ nombre-guia }}", info.Guia);
         const foto = data.querySelector(".foto");
         if (foto != null) {
             // @ts-ignore

@@ -70,5 +70,23 @@ namespace DataBaseModel
 			//throw new Exception("No posee estudiantes asociados");
 			return [];
 		}
-	}
+
+        public object GetResponsables()
+        {
+			var parientes = Where<Parientes>(FilterData.Limit(30), FilterData.NotNull("User_id"));
+            return parientes.Select(Pariente => new {
+				Pariente.Id,
+				Pariente.Primer_nombre,
+				Pariente.Segundo_nombre,
+				Pariente.Primer_apellido,
+				Pariente.Segundo_apellido,
+				Pariente.Sexo,
+				Pariente.Telefono,
+				Pariente.Celular,
+				Pariente.Telefono_trabajo,
+				Pariente.Email,
+				Pariente.User_id
+			}).ToList();
+        }
+    }
 }

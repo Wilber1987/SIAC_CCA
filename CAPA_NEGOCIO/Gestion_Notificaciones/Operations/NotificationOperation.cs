@@ -25,30 +25,47 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                     file.Type = Response?.Type;
                 }
                 //hacer consultas para obtener el telefono
-                var idsList = new List<int>();
-                if (request.NotificationType == NotificationTypeEnum.RESPONSABLE)
+                var idsList = new List<int?>();
+                List<Parientes> parientesFiltrados = [];
+
+                if (request.NotificationType == NotificationTypeEnum.RESPONSABLE && request.Responsables?.Count > 0)
                 {
-                    foreach (var item in request.Responsables ?? [])
-                    {
-                        idsList.Add(item);
-                    }
-                    string result = string.Join(",", idsList);
-                    var parientesFiltrados = new Parientes().Where<Parientes>(FilterData.In("Id", (result)));
-                    foreach (var item in parientesFiltrados)
-                    {
-                        var newNotificaciones = new Notificaciones
-                        {
-                            Id_User = item.Id,
-                            Mensaje = request.Mensaje,
-                            Media = request.MediaUrl,
-                            Enviado = false,
-                            Leido = false,
-                            Tipo = request.NotificationType.ToString(),
-                            Telefono = item.Telefono,
-                            Email = item.Email
-                        };
-                        newNotificaciones.Save();
-                    }
+                    idsList.AddRange([.. request.Responsables]);
+                    parientesFiltrados = new Parientes().Where<Parientes>(FilterData.In("User_Id", idsList.ToArray()));
+                    SendNotificacion(request, parientesFiltrados);
+                }
+                else if (request.NotificationType == NotificationTypeEnum.SECCION && request.Secciones?.Count > 0)
+                {
+                    var estudiante_Clases = new Estudiante_clases()
+                        .Where<Estudiante_clases>(FilterData.In("Seccion_id", 
+                            request.Secciones?.ToArray()));
+                    var responsables = new Estudiantes_responsables_familia()
+                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", 
+                            estudiante_Clases.Select(ec => ec.Estudiante_id).ToArray()));
+                    parientesFiltrados = responsables?
+                        .Where(responsable => responsable.Parientes != null && responsable.Parientes.User_id != null)
+                        .Select(responsable => responsable?.Parientes ?? new Parientes())                        
+                        .ToList() ?? [];
+                    
+                    SendNotificacion(request, parientesFiltrados);
+                } 
+                else if (request.NotificationType == NotificationTypeEnum.CLASE && request.Clases?.Count > 0)
+                {
+                    var estudiante_Clases = new Estudiante_clases()
+                        .Where<Estudiante_clases>(FilterData.In("Clase_id", 
+                            request.Clases?.ToArray()));
+                    var responsables = new Estudiantes_responsables_familia()
+                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", 
+                            estudiante_Clases.Select(ec => ec.Estudiante_id).ToArray()));
+                    parientesFiltrados = responsables?
+                        .Where(responsable => responsable.Parientes != null && responsable.Parientes.User_id != null)
+                        .Select(responsable => responsable?.Parientes ?? new Parientes())                        
+                        .ToList() ?? [];
+                    
+                    SendNotificacion(request, parientesFiltrados);
+                } else {
+                    parientesFiltrados = new  Parientes().Where<Parientes>(FilterData.NotNull("User_Id"));
+                     SendNotificacion(request, parientesFiltrados);
                 }
 
                 //logica
@@ -60,7 +77,8 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
 
                 //CommitGlobalTransaction();
                 LoggerServices.AddMessageInfo($"El usuario con id = {user.UserId} envio una notificación");
-                return new ResponseService {
+                return new ResponseService
+                {
                     status = 200,
                     message = "Notificacion enviada"
                 };
@@ -72,10 +90,32 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
             }
         }
 
-        public static List<Notificaciones> GetNotificaciones(string identity)
+        private static void SendNotificacion(NotificationRequest request, List<Parientes> parientesFiltrados)
+        {
+            foreach (var item in parientesFiltrados)
+            {
+                var newNotificaciones = new Notificaciones
+                {
+                    Id_User = item.User_id,
+                    Mensaje = request.Mensaje,
+                    Titulo = request.Titulo,
+                    Media = request.Files,
+                    Enviado = false,
+                    Leido = false,
+                    Tipo = request.NotificationType.ToString(),
+                    Telefono = item.Telefono,
+                    Email = item.Email,
+                    Fecha = DateTime.Now
+                };
+                newNotificaciones.Save();
+            }
+        }
+
+        public static List<Notificaciones> GetNotificaciones(Notificaciones Inst, string identity)
         {
             UserModel user = AuthNetCore.User(identity);
-            return new Notificaciones { Id_User = user.UserId }.Get<Notificaciones>();
+            Inst.Id_User = user.UserId;
+            return Inst.Get<Notificaciones>();
         }
 
     }

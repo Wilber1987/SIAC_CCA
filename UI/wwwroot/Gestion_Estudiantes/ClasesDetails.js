@@ -356,7 +356,7 @@ class ClaseGroup extends HTMLElement {
             bottom: 10px;
             height: 15px;
             font-weight: 500 !important;
-            font-size: 10px !important;
+            font-size: 12px !important;
             padding: 5px 5px !important;
             text-transform: capitalize;
             cursor: pointer;
@@ -488,9 +488,9 @@ class ClaseGroup extends HTMLElement {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            font-size: 10px !important;
+            font-size: 12px !important;
             & .prop {
-                font-size: 11px !important;
+                font-size: 12px !important;
                 margin-right: 10px;
             }
             & .detalle-btn {

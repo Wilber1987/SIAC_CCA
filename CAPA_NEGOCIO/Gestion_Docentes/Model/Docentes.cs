@@ -30,7 +30,7 @@ namespace DataBaseModel
         public bool? Habilitado { get; set; }
         public string? Cargo { get; set; }
         public int? Id_User { get; set; }
-        public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
+        public string? Nombre_completo { get { return $"{Primer_nombre} {Primer_apellido}"; } }
 
         [ManyToOne(TableName = "Escolaridades", KeyColumn = "Id", ForeignKeyColumn = "Escolaridad_id")]
         public Escolaridades? Escolaridades { get; set; }

@@ -37,36 +37,12 @@ namespace DataBaseModel
 		public int? Id_familia { get; set; }
 
 		/***new properties **/
-		public int? Periodo { get; set; }
-		public DateTime? Fecha_ingreso { get; set; }
-		public int? Id_pais { get; set; }
-		public int? Id_sociedad { get; set; }
-		public int? Id_region { get; set; }
-		public string? Solvencia { get; set; }
-		public Double? Saldomd { get; set; }
-		public string? Estatus { get; set; }
-		public bool? Retenido { get; set; }
-		public string? Referencia_estatus { get; set; }
-		public string? Usuario_grabacion { get; set; }
-		public string? Usuario_modificacion { get; set; }
-		public string? Id_old { get; set; }
-		public int? Id_cliente { get; set; }
-		public string? Codigomed { get; set; }
-		public int? Ump { get; set; }
-		public int? Uep { get; set; }
-		public string? Colegio { get; set; }
-		public string? Vivecon { get; set; }
-		public string? Sacramento { get; set; }
-		public int? Aniosacra { get; set; }
-		public DateTime? Fecha_aceptacion { get; set; }
-		public string? Usuario_aceptacion { get; set; }
-		public bool? Aceptacion { get; set; }
-		public int? Periodo_aceptacion { get; set; }
-		public DateTime? Fechaun { get; set; }
-		public string? Motivo { get; set; }
-		public string? Comentario { get; set; }
-		public DateTime? Fecharetencion { get; set; }
-		public Double? Saldoeamd { get; set; }
+
+		public DateTime? Fecha_ingreso { get; set; }//dejar
+		public int? Id_cliente { get; set; }//dejar
+		public string? Codigomed { get; set; }//dejar		
+		public Double? Saldoeamd { get; set; }//dejar
+
 		/***new properties **/
 
 		public bool? Activo { get; set; }
@@ -87,7 +63,7 @@ namespace DataBaseModel
 
 			if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES))
 			{
-				return GetFullEstudiante(false);
+				return GetFullEstudiante();
 			}
 			else if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES_PROPIOS))
 			{
@@ -95,7 +71,7 @@ namespace DataBaseModel
 				Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 				if (pariente?.Estudiantes_responsables_familia?.Find(r => r.Estudiante_id == Id) != null)
 				{
-					return GetFullEstudiante();
+					return GetFullEstudiante(false);
 				}
 				else
 				{

@@ -17,11 +17,12 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 
 		public bool Migrate()
-		{
-			return MigrateParentesco() 
-			&& MigrateFamilia() 
-			&& migrateEstudiantes(MySqlConnections.Bellacom) /*&& migrateEstudiantes(MySqlConnections.Siac)*/
-			&& MigrateParientesAndUsers() 
+		{			
+
+			return MigrateParentesco()
+			&& MigrateFamilia()
+			&& migrateEstudiantesSiac(MySqlConnections.Siac)
+			&& MigrateParientesAndUsers()
 			&& migrateEstudiantesReponsablesFamilia();
 		}
 
@@ -73,51 +74,63 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateEstudiantes(WDataMapper? connection)
+
+		public bool migrateEstudiantesSiac(WDataMapper? connection)
 		{
 			Console.Write("-->migrateEstudiantes");
-			var estudiante = new Tbl_aca_estudiante();
+			var estudiante = new Estudiantes();
 			estudiante.SetConnection(connection);
-			var EstudiantesMsql = estudiante.Get<Tbl_aca_estudiante>();
+			//var EstudiantesMsql = estudiante.Get<Estudiantes>();
+
+			var EstudiantesMsql = estudiante.Where<Estudiantes>(FilterData.Between("created_at", MigrationDates.GetStartOfLastYear(), MigrationDates.GetEndOfCurrentYear()));
+
+			var estudianteview = new ViewEstudiantesMigracion();
+			estudianteview.SetConnection(MySqlConnections.Bellacom);
+			estudianteview.CreateView();
+
+			Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
+			int i = 0;
 			try
 			{
-				BeginGlobalTransaction();
 				EstudiantesMsql.ForEach(est =>
 				{
+					Console.Write("Estudiantes contador : " + i.ToString());
+
 					var existingEstudiante = new Estudiantes()
 					{
-						Id = est.Idestudiante
+						Id = est.Id
 					}.Find<Estudiantes>();
 
-					est.Fechanacimiento = DateUtil.ValidSqlDateTime(est.Fechanacimiento.GetValueOrDefault());
-					est.Fechamodificacion = DateUtil.ValidSqlDateTime(est.Fechamodificacion.GetValueOrDefault());
-					est.Fechagrabacion = DateUtil.ValidSqlDateTime(est.Fechagrabacion.GetValueOrDefault());
-					if (existingEstudiante != null /*&& existingEstudiante.Updated_at != est.Fechamodificacion*/)
+					//est.Idestudiante = est.Id;
+
+					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
+					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
+					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
+					est.Fecha_ingreso = DateUtil.ValidSqlDateTime(est.Fecha_ingreso.GetValueOrDefault());
+					if (existingEstudiante != null)
 					{
-						buildEstudiante(est, existingEstudiante);
+						buildEstudianteSiac(est, existingEstudiante);
 
 						existingEstudiante.Update();
 					}
 					else if (existingEstudiante == null)
 					{
 						Estudiantes newEstudiante = new Estudiantes();
-						buildEstudiante(est, newEstudiante);
+						buildEstudianteSiac(est, newEstudiante);
 						newEstudiante.Save();
 					}
-
+					i++;
 				});
-				CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateEstudiantes.", ex);
-				RollBackGlobalTransaction();
 				throw;
 			}
-
+			estudianteview.DestroyView();
 			return true;
 		}
-
+		
 		public bool MigrateFamilia()
 		{
 
@@ -319,75 +332,60 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		private static void buildEstudiante(Tbl_aca_estudiante est, Estudiantes? existingEstudiante)
+		private static void buildEstudianteSiac(Estudiantes est, Estudiantes? existingEstudiante)
 		{
-			var estudianteJoin = new Estudiantes();
-			estudianteJoin.SetConnection(MySqlConnections.Bellacom);
-			var otrosDatos = estudianteJoin.Where<Estudiantes>(FilterData.Equal("codigo", est.Idtestudiante)).FirstOrDefault();
-			if (otrosDatos != null)
+			// Reutiliza la misma conexión para todas las operaciones relacionadas con Bellacom
+			var connection = MySqlConnections.Bellacom;
+
+			// Carga la vista de estudiante
+			var estudianteView = new ViewEstudiantesMigracion();
+			estudianteView.SetConnection(connection);
+			estudianteView.CreateView();
+			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("codigo", est.Codigo)).FirstOrDefault();
+
+			// Si no se encuentra el estudiante en la vista, retornar
+			if (estudiantesView == null)
 			{
-				existingEstudiante.Lugar_nacimiento = otrosDatos.Lugar_nacimiento;
-				existingEstudiante.Madre_id = otrosDatos.Madre_id;
-				existingEstudiante.Padre_id = otrosDatos.Padre_id;
-				existingEstudiante.Foto = otrosDatos.Foto;
-				existingEstudiante.Peso = otrosDatos.Peso;
-				existingEstudiante.Altura = otrosDatos.Altura;
-				existingEstudiante.Tipo_sangre = otrosDatos.Tipo_sangre;
-				existingEstudiante.Padecimientos = otrosDatos.Padecimientos;
-				existingEstudiante.Alergias = otrosDatos.Alergias;
-				existingEstudiante.Recorrido_id = otrosDatos.Recorrido_id;
-				existingEstudiante.Idtestudiante = otrosDatos.Idtestudiante;
+				return;
 			}
 
-			existingEstudiante.Id = est.Idestudiante;
-			existingEstudiante.Primer_nombre = StringUtil.GetNombres(est.Nombres)[0];
-			existingEstudiante.Segundo_nombre = StringUtil.GetNombres(est.Nombres)[1];
-			existingEstudiante.Primer_apellido = StringUtil.GetNombres(est.Apellidos)[0];
-			existingEstudiante.Segundo_apellido = StringUtil.GetNombres(est.Apellidos)[1];
-			existingEstudiante.Fecha_nacimiento = est.Fechanacimiento;
-			existingEstudiante.Sexo = est.Sexo;
-			existingEstudiante.Direccion = est.Direccion;
-			existingEstudiante.Codigo = est.Idtestudiante;
-			existingEstudiante.Created_at = est.Fechagrabacion;
-			existingEstudiante.Updated_at = est.Fechamodificacion;
-			existingEstudiante.Id_familia = est.Idfamilia;
-			existingEstudiante.Periodo = est.Periodo;
-			existingEstudiante.Fecha_ingreso = est.Fechaingreso;
-			existingEstudiante.Id_pais = est.Idpais;
-			existingEstudiante.Id_sociedad = est.Idsociedad;
-			existingEstudiante.Id_region = est.Idregion;
-			existingEstudiante.Solvencia = est.Solvencia;
-			existingEstudiante.Saldomd = est.Saldomd;
-			existingEstudiante.Estatus = est.Estatus;
-			existingEstudiante.Retenido = est.Retenido;
-			existingEstudiante.Referencia_estatus = est.Referenciaestatus;
-			existingEstudiante.Usuario_grabacion = est.Usuariograbacion;
-			existingEstudiante.Usuario_modificacion = est.Usuariomodificacion;
-			existingEstudiante.Id_old = est.Id_old;
-			existingEstudiante.Id_cliente = est.Idcliente;
-			existingEstudiante.Codigomed = est.Codigomed;
-			existingEstudiante.Ump = est.Ump;
-			existingEstudiante.Uep = est.Uep;
-			existingEstudiante.Colegio = est.Colegio;
-			existingEstudiante.Vivecon = est.Vivecon;
-			existingEstudiante.Sacramento = est.Sacramento;
-			existingEstudiante.Aniosacra = est.Aniosacra;
-			existingEstudiante.Fecha_aceptacion = est.Fechaaceptacion;
-			existingEstudiante.Usuario_aceptacion = est.Usuarioaceptacion;
-			existingEstudiante.Aceptacion = est.Aceptacion;
-			existingEstudiante.Periodo_aceptacion = est.Periodoaceptacion;
-			existingEstudiante.Fechaun = est.Fechaun;
-			existingEstudiante.Motivo = est.Motivo;
-			existingEstudiante.Comentario = est.Comentario;
-			existingEstudiante.Fecharetencion = est.Fecharetencion;
-			existingEstudiante.Saldoeamd = est.Saldoeamd;
-			existingEstudiante.Id_familia = est.Idfamilia;
+			// Carga los datos de la familia si están disponibles
+			var familiaJoin = new Tbl_aca_familia();
+			familiaJoin.SetConnection(connection);
+			var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
 
-			if (existingEstudiante.Foto == "" || existingEstudiante.Foto == null)
+			// Si no tiene familia, omitir al estudiante
+			if (familiaDatos == null)
+			{
+				return;
+			}
+
+			existingEstudiante.Id_familia = familiaDatos.Idfamilia;
+
+			// Asignación de datos básicos del estudiante
+			existingEstudiante.Id = est.Id;
+			existingEstudiante.Primer_nombre = est.Primer_nombre;
+			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
+			existingEstudiante.Primer_apellido = est.Primer_apellido;
+			existingEstudiante.Segundo_apellido = est.Segundo_apellido;
+			existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
+			existingEstudiante.Sexo = est.Sexo;
+			existingEstudiante.Foto = estudiantesView.Foto ?? est.Foto;
+			existingEstudiante.Direccion = est.Direccion;
+			existingEstudiante.Codigo = est.Codigo;
+			existingEstudiante.Created_at = est.Created_at;
+			existingEstudiante.Updated_at = est.Updated_at;
+			existingEstudiante.Fecha_ingreso = est.Fecha_ingreso;
+			existingEstudiante.Id_cliente = est.Id_cliente;
+			existingEstudiante.Codigomed = est.Codigomed;
+			existingEstudiante.Saldoeamd = est.Saldoeamd;
+
+			// Si no se encontró una foto, se busca en el sistema SIAC
+			if (string.IsNullOrEmpty(existingEstudiante.Foto))
 			{
 				var estudianteSiac = new Estudiantes();
 				estudianteSiac.SetConnection(MySqlConnections.Siac);
-				var existeRelacion = new Estudiantes().Where<Estudiantes>(FilterData.Equal("codigo", existingEstudiante.Codigo)).FirstOrDefault();
+				var existeRelacion = estudianteSiac.Where<Estudiantes>(FilterData.Equal("codigo", existingEstudiante.Codigo)).FirstOrDefault();
 
 				if (existeRelacion != null)
 				{

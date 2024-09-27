@@ -49,5 +49,21 @@ namespace DataBaseModel {
        public string? Comentario { get; set; }
        public DateTime? Fecharetencion { get; set; }
        public Double? Saldoeamd { get; set; }
+       public string? Foto { get; set; }
+   }
+
+   public class ViewEstudiantesMigracion: Tbl_aca_estudiante
+   {
+        public int? Id { get; set; }
+
+        public object? CreateView(){
+            String query =  "DROP VIEW IF EXISTS viewEstudiantesMigracion;CREATE VIEW viewEstudiantesMigracion AS SELECT e.id, e.foto, tae.* FROM tbl_aca_estudiante tae INNER JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
+            return ExecuteSqlQuery(query);
+        }
+
+        public object? DestroyView(){
+            String query =  "DROP VIEW IF EXISTS viewEstudiantesMigracion;";
+            return ExecuteSqlQuery(query);
+        }
    }
 }

@@ -3,17 +3,19 @@
 @using DataBaseModel
 @{
     string identify = Context.Session.GetString("seassonKey");
-    if(identify == null){
+    if (identify == null)
+    {
         Context.Response.Redirect("/Security/Login");
     }
     var pageConfig = Config.pageConfig();
-    
 }
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
+    <title>Portal CCA</title>
+    <link rel="icon" type="image/x-icon" href="@pageConfig.MEDIA_IMG_PATH/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/bootstrap.css">
     <link rel="stylesheet" href="~/css/icons.css">
@@ -23,22 +25,25 @@
     @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
-            const logout = () => {
-                WSecurity.LogOut();
-            }
-            window.addEventListener("load", () => {
-                //active nav
-                document.querySelectorAll(".menu-item").forEach(item => {
-                    if (location.href.includes(item.id)) {
-                        item.className = "active";
-                    }
-                })
-                //logOut
-                btnLogOut.onclick = logout;
-
+        import { NotificacionesReader } from "/Gestion_Mensajes/NotificacionesView.js";
+        const logout = () => {
+            WSecurity.LogOut();
+        }
+        window.addEventListener("load", () => {
+            //active nav
+            document.querySelectorAll(".menu-item").forEach(item => {
+                if (location.href.includes(item.id)) {
+                    item.className = "active";
+                }
             })
             //logOut
-            btnLogOut.onclick = logout;
+            btnLogOut.onclick = logout;            
+            //notificaciones 
+            document.body.append(new NotificacionesReader({ Leidas: false }))
+
+        })
+        //logOut
+        btnLogOut.onclick = logout;
     </script>
 </head>
 
@@ -69,7 +74,7 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                               
+
                             </div>
                         </div>
                     </div>
@@ -89,21 +94,21 @@
 
 </html>
 
-@* 
- <aside id="Aside">
-        <nav>
-            <img src="~/Media/Image/close.webp" class="navIcon" onclick="displayNav()">
-            <div class="logo-container">
-                <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL">
-            </div>
-            <partial name="MainMenu"/>
-           
-        </nav>
-    </aside>
+@*
+<aside id="Aside">
+<nav>
+<img src="~/Media/Image/close.webp" class="navIcon" onclick="displayNav()">
+<div class="logo-container">
+<img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL">
+</div>
+<partial name="MainMenu"/>
 
-    <header id="Header" class="admin-header">
-        <img src="~/Media/Image/navIcon.png" class="navIcon" onclick="displayNav()">
-        <div class="title-container">
-            <label for="" class="title">@pageConfig.TITULO</label>
-            <label for="" class="sub-title">@pageConfig.SUB_TITULO</label>
-        </div> *@
+</nav>
+</aside>
+
+<header id="Header" class="admin-header">
+<img src="~/Media/Image/navIcon.png" class="navIcon" onclick="displayNav()">
+<div class="title-container">
+<label for="" class="title">@pageConfig.TITULO</label>
+<label for="" class="sub-title">@pageConfig.SUB_TITULO</label>
+</div> *@

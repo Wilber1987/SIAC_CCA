@@ -13,6 +13,7 @@ class NotificationRequest extends EntityClass {
         }
     }
    /**@type {Number}*/ Id;
+   /**@type {String}*/ Titulo;
    /**@type {String}*/ Mensaje;
    /**@type {Array<ModelFiles>}*/ Files;
    /**@type {String}*/ NotificationType;
@@ -21,8 +22,7 @@ class NotificationRequest extends EntityClass {
    /**@type {Array<Number>}*/ Clases;
    /**@type {Array<Number>}*/ Secciones;
    /**@type {Array<Number>}*/ Periodos;
-   /**@type {String}*/ NotificationsServicesEnum;
-
+   /**@type {String}*/ NotificationsServicesEnum;  
 }
 
 export { NotificationRequest }
