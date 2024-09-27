@@ -12,8 +12,8 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			return migrateEvaluaciones();
-			//return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
+			//return migrateCalificaciones();
+			return migrateTipoNotas() /*&& migrateEvaluaciones()*/ && migrateCalificaciones();
 		}
 
 		public bool migrateTipoNotas()
@@ -24,7 +24,7 @@ namespace CAPA_NEGOCIO.Oparations
 			var tipoNotasMsql = tipoNotas.Get<Tipo_notas>();
 			try
 			{
-				BeginGlobalTransaction();
+				//BeginGlobalTransaction();
 				tipoNotasMsql.ForEach(tn =>
 				{
 					var existingNota = new Tipo_notas()
@@ -34,7 +34,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
 					tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (existingNota != null && existingNota.Updated_at != tn.Updated_at)
+					if (existingNota != null/* && existingNota.Updated_at != tn.Updated_at*/)
 					{
 						existingNota.Nombre = tn.Nombre;
 						existingNota.Nombre_corto = tn.Nombre_corto;
@@ -52,7 +52,7 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 
 				});
-				CommitGlobalTransaction();
+				//CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
@@ -71,13 +71,16 @@ namespace CAPA_NEGOCIO.Oparations
 			calificacion.SetConnection(MySqlConnections.Siac);
 			//var calificacionMsql = calificacion.Get<Calificaciones>();
 			
-			var calificacionMsql = calificacion.Where<Calificaciones>(FilterData.GreaterEqual("created_at", new DateTime(2022, 01, 01)), FilterData.Limit(20));
-
+			var calificacionMsql = calificacion.Where<Calificaciones>(FilterData.Between("created_at", MigrationDates.GetStartOfCurrentYear(), MigrationDates.GetEndOfCurrentYear()));
+			int i = 0;
+			
+			Console.Write("No de registros encontrados: "+calificacionMsql.Count);
 			try
 			{
-				BeginGlobalTransaction();
+				//BeginGlobalTransaction();
 				calificacionMsql.ForEach(tn =>
 				{
+					Console.Write("Registro no: "+i.ToString());;
 					try
 					{
 						var existingCalificacion = new Calificaciones()
@@ -88,7 +91,7 @@ namespace CAPA_NEGOCIO.Oparations
 						tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
 						tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
 
-						if (existingCalificacion != null && existingCalificacion.Updated_at != tn.Updated_at)
+						if (existingCalificacion != null /*&& existingCalificacion.Updated_at != tn.Updated_at*/)
 						{
 							existingCalificacion.Resultado = tn.Resultado;
 							existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
@@ -103,39 +106,21 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 						else if (existingCalificacion == null)
 						{
-							/*var evaluacion = new Evaluaciones { Id = tn.Evaluacion_id }.Find<Evaluaciones>();
-							if (evaluacion != null)
-							{
-								var estudianteClase = new Estudiante_clases { Id = tn.Estudiante_clase_id }.Find<Estudiante_clases>();
-								if (estudianteClase != null)
-								{*/
-									tn.Save();
-								/*}
-							}
-							else
-							{
-								LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Evaluacion_id no existe para la calificación con ID: " + tn.Id,null);
-							}*/
+							tn.Save();
 						}
 					}
 					catch (System.Data.SqlClient.SqlException sqlEx)
 					{
-						/*if (sqlEx.Number == 547) // 547 es el código de error para violación de restricción de clave externa
-						{
-							LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error de clave externa ignorado.", sqlEx);
-						}
-						else
-						{
-							LoggerServices.AddMessageError("ADVERTENCIA: migrateCalificaciones - Error desconocido ignorado, Codigo: " + sqlEx.Number.ToString(), sqlEx);
-						}*/
+						var ex = sqlEx;
 					}
+					i++;
 				});
-				CommitGlobalTransaction();
+				//CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateCalificaciones.Migrate.", ex);
-				RollBackGlobalTransaction();
+				//RollBackGlobalTransaction();
 				throw;
 			}
 
@@ -151,11 +136,11 @@ namespace CAPA_NEGOCIO.Oparations
 			//var EvaluacionMsql = Evaluacion.Get<Evaluaciones>();
 
 			var filter = new FilterData
-				{
-					PropName = "created_at",
-					FilterType = ">=",  
-					Values = new List<string?> { "2022-01-01 00:00:00" } 
-				};
+			{
+				PropName = "created_at",
+				FilterType = ">=",
+				Values = new List<string?> { "2022-01-01 00:00:00" }
+			};
 			var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
 
 			try
@@ -170,7 +155,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					evaluacion.Created_at = DateUtil.ValidSqlDateTime(evaluacion.Created_at.GetValueOrDefault());
 					evaluacion.Updated_at = DateUtil.ValidSqlDateTime(evaluacion.Updated_at.GetValueOrDefault());
-					if (existingEvaluacion != null && existingEvaluacion.Updated_at != evaluacion.Updated_at)
+					if (existingEvaluacion != null /*&& existingEvaluacion.Updated_at != evaluacion.Updated_aT*/)
 					{
 						// existingEvaluacion.Fecha = evaluacion.Fecha;
 						//existingEvaluacion.Hora = evaluacion.Hora; //TODO

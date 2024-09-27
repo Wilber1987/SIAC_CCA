@@ -14,48 +14,9 @@ namespace CAPA_NEGOCIO.Oparations
     {
 		public bool Migrate()
 		{
-			return migrateEscolaridad() && migrateDocentes();
+			return  migrateDocentes();
 		}
-
-		public bool migrateEscolaridad()
-        {
-			Console.Write("-->migrateEscolaridad");
-
-			var escolaridad = new Escolaridades();
-		 	escolaridad.SetConnection(MySqlConnections.Siac);
-			var escolaridadMsql = escolaridad.Get<Escolaridades>();
-			try
-			{
-				BeginGlobalTransaction();
-			 	escolaridadMsql.ForEach(tn =>
-				{
-					var existingEscolaridad = new Escolaridades()
-					{
-						Id = tn.Id
-					}.Find<Escolaridades>();
-					
-					if (existingEscolaridad != null)
-					{
-						existingEscolaridad.Nombre = tn.Nombre;						
-						existingEscolaridad.Update();
-					}
-					else
-					{
-						tn.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR: migrateEscolaridad.Migrate.", ex);
-				RollBackGlobalTransaction();
-				throw;
-			}
-
-			return true;
-		}
+	
 
 		public bool migrateDocentes()
         {
