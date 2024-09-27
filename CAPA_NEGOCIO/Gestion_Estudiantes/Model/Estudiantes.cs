@@ -63,7 +63,7 @@ namespace DataBaseModel
 
 			if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES))
 			{
-				return GetFullEstudiante(false);
+				return GetFullEstudiante();
 			}
 			else if (AuthNetCore.HavePermission(identity, Permissions.GESTION_ESTUDIANTES_PROPIOS))
 			{
@@ -71,7 +71,7 @@ namespace DataBaseModel
 				Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 				if (pariente?.Estudiantes_responsables_familia?.Find(r => r.Estudiante_id == Id) != null)
 				{
-					return GetFullEstudiante();
+					return GetFullEstudiante(false);
 				}
 				else
 				{

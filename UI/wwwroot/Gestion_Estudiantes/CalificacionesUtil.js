@@ -11,7 +11,7 @@ export class CalificacionesUtil {
        Dataset.forEach(instance => {
            if (maxDetails && instance.Calificaciones.length < maxDetails) {
                let isFirstOrder = instance.Calificaciones[0].Order == 1
-               for (let index = 0; index <= (maxDetails - instance.Calificaciones.length + 1); index++) {
+               for (let index = 0; index <= (maxDetails - (instance.Calificaciones.length + 1)); index++) {
                    if (isFirstOrder) {
                        instance.Calificaciones.push(new Calificacion_Group({ Evaluacion: "", Resultado: "-" }));
                    } else {
