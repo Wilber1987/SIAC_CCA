@@ -12,11 +12,16 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         [PrimaryKey(Identity = true)]
         public int? Id { get; set; }
         public string? Referencia { get; set; } 
+        public string? Descripcion { get; set; } 
         public int? Responsable_Id { get; set; } 
+        public int? Id_User { get; set; }
         public DateTime? Fecha { get; set; } 
-        public string? Creador { get; set; } 
+        public string? Creador { get; set; }
+        [JsonProp]
         public List<Pago>? Pagos { get; set; }
-         public  PagosState? Estado { get; internal set; }
+        public  string? Estado { get;  set; }
+        public double? Monto { get; set; }
+        public string? Moneda { get;  set; }
     }
 
     public class TPV

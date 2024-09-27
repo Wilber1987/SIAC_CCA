@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
@@ -24,49 +25,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 1, 5),
                 Fecha_Limite = new DateTime(2024, 1, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 2,
-                Estudiante_Id = 102,
-                Responsable_Id = 202,
-                Monto = 450.00,
-                Periodo_lectivo = "2024",
-                Mes = "Febrero",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 2, 10),
-                Fecha_Limite = new DateTime(2024, 2, 28),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 3,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 4,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juana", Segundo_nombre = "Maria", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             },
             new Pago
             {
@@ -80,7 +39,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 3, 15),
                 Fecha_Limite = new DateTime(2024, 3, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Daniel", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             },
             new Pago
             {
@@ -94,7 +53,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 3, 15),
                 Fecha_Limite = new DateTime(2024, 3, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Mario", Segundo_nombre = "Jose", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             },
             new Pago
             {
@@ -108,7 +67,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 3, 15),
                 Fecha_Limite = new DateTime(2024, 3, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Maria", Segundo_nombre = "Masiel", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             },
             new Pago
             {
@@ -122,7 +81,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 3, 15),
                 Fecha_Limite = new DateTime(2024, 3, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             },
             new Pago
             {
@@ -136,7 +95,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 Fecha = new DateTime(2024, 3, 15),
                 Fecha_Limite = new DateTime(2024, 3, 31),
                 Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan Perez", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
+                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Julisa", Segundo_nombre = "Marisol", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
             }];
         }
 
@@ -158,6 +117,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
         {
             try
             {
+                var user = AuthNetCore.User(identify);
                 PagosRequest? pagosRequest = GetPagoARealizar(identify);
                 if (pagosRequest == null)
                 {
@@ -182,9 +142,12 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
                 //TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES
                 pagosRequest!.Referencia = Guid.NewGuid().ToString();
                 pagosRequest!.Fecha = DateTime.Now;
-                pagosRequest!.Estado = PagosState.PAGADO;
+                pagosRequest!.Estado = PagosState.PAGADO.ToString();
+                pagosRequest!.Id_User = user.UserId;
+                pagosRequest!.Monto = pagosRequest!.Pagos!.Sum(x => x.Monto);
+                pagosRequest!.Creador = user.UserData?.Descripcion;
+                //pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Pagos!.Select(x => x.Estudiante?.Nombre_completo))}";
                 pagosRequest?.Save();
-
                 return new ResponseService
                 {
                     status = 200,

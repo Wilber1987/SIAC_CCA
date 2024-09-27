@@ -14,7 +14,7 @@ class Estudiantes_ModelComponent extends EntityClass {
     }
 
     ///**@type {ModelProperty}*/ Foto = { type: 'img', hidden: true };
-    /**@type {ModelProperty}*/ Fotografia = { type: 'img' };
+    /**@type {ModelProperty}*/ Fotografia = { type: 'img' , hidden: true};
     /**@type {ModelProperty}*/ Codigo = { type: 'text' };
     /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
     /**@type {ModelProperty}*/ Nombre_completo = { type: 'text'};

@@ -21,10 +21,10 @@
 <div id="Main" class="tpv-container">
     <div class="TabContainer">
         <form method="post" asp-controller="ApiPagos" asp-action="EjecutarPago">
-            <h1>TARJETA DE CREDITO</h1>
+            <h3>DATOS DE TARJETA</h3>
             <div class="infor">
                 <div class="text-on-surface-variant1 pt-4">
-                    Ingrese sus datos de tarjeta de credito
+                    Ingrese sus datos de tarjeta
                     <div class="tpv-icons">
                         <div class="visa">
                             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50"
@@ -94,7 +94,7 @@
                             placeholder="ex.1234567290" type="text" pattern="[0-9]{13,19}"
                             title="Ingrese un número de tarjeta válido de 13 a 19 dígitos">
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex gap-1">
                         <div class="col-6">
                             <label for="ExpMonth">Mes de expiración</label>
                             <input class="" id="ExpMonth" name="ExpMonth" required type="number" min="1" max="12"
@@ -120,20 +120,20 @@
         </form>
     </div>
     <div class="TabContainer detail-pago-container">
-        <h1>DETALLES DEL PAGO</h1>
+        <h3>DETALLES DEL PAGO</h3>
         @foreach (var pago in pagosRequest?.Pagos ?? [])
         {
             pagoTotal += pago.Monto.GetValueOrDefault();
             <div class="detail">
                 <label for="">@pago.Estudiante?.Nombre_completo</label>
                 <label for="">@pago.Mes</label>
-                <label for="" class="pago-monto">@NumberUtility.ConvertToMoneyString(pago.Monto)</label>
+                <label for="" class="pago-monto">@(pago.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
             </div>
         }
-        <div class="detail">
+        <div class="detail pago-total">
             <label for="">Total</label>
-            <label for="" class="pago-monto-max">@NumberUtility.ConvertToMoneyString(pagoTotal)</label>
+            <label for=""></label>
+            <label for="" class="pago-monto-max">@(pagosRequest?.Pagos?[0].Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pagoTotal)</label>
         </div>
-
     </div>
 </div>
