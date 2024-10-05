@@ -53,6 +53,8 @@ namespace DataBaseModel
 				c.Nombre.Equals(ConfiguracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
 			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
+			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO2.ToString()))?.Valor ?? SUB_TITULO2;
 			NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.NOMBRE_EMPRESA.ToString()))?.Valor ?? NOMBRE_EMPRESA;
 			LOGO_PRINCIPAL = configuraciones.Find(c => c.Nombre != null &&
@@ -68,14 +70,15 @@ namespace DataBaseModel
 		}
 		public string TITULO = "TEMPLATE";
 		public string SUB_TITULO = "Template";
+		public string SUB_TITULO2 = "Template";
 		public string NOMBRE_EMPRESA = "TEMPLATE";
 		public string LOGO_PRINCIPAL = "logo.png";
 		public string MEDIA_IMG_PATH = "/media/img/";
 		public string VERSION = "2024.07";
 		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
 
-        public string WATHERMARK = "logo.png";
-    }
+		public string WATHERMARK = "logo.png";
+	}
 
 	public enum ConfiguracionesTypeEnum
 	{
@@ -85,11 +88,12 @@ namespace DataBaseModel
 	public enum ConfiguracionesThemeEnum
 	{
 		TITULO, SUB_TITULO, NOMBRE_EMPRESA, LOGO_PRINCIPAL, LOGO, MEDIA_IMG_PATH,
-        VERSION,
-        WATHERMARK,
+		VERSION,
+		WATHERMARK,
 		TWILLIO_ACCOUNT,
 		TWILLIO_TOKEN,
-		TWILLIO_NUMBER
+		TWILLIO_NUMBER,
+        SUB_TITULO2
     }
 
 	public class Config
@@ -126,6 +130,6 @@ namespace DataBaseModel
 		{			
 			return new TwillioConfig();
 		}
-    }
+	}
 
 }

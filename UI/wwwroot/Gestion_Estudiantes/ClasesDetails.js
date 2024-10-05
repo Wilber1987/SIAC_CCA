@@ -1,21 +1,22 @@
 //@ts-check
+import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Asignatura_Group, Calificacion_Group, Clase_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
-import { Calificaciones_ModelComponent } from "../Model/ModelComponent/Calificaciones_ModelComponent.js";
-import { Calificacion_Group_ModelComponent, Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
-import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
-import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import { Clase_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
-import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { CalificacionesUtil } from "./CalificacionesUtil.js";
+import { ClaseGroup } from "./ClaseGroup.js";
+import { BuildHeaderData } from "./EstudiantesComponents.js";
+
+const routeEstudiantes = location.origin + "/Media/Images/estudiantes/";
+const HeaderEvaluaciones = ["IB", "IIB", "IS", "IIIB", "IVB", "IIS", "F"];
 /**
  * @typedef {Object} Config 
     * @property {Clase_Group_ModelComponent} ModelObject
     * @property {Function} [action]
+    * @property {Estudiantes} [Estudiante]
     * @property {Estudiante_clases} [Estudiante_Clase_Seleccionado]
     * @property {boolean} [FullEvaluation]
     * @property {boolean} [WithoutDocente]
@@ -30,7 +31,6 @@ class ClasesDetails extends HTMLElement {
         super();
         this.Config = Config;
         this.attachShadow({ mode: 'open' });
-
         this.Acordeon = html`<div class="accordion"></div>`;
         this.shadowRoot?.append(this.CustomStyle, this.Acordeon);
         this.Draw();
@@ -39,27 +39,30 @@ class ClasesDetails extends HTMLElement {
     connectedCallback() { }
     Draw = async () => {
         // ${Object.keys(element).map(key => this.BuildPropiertyDetail(element, key))}
-        this.Config.Dataset?.forEach(element => {
+        this.Config.Dataset?.forEach((element, index) => {
             // @ts-ignore
             const content = html`<div class="element-content"  id="${element.Descripcion?.toString().replaceAll(" ", "")}">
             </div>`;
-            // @ts-ignore
-
+            const btn = html`<div class="accordion-button" onclick="${(ev) => {
+                this.getClassGroup(ev.target, content, element);
+            }}">${element.Descripcion}</div>`
             this.Acordeon?.append(html`<div class="element-container">
-                <div class="accordion-button" onclick="${(ev) => {
-                    this.getClassGroup(ev, content, element);
-                }}">${element.Descripcion}</div>
+                ${btn}
                 ${content}
             </div>`)
+            if (index == 0) {
+                // @ts-ignore
+                this.getClassGroup(btn, content, element);
+            }
         });
     }
 
     /**
-     * @param {{ target: { className: string; }; }} ev
+     * @param {HTMLElement} control
      * @param {HTMLElement} content
      * @param {Estudiante_clases} element
      */
-    async getClassGroup(ev, content, element) {
+    async getClassGroup(control, content, element) {
         // @ts-ignore
         if (!content.dataElement) {
             let response = new Clase_Group();
@@ -78,9 +81,9 @@ class ClasesDetails extends HTMLElement {
             // @ts-ignore
             content.dataElement = response;
             content.innerHTML = "";
-            content.append(classGroup);
+            content.append(new WPrintExportToolBar({ ExportPdfAction: (toolBar) => this.ExportPdfAction(toolBar, element) }), classGroup);
         }
-        ev.target.className = ev.target.className.includes("active-btn")
+        control.className = control.className.includes("active-btn")
             ? "accordion-button" : "accordion-button active-btn";
 
         content.className = content.className.includes("active")
@@ -89,8 +92,16 @@ class ClasesDetails extends HTMLElement {
     update() {
         this.Draw();
     }
+
     CustomStyle = css`@import url(/css/variables.css);
         *{ font-family:  Montserrat, sans-serif;}
+        w-class-detail {
+            width: -webkit-fill-available;
+        }
+        w-tool-bar {
+            width: 100%;
+            display: block;
+        }
         .accordion-button {
             cursor: pointer;
             position: relative;
@@ -157,190 +168,99 @@ class ClasesDetails extends HTMLElement {
         }
        
      `
-}
-customElements.define('w-clases-details', ClasesDetails);
-export { ClasesDetails }
-
-class ClaseGroup extends HTMLElement {
-    /**
-     * @param {Clase_Group} response
-     * @param {{ 
-     *  ModelObject?: Clase_Group_ModelComponent, 
-     *  GroupBy?: String,
-     *  WithoutDocente?: Boolean; 
-     * Estudiante_Clase_Seleccionado?: Estudiante_clases
-     * }} Config
-     */
-    constructor(response, Config) {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.shadowRoot?.append(this.CustomStyle);
-        this.Config = Config ?? { ModelObject: new Clase_Group_ModelComponent() };
-        //this.shadowRoot?.append(this.Builddetail(modelClass, element, ObjectF, prop, maxDetails))
-        const propsData = Object.keys(response)
-            .filter(prop => response[prop] != null && response[prop] != undefined && this.isDrawable(response, prop))
-            .map(prop => this.BuildPropiertyDetail(response, prop))
-        const dataContainer = html`<div class="data-container"></div>`
-        propsData.forEach(data => {
-            dataContainer.appendChild(data);
-        })
-        this.shadowRoot?.append(StylesControlsV2.cloneNode(true));
-        this.shadowRoot?.append(dataContainer);
-    }
-    isDrawable(response, prop) {
-        if (prop.toUpperCase() == "REPITE" || prop.toUpperCase() == "NIVEL") {
-            return false;
+    /* @param {WPrintExportToolBar} toolBar 
+     
+    PrintAction = (toolBar) => {
+        if (!this.EstudianteSeleccionado.Id) {
+            this.append(ModalMessege("Seleccione un estudiante"));
+            return;
         }
-        return true;
-    }
-    connectedCallback() { }
-    BuildPropiertyDetail(ObjectF, prop) {
-        //console.log(html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`);
-        // return html`<div>${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        // @ts-ignore
-        switch (this.Config.ModelObject[prop]?.type.toUpperCase()) {
-            case "MASTERDETAIL":
-                const isEstudiante = this.Config.GroupBy?.toUpperCase() == "ESTUDIANTE";
-                // @ts-ignore
-                const modelClass = this.Config.ModelObject[prop].ModelObject.__proto__ == Function.prototype ? this.Config.ModelObject[prop].ModelObject() : this.Config.ModelObject[prop].ModelObject;
-                //console.log(this.Config.ModelObject, prop, this.Config.ModelObject[prop], this.Config.ModelObject[prop].ModelObject, ObjectF[prop]);
-                const maxDetails = ObjectF[prop].reduce((max, detail) => {
-                    const DetailsLength = new modelClass.constructor(detail).Details
-                        ? new modelClass.constructor(detail).Details.length : 0;
-                    return Math.max(max, DetailsLength);
-                }, 0);
-
-                CalificacionesUtil.UpdateCalificaciones(ObjectF[prop], maxDetails);
-                return html`<div class="detail-content">                   
-                    ${ObjectF[prop].map(element => {
-                    return isEstudiante
-                        ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
-                        : this.Builddetail(modelClass, element, ObjectF, prop, maxDetails);
-                })}
-                <!-- <span class="break-page"></span>-->                    
-                </div>`;
-            //${this.BuildConsolidado(ObjectF[prop])} TODO REVISAR A POSTERIORI
-            default:
-                return html`<div class="prop">${WOrtograficValidation.es(prop)}: ${ObjectF[prop]}</div>`;
-        }
-    }
-    BuildConsolidado(Dataset) {
-        const consolidado = WArrayF.GroupBy(Dataset.flatMap(c => c.Calificaciones), "EvaluacionCompleta", "Resultado")
-        const consolidadoContainer = html`<div class="consolidado-container"></div>`;
-        consolidado.forEach(element => {
-            if (element.EvalProperty.toUpperCase().includes("EVA") || element.EvalProperty.length < 3) {
-                return;
+        this.append(new WModalForm({
+            title: "Imprimir informe clase",
+            StyleForm: "columnX1",
+            ModelObject: {
+                Seleccione: { type: "select", Dataset: this.EstudianteSeleccionado?.Estudiante_clases.map(c => ({ id: c.Clase_id, Descripcion: c.Descripcion })) }
+            }, EditObject: {
+                Estudiante_id: this.EstudianteSeleccionado.Id,
+            }, ObjectOptions: {
+                SaveFunction: async (object) => {
+                    const body = await this.GetActa(object);
+                    toolBar.Print(body);
+                    return;
+                }
             }
-            consolidadoContainer.append(html`<div class="consolidado-detail">
-                <div class="eval-prop">${element.EvalProperty}</div>
-                <div class="eval-result">
-                    <div class="detail"><span class="title">Promedio: </span><span class="value-consolidado">${element.avg.toFixed(2)}</span></div>
-                    <div class="detail"><span class="title">Nota máxima: </span><span class="value-consolidado">${element.Max}</span></div>
-                    <div class="detail"><span class="title">Nota mínima: </span><span class="value-consolidado">${element.Min}</span></div>
-                </div>               
-            </div>`)
-        });
-        return consolidadoContainer;
-    }
-
-    Builddetail(modelClass, element, ObjectF, prop, maxDetails) {
-        ///**@type {Asignatura_Group} */
-        const instance = new modelClass.constructor(element);
-        //this.UpdateCalificaciones(instance, maxDetails);
-        const index = ObjectF[prop].indexOf(element);
-        return html`<div class="container">
-            <div class="element-description">
-                ${index == 0 ? html`<span class="header">Asignatura</span>` : ""} 
-                <span class="value">${instance.Descripcion}</span>
-                <label class="Btn-Mini detalle-btn" onclick="${() => this.ShowDetails(element)}">Detalle</label>                
-            </div>
-            ${this.AddTeacherDetail(index, instance)}          
-            <div class="element-details" style="${this.Config.WithoutDocente == true ? "width: 70%;" : ""} grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-                ${instance.Details.map((detail, indexDetail) => {
-            return this.buildDetail(detail, indexDetail, maxDetails, index);
-        })}</div>
-        </div>`;
-    }
+        }));
+    };*/
     /**
-     * @param {Asignatura_Group} instance
+    * @param {WPrintExportToolBar} toolBar 
+    * @param {Estudiante_clases} object 
+    */
+    ExportPdfAction = async (toolBar, /** @type {Estudiante_clases} */ object) => {
+        const body = await this.GetActa(object);
+        toolBar.ExportPdf(body);
+        return;
+    };
+
+    /**
+     * @param {Estudiante_clases} object
      */
-    async ShowDetails(instance) {
-        console.log(instance);
+    async GetActa(object) {
+        /**@type {DocumentsData} */
+        const documentsData = await new DocumentsData().GetBoletinDataFragments();
 
         const response = await new Estudiante_Clases_View({
-            Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
-            Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
-            Nombre_asignatura: instance.Descripcion
-        }).GetClaseEstudianteCompleta();
-        
-        const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
-        response.Asignaturas.forEach(asignatura => {
-            MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
-            MateriaDetailEvaluations.append(new WTableComponent({
-                Dataset: asignatura.Calificaciones,
-                ModelObject: new Calificacion_Group_ModelComponent(),
-                maxElementByPage: 100,
-                isActiveSorts: false,
-                CustomStyle: css`.WTable td label {
-                    text-transform: uppercase;
-                }`,
-                Options: {}
-            }))
-            document.body.append(new WModalForm({
-                title: asignatura.Descripcion,
-                ObjectModal: MateriaDetailEvaluations
-            }));
-        })
-    }
-    AddTeacherDetail(index, instance) {
-        return this.Config.WithoutDocente == true ? "" : (html`<div class="element-description">
-                ${index == 0 ? html`<span class="header">Docente</span>` : ""} 
-                <span class="value">${instance.Docente ?? "--"}</span>
-            </div>`);
-    }
+            Estudiante_id: object.Estudiante_id,
+            Clase_id: object.Clase_id
+        }).GetClaseEstudianteConsolidado();
 
-    BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
-        /**@type {Estudiante_Group} */
-        const instance = new modelClass.constructor(element);
-        const index = ObjectF[prop].indexOf(element);
-        return html`<div class="container">
-            <div class="element-description">
-                ${index == 0 ? html`<span class="header">Estudiante</span>` : ""} 
-                <span class="value">${instance.Descripcion}</span>
-            </div>
-            <div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-                ${instance.Details.map((detail, indexDetail) => {
-            return this.buildDetail(detail, indexDetail, maxDetails, index);
-        })}</div>
+        const body = new ClaseGroup(response, { ModelObject: new Clase_Group_ModelComponent() });
+
+        documentsData.Header.style.width = "100%";
+
+        const data = html`<div class="page" style="position:relative">
+            ${documentsData.Header}
+            ${body.shadowRoot?.innerHTML}
+            ${documentsData.WatherMark}
+            ${this.PrintStyle.cloneNode(true)}
+            ${documentsData.Footer}
         </div>`;
+        BuildHeaderData(data, this.Config.Estudiante);
+        return data;
     }
 
-
-
-    buildDetail(detail, indexDetail, maxDetails, index) {
-        let columStyle = detail.Order == 1
-            ? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
-
-        columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
-
-        return html`<div class="element-detail" style="">
-            <span class="header ${index == 0 ? "" : "hidden"}">
-                <span class="tooltip">${detail.EvaluacionCompleta}</span>
-                <span>${detail.Evaluacion}</span>
-            </span>
-            <span class="value">${detail.Resultado}</span>
-        </div>`;
-    }
-
-    CustomStyle = css`   
-        .data-container {
+    PrintStyle = css`@import url(/css/variables.css);
+        *{ font-family:  Montserrat, sans-serif; color: #000 !important; }
+        .page {   
+            margin: 40px;
             display: flex;
-            row-gap: 20px;
-            column-gap: 25px;
             flex-wrap: wrap;
-            width: 100%;
-            position: relative;
-        }    
+            gap: 10px;
+            font-size: 12px !important;
+        }           
+        .prop {
+            font-size: 12px !important;
+            margin-right: 10px;
+        }               
+            
+        .detail-content .container {
+            width: -webkit-fill-available;
+            & .element-description {
+                font-size: 12px;
+            }
+            & .element-details {
+                & .element-detail {
+                    font-size: 12px;
+                }
+            }   
+        }        
+        .header {
+            width: 100%;           
+            font-size: 12px;
+        }
+        .value {            
+            font-size: 12px;
+        }   
+        
         .detail-content { 
             display: flex;
             flex-direction: column;
@@ -350,184 +270,57 @@ class ClaseGroup extends HTMLElement {
             border-radius: 0.3cm;
             width: 100%;
         } 
-        .detalle-btn {
-            position: absolute;
-            right: 10px;
-            bottom: 10px;
-            height: 15px;
-            font-weight: 500 !important;
-            font-size: 12px !important;
-            padding: 5px 5px !important;
-            text-transform: capitalize;
-            cursor: pointer;
+
+        .element-content.active {           
+            max-height: unset;
+            padding: 20px 20px;
         }
-        
-        .container {
-            display: flex;
-            flex: 1;
-            & .element-description {
-                width: 30%;
-                display: grid;
-                grid-template-rows: 50% 50%;
-                position: relative;
-            }
-            & .element-details {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(min-content, 1fr));
-                width: 40%;
-                & .element-detail {
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-                    border-right: solid 1px rgb(239, 240, 242);
-                    border-left: solid 1px rgb(239, 240, 242);
-                    & .value {
-                        position: relative;
-                        text-align: right;
-                    }
-                }
-            }   
-        }        
-        .header {
-            flex: 1;
-            padding: 5px;
-            border-bottom: 1px solid #999;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 10px;
-            position: relative;
-           /* & span {
-                position: absolute;
-                transform: rotate(-50deg) translateY(-0px) translateX(20px);
-                background-color: #fff;
-                border-bottom: solid 1px #999;
-                width: 80px;
-                display: flex;
-                justify-content: center;
-            }*/
+        h2, h3, h4 {
+            width: 100%;            
         }
-       
-        .tooltip {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 5px;
-            padding: 5px;
-            font-size: 0.8rem;
-            display: none;
-            transform: translateY(100%);
-            width: 150px;
+
+        h2 {
+            font-size: 16px;
             text-align: center;
         }
-        
-        .header:hover .tooltip {
-            display: block;
+        h3 {
+            font-size: 14px;
+            text-align: center;
         }
-        .value {
-            flex: 1;
-            padding: 10px;
+        h4 {
+            font-size: 12px;
+            text-align: left;
         }
-        .hidden {
-            display: none;
+        .accordion {
+            border: 1px solid #d2d2d2;
+            border-radius: 20px;
+            overflow: hidden;
         }
-        .prop {            
-            text-transform: capitalize;
-            font-size: 1rem;
-            font-weight: 600;
-
-        }
-        .container:nth-of-type(even) {
-            background-color: #f8f8f8;
-        }  
-        .consolidado-container { 
-            display: grid;
-            flex-direction: column;
-            grid-template-columns: calc(50% - 10px) calc(50% - 10px);
-            gap: 10px;
-            margin-top: 20px;
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box;
-            & .consolidado-detail {
-                width: 100%;
-                max-width: 600px;                  
-                text-transform: uppercase;
-                display: grid;
-                grid-template-columns:  150px calc(100% - 150px);             
-                & .eval-prop {     
-                    border: solid 1px #eee;  
-                    padding: 5px 10px;         
-                }
-                & .eval-result { 
-                    display: flex;
-                    flex-direction: column;  
-                    border: solid 1px #eee;
-                    & .detail {
-                        border-bottom: solid 1px #eee; 
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;  
-                        & .title { 
-                            padding: 5px 10px;
-                        }                     
-                        & .value-consolidado {
-                            text-align: right;  
-                            padding: 5px 10px;                          
-                        }
-                    }                     
-                }                
+        .hidden, .option {
+            display: none !important;
+        }       
+        @media print{
+            *{
+                -webkit-print-color-adjust: exact !important;
+                border-collapse: collapse;
             }
-           
-        }
-        
-        .break-page {
-            page-break-after: always;
-        }
-        .page {   
-            margin: 40px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            font-size: 12px !important;
-            & .prop {
-                font-size: 12px !important;
-                margin-right: 10px;
+            .page{
+                border: none; /* Optional: Remove border for printing */
+                margin: 0;
+                padding: 0;
+                box-shadow: none; /* Optional: Remove any shadow for printing */
+                page-break-after: always; /* Ensure each .page-container starts on a new page */
             }
-            & .detalle-btn {
-                display: none  ;
-            }
-        } 
-            
-        @media (max-width: 800px) {
             .detail-content .container, .detail-content .element-details {
-                flex-direction: column;
+                flex-direction: row
             }
             .hidden {
-                display: block;
+                display: none;
             }
-            .element-detail {
-                flex-direction: row;
-            }
-            .detail-content .container {
-                border: solid 1px rgb(239, 240, 242);
-                display: flex;
-                flex: 1;
-                & .element-description {
-                    width: 100%;
-                    border: solid 1px rgb(239, 240, 242);
-                }
-                & .element-details {
-                    width: 100%; 
-                    border: solid 1px rgb(239, 240, 242);
-                }
-            }
-            .page .hidden{                
-                display: none !important;
-            }  
         } 
-             
-     `
+    `
+
 }
-customElements.define('w-class-detail', ClaseGroup);
-export { ClaseGroup }
+customElements.define('w-clases-details', ClasesDetails);
+export { ClasesDetails };
 

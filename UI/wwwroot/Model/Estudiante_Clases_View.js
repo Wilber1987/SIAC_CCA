@@ -72,11 +72,15 @@ class Estudiante_Clases_View extends EntityClass {
         // @ts-ignore
         return await this.GetData("ApiGestionCursos/GetClaseMateriaConsolidado");
     }
+    /**
+    * @returns {Promise<Clase_Group>}
+    */
     async GetClaseMateriaCompleta() {
+        // @ts-ignore
         return await this.GetData("ApiGestionCursos/GetClaseMateriaCompleta");
     }
     /**
-    * @returns {Promise<Array<Clase_Group>>}
+    * @returns {Promise<Clase_Group>}
     */
     async GetClasesCompleta() {
         // @ts-ignore

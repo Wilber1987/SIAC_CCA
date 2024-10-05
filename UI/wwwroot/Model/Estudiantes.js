@@ -55,21 +55,21 @@ class Estudiantes extends EntityClass {
     * @returns {Object}
     */
     GetMadre() {
-        const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "MADRE");
-        return {
-            Id: responsable?.Parientes?.Id,
-            Name: responsable?.Parientes?.Nombre_completo,
-        }
+        // const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "MADRE");
+        // return {
+        //     Id: responsable?.Parientes?.Id,
+        //     Name: responsable?.Parientes?.Nombre_completo,
+        // }
     }
     /**
     * @returns {Object}
     */
     GetPadre() {
-        const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "PADRE");
-        return {
-            Id: responsable?.Parientes?.Id,
-            Name: responsable?.Parientes?.Nombre_completo,
-        }
+        // const responsable = this.Responsables.find(r => r.Parentesco.toUpperCase() == "PADRE");
+        // return {
+        //     Id: responsable?.Parientes?.Id,
+        //     Name: responsable?.Parientes?.Nombre_completo,
+        // }
     }
 
     /**
@@ -99,6 +99,9 @@ class Calificacion_Group {
 
     /** @type {String}*/
     Evaluacion;
+    
+    /** @type {String}*/
+    Periodo;
 
     /** @type {String}*/
     EvaluacionCompleta;

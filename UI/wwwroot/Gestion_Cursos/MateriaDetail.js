@@ -1,11 +1,11 @@
 //@ts-check
 
-import { ClaseGroup } from "../Gestion_Estudiantes/ClasesDetails.js";
+import { ClaseGroup } from "../Gestion_Estudiantes/ClaseGroup.js";
 import { Docente_materias } from "../Model/Docente_materias.js";
 import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Estudiantes } from "../Model/Estudiantes.js";
+import { Clase_Group, Estudiantes } from "../Model/Estudiantes.js";
 import { Clase_Group_ModelComponent, Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
@@ -100,7 +100,7 @@ class MateriaDetail extends HTMLElement {
             return;
         }
         if (!this.calificacionesResponse) {
-            /**@type {Array<Estudiante_Clases_View>} */
+            /**@type {Clase_Group} */
             this.calificacionesResponse = await new Estudiante_Clases_View({
                 Materia_id: this.Docente_Materia?.Materias?.Id,
                 Seccion_id: this.Docente_Materia?.Seccion_id
@@ -118,13 +118,13 @@ class MateriaDetail extends HTMLElement {
             return;
         }
         if (!this.calificacionesCompletasResponse) {
-            /**@type {Array<Estudiante_Clases_View>} */
+            /**@type {Clase_Group} */
             this.calificacionesCompletasResponse = await new Estudiante_Clases_View({
                 Materia_id: this.Docente_Materia?.Materias?.Id,
                 Seccion_id: this.Docente_Materia?.Seccion_id
             }).GetClaseMateriaCompleta();
         }
-        const classGroup = new ClaseGroup(this.calificacionesCompletasResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent() });
+        const classGroup = new ClaseGroup(this.calificacionesCompletasResponse, { GroupBy: "Estudiante", ModelObject: new Clase_Group_ModelComponent(), IsComplete: true });
         const optionsBar = await this.buildOptionsBar(classGroup);
         return html`<div style=" display: flex;
             flex-direction: column;
