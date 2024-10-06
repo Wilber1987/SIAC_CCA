@@ -17,8 +17,8 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 
 		public bool Migrate()
-		{			
-
+		{
+			//return migrateEstudiantesSiac(MySqlConnections.Siac);
 			return MigrateParentesco()
 			&& MigrateFamilia()
 			&& migrateEstudiantesSiac(MySqlConnections.Siac)
@@ -78,16 +78,19 @@ namespace CAPA_NEGOCIO.Oparations
 		public bool migrateEstudiantesSiac(WDataMapper? connection)
 		{
 			Console.Write("-->migrateEstudiantes");
-			var estudiante = new Estudiantes();
+			var estudiante = new ViewEstudiantesActivosSiac();
 			estudiante.SetConnection(connection);
-			//var EstudiantesMsql = estudiante.Get<Estudiantes>();
+			estudiante.CreateViewEstudiantesActivos();
 
-			var EstudiantesMsql = estudiante.Where<Estudiantes>(FilterData.Between("created_at", MigrationDates.GetStartOfLastYear(), MigrationDates.GetEndOfCurrentYear()));
+			var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
+
+			//var EstudiantesMsql =  estudiante.Where<Estudiantes>(FilterData.Between("created_at", MigrationDates.GetStartOfLastYear(), MigrationDates.GetEndOfCurrentYear()));
+			estudiante.DestroyView("viewEstudiantesActivosSiac");
 
 			var estudianteview = new ViewEstudiantesMigracion();
 			estudianteview.SetConnection(MySqlConnections.Bellacom);
 			estudianteview.CreateView();
-
+			
 			Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
 			int i = 0;
 			try
@@ -125,12 +128,12 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateEstudiantes.", ex);
-				throw;
+				//throw;
 			}
-			estudianteview.DestroyView();
+			estudianteview.DestroyView("viewEstudiantesMigracion");
 			return true;
 		}
-		
+
 		public bool MigrateFamilia()
 		{
 
@@ -193,9 +196,9 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				//LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
+				LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
 				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 
 			return true;
@@ -267,9 +270,9 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				//LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
+				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
 				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 			return true;
 		}
@@ -325,9 +328,9 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				//LoggerServices.AddMessageError("ERROR: migrateEstudiantesReponsablesFamilia.", ex);
+				LoggerServices.AddMessageError("ERROR: migrateEstudiantesReponsablesFamilia.", ex);
 				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 			return true;
 		}

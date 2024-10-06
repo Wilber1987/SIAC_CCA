@@ -10,15 +10,16 @@ namespace CAPA_NEGOCIO.Util
         {
             get
             {
-                return MySQLConnection.BuildDataMapper("localhost","root", "",  "siac_cca_production", 3306);
+                //return MySQLConnection.BuildDataMapper("localhost","root", "",  "siac_cca_production", 3306);
+                return MySQLConnection.BuildDataMapper("localhost","root", "",  "siac_migracion", 3306);
             }
         }
         public static WDataMapper? Bellacom
         {
             get
-            {
-                //return MySQLConnection.BuildDataMapper("root", "", "localhost", "bellacom_dbcca", 3306);
-                return MySQLConnection.BuildDataMapper("localhost", "root", "", "bellacom_dbcca", 3306);
+            {                
+                //return MySQLConnection.BuildDataMapper("localhost", "root", "", "bellacom_dbcca", 3306);
+                return MySQLConnection.BuildDataMapper("localhost", "root", "", "bellacom_migracion", 3306);
             }
         }
     }

@@ -68,8 +68,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateDocentes.Migrate.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
