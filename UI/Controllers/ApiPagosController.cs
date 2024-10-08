@@ -7,6 +7,7 @@ using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Operations;
+using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers
@@ -34,6 +35,14 @@ namespace UI.Controllers
             var response = PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
             if (response.status == 200) return RedirectToAction("PagoExitoso");
             else return BadRequest(response.message);
+        }
+
+        [HttpPost]
+        public List<CuentasPorCobrarDocumentos> getCuentasPorCobrar()
+        {
+            // Obtener el los documentos que el padre tiene pendiente de pagar
+            return CuentasPorCobrarOperation.GetCuentasPorCorar(HttpContext.Session.GetString("seassonKey"));
+            
         }
     }
 }
