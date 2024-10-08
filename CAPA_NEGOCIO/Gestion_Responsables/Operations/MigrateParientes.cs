@@ -14,7 +14,9 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			return MigrateFamilia() && MigrateParientesAndUsers();
+			var carajo = MySqlConnections.ConnectToMysql;
+			return false;
+			///return MigrateFamilia() && MigrateParientesAndUsers();
 		}
 
 		public bool MigrateParientesAndUsers()

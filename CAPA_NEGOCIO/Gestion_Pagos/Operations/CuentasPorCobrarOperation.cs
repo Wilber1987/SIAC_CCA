@@ -12,9 +12,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {
     public class CuentasPorCobrarOperation
     {
-        public static List<CuentasPorCobrarDocumentos> GetCuentasPorCorar(string identify)
+        /*public static List<CuentasPorCobrarDocumentos> GetCuentasPorCorar(string identify)
         {
             return null;
-        }
+        }*/
     }
 }

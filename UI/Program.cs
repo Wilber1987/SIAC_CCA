@@ -30,6 +30,8 @@ new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();*/
 
+new MigrateParientes().Migrate();
+
 
 
 var builder = WebApplication.CreateBuilder(args);

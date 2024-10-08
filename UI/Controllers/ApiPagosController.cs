@@ -37,12 +37,12 @@ namespace UI.Controllers
             else return BadRequest(response.message);
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public List<CuentasPorCobrarDocumentos> getCuentasPorCobrar()
         {
             // Obtener el los documentos que el padre tiene pendiente de pagar
             return CuentasPorCobrarOperation.GetCuentasPorCorar(HttpContext.Session.GetString("seassonKey"));
             
-        }
+        }*/
     }
 }
