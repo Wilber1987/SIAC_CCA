@@ -31,9 +31,21 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->MigrateParentesco");
 			// Inicializar el servicio SSH Tunnel
 			var sshTunnelService = new SshTunnelService();
+			using( var client = sshTunnelService.GetSshClient("Bellacom")) 
+			{
+				client.Connect();
+				var forwardedPort = sshTunnelService.GetForwardedPort("Bellacom", client);
+				forwardedPort.Start();
+				 
+				var parentescos2 = new Tbl_gen_relacionfamilar();
+				parentescos2.SetConnection(MySqlConnections.BellacomTest);
+				var parentescosMsql2 = parentescos2.Get<Tbl_gen_relacionfamilar>();
+				forwardedPort.Stop();
+                client.Disconnect();
+			}
 
 			// Abrir túnel SSH para Bellacom
-			sshTunnelService.OpenTunnel("Bellacom");
+			//sshTunnelService.OpenTunnel("Bellacom");
 
 			// Obtener los datos desde la base de datos Bellacom
 			var parentescos = new Tbl_gen_relacionfamilar();
@@ -79,7 +91,7 @@ namespace CAPA_NEGOCIO.Oparations
 			finally
 			{
 				// Cerrar el túnel SSH
-				sshTunnelService.CloseTunnel();
+				//sshTunnelService.CloseTunnel();
 			}
 
 			return true;
