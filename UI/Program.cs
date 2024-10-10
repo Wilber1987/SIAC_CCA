@@ -25,8 +25,8 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_B
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-/*new MigrateEstudiantes().Migrate();
-new MigrateDocentes().Migrate();
+new MigrateEstudiantes().Migrate();
+/*new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();*/
 

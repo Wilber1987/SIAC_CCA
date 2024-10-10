@@ -29,9 +29,68 @@ namespace CAPA_NEGOCIO.Oparations
 		public bool MigrateParentesco()
 		{
 			Console.Write("-->MigrateParentesco");
+			// Inicializar el servicio SSH Tunnel
+			var sshTunnelService = new SshTunnelService();
+			// Abrir túnel SSH para Bellacom
+			sshTunnelService.OpenTunnel("Bellacom");
+			// Obtener los datos desde la base de datos Bellacom
 			var parentescos = new Tbl_gen_relacionfamilar();
+			parentescos.SetConnection(MySqlConnections.BellacomTest);
+			var parentescosMsql = parentescos.Get<Tbl_gen_relacionfamilar>();
+
+			try
+			{
+				BeginGlobalTransaction();
+				parentescosMsql.ForEach(tn =>
+				{
+					var existingParentesco = new Parentesco()
+					{
+						Id = tn.idrelacionfamiliar
+					}.Find<Parentesco>();
+
+					if (existingParentesco != null)
+					{
+						existingParentesco.Id = tn.idrelacionfamiliar;
+						existingParentesco.Sigla = tn.idtrelacionfamiliar;
+						existingParentesco.Descripcion = tn.texto;
+						existingParentesco.Update();
+					}
+					else
+					{
+						Parentesco newParentesco = new Parentesco
+						{
+							Id = tn.idrelacionfamiliar,
+							Sigla = tn.idtrelacionfamiliar,
+							Descripcion = tn.texto
+						};
+						newParentesco.Save();
+					}
+				});
+				CommitGlobalTransaction();
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);
+				RollBackGlobalTransaction();
+				throw;
+			}
+			finally
+			{
+				// Cerrar el túnel SSH
+				sshTunnelService.CloseTunnel();
+			}
+
+			return true;
+		}
+
+		public bool MigrateParentescoOLD()
+		{
+			Console.Write("-->MigrateParentesco");
+			//abrir puerto ssh
+			var parentescos = new Tbl_gen_relacionfamilar();//obtener datos
 			parentescos.SetConnection(MySqlConnections.Bellacom);
 			var parentescosMsql = parentescos.Get<Tbl_gen_relacionfamilar>();
+			//cerrar puerto ssh
 			try
 			{
 				BeginGlobalTransaction();
@@ -90,7 +149,7 @@ namespace CAPA_NEGOCIO.Oparations
 			var estudianteview = new ViewEstudiantesMigracion();
 			estudianteview.SetConnection(MySqlConnections.Bellacom);
 			estudianteview.CreateView();
-			
+
 			Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
 			int i = 0;
 			try
