@@ -1,12 +1,7 @@
 using System.Text.Json.Serialization;
-using AppGenerate;
-using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS;
-using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.Configuration; // Asegúrate de incluir este espacio de nombres
-using TwilioWhatsAppDemo.Services; // Asegúrate de que la ruta sea la correcta
 
 //coneccion wilber
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
@@ -25,12 +20,14 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_B
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-new MigrateEstudiantes().Migrate();
+//new MigrateEstudiantes().Migrate();
 /*new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();*/
+//new MigrateGestionCursos().Migrate();
+new MigrateNotas().Migrate();
 
-new MigrateParientes().Migrate();
+//new MigrateEstudiantes().Migrate();
 
 
 
@@ -72,8 +69,6 @@ builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromMinutes(40);
 });
-
-builder.Services.AddSingleton<WhatsAppService>(); // Aquí se registra el servicio
 
 
 #region CRONJOB
