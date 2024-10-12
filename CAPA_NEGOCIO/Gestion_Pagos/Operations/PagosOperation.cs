@@ -113,6 +113,23 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
             return SeasonServices.Get<PagosRequest>("PagosRequest", identify);
         }
 
+        public static InfoPagos GetSaldoPendiente(string? identify)
+        {
+            var user = AuthNetCore.User(identify);
+            var pagos = GetPagos(new Pago(), identify);
+            var Amount = 0.0;
+            if (pagos.Count > 0 )
+            {
+                Amount = pagos.Sum(x => x.Monto).GetValueOrDefault();                
+            }
+            return new InfoPagos {
+                Mes = pagos.First()?.Mes,
+                Amount = Amount,
+                Money = pagos.First()?.Money,
+                StringAmount = NumberUtility.ConvertToMoneyString(Amount)
+            };
+        }
+
         public static ResponseService EjecutarPago(TPV datosDePago, string? identify)
         {
             try
@@ -164,5 +181,13 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
             }
 
         }
+    }
+
+    public class InfoPagos
+    {
+        public Double? Amount { get; set; }
+        public string? StringAmount { get; set; }
+        public MoneyEnum? Money { get;  set; }
+        public string? Mes { get; internal set; }
     }
 }

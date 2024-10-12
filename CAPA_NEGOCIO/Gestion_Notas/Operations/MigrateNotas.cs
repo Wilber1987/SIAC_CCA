@@ -12,8 +12,7 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{
-			//return migrateCalificaciones();
-			return migrateTipoNotas() /*&& migrateEvaluaciones()*/ && migrateCalificaciones();
+			return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
 		}
 
 		public bool migrateTipoNotas()
@@ -56,9 +55,9 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				//LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
+				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
 				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 
 			return true;
@@ -67,32 +66,43 @@ namespace CAPA_NEGOCIO.Oparations
 		public bool migrateCalificaciones()
 		{
 			Console.Write("-->migrateCalificaciones");
-			var calificacion = new Calificaciones();
+
+			// Instancia para manejar los datos de la vista
+			var calificacion = new ViewCalificacionesActivasSiac();
 			calificacion.SetConnection(MySqlConnections.Siac);
-			//var calificacionMsql = calificacion.Get<Calificaciones>();
-			
-			var calificacionMsql = calificacion.Where<Calificaciones>(FilterData.Between("created_at", MigrationDates.GetStartOfCurrentYear(), MigrationDates.GetEndOfCurrentYear()));
+			calificacion.CreateViewEstudiantesActivos();
+
+			// Obtener los registros desde la vista
+			var calificacionMsql = calificacion.Get<ViewCalificacionesActivasSiac>();
+
+			// Destruir la vista después de obtener los datos
+			calificacion.DestroyView("ViewCalificacionesActivasSiac");
+
+			Console.Write("No de registros encontrados: " + calificacionMsql.Count);
 			int i = 0;
-			
-			Console.Write("No de registros encontrados: "+calificacionMsql.Count);
+
 			try
 			{
-				//BeginGlobalTransaction();
+				// Iterar sobre los registros obtenidos de la vista
 				calificacionMsql.ForEach(tn =>
 				{
-					Console.Write("Registro no: "+i.ToString());;
+					Console.Write("Registro no: " + i.ToString());
 					try
 					{
+						// Buscar si el registro ya existe en la tabla Calificaciones
 						var existingCalificacion = new Calificaciones()
 						{
-							Id = tn.Id
+							Id = tn.Id // Usar el ID de la vista para buscar en la tabla Calificaciones
 						}.Find<Calificaciones>();
 
+						// Validar y ajustar las fechas
 						tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
 						tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
 
-						if (existingCalificacion != null /*&& existingCalificacion.Updated_at != tn.Updated_at*/)
+						// Si la calificación ya existe, actualizarla
+						if (existingCalificacion != null)
 						{
+							// Actualizar el registro existente en Calificaciones
 							existingCalificacion.Resultado = tn.Resultado;
 							existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
 							existingCalificacion.Evaluacion_id = tn.Evaluacion_id;
@@ -102,26 +112,43 @@ namespace CAPA_NEGOCIO.Oparations
 							existingCalificacion.Estudiante_clase_id = tn.Estudiante_clase_id;
 							existingCalificacion.Materia_id = tn.Materia_id;
 							existingCalificacion.Periodo = tn.Periodo;
+
+							// Guardar los cambios en la tabla Calificaciones
 							existingCalificacion.Update();
 						}
-						else if (existingCalificacion == null)
+						else
 						{
-							tn.Save();
+							// Si no existe, mapear la entidad Calificaciones y guardar
+							var nuevaCalificacion = new Calificaciones()
+							{
+								Id = tn.Id,
+								Resultado = tn.Resultado,
+								Tipo_nota_id = tn.Tipo_nota_id,
+								Evaluacion_id = tn.Evaluacion_id,
+								Observaciones = tn.Observaciones,
+								Created_at = tn.Created_at,
+								Updated_at = tn.Updated_at,
+								Consolidado_id = tn.Consolidado_id,
+								Estudiante_clase_id = tn.Estudiante_clase_id,
+								Materia_id = tn.Materia_id,
+								Periodo = tn.Periodo
+							};
+
+							// Guardar el nuevo registro en la tabla Calificaciones
+							nuevaCalificacion.Save();
 						}
 					}
 					catch (System.Data.SqlClient.SqlException sqlEx)
 					{
-						var ex = sqlEx;
+						LoggerServices.AddMessageError("SQL Error: ", sqlEx);
 					}
 					i++;
 				});
-				//CommitGlobalTransaction();
 			}
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateCalificaciones.Migrate.", ex);
-				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 
 			return true;
@@ -133,15 +160,16 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateEvaluaciones");
 			var Evaluacion = new Evaluaciones();
 			Evaluacion.SetConnection(MySqlConnections.Siac);
-			//var EvaluacionMsql = Evaluacion.Get<Evaluaciones>();
-
+			
+			var currentYear = MigrationDates.GetCurrentYear(); // Obtiene el año actual (por ejemplo, 2024)
 			var filter = new FilterData
 			{
-				PropName = "created_at",
-				FilterType = ">=",
-				Values = new List<string?> { "2022-01-01 00:00:00" }
+				PropName = "YEAR(fecha)", // Extrae el año de la columna fecha
+				FilterType = "=",
+				Values = new List<string?> { currentYear.ToString() }
 			};
 			var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
+
 
 			try
 			{
@@ -180,9 +208,9 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			catch (System.Exception ex)
 			{
-				//LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
+				LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
 				//RollBackGlobalTransaction();
-				throw;
+				//throw;
 			}
 
 			return true;

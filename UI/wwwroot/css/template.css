@@ -71,6 +71,15 @@
         height: 40px;
     }    
 } 
+.pagos-alert {
+    position: fixed;
+    right: 0;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    margin-top: 10px;
+    gap: 5px;
+}
 @media (max-width: 600px)  {
     .TabContainer, .aside-container, .OptionContainer {
         padding: 10px;

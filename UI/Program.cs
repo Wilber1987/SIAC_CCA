@@ -26,10 +26,11 @@ SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO"
 
 
 // Migraciones
-//new MigrateEstudiantes().Migrate();
-//new MigrateDocentes().Migrate();
-//new MigrateGestionCursos().Migrate();
-//new MigrateNotas().Migrate();
+//TODO crear conexion aparte para cronjob
+/*new MigrateEstudiantes().Migrate();
+new MigrateDocentes().Migrate();
+new MigrateGestionCursos().Migrate();
+new MigrateNotas().Migrate();*/
 
 
 
@@ -76,11 +77,11 @@ builder.Services.AddSingleton<WhatsAppService>(); // Aquí se registra el servic
 
 
 #region CRONJOB
-builder.Services.AddCronJob<DailyCronJob>(options =>
+/*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 
 /***cron jobs de migracion***/
 /*builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>

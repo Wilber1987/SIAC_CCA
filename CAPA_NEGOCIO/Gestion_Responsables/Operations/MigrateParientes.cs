@@ -84,8 +84,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				//RollBackGlobalTransaction();
+				//throw;
 			}
 			return true;
 		}
@@ -154,8 +154,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				//RollBackGlobalTransaction();
+				//throw;
 			}
 
 			return true;
@@ -268,8 +268,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateParientes.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				//RollBackGlobalTransaction();
+				//throw;
 			}
 
 			return true;

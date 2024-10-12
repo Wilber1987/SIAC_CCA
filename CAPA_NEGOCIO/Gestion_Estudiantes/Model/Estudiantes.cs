@@ -1,6 +1,7 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,31 @@ namespace DataBaseModel
 		{
 			throw new NotImplementedException();
 		}
+
+	}
+
+	public class ViewEstudiantesActivosSiac : Estudiantes
+	{
+		public object? CreateViewEstudiantesActivos()
+		{
+			int currentYear = MigrationDates.GetCurrentYear();
+
+			string query = $"DROP VIEW IF EXISTS viewEstudiantesActivosSiac; " +
+						   $"CREATE VIEW viewEstudiantesActivosSiac AS " +
+						   $"SELECT e.* " +
+						   $"FROM estudiantes e " +
+						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +
+						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
+						   
+
+			return ExecuteSqlQuery(query);
+		}
+
+		public object? DestroyView(String view)
+		{
+			string query = $"DROP VIEW IF EXISTS {view};";
+			return ExecuteSqlQuery(query);
+		}
 	}
 
 	public class Calificacion_Group
@@ -118,8 +144,8 @@ namespace DataBaseModel
 		public int? Periodo { get; set; }
 		public int? Order { get; set; }
 		public string? EvaluacionCompleta { get; set; }
-        public string? Observaciones { get; internal set; }
-    }
+		public string? Observaciones { get; internal set; }
+	}
 
 	public class Asignatura_Group
 	{
@@ -127,8 +153,8 @@ namespace DataBaseModel
 		public List<string?>? Evaluaciones { get; set; }
 		public List<Calificacion_Group>? Calificaciones { get; set; }
 		public string? Docente { get; set; }
-        public string? Descripcion_Corta { get;  set; }
-    }
+		public string? Descripcion_Corta { get; set; }
+	}
 
 	public class Clase_Group
 	{
@@ -147,8 +173,8 @@ namespace DataBaseModel
 		public string? Descripcion { get; set; }
 		public List<string?>? Evaluaciones { get; set; }
 		public List<Calificacion_Group>? Calificaciones { get; set; }
-        public List<Asignatura_Group>? Asignaturas { get; internal set; }
-        public string? Estado { get;  set; }
-        public string? Sexo { get;  set; }
-    }
+		public List<Asignatura_Group>? Asignaturas { get; internal set; }
+		public string? Estado { get; set; }
+		public string? Sexo { get; set; }
+	}
 }

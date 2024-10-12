@@ -73,6 +73,12 @@ namespace CAPA_NEGOCIO.Util
 		{
 			return new DateTime(year, 12, 31, 23, 59, 59);
 		}
+
+		public static int GetCurrentYear()
+		{
+			return DateTime.Now.Year;
+		}
+
 	}
 
 }

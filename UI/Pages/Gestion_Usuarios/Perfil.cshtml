@@ -2,6 +2,7 @@
 @using API.Controllers;
 @using CAPA_DATOS;
 @using CAPA_DATOS.Security
+@using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @using DataBaseModel;
 @{
     string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";
@@ -13,6 +14,7 @@
     var pageConfig = Config.pageConfig();
     UserModel user = AuthNetCore.User(identify);
     var perfil = CAPA_NEGOCIO.Tbl_Profile.Get_Profile(user);
+     var pagos = PagosOperation.GetSaldoPendiente(identify);
     var avatar = perfil.Foto != null
     ? perfil.Foto
     : (perfil!.Sexo?.ToUpper() == "M"
@@ -79,7 +81,7 @@
                         <div class="row text-center">
                             <div class="col-12 border-end">
                                 <div class="p-1">
-                                    <h5 class="mb-1">1,269</h5>
+                                    <h5 class="mb-1">@pagos.StringAmount @pagos.Money</h5>
                                     <p class="text-muted mb-0">Saldo Pendiente</p>
                                 </div>
                             </div>

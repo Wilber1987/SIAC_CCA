@@ -1,4 +1,5 @@
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,4 +29,28 @@ namespace DataBaseModel {
        [ManyToOne(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Materia_id")]
        public Materias? Materia { get; set; }
    }
+
+   public class ViewCalificacionesActivasSiac : Calificaciones
+	{
+		public object? CreateViewEstudiantesActivos()
+		{
+			int currentYear = MigrationDates.GetCurrentYear();
+
+			string query = $"DROP VIEW IF EXISTS ViewCalificacionesActivasSiac; " +
+						   $"CREATE VIEW ViewCalificacionesActivasSiac AS " +
+						   $"SELECT c.* " +
+						   $"FROM calificaciones c " +
+						   $"INNER JOIN estudiante_clases ec ON ec.id = c.estudiante_clase_id " +
+						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
+						   
+
+			return ExecuteSqlQuery(query);
+		}
+
+		public object? DestroyView(String view)
+		{
+			string query = $"DROP VIEW IF EXISTS {view};";
+			return ExecuteSqlQuery(query);
+		}
+	}
 }

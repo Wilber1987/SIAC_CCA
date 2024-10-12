@@ -12,8 +12,6 @@ namespace CAPA_NEGOCIO.Oparations
 	{
 		public bool Migrate()
 		{			
-			//return migrateEstudiantesClases();
-
 			return	migrateNiveles() &&
 				migrateSecciones() &&
 				migratePeriodosLectivos() &&
@@ -64,8 +62,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -107,8 +105,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateSecciones.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -151,8 +149,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migratePeriodosLectivos.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -199,8 +197,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateAsignaturas.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -244,8 +242,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -289,8 +287,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateClases.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -302,15 +300,20 @@ namespace CAPA_NEGOCIO.Oparations
 			var clase = new Estudiante_clases();
 			clase.SetConnection(MySqlConnections.Siac);
 			//var clasesMsql = clase.Get<Estudiante_clases>();
-
-			var filter = new FilterData
+			var periodo_lectivo = new Periodo_lectivos();
+			var periodo = periodo_lectivo.Where<Periodo_lectivos>(new FilterData
 			{
-				PropName = "created_at",
-				FilterType = ">=",
-				Values = new List<string?> { "2022-01-01 00:00:00" }
-			};
-			var clasesMsql = clase.Where<Estudiante_clases>(filter);
+				PropName = "nombre_corto",
+				FilterType = "=",
+				Values = new List<string?> { MigrationDates.GetCurrentYear().ToString() }
+			}).FirstOrDefault();
 
+			if (periodo == null)
+			{
+				return false;
+			}					
+					
+			var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));			
 
 			try
 			{
@@ -341,13 +344,7 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 					else if (existingClase == null)
 					{
-						/*var estExists = new Estudiantes();
-						var exists = estExists.Where<Estudiantes>(FilterData.Equal("Id", clase.Estudiante_id));
-						// Verificar si el estudiante existe antes de guardar la clase		
-						if (exists.Count()>0)
-						{*/
-							clase.Save();
-						//}
+							clase.Save();						
 					}
 				});
 				CommitGlobalTransaction();
@@ -355,8 +352,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				//RollBackGlobalTransaction();
+				//throw;
 			}
 
 			return true;
@@ -401,8 +398,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;
@@ -445,8 +442,8 @@ namespace CAPA_NEGOCIO.Oparations
 			catch (System.Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);
-				RollBackGlobalTransaction();
-				throw;
+				/*RollBackGlobalTransaction();
+				throw;*/
 			}
 
 			return true;

@@ -6,15 +6,17 @@ import {  Estudiantes } from "../Model/Estudiantes.js";
 import { Clase_Group_ModelComponent, Estudiantes_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WDetailObject } from "../WDevCore/WComponents/WDetailObject.js";
-import { ComponentsManager, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { ClasesDetails } from "./ClasesDetails.js";
+import { DatosGenerales } from "./EstudiantesComponents.js";
 
 
 const route = location.origin
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
 
-class EstudianteDetail extends HTMLElement {    
+class EstudianteDetail extends HTMLElement {
+   
     /**
      * 
      * @param {Estudiantes} Estudiante 
@@ -32,11 +34,7 @@ class EstudianteDetail extends HTMLElement {
         this.Draw();
     }
     Draw = async () => {
-        this.append(new WDetailObject({
-            ObjectDetail: this.Estudiante,
-            ImageUrlPath: `${routeEstudiantes}`,
-            ModelObject: new Estudiantes_ModelComponent()
-        }));
+        this.append(DatosGenerales(this.Estudiante));        
         this.ComponentTab = new WAppNavigator({
             NavStyle: "tab", Inicialize: true, Elements: this.TabElements()
         });
@@ -51,31 +49,20 @@ class EstudianteDetail extends HTMLElement {
                 action: async (ev) => {                   
                     return new ClasesDetails({
                         ModelObject: new Clase_Group_ModelComponent(),
-                        Dataset: this.Estudiante.Estudiante_clases ?? []
+                        Dataset: this.Estudiante.Estudiante_clases ?? [],
+                        Estudiante: this.Estudiante
                     });
                 }
-            }/*,  {
-                name: "Evaluaciones",
-                NavStyle: "tab",
-                action: async (ev) => {                   
-                    return new ClasesDetails({
-                        FullEvaluation: true,
-                        WithoutDocente: true,
-                        ModelObject: new Clase_Group_ModelComponent(),
-                        Dataset: this.Estudiante.Estudiante_clases ?? []
-                    });
-                }
-            }*/
+            }
         ];
     }
-
 
     async MainComponent() { return {} }
 
     CustomStyle = css`
         .component{
             display: block;
-        }       
+        }             
         w-view-detail{
             text-transform: uppercase !important;
         }    
