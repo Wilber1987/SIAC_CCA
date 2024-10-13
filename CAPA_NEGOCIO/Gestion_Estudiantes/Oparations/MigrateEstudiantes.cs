@@ -5,7 +5,6 @@ using CAPA_DATOS.Security;
 using Microsoft.Extensions.Configuration;
 using Renci.SshNet;
 
-
 namespace CAPA_NEGOCIO.Oparations
 {
 	public class MigrateEstudiantes : TransactionalClass
@@ -18,14 +17,14 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool Migrate()
+		public async Task Migrate()
 		{
-			//return migrateEstudiantesSiac(_sshTunnelService);
-			return MigrateParentesco()
-			&& MigrateFamilia()
-			&& migrateEstudiantesSiac(_sshTunnelService)
-			&& MigrateParientesAndUsers()
-			&& migrateEstudiantesReponsablesFamilia();
+			await MigrateParentesco();
+			await MigrateFamilia();
+			await migrateEstudiantesSiac(_sshTunnelService);
+			await MigrateParientesAndUsers();
+			await migrateEstudiantesReponsablesFamilia();
+			
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -36,7 +35,7 @@ namespace CAPA_NEGOCIO.Oparations
 				.Build();
 		}
 
-		public bool MigrateParentesco()
+		public async Task<bool> MigrateParentesco()
 		{
 			Console.Write("-->MigrateParentesco");
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
@@ -97,7 +96,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateEstudiantesSiac(SshTunnelService sshService)
+		public async Task<bool> migrateEstudiantesSiac(SshTunnelService sshService)
 		{
 			Console.Write("-->migrateEstudiantes");
 
@@ -181,7 +180,7 @@ namespace CAPA_NEGOCIO.Oparations
 			var estudianteView = new ViewEstudiantesMigracion();
 			estudianteView.SetConnection(bellacomConnection);
 			estudianteView.CreateView();
-			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("codigo", est.Codigo)).FirstOrDefault();
+			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
 
 			if (estudiantesView == null)
 			{
@@ -228,7 +227,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateEstudiantesSiacOld()
+		public async Task<bool> migrateEstudiantesSiacOld()
 		{
 			Console.Write("-->migrateEstudiantes");
 			var estudiante = new ViewEstudiantesActivosSiac();
@@ -287,7 +286,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool MigrateFamilia()
+		public async Task<bool> MigrateFamilia()
 		{
 			Console.Write("-->MigrateFamilia");
 			var rol = validateRolPariente();
@@ -369,7 +368,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool MigrateFamiliaOld()
+		public async Task<bool> MigrateFamiliaOld()
 		{
 
 			Console.Write("-->MigrateFamilia");
@@ -439,7 +438,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool MigrateParientesAndUsers()
+		public async Task<bool> MigrateParientesAndUsers()
 		{
 			Console.Write("-->MigrateParientesAndUsers");
 
@@ -530,7 +529,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool MigrateParientesAndUsersOld()
+		public async Task<bool> MigrateParientesAndUsersOld()
 		{
 			Console.Write("-->MigrateParientesAndUsers");
 			//si no eixiste el rol de pariente se debe crear para asignarselo al usuario de cada responsable 
@@ -603,7 +602,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateEstudiantesReponsablesFamilia()
+		public async Task<bool> migrateEstudiantesReponsablesFamilia()
 		{
 			Console.Write("-->migrateEstudiantesReponsablesFamilia");
 			var familia = new Familias();
