@@ -181,7 +181,7 @@ namespace CAPA_NEGOCIO.Oparations
 			var estudianteView = new ViewEstudiantesMigracion();
 			estudianteView.SetConnection(bellacomConnection);
 			estudianteView.CreateView();
-			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("codigo", est.Codigo)).FirstOrDefault();
+			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
 
 			if (estudiantesView == null)
 			{
