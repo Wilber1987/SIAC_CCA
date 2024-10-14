@@ -47,7 +47,7 @@ class ClasesDetails extends HTMLElement {
                 this.getClassGroup(ev.target, content, element);
             }}">${element.Descripcion}</div>`
             this.Acordeon?.append(html`<div class="element-container">
-                ${btn}
+                
                 ${content}
             </div>`)
             if (index == 0) {

@@ -10,184 +10,236 @@ using DataBaseModel;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {
-    public class PagosOperation
-    {
-        public static List<Pago> GetPagos(Pago pago, string identify)
-        {
-            return [new Pago {
-                Id_Pago = 1,
-                Estudiante_Id = 101,
-                Responsable_Id = 201,
-                Monto = 500.75,
-                Periodo_lectivo = "2024",
-                Mes = "Enero",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 1, 5),
-                Fecha_Limite = new DateTime(2024, 1, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juana", Segundo_nombre = "Maria", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 5,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Daniel", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 6,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Mario", Segundo_nombre = "Jose", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 7,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Maria", Segundo_nombre = "Masiel", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 8,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Juan", Segundo_nombre = "Pepe", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            },
-            new Pago
-            {
-                Id_Pago = 9,
-                Estudiante_Id = 103,
-                Responsable_Id = 203,
-                Monto = 550.25,
-                Periodo_lectivo = "2024",
-                Mes = "Marzo",
-                Money = MoneyEnum.CORDOBAS,
-                Fecha = new DateTime(2024, 3, 15),
-                Fecha_Limite = new DateTime(2024, 3, 31),
-                Estado = PagosState.PENDIENTE,
-                Estudiante = new Estudiantes { Id = 101, Primer_nombre = "Julisa", Segundo_nombre = "Marisol", Primer_apellido = "Perez", Segundo_apellido = "Perez" }
-            }];
-        }
+	public class PagosOperation
+	{
 
-        public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
-        {
-            SeasonServices.Set("PagosRequest", inst, identify);
-            return new ResponseService
-            {
-                status = 200,
-                message = "solicitud guardada"
-            };
-        }
-        public static PagosRequest? GetPagoARealizar(string? identify)
-        {
-            return SeasonServices.Get<PagosRequest>("PagosRequest", identify);
-        }
+		public static List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
+		{
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
+			var pagosP = new Tbl_Pago().Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.In("Estado", PagosState.PENDIENTE.ToString())
+			);
+			if (pagosP.Count() != 0)
+			{
+				return pagosP;
+			}
+			//TODO ELIMINAR ESTE METODO
+			estudiantes.ForEach(x =>
+			{
+				List<Tbl_Pago> pagos = [
+				new Tbl_Pago {
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 500.75,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Pago de viaje",
+					Periodo_lectivo = "2024",
+					Mes = "Enero",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 1, 5),
+					Fecha_Limite = new DateTime(2024, 1, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				},
+				new Tbl_Pago
+				{
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 550.25,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Matricula",
+					Periodo_lectivo = "2024",
+					Mes = "Marzo",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 3, 15),
+					Fecha_Limite = new DateTime(2024, 3, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				},
+				new Tbl_Pago
+				{
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 550.25,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Mensualidad",
+					Periodo_lectivo = "2024",
+					Mes = "Marzo",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 3, 15),
+					Fecha_Limite = new DateTime(2024, 3, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				},
+				new Tbl_Pago
+				{
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 550.25,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Mensualidad",
+					Periodo_lectivo = "2024",
+					Mes = "Abril",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 3, 15),
+					Fecha_Limite = new DateTime(2024, 3, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				},
+				new Tbl_Pago
+				{
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 550.25,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Mensualidad",
+					Periodo_lectivo = "2024",
+					Mes = "Mayo",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 3, 15),
+					Fecha_Limite = new DateTime(2024, 3, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				},
+				new Tbl_Pago
+				{
+					Estudiante_Id = x.Id,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = 550.25,
+					Monto_Pagado = 0,
+					Monto_Pendiente = 500.75,
+					Documento = "00001",
+					Concepto = "Matricula",
+					Periodo_lectivo = "2024",
+					Mes = "Marzo",
+					Money = MoneyEnum.CORDOBAS,
+					Fecha = new DateTime(2024, 3, 15),
+					Fecha_Limite = new DateTime(2024, 3, 31),
+					Estado = PagosState.PENDIENTE.ToString()
+				}];
+				pagos.ForEach(p => 	p.Save());
+			});
 
-        public static InfoPagos GetSaldoPendiente(string? identify)
-        {
-            var user = AuthNetCore.User(identify);
-            var pagos = GetPagos(new Pago(), identify);
-            var Amount = 0.0;
-            if (pagos.Count > 0 )
-            {
-                Amount = pagos.Sum(x => x.Monto).GetValueOrDefault();                
-            }
-            return new InfoPagos {
-                Mes = pagos.First()?.Mes,
-                Amount = Amount,
-                Money = pagos.First()?.Money,
-                StringAmount = NumberUtility.ConvertToMoneyString(Amount)
-            };
-        }
 
-        public static ResponseService EjecutarPago(TPV datosDePago, string? identify)
-        {
-            try
-            {
-                var user = AuthNetCore.User(identify);
-                PagosRequest? pagosRequest = GetPagoARealizar(identify);
-                if (pagosRequest == null)
-                {
-                    return new ResponseService
-                    {
-                        status = 403,
-                        message = "pago no encontrado"
-                    };
-                }
-                if (datosDePago == null
-                || datosDePago.CardNumber == null
-                || datosDePago.Cvv == null
-                || datosDePago.ExpYear == null
-                || datosDePago.ExpMonth == null)
-                {
-                    return new ResponseService
-                    {
-                        status = 403,
-                        message = "datos de la tarjeta no validos"
-                    };
-                }
-                //TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES
-                pagosRequest!.Referencia = Guid.NewGuid().ToString();
-                pagosRequest!.Fecha = DateTime.Now;
-                pagosRequest!.Estado = PagosState.PAGADO.ToString();
-                pagosRequest!.Id_User = user.UserId;
-                pagosRequest!.Monto = pagosRequest!.Pagos!.Sum(x => x.Monto);
-                pagosRequest!.Creador = user.UserData?.Descripcion;
-                //pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Pagos!.Select(x => x.Estudiante?.Nombre_completo))}";
-                pagosRequest?.Save();
-                return new ResponseService
-                {
-                    status = 200,
-                    message = "pago realizado"
-                };
-            }
-            catch (System.Exception e)
-            {
-                return new ResponseService
-                {
-                    status = 500,
-                    message = e.Message
-                };
-            }
+			return  new Tbl_Pago().Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
+			);
+		}
 
-        }
-    }
+		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
+		{
+			SeasonServices.Set("PagosRequest", inst, identify);
+			return new ResponseService
+			{
+				status = 200,
+				message = "solicitud guardada"
+			};
+		}
+		public static PagosRequest? GetPagoARealizar(string? identify)
+		{
+			return SeasonServices.Get<PagosRequest>("PagosRequest", identify);
+		}
 
-    public class InfoPagos
-    {
-        public Double? Amount { get; set; }
-        public string? StringAmount { get; set; }
-        public MoneyEnum? Money { get;  set; }
-        public string? Mes { get; internal set; }
-    }
+		public static InfoPagos GetSaldoPendiente(string? identify)
+		{
+			var user = AuthNetCore.User(identify);
+			var pagos = GetPagos(new Tbl_Pago(), identify);
+			double Amount = 0.0;
+			if (pagos.Count > 0)
+			{
+				Amount = pagos.Sum(x => x.Monto).GetValueOrDefault();
+			}
+			return new InfoPagos
+			{
+				Mes = Amount > 0.0 ? pagos.First()?.Mes : null,
+				Amount = Amount,
+				Money = Amount > 0.0 ? pagos.First()?.Money : null,
+				StringAmount = NumberUtility.ConvertToMoneyString(Amount)
+			};
+		}
+
+		public static ResponseService EjecutarPago(TPV datosDePago, string? identify)
+		{
+			try
+			{
+				var user = AuthNetCore.User(identify);
+				PagosRequest? pagosRequest = GetPagoARealizar(identify);
+				var responsable = Tbl_Profile.Get_Profile(user);
+				if (pagosRequest == null)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = "pago no encontrado"
+					};
+				}
+				if (datosDePago == null
+				|| datosDePago.CardNumber == null
+				|| datosDePago.Cvv == null
+				|| datosDePago.ExpYear == null
+				|| datosDePago.ExpMonth == null)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = "datos de la tarjeta no validos"
+					};
+				}
+				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES
+				pagosRequest!.Referencia = Guid.NewGuid().ToString();
+				pagosRequest!.Fecha = DateTime.Now;
+				pagosRequest!.Estado = PagosState.PAGADO.ToString();
+				pagosRequest!.Responsable_Id = responsable.Pariente_id;
+				pagosRequest!.Id_User = user.UserId;
+				pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
+				pagosRequest!.Creador = user.UserData?.Descripcion;
+				pagosRequest?.Detalle_Pago!.ForEach(detalle => 
+				{
+					detalle.Pago!.Monto_Pendiente = detalle.Pago.Monto_Pendiente - detalle.Monto;
+					if (detalle.Pago!.Monto_Pendiente <= 0)
+					{
+						detalle.Pago!.Monto_Pendiente = 0;
+						detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
+						pagosRequest!.Descripcion +=  ", pago de :" + detalle.Pago.Concepto;
+					} else 
+					{
+						pagosRequest!.Descripcion +=  ", pago parcial de :" + detalle.Pago.Concepto;
+					}
+					detalle.Pago!.Monto_Pagado = detalle.Pago.Monto_Pagado + detalle.Monto;
+					detalle.Pago?.Update();
+				});
+				//pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Pagos!.Select(x => x.Estudiante?.Nombre_completo))}";
+				pagosRequest?.Save();
+				return new ResponseService
+				{
+					status = 200,
+					message = "pago realizado"
+				};
+			}
+			catch (System.Exception e)
+			{
+				return new ResponseService
+				{
+					status = 500,
+					message = e.Message
+				};
+			}
+
+		}
+	}
+
+	public class InfoPagos
+	{
+		public Double? Amount { get; set; }
+		public string? StringAmount { get; set; }
+		public MoneyEnum? Money { get; set; }
+		public string? Mes { get; internal set; }
+	}
 }

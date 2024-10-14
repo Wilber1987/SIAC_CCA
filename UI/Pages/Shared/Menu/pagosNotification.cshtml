@@ -4,12 +4,16 @@
 @using DataBaseModel
 @{
     string Identify = Context.Session.GetString("seassonKey");
-    var pagos = PagosOperation.GetSaldoPendiente(Identify);
-    if (pagos.Amount > 0)
-    {        
-        <div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
-            <i class="mdi mdi-alert-outline label-icon"></i>Insolvente desde <strong>"@pagos.Mes"</strong>
-            <a href="~/Gestion_Pagos/Pagos_Pendientes">Estado de cuenta/Pagar aquí</a>           
-        </div>
+    if (Identify != null)
+    {
+        var pagos = PagosOperation.GetSaldoPendiente(Identify);
+        if (pagos.Amount > 0)
+        {
+            <div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
+                <i class="mdi mdi-alert-outline label-icon"></i>Insolvente desde <strong>"@pagos.Mes"</strong>
+                <a href="~/Gestion_Pagos/Pagos_Pendientes">Estado de cuenta/Pagar aquí</a>
+            </div>
+        }
     }
+
 }

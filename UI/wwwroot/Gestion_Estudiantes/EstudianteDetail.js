@@ -38,7 +38,8 @@ class EstudianteDetail extends HTMLElement {
         this.ComponentTab = new WAppNavigator({
             NavStyle: "tab", Inicialize: true, Elements: this.TabElements()
         });
-        this.append(this.ComponentTab)
+        //this.append(this.ComponentTab)
+        this.append(this.BuildClassDetail());
     }
     TabElements() {
         return [
@@ -47,14 +48,18 @@ class EstudianteDetail extends HTMLElement {
                 NavStyle: "tab",
                 Inicialize: true,
                 action: async (ev) => {                   
-                    return new ClasesDetails({
-                        ModelObject: new Clase_Group_ModelComponent(),
-                        Dataset: this.Estudiante.Estudiante_clases ?? [],
-                        Estudiante: this.Estudiante
-                    });
+                    return this.BuildClassDetail();
                 }
             }
         ];
+    }
+
+    BuildClassDetail() {
+        return new ClasesDetails({
+            ModelObject: new Clase_Group_ModelComponent(),
+            Dataset: this.Estudiante.Estudiante_clases ?? [],
+            Estudiante: this.Estudiante
+        });
     }
 
     async MainComponent() { return {} }
