@@ -8,18 +8,18 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 //coneccion wilber
 
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", ".\\MSSQLSERVER", "SIAC_CCA_BEFORE_DEMO");
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //AppGeneratorProgram.Main(); //generador de codigo
 
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-new MigrateEstudiantes().Migrate();
+//new MigrateEstudiantes().Migrate();
 /*new MigrateDocentes().Migrate();
 new MigrateGestionCursos().Migrate();
 new MigrateNotas().Migrate();*/

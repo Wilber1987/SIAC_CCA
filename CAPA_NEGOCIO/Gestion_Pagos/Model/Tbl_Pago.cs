@@ -9,6 +9,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
 	public class Tbl_Pago : EntityClass
 	{
+		[PrimaryKey(Identity = true)]
 		public int? Id_Pago { get; set; }
 		public int? Estudiante_Id { get; set; }
 		public int? Responsable_Id { get; set; }
@@ -32,8 +33,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		PENDIENTE,
 		PAGADO,
 		PAGO_PARCIAL,
-        CANCELADO
-    }
+		CANCELADO
+	}
 	public enum MoneyEnum
 	{
 		CORDOBAS,

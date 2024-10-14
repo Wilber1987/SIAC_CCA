@@ -124,11 +124,14 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				}];
-				pagos.ForEach(p => 	p.Save());
+				pagos.ForEach(p => p.Save());
 			});
 
 
-			return  new Tbl_Pago().Where<Tbl_Pago>(
+			return new Tbl_Pago
+			{
+				orderData = [OrdeData.Asc("Fecha")]
+			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
 			);
 		}
@@ -200,17 +203,18 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				pagosRequest!.Id_User = user.UserId;
 				pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
 				pagosRequest!.Creador = user.UserData?.Descripcion;
-				pagosRequest?.Detalle_Pago!.ForEach(detalle => 
+				pagosRequest?.Detalle_Pago!.ForEach(detalle =>
 				{
 					detalle.Pago!.Monto_Pendiente = detalle.Pago.Monto_Pendiente - detalle.Monto;
 					if (detalle.Pago!.Monto_Pendiente <= 0)
 					{
 						detalle.Pago!.Monto_Pendiente = 0;
 						detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
-						pagosRequest!.Descripcion +=  ", pago de :" + detalle.Pago.Concepto;
-					} else 
+						pagosRequest!.Descripcion += ", pago de :" + detalle.Pago.Concepto;
+					}
+					else
 					{
-						pagosRequest!.Descripcion +=  ", pago parcial de :" + detalle.Pago.Concepto;
+						pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
 					}
 					detalle.Pago!.Monto_Pagado = detalle.Pago.Monto_Pagado + detalle.Monto;
 					detalle.Pago?.Update();
