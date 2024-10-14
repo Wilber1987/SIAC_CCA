@@ -120,8 +120,8 @@ namespace DataBaseModel
 						   $"CREATE VIEW viewestudiantesactivossiac AS " +
 						   $"SELECT e.* " +
 						   $"FROM estudiantes e " +
-						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +
-						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
+						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id ";/* +
+						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto in ('2023','2024');";//'{currentYear}');";*/
 						   
 
 			return ExecuteSqlQuery(query);
