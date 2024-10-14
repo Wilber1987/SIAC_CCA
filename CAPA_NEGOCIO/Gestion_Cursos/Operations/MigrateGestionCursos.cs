@@ -27,18 +27,20 @@ namespace CAPA_NEGOCIO.Oparations
 				.Build();
 		}
 
-		public bool Migrate()
+		public async Task Migrate()
 		{
-			return migrateNiveles() &&
-				migrateSecciones() &&
-				migratePeriodosLectivos() &&
-				migrateAsignaturas() && migrateClases() && migrateMateria()
-				&& migrateEstudiantesClases()
-				&& migrateDocentesAsignaturas()
-				&& migrateDocentesMaterias();
+			await migrateNiveles();
+			await migrateSecciones();
+			await migratePeriodosLectivos();
+			await migrateAsignaturas();
+			await migrateClases();
+			await migrateMateria();
+			await migrateEstudiantesClases();
+			await migrateDocentesAsignaturas();
+			await migrateDocentesMaterias();
 		}
 
-		public bool migrateNiveles()
+		public async Task<bool> migrateNiveles()
 		{
 			Console.Write("-->migrateNiveles");
 
@@ -49,7 +51,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 
 				try
@@ -113,7 +115,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateSecciones()
+		public async Task<bool> migrateSecciones()
 		{
 			Console.Write("-->migrateSecciones");
 
@@ -124,7 +126,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -182,7 +184,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migratePeriodosLectivos()
+		public async Task<bool> migratePeriodosLectivos()
 		{
 			Console.Write("-->migratePeriodosLectivos");
 
@@ -193,7 +195,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -251,7 +253,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateAsignaturas()
+		public async Task<bool> migrateAsignaturas()
 		{
 			Console.Write("-->migrateAsignaturas");
 
@@ -262,7 +264,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -325,7 +327,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateMateria()
+		public async Task<bool> migrateMateria()
 		{
 			Console.Write("-->migrateMateria");
 
@@ -336,7 +338,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -399,7 +401,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateClases()
+		public async Task<bool> migrateClases()
 		{
 			Console.Write("-->migrateClases");
 
@@ -410,7 +412,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -471,18 +473,15 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateEstudiantesClases()
+		public async Task<bool> migrateEstudiantesClases()
 		{
 			Console.Write("-->migrateEstudiantesClases");
 
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
 				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -505,11 +504,27 @@ namespace CAPA_NEGOCIO.Oparations
 					var clase = new Estudiante_clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
 					var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));
+					if (siacTunnel.IsStarted)
+					{
+						siacTunnel.Stop();
+					}
 
-					BeginGlobalTransaction();
+					siacSshClient.Disconnect();
+					//BeginGlobalTransaction();
 
 					clasesMsql.ForEach(clase =>
 					{
+						var estudiante = new Estudiantes()
+						{
+							Id = clase.Estudiante_id
+						}.Find<Estudiantes>();
+
+						// Si el estudiante no existe, omitir el registro
+						if (estudiante == null)
+						{
+							Console.WriteLine($"Estudiante con ID {clase.Estudiante_id} no existe. Registro omitido.");
+							return; // Omitir este registro
+						}
 						var existingClase = new Estudiante_clases()
 						{
 							Id = clase.Id
@@ -539,29 +554,19 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 				}
 				catch (System.Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
 					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
 				}
-				finally
-				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
-					{
-						siacTunnel.Stop();
-					}
-
-					siacSshClient.Disconnect();
-				}
 			}
 
 			return true;
 		}
 
-		public bool migrateDocentesAsignaturas()
+		public async Task<bool> migrateDocentesAsignaturas()
 		{
 			Console.Write("-->migrateDocentesAsignaturas");
 
@@ -572,7 +577,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -633,7 +638,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateDocentesMaterias()
+		public async Task<bool> migrateDocentesMaterias()
 		{
 			Console.Write("-->migrateDocentesMaterias");
 
@@ -644,7 +649,7 @@ namespace CAPA_NEGOCIO.Oparations
 				siacSshClient.Connect();
 
 				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 				try
 				{
@@ -704,7 +709,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateNivelesOld()
+		public async Task<bool> migrateNivelesOld()
 		{
 			Console.Write("-->migrateNiveles");
 			var nivel = new Niveles();
@@ -752,7 +757,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateSeccionesOld()
+		public async Task<bool> migrateSeccionesOld()
 		{
 			Console.Write("-->migrateSecciones");
 			var seccion = new Secciones();
@@ -795,7 +800,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migratePeriodosLectivosOld()
+		public async Task<bool> migratePeriodosLectivosOld()
 		{
 			Console.Write("-->migratePeriodosLectivos");
 			var periodo = new Periodo_lectivos();
@@ -839,7 +844,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateAsignaturasOld()
+		public async Task<bool> migrateAsignaturasOld()
 		{
 			Console.Write("-->migrateAsignaturas");
 			var asig = new Asignaturas();
@@ -887,7 +892,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateMateriaOld()
+		public async Task<bool> migrateMateriaOld()
 		{
 			Console.Write("-->migrateMateria");
 			var mat = new Materias();
@@ -932,7 +937,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateClasesOld()
+		public async Task<bool> migrateClasesOld()
 		{
 			Console.Write("-->migrateClases");
 			var clase = new Clases();
@@ -977,7 +982,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateEstudiantesClasesOld()
+		public async Task<bool> migrateEstudiantesClasesOld()
 		{
 			Console.Write("-->migrateEstudiantesClases");
 			var clase = new Estudiante_clases();
@@ -1043,7 +1048,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateDocentesAsignaturasOld()
+		public async Task<bool> migrateDocentesAsignaturasOld()
 		{
 			Console.Write("-->migrateDocentesAsignaturas");
 			var docAsig = new Docente_asignaturas();
@@ -1088,7 +1093,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateDocentesMateriasOld()
+		public async Task<bool> migrateDocentesMateriasOld()
 		{
 			Console.Write("-->migrateDocentesMaterias");
 			var docMat = new Docente_materias();

@@ -19,10 +19,11 @@ namespace CAPA_NEGOCIO.Oparations
 			_sshTunnelService = new SshTunnelService(LoadConfiguration());
 		}
 
-		public bool Migrate()
+		public async Task Migrate()
 		{
-			//return migrateCalificaciones();
-			return migrateTipoNotas() && migrateEvaluaciones() && migrateCalificaciones();
+			//await migrateTipoNotas();
+			//await migrateEvaluaciones();
+			await migrateCalificaciones();
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -32,7 +33,7 @@ namespace CAPA_NEGOCIO.Oparations
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.Build();
 		}
-		public bool migrateTipoNotas()
+		public async Task<bool> migrateTipoNotas()
 		{
 			Console.Write("-->migrateTipoNotas");
 
@@ -92,7 +93,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateCalificaciones()
+		public async Task<bool> migrateCalificaciones()
 		{
 			Console.Write("--> migrateCalificaciones");
 
@@ -197,7 +198,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateEvaluaciones()
+		public async Task<bool> migrateEvaluaciones()
 		{
 			Console.Write("--> migrateEvaluaciones");
 
@@ -271,7 +272,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateTipoNotasOld()
+		public async Task<bool> migrateTipoNotasOld()
 		{
 			Console.Write("-->migrateTipoNotas");
 			var tipoNotas = new Tipo_notas();
@@ -319,7 +320,7 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public bool migrateCalificacionesOld()
+		public async Task<bool> migrateCalificacionesOld()
 		{
 			Console.Write("-->migrateCalificaciones");
 
@@ -411,7 +412,7 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public bool migrateEvaluacionesOld()
+		public async Task<bool> migrateEvaluacionesOld()
 		{
 			Console.Write("-->migrateEvaluaciones");
 			var Evaluacion = new Evaluaciones();
