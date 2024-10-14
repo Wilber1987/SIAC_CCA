@@ -177,7 +177,7 @@ class BaremoComponent extends HTMLElement {
                 ...rowB2,
                 ...rowBR])
             });
-        })
+        });
         this.append(container);
     }
     /**
@@ -185,20 +185,17 @@ class BaremoComponent extends HTMLElement {
      * @returns {Array<Calificacion_Group>}
      */
     GetBaremoCal(asignatura) {
-        const NotaSemestral = asignatura.Calificaciones?.filter(c => c.Evaluacion.toUpperCase().includes("S") && c.Resultado != null) ?? [];
-        //console.log(NotaSemestral);
-
-        if (NotaSemestral.length == 2) {
-            return NotaSemestral;
-        } else if (NotaSemestral.length == 1) {
-            const NotaBimestral = asignatura.Calificaciones.filter(c => c.Evaluacion.toUpperCase().includes("B") && c.Resultado != null);
-            if (NotaBimestral.length > 2) {
-                /**si ya se evaluo el primer semestre y el tercer bimestre retorno el primer semestre y tercer bimestre */
-                return [NotaSemestral[0], NotaBimestral[2]]
-            }
-            return [NotaSemestral[0]];
+        
+        const NotaSemestral = asignatura.Calificaciones?.find(c => c.Evaluacion.toUpperCase().includes("IS") && c.Resultado != null);
+        const NotaBimestral = asignatura.Calificaciones?.find(c => c.Evaluacion.toUpperCase().includes("IIIB") && c.Resultado != null);       
+        if (NotaSemestral != undefined && NotaBimestral != undefined) {
+            return [NotaSemestral, NotaBimestral];
+        } else if (NotaSemestral != undefined) {
+            return [NotaSemestral];
+        } else {
+            return [];
         }
-        return [];
+        
     }
     /**
      * @param {WPrintExportToolBar} tool

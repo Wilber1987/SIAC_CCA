@@ -25,19 +25,19 @@
     </div>
     <div class="TabContainer detail-pago-container">
         <h3>DETALLES DEL PAGO</h3>
-        @foreach (var pago in pagosRequest?.Pagos ?? [])
+        @foreach (var pago in pagosRequest?.Detalle_Pago ?? [])
         {
             pagoTotal += pago.Monto.GetValueOrDefault();
             <div class="detail">
-                <label for="">@pago.Estudiante?.Nombre_completo</label>
-                <label for="">@pago.Mes</label>
-                <label for="" class="pago-monto">@(pago.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
+                <label for="">@pago.Pago?.Estudiante?.Nombre_completo</label>
+                <label for="">@pago.Pago?.Mes</label>
+                <label for="" class="pago-monto">@(pago.Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
             </div>
         }
         <div class="detail pago-total">
             <label for="">Total</label>
             <label for=""></label>
-            <label for="" class="pago-monto-max">@(pagosRequest?.Pagos?[0].Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pagoTotal)</label>
+            <label for="" class="pago-monto-max">@(pagosRequest?.Detalle_Pago?[0].Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pagoTotal)</label>
         </div>
     </div>
 </div>

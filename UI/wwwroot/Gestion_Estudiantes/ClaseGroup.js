@@ -73,21 +73,21 @@ class ClaseGroup extends HTMLElement {
                         ? this.BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails)
                         : this.BuildAsignaturasDetail(modelClass, element, ObjectF, prop, maxDetails);
                 })}
-                <!-- <span class="break-page"></span>-->     
-                 <div class="container promedio">
+                <!-- <span class="break-page"></span>-->   
+                 ${maxDetailsHeaders != null ? html`<div class="container promedio">
                     <div class="element-description"><span class="value">PROMEDIO</span></div>   
                     <div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
                         ${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)}</span></label>`)}
                     </div> 
-                    <div style="width: 80px"></div> 
-                 </div>
-                 <div class="details-options container">
+                    <div style="width: 80px; display: ${isEstudiante ? "none" : "block"}"></div> 
+                 </div>` : ""}                   
+                 ${ !isEstudiante ? html`<div class="details-options container">
                     <div class="element-description"><span class="value">-</span></div>                                  
                     <div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
                         ${evaluaciones.map(element => html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`)}
                     </div>
                     <div style="width: 80px"></div> 
-                 </div>               
+                 </div>` : ""}                 
                 </div>`;
             //${this.BuildConsolidado(ObjectF[prop])} TODO REVISAR A POSTERIORI
             default:

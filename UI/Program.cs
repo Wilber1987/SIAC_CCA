@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 //coneccion wilber
 
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
