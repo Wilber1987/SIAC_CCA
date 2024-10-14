@@ -116,8 +116,8 @@ namespace DataBaseModel
 		{
 			int currentYear = MigrationDates.GetCurrentYear();
 
-			string query = $"DROP VIEW IF EXISTS viewEstudiantesActivosSiac; " +
-						   $"CREATE VIEW viewEstudiantesActivosSiac AS " +
+			string query = $"DROP VIEW IF EXISTS viewestudiantesactivossiac; " +
+						   $"CREATE VIEW viewestudiantesactivossiac AS " +
 						   $"SELECT e.* " +
 						   $"FROM estudiantes e " +
 						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +

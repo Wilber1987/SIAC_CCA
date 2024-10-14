@@ -61,7 +61,7 @@ namespace DataBaseModel
 
         public object? CreateView()
         {
-            String query = "DROP VIEW IF EXISTS viewEstudiantesMigracion;CREATE VIEW viewEstudiantesMigracion AS SELECT e.id, e.foto, tae.* FROM tbl_aca_estudiante tae INNER JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
+            String query = "DROP VIEW IF EXISTS viewestudiantesmigracion;CREATE VIEW viewestudiantesmigracion AS SELECT e.id, e.foto, tae.* FROM tbl_aca_estudiante tae INNER JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
             return ExecuteSqlQuery(query);
         }
 
@@ -75,8 +75,8 @@ namespace DataBaseModel
         {
             int currentYear = MigrationDates.GetCurrentYear();
 
-            string query = $"DROP VIEW IF EXISTS viewEstudiantesActivosSiac; " +
-                           $"CREATE VIEW viewEstudiantesActivosSiac AS " +
+            string query = $"DROP VIEW IF EXISTS viewestudiantesactivossiac; " +
+                           $"CREATE VIEW viewestudiantesactivossiac AS " +
                            $"SELECT e.* " +
                            $"FROM estudiantes e " +
                            $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +

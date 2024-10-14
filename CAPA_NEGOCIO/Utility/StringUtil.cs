@@ -32,27 +32,26 @@ namespace CAPA_NEGOCIO.Util
                 string firstNameInitial = !string.IsNullOrWhiteSpace(nombre) ? nombre.Substring(0, 1).ToUpper() : "X";
                 string lastName = !string.IsNullOrWhiteSpace(apellido) ? apellido.Split(' ')[0].ToUpper() : "Y";
 
-                int randomNumber = random.Next(10, 100); 
+                int randomNumber = random.Next(10, 100);
                 password = $"{firstNameInitial}{lastName}{randomNumber}";
             }
             return password;
         }
 
-          public static string GenerateNickName(string nombres, string apellidos)
+        public static string GenerateNickName(string nombres, string apellidos)
         {
             Random random = new Random();
-            string letters = string.Empty;
-            string fullName = $"{nombres}{apellidos}".Replace(" ", "");
-            while (letters.Length < 5)
-            {
-                letters += fullName[random.Next(0, fullName.Length)];
-            }
-            int randomNumber = random.Next(10, 100); 
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789"; // Caracteres a utilizar
+            string letters = new string(Enumerable.Range(0, 5) // Generar 5 letras aleatorias
+                .Select(_ => chars[random.Next(chars.Length)])
+                .ToArray());
 
-            string nickname = $"{letters}{randomNumber}";
+            int randomNumber = random.Next(10, 100); // Generar un número aleatorio entre 10 y 99
+            string nickname = $"{letters}{randomNumber}"; // Concatenar letras y número
 
-            return nickname.ToLower();
+            return nickname.ToLower(); // Retornar en minúsculas
         }
+
 
         public static bool IsValidEmail(string email)
         {
