@@ -17,7 +17,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			var pagosP = new Tbl_Pago().Where<Tbl_Pago>(
+			var pagosP = new Tbl_Pago(){
+				orderData = [OrdeData.Asc("Fecha")]
+			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
 				FilterData.In("Estado", PagosState.PENDIENTE.ToString())
 			);
