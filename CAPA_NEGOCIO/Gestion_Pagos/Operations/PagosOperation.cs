@@ -17,7 +17,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			var pagosP = new Tbl_Pago(){
+			var pagosP = new Tbl_Pago()
+			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
@@ -30,7 +31,21 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			//TODO ELIMINAR ESTE METODO
 			estudiantes.ForEach(x =>
 			{
-				List<Tbl_Pago> pagos = [
+				CreateFakePayments(x, responsable);
+			});
+
+
+			return new Tbl_Pago
+			{
+				orderData = [OrdeData.Asc("Fecha")]
+			}.Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
+			);
+		}
+
+		private static void CreateFakePayments(Estudiantes x, Tbl_Profile responsable)
+		{
+			List<Tbl_Pago> pagos = [
 				new Tbl_Pago {
 					Estudiante_Id = x.Id,
 					Responsable_Id = responsable.Pariente_id,
@@ -58,7 +73,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Periodo_lectivo = "2024",
 					Mes = "Marzo",
 					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
+					Fecha = new DateTime(2024, 3, 11),
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				},
@@ -74,7 +89,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Periodo_lectivo = "2024",
 					Mes = "Marzo",
 					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
+					Fecha = new DateTime(2024, 3, 12),
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				},
@@ -90,7 +105,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Periodo_lectivo = "2024",
 					Mes = "Abril",
 					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
+					Fecha = new DateTime(2024, 4, 15),
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				},
@@ -106,7 +121,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Periodo_lectivo = "2024",
 					Mes = "Mayo",
 					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
+					Fecha = new DateTime(2024, 5, 15),
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				},
@@ -126,16 +141,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Fecha_Limite = new DateTime(2024, 3, 31),
 					Estado = PagosState.PENDIENTE.ToString()
 				}];
-				pagos.ForEach(p => p.Save());
-			});
-
-
-			return new Tbl_Pago
-			{
-				orderData = [OrdeData.Asc("Fecha")]
-			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
-			);
+			pagos.ForEach(p => p.Save());
 		}
 
 		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)

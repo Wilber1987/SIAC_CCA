@@ -125,7 +125,7 @@ class Pagos_PendientesView extends HTMLElement {
      */
     PagosCard(pago, pagosSeleccionados, pagosPendientes) {
         const newDetalle = Detalle_Pago.CrearPago(pago);
-        const pagoInput = html`<input value="${pago.Monto_Pendiente}" min="0" max="${pago.Monto_Pendiente}" type="number" hidden onchange="${(ev) => {
+        const pagoInput = html`<input value="${pago.Monto_Pendiente}" min="0" max="${pago.Monto_Pendiente}" style="display: none" type="number" onchange="${(ev) => {
             Detalle_Pago.ActualizarDetalle(newDetalle, parseFloat(ev.target.value))
             this.UpdatePagos();
         }}" />`
@@ -143,7 +143,7 @@ class Pagos_PendientesView extends HTMLElement {
         <div class="pago-options pago-parcial-check">
             <label for="pago-parcial${pago.Id_Pago}">Pago parcial</label>
             <input type="checkbox" class="check-pago" id="pago-parcial${pago.Id_Pago}"  onchange="${(ev) => {
-                pagoInput.hidden = !ev.target.checked;
+                pagoInput.style.display = ev.target.checked ? "block" : "none";
                 Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
                 this.UpdatePagos();
             }}"/>
