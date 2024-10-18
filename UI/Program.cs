@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 //coneccion wilber
 
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
@@ -20,10 +20,10 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_B
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-/*await new MigrateDocentes().Migrate();
+await new MigrateDocentes().Migrate();
 await new MigrateEstudiantes().Migrate();
 await new MigrateGestionCursos().Migrate();
-await new MigrateNotas().Migrate();*/
+await new MigrateNotas().Migrate();
 
 
 

@@ -39,9 +39,9 @@ namespace DataBaseModel {
 			string query = $"DROP VIEW IF EXISTS viewcalificacionesactivassiac; " +
 						   $"CREATE VIEW viewcalificacionesactivassiac AS " +
 						   $"SELECT c.* " +
-						   $"FROM calificaciones c " +
-						   $"INNER JOIN estudiante_clases ec ON ec.id = c.estudiante_clase_id " +
-						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
+						   $"FROM calificaciones c ";// +
+						   // $"INNER JOIN estudiante_clases ec ON ec.id = c.estudiante_clase_id; ";// +
+						   //$"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
 						   
 
 			return ExecuteSqlQuery(query);
