@@ -101,7 +101,8 @@ class EstudiantesDetails extends HTMLElement {
         }
         .alumnos-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: wrap;
             gap: 10px;
         }
         .TabContainer {
