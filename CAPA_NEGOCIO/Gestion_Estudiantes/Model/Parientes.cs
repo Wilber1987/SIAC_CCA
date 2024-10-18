@@ -43,7 +43,7 @@ namespace DataBaseModel
 		public bool? Actualizado { get; set; }
 		public int? No_Responsable { get; set; }
 		public int? Id_familia { get; set; }	
-       	public int? Id_relacion_familiar { get; set; }
+	   	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
 		
 		[JsonProp]
@@ -53,28 +53,29 @@ namespace DataBaseModel
 
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
 		public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
-        
 		
-        #endregion
+		
+		#endregion
 
-        public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
+		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
 		{
 			UserModel user = AuthNetCore.User(identity);
 			Parientes? pariente = new Parientes{User_id = user.UserId}.Find<Parientes>();
 			if (pariente?.Estudiantes_responsables_familia != null)
 			{
+				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-				);
+				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
 			}
 			//throw new Exception("No posee estudiantes asociados");
 			return [];
 		}
 
-        public object GetResponsables()
-        {
+		public object GetResponsables()
+		{
 			var parientes = Where<Parientes>(FilterData.Limit(30), FilterData.NotNull("User_id"));
-            return parientes.Select(Pariente => new {
+			return parientes.Select(Pariente => new {
 				Pariente.Id,
 				Pariente.Primer_nombre,
 				Pariente.Segundo_nombre,
@@ -87,6 +88,6 @@ namespace DataBaseModel
 				Pariente.Email,
 				Pariente.User_id
 			}).ToList();
-        }
-    }
+		}
+	}
 }
