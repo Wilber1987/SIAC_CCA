@@ -9,6 +9,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
     public class Pagos_alumnos_view : EntityClass
     {
+        public int? Codigo_estudiante { get; set; }
         public int? Id_estudiante { get; set; }
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }

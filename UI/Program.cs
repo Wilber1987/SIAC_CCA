@@ -13,17 +13,17 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 //coneccion alder
 
-//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //AppGeneratorProgram.Main(); //generador de codigo
 
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-await new MigrateDocentes().Migrate();
+/*await new MigrateDocentes().Migrate();
 await new MigrateEstudiantes().Migrate();
 await new MigrateGestionCursos().Migrate();
-await new MigrateNotas().Migrate();
+await new MigrateNotas().Migrate();*/
 
 
 

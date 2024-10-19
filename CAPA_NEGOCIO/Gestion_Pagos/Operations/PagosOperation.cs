@@ -13,34 +13,19 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 	public class PagosOperation
 	{
 
-		public static List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
+		public static List<Pagos_alumnos_view> GetPagos(Tbl_Pago pago, string identify)
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			var pagosP = new Tbl_Pago()
+			var pagosP = new Pagos_alumnos_view()
 			{
-				orderData = [OrdeData.Asc("Fecha")]
-			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
-				FilterData.In("Estado", PagosState.PENDIENTE.ToString())
-			);
-			if (pagosP.Count() != 0)
-			{
-				return pagosP;
-			}
-			//TODO ELIMINAR ESTE METODO
-			estudiantes.ForEach(x =>
-			{
-				CreateFakePayments(x, responsable);
-			});
-
-
-			return new Tbl_Pago
-			{
-				orderData = [OrdeData.Asc("Fecha")]
-			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
-			);
+				orderData = [OrdeData.Asc("fecha_documento"), OrdeData.Asc("nombres")]
+			}.Where<Pagos_alumnos_view>(
+				FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray())
+				//,FilterData.In("Estado", PagosState.PENDIENTE.ToString())
+			);		
+			
+			return pagosP ?? new List<Pagos_alumnos_view>();
 		}
 
 		private static void CreateFakePayments(Estudiantes x, Tbl_Profile responsable)
