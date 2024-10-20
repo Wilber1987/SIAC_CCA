@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Controllers;
 using CAPA_DATOS;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
-    public class Pagos_alumnos_view : EntityClass
+    public class Pagos_alumnos_view// : EntityClass
     {
         public int? Codigo_estudiante { get; set; }
         public int? Id_estudiante { get; set; }
@@ -33,15 +28,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Asignacion { get; set; }
         public string? Texto_posicion { get; set; }
         public int? Id_moneda { get; set; }
-        public decimal? Importe_md { get; set; }
+        public double? Importe_md { get; set; }
         public int? Id_cuenta { get; set; }
         public int? Id_ceco { get; set; }
         public int? Id_cebe { get; set; }
         public string? Clave { get; set; }
         public int? Id_indicador_impuesto { get; set; }
         public bool? Calcula_impuesto { get; set; }
-        public decimal? Importe_impuesto_md { get; set; }
-        public decimal? Importe_saldo_md { get; set; }
+        public double? Importe_impuesto_md { get; set; }
+        public double? Importe_saldo_md { get; set; }
         public int? Id_documento_detalle { get; set; }
         public DateTime? Fecha_grabacion { get; set; }
         public string? Usuario_grabacion { get; set; }
@@ -49,7 +44,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public DateTime? Fecha_anulacion { get; set; }
         public string? Usuario_anulacion { get; set; }
         public int? Id_servicio_referencia { get; set; }
-        public decimal? Importe_dif_cambiario { get; set; }
+        public double? Importe_dif_cambiario { get; set; }
         public string? Id_moneda_t { get; set; }
         public string? Texto_corto { get; set; }
         public string? Texto_largo { get; set; }
