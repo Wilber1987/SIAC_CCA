@@ -21,8 +21,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate()
 		{
-			//await migrateTipoNotas();
-			//await migrateEvaluaciones();
+			await migrateTipoNotas();
+			await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 
@@ -220,7 +220,8 @@ namespace CAPA_NEGOCIO.Oparations
 					FilterType = "=",
 					Values = new List<string?> { currentYear.ToString() }
 				};
-				var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
+				//var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
+				var EvaluacionMsql = Evaluacion.Where<Evaluaciones>();
 
 				try
 				{

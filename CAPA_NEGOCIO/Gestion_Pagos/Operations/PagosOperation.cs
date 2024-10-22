@@ -6,129 +6,64 @@ using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
+using CAPA_NEGOCIO.Util;
 using DataBaseModel;
+using Microsoft.Extensions.Configuration;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {
 	public class PagosOperation
 	{
+		private readonly SshTunnelService _sshTunnelService;
 
-		public static List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
+		public PagosOperation()
+		{
+			_sshTunnelService = new SshTunnelService(LoadConfiguration());
+		}
+
+		private IConfigurationRoot LoadConfiguration()
+		{
+			return new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.Build();
+		}
+
+		public List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			var pagosP = new Tbl_Pago(){
+			var pagosP = new Tbl_Pago()
+			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
 				FilterData.In("Estado", PagosState.PENDIENTE.ToString())
 			);
-			if (pagosP.Count() != 0)
-			{
-				return pagosP;
-			}
-			//TODO ELIMINAR ESTE METODO
-			estudiantes.ForEach(x =>
-			{
-				List<Tbl_Pago> pagos = [
-				new Tbl_Pago {
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 500.75,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Pago de viaje",
-					Periodo_lectivo = "2024",
-					Mes = "Enero",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 1, 5),
-					Fecha_Limite = new DateTime(2024, 1, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				},
-				new Tbl_Pago
-				{
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 550.25,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Matricula",
-					Periodo_lectivo = "2024",
-					Mes = "Marzo",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
-					Fecha_Limite = new DateTime(2024, 3, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				},
-				new Tbl_Pago
-				{
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 550.25,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Mensualidad",
-					Periodo_lectivo = "2024",
-					Mes = "Marzo",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
-					Fecha_Limite = new DateTime(2024, 3, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				},
-				new Tbl_Pago
-				{
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 550.25,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Mensualidad",
-					Periodo_lectivo = "2024",
-					Mes = "Abril",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
-					Fecha_Limite = new DateTime(2024, 3, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				},
-				new Tbl_Pago
-				{
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 550.25,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Mensualidad",
-					Periodo_lectivo = "2024",
-					Mes = "Mayo",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
-					Fecha_Limite = new DateTime(2024, 3, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				},
-				new Tbl_Pago
-				{
-					Estudiante_Id = x.Id,
-					Responsable_Id = responsable.Pariente_id,
-					Monto = 550.25,
-					Monto_Pagado = 0,
-					Monto_Pendiente = 500.75,
-					Documento = "00001",
-					Concepto = "Matricula",
-					Periodo_lectivo = "2024",
-					Mes = "Marzo",
-					Money = MoneyEnum.CORDOBAS,
-					Fecha = new DateTime(2024, 3, 15),
-					Fecha_Limite = new DateTime(2024, 3, 31),
-					Estado = PagosState.PENDIENTE.ToString()
-				}];
-				pagos.ForEach(p => p.Save());
-			});
+			List<Pagos_alumnos_view> recientraidos = null;
 
+			using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+			{
+				siacSshClient.Connect();
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
+				siacTunnel.Start();
+
+				recientraidos = new Pagos_alumnos_view()
+				{
+					orderData = [OrdeData.Asc("fecha_documento"), OrdeData.Asc("nombres")]
+				}.Where<Pagos_alumnos_view>(
+					FilterData.ISNull("fecha_anulacion"),
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Greater("importe_saldo_md", 0)
+				);
+				siacTunnel.Stop();
+				siacSshClient.Disconnect();
+			}
+
+			var recienTraidosPagos = recientraidos.SelectMany(x =>
+			{
+				return buildCuentasPorCobrar(x, responsable);
+			}).ToList();
 
 			return new Tbl_Pago
 			{
@@ -136,7 +71,68 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
 			);
+
 		}
+
+
+
+		private static List<Tbl_Pago> buildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
+		{
+			MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
+			if (x?.Texto_corto != null)
+			{
+				Enum.TryParse(x?.Texto_corto, out MoneyEnum result);
+				moneyEnumValue = result;
+			}
+			List<Tbl_Pago> pagos = new List<Tbl_Pago>
+			{
+
+				new Tbl_Pago {
+					Estudiante_Id = x.Id_estudiante,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = x.Importe_saldo_md,
+					Monto_Pagado = 0,
+					Monto_Pendiente = x.Importe_saldo_md,
+					Documento = x.No_documento.HasValue ? x.No_documento.Value.ToString() : "00001",
+					Concepto = x.Texto_posicion,
+					Periodo_lectivo = x.Anio.Value.ToString(),
+					Mes = x.Mes.HasValue ? x.Mes.Value.ToString() : "Enero",
+					Money = moneyEnumValue,
+					Fecha = x.Fecha_documento ?? DateTime.Now,
+					Fecha_Limite = x.Fecha_documento?.AddDays(30) ?? DateTime.Now.AddDays(30),
+					Estado = PagosState.PENDIENTE.ToString(),
+					// Nuevas propiedades añadidas
+					Id_plazo = x.Id_plazo,
+					Anio = x.Anio,
+					Id_documento_cc = x.Id_documento_cc,
+					Id_documento = x.Id_documento,
+					Id_clase_documento = x.Id_clase_documento,
+					Fecha_documento = x.Fecha_documento,
+					Fecha_contabilizacion = x.Fecha_contabilizacion,
+					Ejercicio = x.Ejercicio,
+					Periodo = x.Periodo,
+					No_documento = x.No_documento,
+					Id_deudor = x.Id_deudor,
+					Asignacion = x.Asignacion,
+					Texto_posicion = x.Texto_posicion,
+					Id_cuenta = x.Id_cuenta,
+					Id_indicador_impuesto = x.Id_indicador_impuesto,
+					Id_documento_detalle = x.Id_documento_detalle,
+					Fecha_anulacion = x.Fecha_anulacion,
+					Usuario_anulacion = x.Usuario_anulacion,
+					Texto_corto = x.Texto_corto,
+					Simbolo = x.Simbolo
+				}
+			};
+			foreach (var pago in pagos)
+			{
+				pago.Save();
+			}
+
+			return pagos;
+		}
+
+
 
 		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
 		{
@@ -154,18 +150,25 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		public static InfoPagos GetSaldoPendiente(string? identify)
 		{
+			//
 			var user = AuthNetCore.User(identify);
-			var pagos = GetPagos(new Tbl_Pago(), identify);
+			var pagos = new PagosOperation().GetPagos(new Tbl_Pago(), identify);
 			double Amount = 0.0;
 			if (pagos.Count > 0)
 			{
-				Amount = pagos.Sum(x => x.Monto).GetValueOrDefault();
+				Amount = pagos.Sum(x => x.Monto_Pagado).GetValueOrDefault();
+			}
+			MoneyEnum? moneyEnumValue = null;
+			if (Amount > 0.0 && pagos.First()?.Texto_corto != null)
+			{
+				Enum.TryParse(pagos.First()?.Texto_corto, out MoneyEnum result);
+				moneyEnumValue = result; // Si la conversión es exitosa, asignamos el valor al moneyEnumValue
 			}
 			return new InfoPagos
 			{
-				Mes = Amount > 0.0 ? pagos.First()?.Mes : null,
+				Mes = Amount > 0.0 ? DateUtil.GetMonthName(pagos.First()?.Fecha_contabilizacion) : null,
 				Amount = Amount,
-				Money = Amount > 0.0 ? pagos.First()?.Money : null,
+				Money = moneyEnumValue,
 				StringAmount = NumberUtility.ConvertToMoneyString(Amount)
 			};
 		}
@@ -182,7 +185,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					return new ResponseService
 					{
 						status = 403,
-						message = "pago no encontrado"
+						message = "Pago no encontrado"
 					};
 				}
 				if (datosDePago == null
@@ -194,7 +197,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					return new ResponseService
 					{
 						status = 403,
-						message = "datos de la tarjeta no validos"
+						message = "Datos de la tarjeta no validos"
 					};
 				}
 				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES
@@ -226,7 +229,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				return new ResponseService
 				{
 					status = 200,
-					message = "pago realizado"
+					message = "Pago realizado"
 				};
 			}
 			catch (System.Exception e)
