@@ -108,14 +108,14 @@ namespace CAPA_NEGOCIO.Oparations
 					var siacTunnel = sshService.GetForwardedPort("Siac", siacSshClient, 3307);
 					siacTunnel.Start();
 
-					// Obtener estudiantes de SiacTest
+					// Obtener estudiantes de SiacTestViewEstudiantesActivosSiac
 					var estudiante = new ViewEstudiantesActivosSiac();
 					estudiante.SetConnection(MySqlConnections.SiacTest);
 					estudiante.CreateViewEstudiantesActivos();
 					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
 					estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
-
+ 
 					using (var bellacomSshClient = sshService.GetSshClient("Bellacom"))
 					{
 						bellacomSshClient.Connect();
@@ -182,19 +182,17 @@ namespace CAPA_NEGOCIO.Oparations
 			estudianteView.CreateView();
 			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
 
-			if (estudiantesView == null)
+			if (estudiantesView != null)
 			{
-				return;
-			}
+				// Obtener datos de la familia usando BellacomTest
+				var familiaJoin = new Tbl_aca_familia();
+				familiaJoin.SetConnection(bellacomConnection);
+				var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
 
-			// Obtener datos de la familia usando BellacomTest
-			var familiaJoin = new Tbl_aca_familia();
-			familiaJoin.SetConnection(bellacomConnection);
-			var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
-
-			if (familiaDatos != null)
-			{
-				existingEstudiante.Id_familia = familiaDatos.Idfamilia;
+				if (familiaDatos != null)
+				{
+					existingEstudiante.Id_familia = familiaDatos.Idfamilia;
+				}
 			}
 
 			// Asignación de datos básicos del estudiante
@@ -226,66 +224,6 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 		}
 
-
-		public async Task<bool> migrateEstudiantesSiacOld()
-		{
-			Console.Write("-->migrateEstudiantes");
-			var estudiante = new ViewEstudiantesActivosSiac();
-			estudiante.SetConnection(MySqlConnections.SiacTest);
-			estudiante.CreateViewEstudiantesActivos();
-
-			var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
-
-			//var EstudiantesMsql =  estudiante.Where<Estudiantes>(FilterData.Between("created_at", MigrationDates.GetStartOfLastYear(), MigrationDates.GetEndOfCurrentYear()));
-			estudiante.DestroyView("viewEstudiantesActivosSiac");
-
-			var estudianteview = new ViewEstudiantesMigracion();
-			estudianteview.SetConnection(MySqlConnections.BellacomTest);
-			estudianteview.CreateView();
-
-			Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
-			int i = 0;
-			try
-			{
-				EstudiantesMsql.ForEach(est =>
-				{
-					Console.Write("Estudiantes contador : " + i.ToString());
-
-					var existingEstudiante = new Estudiantes()
-					{
-						Id = est.Id
-					}.Find<Estudiantes>();
-
-					//est.Idestudiante = est.Id;
-
-					est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
-					est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
-					est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
-					est.Fecha_ingreso = DateUtil.ValidSqlDateTime(est.Fecha_ingreso.GetValueOrDefault());
-					if (existingEstudiante != null)
-					{
-						//buildEstudianteSiac(est, existingEstudiante);
-
-						existingEstudiante.Update();
-					}
-					else if (existingEstudiante == null)
-					{
-						Estudiantes newEstudiante = new Estudiantes();
-						//buildEstudianteSiac(est, newEstudiante);
-						newEstudiante.Save();
-					}
-					i++;
-				});
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR: migrateEstudiantes.", ex);
-				//throw;
-			}
-			estudianteview.DestroyView("viewestudiantesmigracion");
-			return true;
-		}
-
 		public async Task<bool> MigrateFamilia()
 		{
 			Console.Write("-->MigrateFamilia");
@@ -296,7 +234,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 			var familias = new Tbl_aca_familia();
-			
+
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
 				client.Connect();

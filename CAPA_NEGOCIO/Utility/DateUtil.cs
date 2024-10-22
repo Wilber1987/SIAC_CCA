@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,6 +30,13 @@ namespace CAPA_NEGOCIO.Util
 			{
 				return date;
 			}
+		}
+
+		public static string? GetMonthName(DateTime? fecha)
+		{
+			if (fecha == null) return null;
+			return  fecha.Value.ToString("dddd, d 'del' MMMM 'del' yyyy", new CultureInfo("es-ES"));
+
 		}
 
 	}
@@ -77,7 +85,7 @@ namespace CAPA_NEGOCIO.Util
 		public static int GetCurrentYear()
 		{
 			return DateTime.Now.Year;
-		}
+		}		
 
 	}
 
