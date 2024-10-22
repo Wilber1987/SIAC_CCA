@@ -118,9 +118,9 @@ namespace DataBaseModel
 
 			string query = $"DROP VIEW IF EXISTS viewestudiantesactivossiac; " +
 						   $"CREATE VIEW viewestudiantesactivossiac AS " +
-						   $"SELECT e.* " +
+						   $"SELECT distinct e.* " +
 						   $"FROM estudiantes e " +
-						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id ";/* +
+						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id";/* +
 						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto in ('2023','2024');";//'{currentYear}');";*/
 						   
 

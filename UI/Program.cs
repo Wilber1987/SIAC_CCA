@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Gestion_Pagos.Model;
+using CAPA_NEGOCIO.Gestion_Pagos.Operations;
 using CAPA_NEGOCIO.Oparations;
 using Microsoft.AspNetCore.ResponseCompression;
 

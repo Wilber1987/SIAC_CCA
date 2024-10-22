@@ -26,6 +26,28 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha { get; set; }
 		public string? Estado { get; set; }
 		public Estudiantes? Estudiante { get; set; }
+
+		//nuevas propiedades luego del alter 23
+		public int? Id_plazo { get; set; }
+		public int? Anio { get; set; }
+		public int? Id_documento_cc { get; set; }
+		public int? Id_documento { get; set; }
+		public int? Id_clase_documento { get; set; }
+		public DateTime? Fecha_documento { get; set; }
+		public DateTime? Fecha_contabilizacion { get; set; }
+		public int? Ejercicio { get; set; }
+		public int? Periodo { get; set; }
+		public int? No_documento { get; set; }
+		public int? Id_deudor { get; set; }
+		public string? Asignacion { get; set; }
+		public string? Texto_posicion { get; set; }
+		public int? Id_cuenta { get; set; }
+		public int? Id_indicador_impuesto { get; set; }
+		public int? Id_documento_detalle { get; set; }
+		public DateTime? Fecha_anulacion { get; set; }
+		public string? Usuario_anulacion { get; set; }
+		public string? Texto_corto { get; set; }
+		public string? Simbolo { get; set; }
 	}
 
 	public enum PagosState

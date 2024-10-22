@@ -503,7 +503,9 @@ namespace CAPA_NEGOCIO.Oparations
 					// Establecer conexión con la base de datos SiacTest y obtener estudiantes clases
 					var clase = new Estudiante_clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
-					var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));
+					//var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));					
+					
+					var clasesMsql = clase.Get<Estudiante_clases>();
 					if (siacTunnel.IsStarted)
 					{
 						siacTunnel.Stop();
