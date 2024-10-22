@@ -31,7 +31,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		public List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
 		{
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			return new List<Tbl_Pago>();
+			/*var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			var pagosP = new Tbl_Pago()
 			{
@@ -70,7 +71,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
-			);
+			);*/
 
 		}
 
