@@ -24,7 +24,7 @@ namespace CAPA_NEGOCIO.Oparations
 			await migrateEstudiantesSiac(_sshTunnelService);
 			await MigrateParientesAndUsers();
 			await migrateEstudiantesReponsablesFamilia();
-			
+
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -296,7 +296,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 			var familias = new Tbl_aca_familia();
-			// Set the connection through the SSH tunnel
+			
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
 				client.Connect();
@@ -306,7 +306,8 @@ namespace CAPA_NEGOCIO.Oparations
 				familias.SetConnection(MySqlConnections.BellacomTest);
 
 				var familiasMsql = familias.Get<Tbl_aca_familia>();
-
+				forwardedPort.Stop();
+				client.Disconnect();
 				try
 				{
 					BeginGlobalTransaction();
@@ -358,11 +359,7 @@ namespace CAPA_NEGOCIO.Oparations
 					//RollBackGlobalTransaction(); // Descomentar para revertir la transacción en caso de error
 					//throw;
 				}
-				finally
-				{
-					forwardedPort.Stop();
-					client.Disconnect();
-				}
+
 			}
 
 			return true;

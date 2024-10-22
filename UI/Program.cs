@@ -20,12 +20,10 @@ SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CC
 
 // Migraciones
 //TODO crear conexion aparte para cronjob
-//new MigrateEstudiantes().Migrate();
-/*new MigrateDocentes().Migrate();
-new MigrateGestionCursos().Migrate();
-new MigrateNotas().Migrate();*/
-
-
+/*await new MigrateDocentes().Migrate();
+await new MigrateEstudiantes().Migrate();
+await new MigrateGestionCursos().Migrate();
+await new MigrateNotas().Migrate();*/
 
 
 
