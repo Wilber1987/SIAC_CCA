@@ -1,12 +1,15 @@
 CREATE OR REPLACE
 ALGORITHM = UNDEFINED VIEW `pagos_alumnos_view` AS
 select
+
 	`tae`.`idtestudiante` AS `codigo_estudiante`,
     `tae`.`idestudiante` AS `id_estudiante`,
     `tae`.`nombres` AS `nombres`,
     `tae`.`apellidos` AS `apellidos`,
     `tcd2`.`idclasedeudor` AS `id_clase_deudor`,
     `tcd2`.`idplazo` AS `id_plazo`,
+    tgp.texto AS plazo_text,
+    tgp.dias AS dias_plazo,
     `tcd2`.`nombre` AS `nombre`,
     `tcd2`.`razonsocial` AS `razon_social`,
     month(`tcd`.`fechadocumento`) AS `mes`,
@@ -47,15 +50,17 @@ select
     `tgm`.`textolargo` AS `texto_largo`,
     `tgm`.`simbolo` AS `simbolo`
 from
-    (((`tbl_cxc_documento` `tcd`
+    `tbl_cxc_documento` `tcd`
 join `tbl_cxc_deudor` `tcd2` on
-    ((`tcd2`.`iddeudor` = `tcd`.`iddeudor`)))
+    `tcd2`.`iddeudor` = `tcd`.`iddeudor`
 join `tbl_aca_estudiante` `tae` on
-    ((`tae`.`idestudiante` = `tcd2`.`idestudiante`)))
+    `tae`.`idestudiante` = `tcd2`.`idestudiante`
 join `tbl_gen_moneda` `tgm` on
-    ((`tgm`.`idmoneda` = `tcd`.`idmd`)))
+    `tgm`.`idmoneda` = `tcd`.`idmd`
+inner join tbl_gen_plazo tgp on tgp.idplazo = tcd2.idplazo
 where
     (`tcd`.`iddeudor` = 979)
 order by
     `tcd`.`fechadocumento`,
     `tcd`.`asignacion`;
+    

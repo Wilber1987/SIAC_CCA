@@ -13,11 +13,11 @@ class Niveles_ModelComponent extends EntityClass {
    }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Nombre_corto = { type: 'text' };
-   /**@type {ModelProperty}*/ Nombre_grado = { type: 'text' };
+   /**@type {ModelProperty}*/ Nombre_corto = { type: 'text' , hiddenInTable: true};
+   /**@type {ModelProperty}*/ Nombre_grado = { type: 'text', label: "asds" };
    ///**@type {ModelProperty}*/ Numero_grados = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
-   /**@type {ModelProperty}*/ Habilitado = { type: 'checkbox' };
+   /**@type {ModelProperty}*/ Habilitado = { type: 'checkbox', hiddenInTable: true };
    ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
    ///**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    ///**@type {ModelProperty}*/ Orden = { type: 'number' };
