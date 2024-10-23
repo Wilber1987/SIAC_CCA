@@ -6,8 +6,8 @@ using CAPA_NEGOCIO.Oparations;
 using Microsoft.AspNetCore.ResponseCompression;
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
-//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 
 //coneccion alder
@@ -18,7 +18,7 @@ SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CC
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS02", "SIAC_CCA_BEFORE_DEMO");
 
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //AppGeneratorProgram.Main(); //generador de codigo
 
 
@@ -132,7 +132,7 @@ app.UseEndpoints(endpoints =>
 		endpoints.MapRazorPages();
 		endpoints.MapControllerRoute(
 		   name: "default",
-           pattern: "{controller=Home}/{action=Login}/{id?}");
+		   pattern: "{controller=Home}/{action=Login}/{id?}");
 	});
 
 app.Run();

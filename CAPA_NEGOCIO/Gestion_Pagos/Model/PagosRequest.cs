@@ -27,6 +27,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public static List<PagosRequest> GetPagosRealizados(PagosRequest inst, string? identify)
 		{
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
+			if (inst.Responsable_Id == null)
+			{
+				return [];
+			}
 			return inst.Where<PagosRequest>(
 				FilterData.Equal("Responsable_Id", responsable.Pariente_id)
 			);
