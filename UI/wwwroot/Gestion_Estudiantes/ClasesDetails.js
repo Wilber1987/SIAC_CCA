@@ -96,6 +96,7 @@ class ClasesDetails extends HTMLElement {
     CustomStyle = css`@import url(/css/variables.css);
         *{ font-family:  Montserrat, sans-serif;}
         w-class-detail {
+            width: 100%;
             width: -webkit-fill-available;
         }
         w-tool-bar {
