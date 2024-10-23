@@ -38,7 +38,7 @@
                 }
             })
             //logOut
-            btnLogOut.onclick = logout;            
+            btnLogOut.onclick = logout;
             //notificaciones 
             document.body.append(new NotificacionesReader({ Leidas: false }))
 
@@ -56,11 +56,34 @@
             <partial name="Menu/pagosNotification" />
         </header>
 
-        <partial name="Menu/MainMenu" />
+        @if (!SecurityController.IsAdmin(identify))
+        {
+            <!-- ========== Left Sidebar Start ========== -->
+            <div class="vertical-menu">
+                <!-- LOGO -->
+                <partial name="Menu/NavbarBrand" />
+                <div data-simplebar class="sidebar-menu-scroll">
+                    <!--- Sidemenu -->
+                    <div id="sidebar-menu">
+                        <partial name="Menu/MainMenu" />
+                    </div>
+                </div>
+            </div>
+
+        }
+
         <partial name="Menu/headerCollapse" />
 
         @* RenderBody() contenido de las paginas que usan el layout razor *@
         <div class="main-content">
+            @if (SecurityController.IsAdmin(identify))
+            {
+                <div class="admin-menu">
+                    <partial name="Menu/MainMenu" />
+
+                </div>
+            }
+
             <div class="page-content">
                 <div class="container-fluid">
                     @RenderBody()
