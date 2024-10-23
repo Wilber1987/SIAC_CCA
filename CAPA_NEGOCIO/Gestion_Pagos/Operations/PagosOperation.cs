@@ -40,7 +40,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
 				FilterData.In("Estado", PagosState.PENDIENTE.ToString())
 			);
-			List<Pagos_alumnos_view> recientraidos = null;
+			//List<Pagos_alumnos_view> recientraidos = null;
+			List<Pagos_alumnos_view> recientraidos;
+
 
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
 			{
@@ -48,18 +50,19 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
 				siacTunnel.Start();
 
-				recientraidos = new Pagos_alumnos_view()
-				{
-					orderData = [OrdeData.Asc("fecha_documento"), OrdeData.Asc("nombres")]
-				}.Where<Pagos_alumnos_view>(
-					FilterData.ISNull("fecha_anulacion"),
-					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
-					FilterData.Greater("importe_saldo_md", 0)
-				);
+				var pagosAlumnosView = new Pagos_alumnos_view();
+				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
+
+				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(
+					//FilterData.ISNull("fecha_anulacion"),
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray())
+					//,
+					//FilterData.Greater("importe_saldo_md", 0)
+				).ToList();
+
 				siacTunnel.Stop();
 				siacSshClient.Disconnect();
 			}
-
 			var recienTraidosPagos = recientraidos.SelectMany(x =>
 			{
 				return buildCuentasPorCobrar(x, responsable);

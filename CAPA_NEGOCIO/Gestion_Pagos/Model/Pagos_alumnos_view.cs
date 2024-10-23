@@ -2,7 +2,7 @@ using CAPA_DATOS;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
-    public class Pagos_alumnos_view// : EntityClass
+    public class Pagos_alumnos_view : EntityClass
     {
         public int? Codigo_estudiante { get; set; }
         public int? Id_estudiante { get; set; }
@@ -10,6 +10,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Apellidos { get; set; }
         public int? Id_clase_deudor { get; set; }
         public int? Id_plazo { get; set; }
+        public string? Plazo_texto { get; set; }
+        public int? dias_plazo { get; set; }
         public string? Nombre { get; set; }
         public string? Razon_social { get; set; }
         public int? Mes { get; set; }
