@@ -104,9 +104,8 @@ body[data-sidebar-size=sm] #page-topbar, .ishorizontal-topbar, .isvertical-topba
 }
 .selected {
     background-color: transparent !important; /* Fondo transparente */
-    box-shadow: none !important; /* Sin sombra */
-    pointer-events: none !important; /* Deshabilitar efecto de hover */
-    cursor: default !important;
+    box-shadow: none !important; /* Sin sombra */    
+    
     border: none!important;
 }
 
