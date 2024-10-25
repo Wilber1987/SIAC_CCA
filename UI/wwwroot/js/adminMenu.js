@@ -2,6 +2,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuParentOptions = document.querySelectorAll(".menuParentOption");
     const subMenus = document.querySelectorAll(".sub-menu");
     const backButton = document.getElementById("backButton");
+    const adminMenu = document.querySelector(".admin-menu"); // Obtén el div con la clase "admin-menu"
+
+    // Función para ocultar el menú admin según la URL
+    function toggleAdminMenu() {
+        const currentPath = window.location.pathname; // Obtiene la ruta actual
+        if (currentPath === "/home") { // Cambia "/home" a la ruta que necesites
+            adminMenu.style.display = "block"; // Muestra el menú admin
+        } else {
+            adminMenu.style.display = "none"; // Oculta el menú admin
+        }
+    }
+
+    // Llama a la función para comprobar la URL al cargar el contenido
+    toggleAdminMenu();
 
     function hideAllOptions(except) {
         menuParentOptions.forEach(opt => {
@@ -30,8 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Manejar clics en las opciones del menú padre
     menuParentOptions.forEach(option => {
-        option.addEventListener("click", function (event) {
-            event.preventDefault(); // Evitar la acción predeterminada solo si es un padre
+        option.addEventListener("click", function (event) {            
             hideAllOptions(option);
 
             const link = option.querySelector("a");

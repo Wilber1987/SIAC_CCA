@@ -8,7 +8,7 @@ body[data-sidebar-size=sm] #page-topbar, .ishorizontal-topbar, .isvertical-topba
     left: 0px!important;
 }
 .main-content {
-    margin-top: 9vh !important;
+    margin-top: 7vh !important;
 }
 #btnMenu{
     display: none!important;
@@ -24,7 +24,7 @@ body[data-sidebar-size=sm] #page-topbar, .ishorizontal-topbar, .isvertical-topba
 }
 /***menu para adminsitrador ***/
 .admin-menu{
-    margin-top: 160px;
+    margin-top: 100px;
 }
 .nav-icon {
     font-size: 40px !important; /* Ajusta este valor para aumentar el tamaño del ícono */
@@ -56,12 +56,16 @@ body[data-sidebar-size=sm] #page-topbar, .ishorizontal-topbar, .isvertical-topba
     color: #333; /* Color del texto */
 }
 #backButton {
-    margin-top: 20px !important;
-    padding: 10px !important;
-    background-color: #4CAF50 !important;
-    color: white !important;
-    border: none !important;
-    cursor: pointer !important;
+    margin-left: 30px;
+    background-color: #007bff; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de la fuente */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s, transform 0.3s; /* Efecto de transición */
+
 }
 
 .sub-menu {
