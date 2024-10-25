@@ -1,0 +1,140 @@
+﻿@import url(./variables.css);
+@import url(./template.css); 
+.main-content, body[data-sidebar-size=sm] .main-content{
+    margin-left: 0px!important;
+}
+
+body[data-sidebar-size=sm] #page-topbar, .ishorizontal-topbar, .isvertical-topbar, .footer{
+    left: 0px!important;
+}
+.main-content {
+    margin-top: 9vh !important;
+}
+#btnMenu{
+    display: none!important;
+}
+.main-content {
+    min-height: 85vh!important;
+}
+#side-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centrar los elementos cuando haya menos de 4 */
+    gap: 20px; /* Espacio entre los elementos */
+}
+/***menu para adminsitrador ***/
+.admin-menu{
+    margin-top: 160px;
+}
+.nav-icon {
+    font-size: 40px !important; /* Ajusta este valor para aumentar el tamaño del ícono */
+    margin-bottom: 10px; /* Espacio entre el ícono y el texto */
+    display: block; /* Asegurar que el ícono se muestre en bloque encima del texto */
+}
+#side-menu .menuParentOption {
+    width: calc(100% / 4 - 40px); /* 4 columnas con margen ajustado */
+    padding: 20px;
+    margin: 10px;
+    background-color: #fff; /* Fondo blanco para la card */
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #ccc; /* Borde gris claro */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-radius: 8px; /* Bordes redondeados */
+    transition: transform 0.3s, box-shadow 0.3s; /* Animación al pasar el ratón */
+    box-sizing: border-box; /* Asegura que el ancho incluya padding y borde */
+    position: relative;
+    min-height: 110px; /* Altura mínima para acomodar ícono y texto */
+}
+#side-menu .menuParentOption:hover {
+    transform: translateY(-5px); /* Efecto de elevar la tarjeta */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más intensa al pasar el ratón */
+}
+#side-menu .menuParentOption span {
+    display: block; /* Asegura que el texto esté en una nueva línea */
+    font-size: 16px; /* Tamaño del texto */
+    color: #333; /* Color del texto */
+}
+#backButton {
+    margin-top: 20px !important;
+    padding: 10px !important;
+    background-color: #4CAF50 !important;
+    color: white !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+.sub-menu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+.sub-menu.show {
+    max-height: 500px; /* Ajusta según el contenido */
+    opacity: 1;
+}
+.sub-menu {
+    transition: height 0.3s ease;
+}
+
+@media (max-width: 992px) {
+    #side-menu .menuParentOption {
+        width: calc(100% / 3 - 40px); /* 3 columnas en pantallas más pequeñas */
+    }
+}
+.menuParentOption .sub-menu li {
+    display: inline-block;
+    width: calc(100% / 3 - 20px); /* Ajusta el ancho de cada tarjeta */
+    padding: 15px;
+    margin: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+/* Efecto hover para las tarjetas */
+.menuParentOption .sub-menu li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.selected {
+    background-color: transparent !important; /* Fondo transparente */
+    box-shadow: none !important; /* Sin sombra */
+    pointer-events: none !important; /* Deshabilitar efecto de hover */
+    cursor: default !important;
+    border: none!important;
+}
+
+#side-menu .menuParentOption:hover {
+    transform: translateY(-5px); /* Efecto de elevar la tarjeta */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más intensa al pasar el ratón */
+}
+
+/* Efecto hover para los elementos del submenú, copiando el estilo de los padres */
+.menuParentOption .sub-menu li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+@media (max-width: 768px) {
+    #side-menu .menuParentOption {
+        width: calc(100% / 2 - 40px); /* 2 columnas en pantallas medianas */
+    }
+    .menuParentOption .sub-menu li {
+        width: calc(100% / 2 - 20px); /* 2 columnas en pantallas medianas */
+    }
+}
+
+@media (max-width: 576px) {
+    #side-menu .menuParentOption {
+        width: 100%; /* 1 columna en pantallas muy pequeñas */
+    }
+    .menuParentOption .sub-menu li {
+        width: 100%; /* 1 columna en pantallas muy pequeñas */
+    }
+}
+

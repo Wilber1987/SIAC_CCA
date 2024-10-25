@@ -1,8 +1,8 @@
 @page
 @using API.Controllers;
-@using CAPA_DATOS.Security; 
+@using CAPA_DATOS.Security;
 @{
-   
+
     if (!SecurityController.Auth(HttpContext.Session.GetString("seassonKey")))
     {
         Response.Redirect("./Security/Login");
@@ -10,21 +10,24 @@
     }
 
 }
-<div id="Main">
-    <img class="mg-boletin" height="500px" src="/Media/img/inicio.jpeg" alt="Header Avatar">
-</div>
+@if (!SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+{
+    <div id="Main">
+        <img class="mg-boletin" height="500px" src="/Media/img/inicio.jpeg" alt="Header Avatar">
+    </div>
 
-<style>
-    #Main {
-        display: flex;
-        justify-content: center;
-        align-items: center;        
-        
-    }
+    <style>
+        #Main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    img.mg-boletin {
-        width: 1000px;
-        height: 700px;
-        
-    }
-</style>
+        }
+
+        img.mg-boletin {
+            width: 1000px;
+            height: 700px;
+
+        }
+    </style>
+}

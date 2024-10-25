@@ -22,7 +22,10 @@
     <link rel="stylesheet" href="~/css/icons.css">
     <link rel="stylesheet" href="~/css/app.css">
     <link rel="stylesheet" href="~/css/site.css">
-    <title>@ViewData["Title"] </title>
+    @if (SecurityController.IsAdmin(identify))
+    {
+        <link rel="stylesheet" href="~/css/admin.css">
+    }    
     @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
@@ -115,6 +118,11 @@
     <script src="~/js/template/simplebar.min.js"></script>
     <script src="~/js/template/eva.min.js"></script>
     <script src="~/js/template/app.js"></script>
+    @if (SecurityController.IsAdmin(identify))
+    {
+        
+        <script src="~/js/adminMenu.js"></script>
+    } 
 </body>
 
 </html>

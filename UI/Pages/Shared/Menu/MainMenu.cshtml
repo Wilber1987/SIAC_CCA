@@ -66,8 +66,7 @@
             </a>
         </li>
     }
-    @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER,
-    Permissions.SEND_MESSAGE))
+    @if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER) && SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
     {
         <li class="menuParentOption">
             <a class="" href="javascript: void(0);">
@@ -104,6 +103,7 @@
         </li>
     }
 </ul>
+    <button id="backButton" style="display: none;">Regresar</button>
 
 @* <nav>
 <a class="title-collapse">TRANSACCIONES</a>
