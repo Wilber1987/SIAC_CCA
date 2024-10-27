@@ -1,7 +1,9 @@
 using API.Controllers;
+using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using DataBaseModel;
 using Microsoft.AspNetCore.Mvc;
+using Twilio.Http;
 
 namespace UI.Controllers
 {
@@ -26,7 +28,7 @@ namespace UI.Controllers
 
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
-		public List<Estudiantes> UpdateOwEstudiantes(Estudiantes Inst)
+		public ResponseService UpdateOwEstudiantes(Estudiantes Inst)
 		{
 			return Inst.UpdateOwEstudiantes(HttpContext.Session.GetString("seassonKey"));
 		}

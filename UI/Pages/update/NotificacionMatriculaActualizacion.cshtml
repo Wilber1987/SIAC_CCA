@@ -1,0 +1,20 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS;
+@using CAPA_DATOS.Security
+@using DataBaseModel;
+@{
+    string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";
+    if (!SecurityController.HavePermission(identify, Permissions.ADMINISTRAR_USUARIOS))
+    {
+        Response.Redirect("/Security/Login");
+        return;
+    }
+}
+<script type="module" >
+    import {NotificacionMatriculaActualizacion} from "/update/NotificacionMatriculaActualizacion.js";
+    window.onload = ()=> {
+        Main.append(new NotificacionMatriculaActualizacion());
+    }
+</script>
+<div id="Main" class="app-container"></div>

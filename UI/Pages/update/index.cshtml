@@ -1,0 +1,11 @@
+@page
+@{
+    Layout = "_LayoutUpdates";
+}
+<script type="module" >
+    import {GradosManagerView} from "/update/UpdateView.js";
+    window.onload = ()=> {
+        Main.append(new GradosManagerView());
+    }
+</script>
+<div id="Main" class="app-container"></div>

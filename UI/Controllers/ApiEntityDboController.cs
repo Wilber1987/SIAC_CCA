@@ -251,7 +251,7 @@ namespace API.Controllers
         }
         //Parientes
         [HttpPost]
-        [AuthController]
+        [AuthController(Permissions.ADMIN_ACCESS)]
         public List<Parientes> getParientes(Parientes Inst)
         {
             return Inst.Where<Parientes>(FilterData.Limit(30));

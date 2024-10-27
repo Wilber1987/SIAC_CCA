@@ -103,7 +103,7 @@ namespace DataBaseModel
 			}
 		}
 		public List<Clase_Group>? Clase_Group { get; set; }
-		public List<Estudiantes> UpdateOwEstudiantes(string? v)
+		public ResponseService UpdateOwEstudiantes(string? v)
 		{
 			throw new NotImplementedException();
 		}

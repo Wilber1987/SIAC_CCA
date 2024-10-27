@@ -1,0 +1,50 @@
+﻿@using API.Controllers
+@using CAPA_DATOS.Security
+@using DataBaseModel
+@{
+    string identify = Context.Session.GetString("seassonKey");
+    var pageConfig = Config.pageConfig();
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0"> *@
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="@pageConfig.MEDIA_IMG_PATH/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/icons.css">
+    <link rel="stylesheet" href="~/css/app.css">
+    <link rel="stylesheet" href="~/css/site.css">
+    <title>@ViewData["Title"] @pageConfig.TITULO</title>
+    <link rel="stylesheet" href="~/css/AdminTemplate.css" />
+</head>
+
+<body id="AdminTemplate" class="update-layout">
+    <header id="page-topbar" class="">
+        <div class="navbar-header">
+            <div class="d-flex">
+                <!-- LOGO --
+                <partial name="Menu/NavbarBrand" />
+
+                <!-- start page title -->
+                <div class="page-title-box align-self-center d-none d-md-block">
+                    <h4 class="page-title mb-0">@pageConfig.TITULO</h4>
+                </div>
+                <!-- end page title -->
+            </div>
+        </div>
+    </header>
+    <div id="MainContainer">
+        <main role="main" id="Main">
+            @RenderBody()
+        </main>
+    </div>
+</body>
+
+</html>
