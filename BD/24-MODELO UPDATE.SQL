@@ -38,11 +38,9 @@ CREATE TABLE update.estudiantes_data_update (
 	codigomed varchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	saldo_eamd decimal(18,2) NULL,
 
-    actualizo bit NULL,
-    entro_al_sistema bit NULL,
-    fecha_ingreso_al_sistema datetime NULL,
-    usa_transporte bit NULL,
-
+    puntos_transportes nvarchar(max) COLLATE Modern_Spanish_CI_AS NOT NULL,
+    usa_transporte bit NULL,   
+    
 	CONSTRAINT PK__estudian__3213E83FD683993A PRIMARY KEY (id)
 );
  CREATE NONCLUSTERED INDEX index_estudiantes_on_madre_id ON dbo.estudiantes (  madre_id ASC  )  
@@ -101,6 +99,16 @@ CREATE TABLE update.parientes_data_update (
 	user_id int NULL,
 	id_relacion_familiar int NULL,
 	id_familia int NULL,
+
+
+    correo_enviado bit NULL,
+    actualizo bit NULL,
+    fecha_actualizacion datetime NULL,
+    acepto_terminos bit NULL,
+    entro_al_sistema bit NULL,
+    fecha_ingreso_al_sistema datetime NULL,
+    ip_ingreso nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
+
 	CONSTRAINT PK__pariente__3213E83FC3C303EF PRIMARY KEY (id)
 );
  CREATE NONCLUSTERED INDEX index_parientes_on_estado_civil_id ON dbo.parientes (  estado_civil_id ASC  )  
