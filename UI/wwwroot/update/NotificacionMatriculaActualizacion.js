@@ -3,9 +3,11 @@ import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/St
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import { Parientes_ModelComponent } from "../Model/ModelComponent/Parientes_ModelComponent.js";
-import { Parientes } from "../Model/Parientes.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
+import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
+import { Parientes } from "./Model/Parientes.js";
+import { UpdateData } from "./Model/UpdateData.js";
+import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -39,40 +41,85 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
 
     NavElements() {
         return [{
-            name: "Envio de notificaciones", action: () => {
+            name: "Tutores invitados", action: () => {
+                const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesInvitados() })
                 this.ParientesTable = new WTableComponent({
                     ModelObject: new Parientes_ModelComponent(),
-                    EntityModel: new Parientes(),                    
+                    EntityModel: modelEntity,
                     Options: {
                         Filter: true,
-                        FilterDisplay: true,
+                        //FilterDisplay: true,
+                        MultiSelect: true
+                    }
+                });
+                return html`<div class="w-table-container">                    
+                    <div class="OptionsContainer">
+                        <button class="BtnPrimary" onclick="${(/** @type {any} */ ev) => this.SendNotificaciones(this.ParientesTable)}">
+                            Reenviar invitación</button>
+                    </div>
+                    ${this.ParientesTable}
+                </div>`
+            }
+        }, {
+            name: "Tutores que ingresaron", action: () => {
+                const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueLoguearon() })
+                this.ParientesTable = new WTableComponent({
+                    ModelObject: new Parientes_ModelComponent(),
+                    EntityModel: modelEntity,
+                    Options: {
+                        Filter: true,
                         MultiSelect: true
                     }
                 });
                 return html`<div class="w-table-container">
-                    <h3>Parientes</h3>
+                    ${this.ParientesTable}
+                </div>`
+            }
+        }, {
+            name: "Tutores que actualizarón", action: () => {
+                const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueActulizaron() })
+                this.ParientesTable = new WTableComponent({
+                    ModelObject: new Parientes_ModelComponent(),
+                    EntityModel: modelEntity,
+                    Options: {
+                        Filter: true,
+                        MultiSelect: true
+                    }
+                });
+                return html`<div class="w-table-container">                    
+                    ${this.ParientesTable}
+                </div>`
+            }
+        }, {
+            name: "Envio de invitaciones", action: () => {
+                this.ParientesTable = new WTableComponent({
+                    ModelObject: new Parientes_ModelComponent(),
+                    EntityModel: new Parientes(),
+                    Options: {
+                        Filter: true,
+                        MultiSelect: true
+                    }
+                });
+                return html`<div class="w-table-container">
                     <div class="OptionsContainer">
                         <button class="BtnPrimary" onclick="${(/** @type {any} */ ev) => this.SendNotificaciones(this.ParientesTable)}">Enviar</button>
                     </div>
                     ${this.ParientesTable}
                 </div>`
             }
-        }, {
-            name: "Actualizaciones de parientes", action: () => {
-                return "";
-            }
-        }, {
-            name: "Actualizaciones de estudiantes", action: () => {
-                return "";
-            }
-        }]
+        },]
     }
     /**
      * Env a notificaciones a los parientes seleccionados en la tabla ParientesTable
      * @param {WTableComponent} [ParientesTable] La tabla de parientes a la que se le van a enviar notificaciones
      */
-    SendNotificaciones(ParientesTable) {
-        throw new Error("Method not implemented.");
+    async SendNotificaciones(ParientesTable) {
+        if (ParientesTable?.selectedItems.length == 0) {
+            this.append(ModalMessege("No hay parientes seleccionados", undefined, true));
+            return;
+        }
+        const response = await new UpdateData({ Parientes: ParientesTable?.selectedItems }).Save();
+        this.append(ModalMessege(response.message, undefined, true));
     }
 
     CustomStyle = css`

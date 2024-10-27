@@ -15,7 +15,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		}
 		public Parientes_Data_Update(Parientes inst)
 		{
-
+			AdapterUtil.SetMatchingProperties(inst, this);
 		}
 		
 		

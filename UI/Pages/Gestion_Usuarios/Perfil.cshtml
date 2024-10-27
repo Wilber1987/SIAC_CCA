@@ -14,7 +14,7 @@
     var pageConfig = Config.pageConfig();
     UserModel user = AuthNetCore.User(identify);
     var perfil = CAPA_NEGOCIO.Tbl_Profile.Get_Profile(user);
-     var pagos = PagosOperation.GetSaldoPendiente(identify);
+    var pagos = PagosOperation.GetSaldoPendiente(identify);
     var avatar = perfil.Foto != null
     ? perfil.Foto
     : (perfil!.Sexo?.ToUpper() == "M"

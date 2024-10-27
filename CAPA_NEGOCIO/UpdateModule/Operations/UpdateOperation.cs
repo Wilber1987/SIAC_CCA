@@ -45,7 +45,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			if (updateData.SendAll != null)
 			{
 				parientes = new Parientes { Responsable_Pago = true }.Get<Parientes>();
-			} else
+			}
+			else
 			{
 				parientes = updateData.Parientes;
 			}
@@ -54,30 +55,38 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return new ResponseService
 				{
 					status = 403,
-					message = "No hay datos para actualizar"	
+					message = "No hay datos para actualizar"
 				};
 			}
-			
 			try
 			{
 				BeginGlobalTransaction();
 				parientes?.ForEach(tn =>
 				{
-					var rolPadreResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
-					var user = (Security_Users?)new Security_Users
+					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
+					if (pariente != null)
 					{
-						Nombres = tn.Nombre_completo,
-						Estado = "ACTIVO",
-						Descripcion = tn.Nombre_completo,
-						Password = StringUtil.GeneratePassword(tn.Email, tn.Primer_nombre, tn.Primer_apellido),
-						Mail = StringUtil.GenerateNickName(tn.Primer_nombre, tn.Primer_apellido),
-						Token = null,
-						Password_Expiration_Date = DateTime.Now.AddDays(30),
-						Security_Users_Roles = [new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }]
-					}.Save_User(null);
-					Parientes_Data_Update parientes_Data_Update = (Parientes_Data_Update)tn;
-					parientes_Data_Update.User_id = user?.Id_User;
-					parientes_Data_Update.Save();
+						pariente.Update();
+					}
+					else
+					{
+						Security_Roles? rolPadreResponsable = GetActualizadorRol();
+						var user = (Security_Users?)new Security_Users
+						{
+							Nombres = tn.Nombre_completo,
+							Estado = "ACTIVO",
+							Descripcion = tn.Nombre_completo,
+							Password = StringUtil.GeneratePassword(tn.Email, tn.Primer_nombre, tn.Primer_apellido),
+							Mail = StringUtil.GenerateNickName(tn.Primer_nombre, tn.Primer_apellido),
+							Token = null,
+							Password_Expiration_Date = DateTime.Now.AddDays(30),
+							Security_Users_Roles = [new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }]
+						}.Save_User(null);
+						Parientes_Data_Update parientes_Data_Update = new Parientes_Data_Update(tn);
+						parientes_Data_Update.User_id = user?.Id_User;
+						parientes_Data_Update.Save();
+					}
+
 				});
 				CommitGlobalTransaction();
 				return new ResponseService { status = 200, message = "Actualizacion enviado" };
@@ -88,6 +97,33 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				RollBackGlobalTransaction();
 				throw;
 			}
+		}
+
+		private static Security_Roles? GetActualizadorRol()
+		{
+			Security_Roles? rolPadreResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "ACTUALIZADOR_FAMILIA"));
+			if (rolPadreResponsable == null)
+			{
+				Security_Permissions? permission = new Security_Permissions().Find<Security_Permissions>(FilterData.Equal("descripcion", "UPDATE_FAMILY_DATA"));
+				if (permission == null)
+				{
+					permission = (Security_Permissions?)new Security_Permissions
+					{
+						Descripcion = "UPDATE_FAMILY_DATA",
+						Estado = "ACTIVO",
+						Detalles = "PERMITE ACTUALIZAR DATOS DE FAMILIA"
+					}.Save();
+				}
+				rolPadreResponsable = (Security_Roles?)new Security_Roles
+				{
+					Descripcion = "ACTUALIZADOR_FAMILIA",
+					Estado = "ACTIVO",
+					Security_Permissions_Roles = [new Security_Permissions_Roles
+						{ Security_Permissions = permission, Estado = "ACTIVO" }]
+				}.Save();
+			}
+
+			return rolPadreResponsable;
 		}
 
 		public static ResponseService UpdateEstudiante(string? seassonKey, Estudiantes_Data_Update inst)
@@ -130,6 +166,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (parienteData != null)
 				{
+					inst.Correo_enviado = false;
 					return inst.Update();
 				}
 				else
@@ -148,6 +185,32 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				status = 403,
 				message = "No tiene permisos para realizar esta accion"
 			};
+		}
+
+		public static List<Parientes>? GetParientesToInvite(Parientes inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.Equal("Responsable_Pago", "true"));
+			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
+			return inst.SimpleGet<Parientes>();
+		}
+		public static List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", "true"));
+
+			return inst.SimpleGet<Parientes_Data_Update>();
+		}
+		public static List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.Equal("Actualizo", "true"));
+			return inst.SimpleGet<Parientes_Data_Update>();
+		}
+		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 	}
 }

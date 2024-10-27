@@ -1,13 +1,12 @@
 ALTER TABLE [security].Security_Users ADD Password_Expiration_Date datetime NULL;
 
-CREATE SCHEMA update
+CREATE SCHEMA update_data
 -- dbo.estudiantes definition
 
 -- Drop table
+DROP TABLE update_data.estudiantes_data_update;
 
- DROP TABLE update.estudiantes_data_update;
-
-CREATE TABLE update.estudiantes_data_update (
+CREATE TABLE update_data.estudiantes_data_update (
 	id int NOT NULL,
 	primer_nombre nvarchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	segundo_nombre nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
@@ -43,16 +42,16 @@ CREATE TABLE update.estudiantes_data_update (
     
 	CONSTRAINT PK__estudian__3213E83FD683993A PRIMARY KEY (id)
 );
- CREATE NONCLUSTERED INDEX index_estudiantes_on_madre_id ON dbo.estudiantes (  madre_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_madre_id ON dbo.estudiantes (  madre_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX index_estudiantes_on_padre_id ON dbo.estudiantes (  padre_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_padre_id ON dbo.estudiantes (  padre_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX index_estudiantes_on_recorrido_id ON dbo.estudiantes (  recorrido_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_recorrido_id ON dbo.estudiantes (  recorrido_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX index_estudiantes_on_religion_id ON dbo.estudiantes (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_religion_id ON dbo.estudiantes (  religion_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
 
@@ -60,10 +59,9 @@ CREATE TABLE update.estudiantes_data_update (
 -- dbo.parientes definition
 
 -- Drop table
+DROP TABLE update_data.parientes_data_update
 
-DROP TABLE update.parientes_data_update
-
-CREATE TABLE update.parientes_data_update (
+CREATE TABLE update_data.parientes_data_update (
 	id int NOT NULL,
 	primer_nombre nvarchar(255) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	segundo_nombre nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
@@ -111,10 +109,10 @@ CREATE TABLE update.parientes_data_update (
 
 	CONSTRAINT PK__pariente__3213E83FC3C303EF PRIMARY KEY (id)
 );
- CREATE NONCLUSTERED INDEX index_parientes_on_estado_civil_id ON dbo.parientes (  estado_civil_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_parientes_on_estado_civil_id ON dbo.parientes (  estado_civil_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX index_parientes_on_religion_id ON dbo.parientes (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_parientes_on_religion_id ON dbo.parientes (  religion_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
 

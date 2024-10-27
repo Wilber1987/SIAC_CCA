@@ -31,11 +31,34 @@ namespace UI.Controllers
 			return UpdateOperation.UpdateParientes(HttpContext.Session.GetString("seassonKey"), Inst);
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
-		public ResponseService StartUpdateProcess(UpdateData updateData)
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public ResponseService SaveUpdateData(UpdateData updateData)
 		{
 			return new UpdateOperation().StartUpdateProcess(updateData);
 		}
-		
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes>? GetParientes(Parientes inst)
+		{
+			return UpdateOperation.GetParientesToInvite(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesQueLoguearon(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesQueActulizaron(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesInvitados(inst);
+		}		
 	}
 }
