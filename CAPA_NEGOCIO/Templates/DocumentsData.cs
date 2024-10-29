@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Utility;
 using DataBaseModel;
 
@@ -12,6 +13,7 @@ namespace CAPA_NEGOCIO.Templates
 	{
 		public string? Header { get; set; }
 		public string? WatherMark { get; set; }
+		public string? Body { get; set; }
 		public string? Footer { get; set; }
 		public DocumentsData GetBoletinDataFragments()
 		{
@@ -41,10 +43,45 @@ namespace CAPA_NEGOCIO.Templates
 			Header = Header.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 				.Replace("{{ titulo }}", theme.TITULO)
 				.Replace("{{ sub-titulo }}", "Calificaciones");
-			//build header
+			
 			WatherMark = WatherMark.Replace("url-wattermark", theme.MEDIA_IMG_PATH + theme.WATHERMARK);
 
 			return this;
 		}
+
+		public List<string> GetContratoFragment(UpdateData data)
+		{
+			var theme = new PageConfig();
+			var contratos = new List<string>();
+
+			var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+
+			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
+			DateTime fechaActual = DateTime.Now;
+
+			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+								 .Replace("{{ current_year }}",  fechaActual.Year.ToString())
+								 .Replace("{{ impresion }}",  fechaActual.ToString("dd.MM.yyyy"));
+
+			if (primerParienteConUserId != null)
+			{
+				plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId.Nombre_completo)
+				.Replace("{{ cedula1 }}", primerParienteConUserId.Nombre_completo);
+			}
+
+			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
+			{
+				var contratoEstudiante = plantilla;
+
+				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante.Nombre_completo)
+													   .Replace("{{ codigo_estudiante }}", estudiante.Codigo)
+													   .Replace("{{ codigo_familia }}", estudiante.Id_familia.ToString());
+
+				contratos.Add(contratoEstudiante);
+			}
+
+			return contratos;
+		}
+
 	}
 }

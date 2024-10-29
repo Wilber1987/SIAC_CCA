@@ -1,6 +1,6 @@
 ALTER TABLE [security].Security_Users ADD Password_Expiration_Date datetime NULL;
 
-CREATE SCHEMA update_data
+CREATE SCHEMA update_data;
 -- dbo.estudiantes definition
 
 -- Drop table
