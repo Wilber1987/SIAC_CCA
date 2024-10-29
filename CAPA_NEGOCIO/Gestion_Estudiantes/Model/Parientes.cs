@@ -54,7 +54,12 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
 		public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
 		
-		
+		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
+		public Religiones? Religion { get; set; }
+
+		[ManyToOne(TableName = "estados_civiles", KeyColumn = "id", ForeignKeyColumn = "Id_Estado_Civil")]
+		public Estados_Civiles? Estado_civil { get; set; }
+
 		#endregion
 
 		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)

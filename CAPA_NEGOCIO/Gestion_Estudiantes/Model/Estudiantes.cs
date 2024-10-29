@@ -55,7 +55,9 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiantes_responsables_familia>? Responsables { get; set; }
 
-
+		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
+		public Religiones? Religion { get; set; }
+		
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		//public List<Estudiante_Clases_View>? Clases { get; set; }
 
@@ -122,7 +124,7 @@ namespace DataBaseModel
 						   $"FROM estudiantes e " +
 						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id";/* +
 						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto in ('2023','2024');";//'{currentYear}');";*/
-						   
+
 
 			return ExecuteSqlQuery(query);
 		}
