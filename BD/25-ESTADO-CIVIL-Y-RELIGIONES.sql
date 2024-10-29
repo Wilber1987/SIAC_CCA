@@ -37,3 +37,6 @@ FOREIGN KEY (religion_id) REFERENCES religiones(id);
 ALTER TABLE parientes
 ADD CONSTRAINT FK_parientes_estadocivil
 FOREIGN KEY (estado_civil_id) REFERENCES estados_civiles(id);
+
+ALTER TABLE parientes
+ADD identificacion nvarchar(150);
