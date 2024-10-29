@@ -18,7 +18,7 @@ namespace DataBaseModel
 		public string? Primer_apellido { get; set; }
 		public string? Segundo_apellido { get; set; }
 		public string? Sexo { get; set; }
-		public string? Profesion { get; set; }
+		public int? Profesion { get; set; }
 		public string? Direccion { get; set; }
 		public string? Lugar_trabajo { get; set; }
 		public string? Telefono { get; set; }
@@ -46,7 +46,8 @@ namespace DataBaseModel
 	   	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
 		public String? Identificacion { get; set; }
-		
+		public int? Id_pais { get; set; }
+
 		[JsonProp]
 		public List<ProfileRequest>? ProfileRequest { get; internal set; }
 
@@ -60,6 +61,13 @@ namespace DataBaseModel
 
 		[ManyToOne(TableName = "estados_civiles", KeyColumn = "id", ForeignKeyColumn = "Id_Estado_Civil")]
 		public Estados_Civiles? Estado_civil { get; set; }
+
+		[ManyToOne(TableName = "regiones", KeyColumn = "id_region", ForeignKeyColumn = "Id_Region")]
+        public Regiones? Region { get; set; } 
+
+		[ManyToOne(TableName = "paises", KeyColumn = "id_pais", ForeignKeyColumn = "id_pais")]
+        public Paises? Pais { get; set; } 
+
 
 		#endregion
 

@@ -36,6 +36,8 @@ namespace DataBaseModel
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
 		public int? Id_familia { get; set; }
+		
+		public String? Vive_con { get; set; }
 
 		/***new properties **/
 
