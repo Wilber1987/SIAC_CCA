@@ -6,7 +6,7 @@ class Parientes extends EntityClass {
         super(props, 'Update');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
     }
     /**@type {Number}*/ Id;
     /**@type {String}*/ Primer_nombre;

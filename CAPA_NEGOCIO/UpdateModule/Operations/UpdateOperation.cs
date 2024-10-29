@@ -16,27 +16,36 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static UpdateData GetUpdateData(string seassonKey)
 		{
 			UserModel user = AuthNetCore.User(seassonKey);
-			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
+			Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
+			Parientes? parienteE = new Parientes { Id = pariente?.Id }.Find<Parientes>();
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			if (pariente?.Estudiantes_responsables_familia != null)
+			{
+				var estudiantes = new Estudiantes().Where<Estudiantes>(
+					FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
 
-			var estudiantes = new Estudiantes().Where<Estudiantes>(
-				FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-			).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+				/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
+					.Get<Estudiantes_responsables_familia>();*/
 
-			/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-				.Get<Estudiantes_responsables_familia>();*/
+				//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
 
-			//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
+				List<Parientes>? parientes = estudiantes
+					.SelectMany(e => e.Responsables ?? [])
+					.Select(r => r.Parientes ?? new Parientes()).ToList();
 
-			List<Parientes>? parientes = estudiantes
-				.SelectMany(e => e.Responsables ?? [])
-				.Select(r => r.Parientes ?? new Parientes()).ToList();
-
+				return new UpdateData
+				{
+					Estudiantes = estudiantes,
+					Parientes = parientes
+				};
+			}
 			return new UpdateData
 			{
-				Estudiantes = estudiantes,
-				Parientes = parientes
+				Estudiantes = [],
+				Parientes = []
 			};
+
 		}
 
 		public ResponseService StartUpdateProcess(UpdateData updateData)
@@ -190,21 +199,24 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<Parientes>? GetParientesToInvite(Parientes inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
-			inst.filterData?.Add(FilterData.Equal("Responsable_Pago", "true"));
+			//inst.Responsable_Pago = true;
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
 			return inst.SimpleGet<Parientes>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
-			inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", "true"));
+			inst.Entro_al_sistema = true;
+			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
 
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
-			inst.filterData?.Add(FilterData.Equal("Actualizo", "true"));
+			inst.Actualizo = true;
+			//inst.filterData?.Add(FilterData.Equal("Actualizo", 1));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)

@@ -120,3 +120,6 @@ CREATE TABLE update_data.parientes_data_update (
 -- dbo.parientes foreign keys
 
 ALTER TABLE dbo.parientes ADD CONSTRAINT FK_parientes_Security_Users FOREIGN KEY (user_id) REFERENCES [security].Security_Users(Id_User);
+
+
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.resoponsable_pago' , N'responsable_pago', 'COLUMN';

@@ -28,6 +28,14 @@
 <body id="AdminTemplate" class="update-layout">
     <header id="page-topbar" class="">
         <div class="navbar-header">
+            <a href="javascript:void(0)" class="logo logo-dark">
+                <span class="logo-sm">
+                    <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
+                </span>
+                <span class="logo-lg">
+                    <img src="@pageConfig.MEDIA_IMG_PATH@pageConfig.LOGO_PRINCIPAL" alt="">
+                </span>
+            </a>
             <div class="d-flex">
                 <!-- LOGO --
                 <partial name="Menu/NavbarBrand" />
@@ -38,13 +46,28 @@
                 </div>
                 <!-- end page title -->
             </div>
+            <a class="dropdown-item" href="#" style="text-align: end;" id="btnLogOut"><i
+                        class="mdi mdi-logout text-muted font-size-16 align-middle me-2"></i> <span
+                        class="align-middle" style="color: #000;">Cerrar Sesión</span></a>         
         </div>
     </header>
     <div id="MainContainer">
-        <main role="main" id="Main">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
+     <script type="module">
+        import { WSecurity } from "/WDevCore/Security/WSecurity.js";
+        const logout = () => {
+            WSecurity.LogOut();
+        }
+        window.addEventListener("load", () => {            
+            btnLogOut.onclick = logout;
+        })
+        //logOut
+        btnLogOut.onclick = logout;
+    </script>
 </body>
+
 
 </html>

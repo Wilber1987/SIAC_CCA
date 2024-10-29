@@ -12,7 +12,7 @@ namespace UI.Controllers
 	[Route("api/[controller]/[action]")]
 	public class ApiUpdateController : ControllerBase
 	{
-		[HttpGet]
+		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
 		public UpdateData GetUpdateData()
 		{

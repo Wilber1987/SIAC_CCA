@@ -7,9 +7,10 @@ class Estudiantes extends EntityClass {
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
         super(props, 'Update');
+        this.IdaVueltaForm = {};
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };       
     }
     /**@type {Number}*/ Id;
     /**@type {String}*/ Nombre_completo;
@@ -35,6 +36,20 @@ class Estudiantes extends EntityClass {
     /**@type {String}*/ Alergias;
     /**@type {Number}*/ Recorrido_id;
     /**@type {Boolean}*/ Activo;
+    /**@type {Array<Adress>}*/ Puntos_Transportes;
 
 }
 export { Estudiantes };
+
+export class Adress {
+     /** @param {Partial<Adress>} [props] */
+     constructor(props) {
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
+    /** @type {String}*/
+    Direccion
+    /** @type {String} IDA o VUELTA*/
+    Trayecto
+}
