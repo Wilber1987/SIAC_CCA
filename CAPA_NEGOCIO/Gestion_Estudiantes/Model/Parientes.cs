@@ -45,6 +45,7 @@ namespace DataBaseModel
 		public int? Id_familia { get; set; }	
 	   	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
+		public String? Identificacion { get; set; }
 		
 		[JsonProp]
 		public List<ProfileRequest>? ProfileRequest { get; internal set; }
