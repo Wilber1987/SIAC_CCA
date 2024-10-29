@@ -10,14 +10,13 @@ class Parientes_ModelComponent extends EntityClass {
        for (const prop in props) {
            this[prop] = props[prop];
        }
-   }
-   /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-   /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
-   /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
-   /**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
+   } 
+   /**@type {ModelProperty}*/ Identificacion = { type: 'text' };
+   /**@type {ModelProperty}*/ Sexo = { type: 'select', Dataset: ["Femenino", "Masculino"], hiddenInTable: true, hiddenFilter: true };
+   /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'text' };
+   
    /**@type {ModelProperty}*/ Profesion = { type: 'text' , hiddenInTable: true, hiddenFilter: true };
+   
    /**@type {ModelProperty}*/ Direccion = { type: 'text' };
    /**@type {ModelProperty}*/ Lugar_trabajo = { type: 'text', hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Telefono = { type: 'text' };

@@ -12,16 +12,11 @@ class Estudiantes_ModelComponent extends EntityClass {
     }
 
     ///**@type {ModelProperty}*/ Foto = { type: 'img', hidden: true };
-    /**@type {ModelProperty}*/ Fotografia = { type: 'img' , hidden: true};
+    /**@type {ModelProperty}*/ Fotografia = { type: 'img', hidden: true };
     /**@type {ModelProperty}*/ Codigo = { type: 'text' };
-    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
-    /**@type {ModelProperty}*/ Nombre_completo = { type: 'text'};
-    /**@type {ModelProperty}*/ Primer_nombre = { type: 'text', hiddenInTable: true, hidden: true };
-    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text', hiddenInTable: true, hidden: true };
-    /**@type {ModelProperty}*/ Primer_apellido = { type: 'text', hiddenInTable: true, hidden: true };
-    /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text', hiddenInTable: true , hidden: true};
-    /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date' , hidden: true};
-    /**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true , hidden: true};
+    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };    
+    /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', hidden: true };
+    /**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
     /**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };
     /**@type {ModelProperty}*/ Peso = { type: 'number', hiddenInTable: true };
     /**@type {ModelProperty}*/ Altura = { type: 'number', hiddenInTable: true };
@@ -29,7 +24,7 @@ class Estudiantes_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Padecimientos = { type: 'text', hiddenInTable: true };
     /**@type {ModelProperty}*/ Alergias = { type: 'text', hiddenInTable: true };
     /**@type {ModelProperty}*/ Activo = { type: 'checkbox', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Direccion = { type: 'textarea', hiddenInTable: true , hidden: true};
+    /**@type {ModelProperty}*/ Direccion = { type: 'textarea', hiddenInTable: true, hidden: true };
 
     ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };  
     ///**@type {ModelProperty}*/ Religion_id = { type: 'number' };
@@ -45,3 +40,9 @@ class Estudiantes_ModelComponent extends EntityClass {
 }
 export { Estudiantes_ModelComponent }
 
+export class Adress_ModelComponent {    
+    /** @type {ModelProperty}*/
+    Direccion = { type: 'textarea' };
+    /** @type {ModelProperty} IDA o VUELTA*/
+    Trayecto = { type: 'select', Dataset: ["IDA", "VUELTA"], hidden: true };
+}
