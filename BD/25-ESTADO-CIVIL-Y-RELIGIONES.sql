@@ -40,3 +40,32 @@ FOREIGN KEY (estado_civil_id) REFERENCES estados_civiles(id);
 
 ALTER TABLE parientes
 ADD identificacion nvarchar(150);
+
+ALTER TABLE estudiantes
+ADD vive_con nvarchar(150);
+
+
+CREATE TABLE regiones (
+    id INT PRIMARY KEY,
+    idtreligion CHAR(1) NOT NULL,
+    texto NVARCHAR(50) NOT NULL
+);
+
+ALTER TABLE parientes
+ADD id_pais int;
+
+ALTER TABLE parientes
+ADD id_pais int;
+
+/*ALTER TABLE parientes //hay errores de id al parecer
+ADD CONSTRAINT FK_parientes_regiones
+FOREIGN KEY (id_region) REFERENCES estados_civiles(id_region);*/
+
+ALTER TABLE parientes
+ADD CONSTRAINT FK_parientes_paises
+FOREIGN KEY (id_pais) REFERENCES paises(id_pais);
+
+EXEC sp_rename 'parientes.Profesion', 'id_profesion', 'COLUMN';
+
+ALTER TABLE parientes
+ALTER COLUMN id_profesion INT;
