@@ -154,3 +154,18 @@
     --bs-btn-disabled-border-color: #1f58c7;
 
 }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: rgb(255, 255, 255) !important;
+        --secundary-color: rgb(255, 255, 255) !important;
+        --tertiary-color: rgb(8, 48, 100) !important;
+        --fourth-color: rgba(240, 239, 239, 0.9) !important;
+        --fifty-color: rgba(222, 222, 222, 0.9) !important;
+    
+        --font: "Open Sans", sans-serif !important;
+        --font-primary-color: #222222 !important;
+        --font-secundary-color: rgb(11, 89, 153) !important;
+        --font-tertiary-color: rgb(0, 191, 165) !important;
+        --font-fourth-color: #444444 !important;
+    }
+}

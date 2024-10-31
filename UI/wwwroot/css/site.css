@@ -24,7 +24,7 @@
 }
 
 #page-topbar{
-    background-color:var(--font-primary-color) !important;
+    background-color:var(--primary-color) !important;
     border-bottom: 5px solid var(--base-secundary-link);
 }
 

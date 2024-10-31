@@ -5,7 +5,7 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? Id_pais { get; set; }
-        public int? Idtpais { get; set; }
+        public string? Idtpais { get; set; }
         public string? Texto { get; set; }
     }
 }

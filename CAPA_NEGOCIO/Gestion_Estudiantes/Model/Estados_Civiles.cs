@@ -13,7 +13,7 @@ namespace DataBaseModel
     {
         [PrimaryKey(Identity = true)]
         public int? Id { get; set; }
-        public int? idtestadocivil { get; set; }
-        public string? texto { get; set; }
+        public string? Idtestadocivil { get; set; }
+        public string? Texto { get; set; }
     }
 }
