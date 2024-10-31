@@ -104,7 +104,7 @@ namespace CAPA_NEGOCIO
 				Foto = GetAvatar(docente, pariente, tbl_Profile),
 				Direccion = docente != null ? docente.Direccion : pariente?.Direccion,
 				Correo_institucional = docente != null ? docente.Email : pariente?.Email,
-				Profesion = docente != null ? docente.Escolaridades?.Nombre : pariente?.Profesion,
+				Profesion = docente != null ? docente.Escolaridades?.Nombre : pariente?.Profesion?.Texto,
 				Telefono = docente != null ? docente.Telefono : pariente?.Telefono,
 				Celular = docente != null ? docente.Celular : pariente?.Celular,
 				Codigo_Familia = familia.FirstOrDefault()?.Familia_id?.ToString("D9") ?? "",

@@ -17,8 +17,7 @@ namespace DataBaseModel
 		public string? Segundo_nombre { get; set; }
 		public string? Primer_apellido { get; set; }
 		public string? Segundo_apellido { get; set; }
-		public string? Sexo { get; set; }
-		public int? id_profesion { get; set; }
+		public string? Sexo { get; set; }		
 		public string? Direccion { get; set; }
 		public string? Lugar_trabajo { get; set; }
 		public string? Telefono { get; set; }
@@ -26,12 +25,11 @@ namespace DataBaseModel
 		public string? Foto { get; set; }
 		public string? Telefono_trabajo { get; set; }
 		public string? Email { get; set; }
-		public int? Estado_civil_id { get; set; }
-		public int? Religion_id { get; set; }
+		public int? Estado_civil_id { get; set; }		
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 		public int? Id_Titulo { get; set; }
-		public int? Id_Region { get; set; }
-		public int? Id_Estado_Civil { get; set; }
+		
+		
 		public bool? Responsable_Pago { get; set; }
 		public String? Ex_Alumno { get; set; }
 		public DateTime? Fecha_Nacimiento { get; set; }
@@ -47,6 +45,10 @@ namespace DataBaseModel
 		public int? User_id { get; set; }
 		public String? Identificacion { get; set; }
 		public int? Id_pais { get; set; }
+		public int? Id_Region { get; set; }
+		public int? Id_Estado_Civil { get; set; }
+		public int? Religion_id { get; set; }
+		public int? Id_profesion { get; set; }
 
 		[JsonProp]
 		public List<ProfileRequest>? ProfileRequest { get; internal set; }
@@ -63,13 +65,13 @@ namespace DataBaseModel
 		public Estados_Civiles? Estado_civil { get; set; }
 
 		[ManyToOne(TableName = "regiones", KeyColumn = "id_region", ForeignKeyColumn = "Id_Region")]
-        public Regiones? Region { get; set; } 
+		public Regiones? Region { get; set; } 
 
 		[ManyToOne(TableName = "paises", KeyColumn = "id_pais", ForeignKeyColumn = "id_pais")]
-        public Paises? Pais { get; set; } 
+		public Paises? Pais { get; set; } 
 
 		[ManyToOne(TableName = "profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
-        public Profesiones? Profesion { get; set; } 
+		public Profesiones? Profesion { get; set; } 
 
 
 		#endregion

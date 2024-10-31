@@ -159,3 +159,8 @@ VALUES(51, 'TECNICO SUP.ED.FISICA Y DEPORTES');
 INSERT INTO profesiones
 (id_profesion, texto)
 VALUES(52, 'TECNICO SUPERIOR EN PEDAGOGIA');
+
+--campos de estudiantes
+
+ALTER TABLE dbo.estudiantes ADD id_pais int NULL;
+ALTER TABLE dbo.estudiantes ADD id_region int NULL;

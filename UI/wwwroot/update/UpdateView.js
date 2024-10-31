@@ -143,7 +143,7 @@ class UpdateView extends HTMLElement {
         radioVuelta.checked = !estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "IDA") && estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "VUELTA");
         radioIdaVuelta.checked = estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "IDA") && estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "VUELTA");
         radiioSinIdaVuelta.checked = !estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "IDA") && !estudiante.Puntos_Transportes.find(punto => punto.Trayecto == "VUELTA");
-        
+
         estudiante.IdaVueltaForm = {
             Ida: radioIda,
             Vuelta: radioVuelta,
@@ -263,7 +263,12 @@ class UpdateView extends HTMLElement {
     EditTutor(pariente) {
         const original = new Parientes(pariente);
         const form = new WForm({
-            ModelObject: new Parientes_ModelComponent(),
+            ModelObject: new Parientes_ModelComponent({
+                Primer_nombre: undefined,
+                Segundo_nombre: undefined,
+                Primer_apellido: undefined,
+                Segundo_apellido: undefined
+            }),
             EntityModel: new Parientes(),
             EditObject: pariente,
             AutoSave: false,

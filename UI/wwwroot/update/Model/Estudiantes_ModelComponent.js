@@ -1,5 +1,7 @@
 //@ts-check
 // @ts-ignore
+import { Religiones_ModelComponent } from '../../Model/ModelComponent/Religiones_ModelComponent.js';
+// @ts-ignore
 import { ModelProperty } from '../../WDevCore/WModules/CommonModel.js';
 import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
 class Estudiantes_ModelComponent extends EntityClass {
@@ -10,21 +12,35 @@ class Estudiantes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
+  
+    /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
+    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true };
+     //pais
+    //region
+    /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar" };
+    /**@type {ModelProperty}*/ Vive_con = { type: 'text', label: "Con quién vive" };
+    /**@type {ModelProperty}*/ Colegio_procede = { type: 'text', label: "Colegio de procedencia" };
+    /**@type {ModelProperty}*/ Sacramento = {
+        type: 'select', Dataset:
+            [
+                { id: "-", descripcion: "Seleccione" },
+                { id: "B", descripcion: "Bautizo" },
+                { id: "P", descripcion: "Primera Comunión" },
+                { id: "C", descripcion: "Confirmación" }
+            ]
+    }
+    /**@type {ModelProperty}*/ SaceamentoA = { type: 'number', max: 2030, min: 2000 };
 
-    ///**@type {ModelProperty}*/ Foto = { type: 'img', hidden: true };
-    /**@type {ModelProperty}*/ Fotografia = { type: 'img', hidden: true };
-    /**@type {ModelProperty}*/ Codigo = { type: 'text' };
-    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };    
-    /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', hidden: true };
-    /**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
-    /**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };
-    /**@type {ModelProperty}*/ Peso = { type: 'number', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Altura = { type: 'number', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Tipo_sangre = { type: 'text', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Padecimientos = { type: 'text', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Alergias = { type: 'text', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Activo = { type: 'checkbox', hiddenInTable: true };
-    /**@type {ModelProperty}*/ Direccion = { type: 'textarea', hiddenInTable: true, hidden: true };
+    //**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
+    //**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };
+    //**@type {ModelProperty}*/ Peso = { type: 'number', hiddenInTable: true };
+    //**@type {ModelProperty}*/ Altura = { type: 'number', hiddenInTable: true };
+    //**@type {ModelProperty}*/ Tipo_sangre = { type: 'text', hiddenInTable: true };
+    //**@type {ModelProperty}*/ Padecimientos = { type: 'text', hiddenInTable: true };
+    //**@type {ModelProperty}*/ Alergias = { type: 'text', hiddenInTable: true };
+    //**@type {ModelProperty}*/ Activo = { type: 'checkbox', hiddenInTable: true };
+    
+    
 
     ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };  
     ///**@type {ModelProperty}*/ Religion_id = { type: 'number' };

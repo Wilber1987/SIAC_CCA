@@ -23,7 +23,6 @@ namespace DataBaseModel
 		public string? Sexo { get; set; }
 		public string? Direccion { get; set; }
 		public string? Codigo { get; set; }
-		public int? Religion_id { get; set; }
 		public int? Madre_id { get; set; }
 		public int? Padre_id { get; set; }
 		public DateTime? Created_at { get; set; }
@@ -35,9 +34,11 @@ namespace DataBaseModel
 		public string? Padecimientos { get; set; }
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
-		public int? Id_familia { get; set; }
-		
+		public int? Id_familia { get; set; }		
 		public String? Vive_con { get; set; }
+		public int? Religion_id { get; set; }	
+		public int? Id_pais { get; set; }	
+		public int? Region_id { get; set; }	
 
 		/***new properties **/
 
@@ -59,6 +60,12 @@ namespace DataBaseModel
 
 		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
 		public Religiones? Religion { get; set; }
+		
+		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Id_pais")]
+		public Paises? Pais { get; set; }
+		
+		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Id_region")]
+		public Regiones? Regione { get; set; }
 		
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		//public List<Estudiante_Clases_View>? Clases { get; set; }
