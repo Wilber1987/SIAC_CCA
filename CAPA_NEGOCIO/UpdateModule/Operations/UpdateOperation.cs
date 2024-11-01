@@ -224,5 +224,54 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			inst.filterData?.Add(FilterData.Limit(100));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
+
+		public ResponseService Save(string? identfy, UpdateDataRequest inst)
+		{
+			try
+			{
+				if (inst.AceptaTerminosYCondiciones == true)
+				{
+					BeginGlobalTransaction();
+					inst.Parientes?.ForEach(pariente =>
+					{
+						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
+						if (parienteF != null)
+						{
+							pariente.Update();
+						}
+						else
+						{							
+							pariente.Save();
+						}
+					});
+					inst.Estudiantes?.ForEach(estudiante =>
+					{
+						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update { Id = estudiante.Id }.Find<Estudiantes_Data_Update>();
+						if (estudianteF != null)
+						{
+							estudiante.Update();
+						}
+						else
+						{							
+							estudiante.Save();
+						}
+					});
+					CommitGlobalTransaction();
+					return new ResponseService { status = 200, message = "solicitud guardada" };
+
+				}
+				else
+				{
+					return new ResponseService { status = 403, message = "Debe aceptar los terminos y condiciones" };
+				}
+			}
+			catch (System.Exception ex)
+			{
+
+				throw;
+			}
+
+
+		}
 	}
 }

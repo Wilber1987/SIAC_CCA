@@ -6,7 +6,7 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { UpdateData } from "./Model/UpdateData.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { Adress, Estudiantes } from "./Model/Estudiantes.js";
-import { ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Adress_ModelComponent, Estudiantes_ModelComponent } from "./Model/Estudiantes_ModelComponent.js";
 import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
@@ -25,10 +25,12 @@ class UpdateView extends HTMLElement {
         this.append(this.CustomStyle);
         this.TabContainer = WRender.Create({ className: "TabContainer", id: "content-container" });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
+
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true)
+            StylesControlsV3.cloneNode(true),
+            html`<h3>Actualización de Datos de Familia</h3>`
         );
         this.UpdateData = new UpdateData();
         this.Draw();
@@ -42,7 +44,17 @@ class UpdateView extends HTMLElement {
             TabContainer: this.TabContainer,
             Elements: this.NavElements()
         })
+
         this.append(this.NavManager);
+    }
+    OptionsContainer() {
+        return WRender.Create({
+            className: "OptionsContainer", children: [
+                html`<button class="Btn check-icon" onclick="${() => {
+                    this.Manager.NavigateFunction("finalizacio-proceso", this.ActualizacionForm());
+                }}">Finalizar proceso de actualización</button>`,
+            ]
+        });
     }
 
 
@@ -54,6 +66,7 @@ class UpdateView extends HTMLElement {
                     this.TutorCard(pariente))}
                       ${this.CustomStyle.cloneNode(true)}
                       ${StylesControlsV2.cloneNode(true)}
+                      ${this.OptionsContainer()}
                 </div>`;
             }
         }, {
@@ -63,6 +76,7 @@ class UpdateView extends HTMLElement {
                     this.EstudianteCard(estudiante))}
                     ${this.CustomStyle.cloneNode(true)}
                     ${StylesControlsV2.cloneNode(true)}
+                    ${this.OptionsContainer()}
                 </div>`;
             }
         }]
@@ -86,6 +100,7 @@ class UpdateView extends HTMLElement {
             </div>
         </div>`;
     }
+
 
     /**
      * Function to draw a card element for each estudiante in the update form
@@ -309,14 +324,57 @@ class UpdateView extends HTMLElement {
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
+    ActualizacionForm() {
+        const inputTerminosYCondiciones = html`<input type="checkbox" class="inputChecked" id="terminos" name="terminos" value="terminos">`;
+        return html`<div class="OptionsContainer">
+            ${this.CustomStyle.cloneNode(true)}
+            ${StylesControlsV2.cloneNode(true)}
+            ${[
+                html`<h3>Estimados padres de familia, el contrato debe aceptar por cada estudiante matriculado!</h3>`,
+                html`<div class="options-container">
+                    ${inputTerminosYCondiciones}
+                    <label for="terminos" class="check-label">Acepto contrato para todos mis estudiantes</label>
+                </div>`,
+                html`<div class="element-container">
+                    ${this.UpdateData?.Parientes?.map((pariente, index) => html`<div class="element-detail" >
+                    <div class="element-title">${pariente.Nombre_completo}</div>
+                </div>`)}
+                </div>`,
+                html`<section class="WOptionsSection">
+                <button class="Btn" onclick="${() => {
+                        this.NavManager?.ActiveTab("Hijos");
+                    }}">Atrás</button>
+                <button class="Btn check-icon" onclick="${() => {
+                        document.body.append(new WModalForm({
+                            title: "Contrato",
+                            ObjectModal: this.UpdateData?.Contrato,
+                        }))
+                    }}">Ver contrato</button>
+                <button class="Btn check-icon" onclick="${() => {
+                        // @ts-ignore
+                        if (inputTerminosYCondiciones.checked != true) {
+                            this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
+                            return;
+                        }
+                        this.append(ModalVericateAction(() => {
+                            this.UpdateData?.Save();
+                        }), "¿Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones, desea continuar?");
+
+                    }}">Aceptar</button>
+            </section>`
+            ]}
+        </div>`;
+    }
+
     CustomStyle = css`
-        w-app-navigator {
+        w-app-navigator, .OptionsContainer, h2, h3, h4 {
             display: flex;
             max-width: 100%;
             max-width: 1000px;
             margin  : auto;
             flex-direction: column;
             gap: 10px;
+            margin-bottom: 20px;
         }
         w-form, .form-container, .form-options {
             padding: 20px;
@@ -343,6 +401,18 @@ class UpdateView extends HTMLElement {
             & textarea {
                 height: 100%;
             }
+        }
+        .options-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 16px;
+        }
+        .inputChecked {
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            color: #fff;
         }
         .element-container .element-detail{
            display: block;
