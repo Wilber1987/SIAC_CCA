@@ -63,18 +63,20 @@ class UpdateView extends HTMLElement {
         return [{
             name: "Tutores", action: () => {
                 return html`<div class="element-container">
-                    ${this.UpdateData?.Parientes?.map(pariente =>
-                    this.TutorCard(pariente))}
-                      ${this.CustomStyle.cloneNode(true)}
-                      ${StylesControlsV2.cloneNode(true)}
-                      ${this.OptionsContainer()}
+                    <div class="element-data">
+                        ${this.UpdateData?.Parientes?.map(pariente => this.TutorCard(pariente))}
+                    </div>                    
+                    ${this.CustomStyle.cloneNode(true)}
+                    ${StylesControlsV2.cloneNode(true)}
+                    ${this.OptionsContainer()}
                 </div>`;
             }
         }, {
             name: "Hijos", action: () => {
                 return html`<div class="element-container">
-                    ${this.UpdateData?.Estudiantes?.map(estudiante =>
-                    this.EstudianteCard(estudiante))}
+                    <div class="element-data"> 
+                        ${this.UpdateData?.Estudiantes?.map(estudiante => this.EstudianteCard(estudiante))}
+                    </div>      
                     ${this.CustomStyle.cloneNode(true)}
                     ${StylesControlsV2.cloneNode(true)}
                     ${this.OptionsContainer()}
@@ -229,14 +231,7 @@ class UpdateView extends HTMLElement {
         const original = new Estudiantes(estudiante);
 
         const idaVueltaForm = this.IdaVueltaForm(estudiante);
-        const form = new WForm({
-            ModelObject: new Estudiantes_ModelComponent(),
-            EntityModel: new Estudiantes(),
-            EditObject: estudiante,
-            AutoSave: false,
-            StyleForm: "ColumnX1",
-            Options: false
-        });
+        const form = this.buildUpdateEstForm(estudiante);
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
@@ -249,6 +244,25 @@ class UpdateView extends HTMLElement {
             </div>
         </div>`);
     }
+    /**
+     * Builds a form for updating the given student's details.
+     * It creates a form with the student's data, allowing the user to update the student's details.
+     * The form is configured to not auto-save changes and to have a style of a single column (ColumnX1).
+     * The form also doesn't display any options.
+     * @param {Estudiantes} estudiante - The student object to be edited.
+     * @returns {WForm} - The form object.
+     */
+    buildUpdateEstForm(estudiante) {
+        return new WForm({
+            ModelObject: new Estudiantes_ModelComponent(),
+            EntityModel: new Estudiantes(),
+            EditObject: estudiante,
+            AutoSave: false,
+            StyleForm: "ColumnX1",
+            Options: false
+        });
+    }
+
     GuardarEstudinte(estudiante, original) {
         this.append(ModalVericateAction(() => {
             for (const prop in estudiante) {
@@ -278,7 +292,24 @@ class UpdateView extends HTMLElement {
      */
     EditTutor(pariente) {
         const original = new Parientes(pariente);
-        const form = new WForm({
+        const form = this.buildUpdateParForm(pariente);
+        this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
+            ${this.CustomStyle.cloneNode(true)}          
+            <h3>${pariente.Nombre_completo}</h3>
+            ${form}
+            <div  class="form-options">
+                <button class="Btn" onclick="${() => this.regresarPariente(pariente, original)}">Regresar</button>
+                <button class="Btn" onclick="${() => this.GuardarPariente(pariente, original)}">Actualizar datos</button>
+            </div>
+        </div>`);
+    }
+    /**
+     * Builds and returns a form for updating the information of a given pariente object.
+     * @param {Parientes} pariente - The pariente object containing the data to be edited.
+     * @returns {WForm} An instance of WForm configured with the pariente's data.
+     */
+    buildUpdateParForm(pariente) {
+        return new WForm({
             ModelObject: new Parientes_ModelComponent({
                 Primer_nombre: undefined,
                 Segundo_nombre: undefined,
@@ -290,18 +321,9 @@ class UpdateView extends HTMLElement {
             AutoSave: false,
             StyleForm: "ColumnX1",
             Options: false
-        })
-
-        this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
-            ${this.CustomStyle.cloneNode(true)}          
-            <h3>${pariente.Nombre_completo}</h3>
-            ${form}
-            <div  class="form-options">
-                <button class="Btn" onclick="${() => this.regresarPariente(pariente, original)}">Regresar</button>
-                <button class="Btn" onclick="${() => this.GuardarPariente(pariente, original)}">Actualizar datos</button>
-            </div>
-        </div>`);
+        });
     }
+
     GuardarPariente(pariente, original) {
         this.append(ModalVericateAction(() => {
             for (const prop in pariente) {
@@ -351,13 +373,29 @@ class UpdateView extends HTMLElement {
                             ObjectModal: html`<div class="WModalForm">${this.UpdateData?.Contrato}</div>`,
                         }))
                     }}">Ver contrato</button>
-                <button class="Btn check-icon" onclick="${() => {
+                <button class="Btn check-icon" onclick="${async () => {
                         // @ts-ignore
                         if (inputTerminosYCondiciones.checked != true) {
                             this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
-                        this.append(ModalVericateAction(async () => {                           
+                        for (const pariente of this.UpdateData?.Parientes) {
+                            const form = this.buildUpdateParForm(pariente);
+                            await form.DrawComponent();
+                            if (!form.Validate()) {
+                                this.append(ModalMessege(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
+                                return;
+                            }
+                        }
+                        for (const estudiante of this.UpdateData?.Estudiantes) {
+                            const form = this.buildUpdateEstForm(estudiante);
+                            await form.DrawComponent();
+                            if (!form.Validate()) {
+                                this.append(ModalMessege(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
+                                return;
+                            }
+                        }
+                        this.append(ModalVericateAction(async () => {
                             const response = await new UpdateDataRequest({
                                 Parientes: this.UpdateData?.Parientes,
                                 Estudiantes: this.UpdateData?.Estudiantes,
@@ -389,6 +427,9 @@ class UpdateView extends HTMLElement {
             border-radius: 0.2cm;
             background-color: #fff;
             margin-bottom: 10px;
+        }
+        .element-data {
+            min-height: 300px;
         }
         .form-container {
             height: 80px;

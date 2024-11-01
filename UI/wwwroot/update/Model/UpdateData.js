@@ -10,8 +10,7 @@ export class UpdateData extends EntityClass {
         super(props, 'Update');
         for (const prop in props) {
             this[prop] = props[prop];
-        };
-        this.Contrato = html`<div class="contrato-container">${this.Contrato}</div>`;
+        };       
     }
     /**@type {Array<Estudiantes>} */
     Estudiantes
@@ -19,4 +18,6 @@ export class UpdateData extends EntityClass {
     Parientes
     /**@type {Boolean} */
     SendAll
+    /**@type {String} */
+    Contrato
 }
