@@ -12,6 +12,13 @@
             font-size: 12px;
         }
 
+        .logo {
+            width: 80px;
+            position: absolute;
+            margin-top: -30px;
+            margin-left: 5px;
+        }
+
         .underline {
             text-decoration: underline;
         }
@@ -25,6 +32,7 @@
             max-width: 700px;
             margin: 0 auto;
             padding: 20px;
+            page-break-after: always;
         }
 
         h1 {
@@ -84,7 +92,7 @@
         </div>
         <hr>
         <div class="header-contrato" style="width: 120PX; float: right; text-align: right;">
-            <p><strong style="background-color: #DEDAD9; padding: 5px;">CICLO:</strong> 2024</p>
+            <p><strong style="background-color: #DEDAD9; padding: 5px;">CICLO:</strong> {{ ciclo }}</p>
         </div>
 
         <table class="header-table first" style="width:100%;">
@@ -120,15 +128,8 @@
             </tr>
         </table>
 
-        <div style="text-align: center; display: flex; align-items: center; justify-content: center;">
-            <label style="margin: 15px;">Sin Condición<input type="checkbox" id="cbox1"
-                    value="first_checkbox" /></label>
-            <label style="margin: 15px;">Con Condición<input type="checkbox" id="cbox1"
-                    value="first_checkbox" /></label>
-        </div>
-
         <hr>
-<br><br>
+        <br><br>
 
         <div style="width: 100%; text-align: right;">
             <p style="text-align: center; width: 380px; border-top: 1px dashed black; float: right">
