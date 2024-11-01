@@ -1,13 +1,13 @@
 CREATE TABLE regiones (
     id_region INT PRIMARY KEY,
-    idtregion CHAR(10) NOT NULL,
+    idtregion nvarchar(10) NOT NULL,
     texto NVARCHAR(50) NOT NULL,
     id_pais int
 );
 
 CREATE TABLE paises (
     id_pais INT PRIMARY KEY,
-    idtpais CHAR(10) NOT NULL,
+    idtpais nvarchar(10) NOT NULL,
     texto NVARCHAR(50) NOT NULL
 );
 
@@ -1219,7 +1219,6 @@ VALUES(200, '50', 'Habarovskii krai', 50);
 INSERT INTO regiones
 (id_region, idtregion, texto, id_pais)
 VALUES(201, '50', 'Chelyabinskaya obl.', 50);
-
 
 
 

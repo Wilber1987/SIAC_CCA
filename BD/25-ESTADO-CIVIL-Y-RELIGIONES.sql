@@ -1,12 +1,12 @@
 CREATE TABLE estados_civiles (
     id INT PRIMARY KEY,
-    idtestadocivil CHAR(1) NOT NULL,
+    idtestadocivil nvarchar(1) NOT NULL,
     texto NVARCHAR(50) NOT NULL
 );
 
 CREATE TABLE religiones (
     id INT PRIMARY KEY,
-    idtreligion CHAR(1) NOT NULL,
+    idtreligion nvarchar(1) NOT NULL,
     texto NVARCHAR(50) NOT NULL
 );
 
@@ -47,7 +47,7 @@ ADD vive_con nvarchar(150);
 
 CREATE TABLE regiones (
     id INT PRIMARY KEY,
-    idtreligion CHAR(1) NOT NULL,
+    idtreligion nvarchar(1) NOT NULL,
     texto NVARCHAR(50) NOT NULL
 );
 

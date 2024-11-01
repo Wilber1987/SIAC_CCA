@@ -1,6 +1,6 @@
 CREATE TABLE profesiones (
     id_profesion INT PRIMARY KEY,
-    texto CHAR(50) NOT NULL
+    texto nvarchar(50) NOT NULL
 );
 
 INSERT INTO profesiones
@@ -164,3 +164,5 @@ VALUES(52, 'TECNICO SUPERIOR EN PEDAGOGIA');
 
 ALTER TABLE dbo.estudiantes ADD id_pais int NULL;
 ALTER TABLE dbo.estudiantes ADD id_region int NULL;
+
+EXEC sp_RENAME 'update_data.parientes_data_update.pais_id' , 'id_pais', 'COLUMN'
