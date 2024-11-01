@@ -42,7 +42,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public bool? Usa_transporte { get; set; }
 		
 		[JsonProp]
-		public List<Adress>? Puntos_Transportes { get; set; }
+		public List<Adress>? Puntos_Transportes { get ; set; }
 	}
 
 	public class Adress
