@@ -38,6 +38,12 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
+		public ResponseService SaveUpdateDataRequest(UpdateDataRequest Inst)
+		{
+			return new UpdateOperation().Save(HttpContext.Session.GetString("seassonKey"), Inst );
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
 		public List<Parientes>? GetParientes(Parientes inst)
 		{
 			return UpdateOperation.GetParientesToInvite(inst);
