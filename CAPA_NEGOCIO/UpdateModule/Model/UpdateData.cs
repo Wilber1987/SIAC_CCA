@@ -8,8 +8,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 {
 	public class UpdateData
 	{
-		public List<Estudiantes>? Estudiantes { get; set; }
-		public List<Parientes>? Parientes { get; set; }
+		public List<Estudiantes_Data_Update>? Estudiantes { get; set; }
+		public List<Parientes_Data_Update>? Parientes { get; set; }
 		public bool? SendAll { get; set; }
 		public string? Contrato { get; set; }
 	}

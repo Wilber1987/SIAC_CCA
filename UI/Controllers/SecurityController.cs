@@ -30,21 +30,21 @@ namespace API.Controllers
         }
         //Statics
 
-        public static bool Auth(string? identfy)
+        public static bool Auth(string? seassonKey)
         {
-            return AuthNetCore.Authenticate(identfy);
+            return AuthNetCore.Authenticate(seassonKey);
         }
-        public static bool IsAdmin(string? identfy)
+        public static bool IsAdmin(string? seassonKey)
         {
-            return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), identfy);
+            return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), seassonKey);
         }       
-        public static bool HavePermission(string permission, string? identfy)
+        public static bool HavePermission(string permission, string? seassonKey)
         {
-            return AuthNetCore.HavePermission(permission, identfy);
+            return AuthNetCore.HavePermission(permission, seassonKey);
         }
-        public static bool HavePermission(string? identfy, params Permissions[] permission)
+        public static bool HavePermission(string? seassonKey, params Permissions[] permission)
         {            
-            return AuthNetCore.HavePermission(identfy, permission);
+            return AuthNetCore.HavePermission(seassonKey, permission);
         }      
 
     }

@@ -22,26 +22,53 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			if (pariente?.Estudiantes_responsables_familia != null)
 			{
-				var estudiantes = new Estudiantes().Where<Estudiantes>(
-					FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-				/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-					.Get<Estudiantes_responsables_familia>();*/
-
-				//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
-
-				List<Parientes>? parientes = estudiantes
-					.SelectMany(e => e.Responsables ?? [])
-					.Select(r => r.Parientes ?? new Parientes()).ToList();
-
-				UpdateData updateData = new UpdateData
+				if (pariente.Actualizo == true)
 				{
-					Estudiantes = estudiantes,
-					Parientes = parientes
-				};
-				updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-				return updateData;
+					var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
+							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+
+					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
+						.Get<Estudiantes_responsables_familia>();*/
+
+					var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
+
+					List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
+							FilterData.In("Id", parientesId)
+						).ToList();
+
+					UpdateData updateData = new UpdateData
+					{
+						Estudiantes = estudiantes,
+						Parientes = parientes
+					};
+					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+					return updateData;
+				}
+				else
+				{
+					var estudiantes = new Estudiantes().Where<Estudiantes>(
+							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+
+					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
+						.Get<Estudiantes_responsables_familia>();*/
+
+					//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
+
+					List<Parientes>? parientes = estudiantes
+						.SelectMany(e => e.Responsables ?? [])
+						.Select(r => r.Parientes ?? new Parientes()).ToList();
+
+					UpdateData updateData = new UpdateData
+					{
+						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
+						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
+					};
+					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+					return updateData;
+				}
+
 			}
 			return new UpdateData
 			{
@@ -53,10 +80,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public ResponseService StartUpdateProcess(UpdateData updateData)
 		{
-			List<Parientes>? parientes = [];
+			List<Parientes_Data_Update>? parientes = [];
 			if (updateData.SendAll != null)
 			{
-				parientes = new Parientes { Responsable_Pago = true }.Get<Parientes>();
+				parientes = new Parientes { Responsable_Pago = true }.Get<Parientes>().Select(p => new Parientes_Data_Update(p)).ToList();
 			}
 			else
 			{
@@ -228,10 +255,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 
-		public ResponseService Save(string? identfy, UpdateDataRequest inst)
+		public ResponseService Save(string? seassonKey, UpdateDataRequest inst)
 		{
+			UserModel user = AuthNetCore.User(seassonKey);
 			try
 			{
+
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
 					BeginGlobalTransaction();
@@ -240,11 +269,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
 						if (parienteF != null)
 						{
+							pariente.Actualizo = user.UserId == parienteF.User_id ? true : false;
+							pariente.Acepto_terminos = true;
+							pariente.User_id = parienteF.User_id;
 							pariente.Update();
 						}
 						else
 						{
-							pariente.Estudiantes_responsables_familia = null;							
+							pariente.Estudiantes_responsables_familia = null;
 							pariente.Save();
 						}
 					});
@@ -256,13 +288,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante.Update();
 						}
 						else
-						{	
-							estudiante.Responsables = null;		
+						{
+							estudiante.Responsables = null;
 							estudiante.Estudiante_clases = null;
 							if (estudiante?.Puntos_Transportes?.Count > 0)
 							{
 								estudiante.Usa_transporte = true;
-							}											
+							}
 							estudiante?.Save();
 						}
 					});

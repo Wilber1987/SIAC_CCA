@@ -75,7 +75,7 @@ namespace CAPA_NEGOCIO.Templates
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
 
-			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
+			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
 				var contratoEstudiante = plantilla;
 				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
@@ -101,7 +101,7 @@ namespace CAPA_NEGOCIO.Templates
 			boleta.SetConnection(MySqlConnections.Bellacom);
 
 
-			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
+			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
 				var contratoEstudiante = plantillaBase;
 

@@ -1,5 +1,7 @@
 //@ts-check
 // @ts-ignore
+import { Paises_ModelComponent } from '../../Model/ModelComponent/Paises_ModelComponent.js';
+import { Regiones_ModelComponent } from '../../Model/ModelComponent/Regiones_ModelComponent.js';
 import { Religiones_ModelComponent } from '../../Model/ModelComponent/Religiones_ModelComponent.js';
 // @ts-ignore
 import { ModelProperty } from '../../WDevCore/WModules/CommonModel.js';
@@ -15,8 +17,8 @@ class Estudiantes_ModelComponent extends EntityClass {
   
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
     /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true };
-     //pais
-    //region
+        /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar" };
     /**@type {ModelProperty}*/ Vive_con = { type: 'text', label: "Con quién vive" };
     /**@type {ModelProperty}*/ Colegio_procede = { type: 'text', label: "Colegio de procedencia" };
@@ -29,7 +31,7 @@ class Estudiantes_ModelComponent extends EntityClass {
                 { id: "C", descripcion: "Confirmación" }
             ]
     }
-    /**@type {ModelProperty}*/ SaceamentoA = { type: 'number', max: 2030, min: 2000 };
+    /**@type {ModelProperty}*/ SaceamentoA = { type: 'number', label: "Año de Saceamento", max: 2030, min: 2000 };
 
     //**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
     //**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };

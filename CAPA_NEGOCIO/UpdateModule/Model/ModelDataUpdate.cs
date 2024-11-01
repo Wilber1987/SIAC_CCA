@@ -37,7 +37,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		}
 		public Estudiantes_Data_Update(Estudiantes inst)
 		{
-
+			AdapterUtil.SetMatchingProperties(inst, this);
 		}
 		public bool? Usa_transporte { get; set; }
 		

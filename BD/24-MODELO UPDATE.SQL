@@ -145,3 +145,5 @@ ALTER TABLE dbo.parientes ADD CONSTRAINT FK_parientes_Security_Users FOREIGN KEY
 
 
 EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.resoponsable_pago' , N'responsable_pago', 'COLUMN';
+
+ALTER TABLE OLIMPO.update_data.parientes_data_update ADD EgresoExAlumno numeric(38,0) NULL;
