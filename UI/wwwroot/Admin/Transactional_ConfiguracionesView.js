@@ -90,7 +90,7 @@ class Transactional_Configuraciones extends EntityClass {
     Nombre = { type: 'text', disabled: true };
     Descripcion = { type: 'text', disabled: true };
     Valor = { type: 'text' };
-    Tipo_Configuracion = { type: 'text' , disabled: true };
+    Tipo_Configuracion = { type: 'text' , disabled: true, hiddenInTable:true };
 }
 export { Transactional_Configuraciones };
 
