@@ -43,13 +43,13 @@ namespace CAPA_NEGOCIO.Templates
 			Header = Header.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 				.Replace("{{ titulo }}", theme.TITULO)
 				.Replace("{{ sub-titulo }}", "Calificaciones");
-			
+
 			WatherMark = WatherMark.Replace("url-wattermark", theme.MEDIA_IMG_PATH + theme.WATHERMARK);
 
 			return this;
 		}
 
-		public List<string> GetContratoFragment(UpdateData data)
+		public DocumentsData GetContratoFragment(UpdateData data)
 		{
 			var theme = new PageConfig();
 			var contratos = new List<string>();
@@ -60,27 +60,69 @@ namespace CAPA_NEGOCIO.Templates
 			DateTime fechaActual = DateTime.Now;
 
 			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-								 .Replace("{{ current_year }}",  fechaActual.Year.ToString())
-								 .Replace("{{ impresion }}",  fechaActual.ToString("dd.MM.yyyy"));
+								 .Replace("{{ current_year }}", fechaActual.Year.ToString())
+								 .Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
 
-			if (primerParienteConUserId != null)
-			{
-				plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId.Nombre_completo)
-				.Replace("{{ cedula1 }}", primerParienteConUserId.Nombre_completo);
-			}
+			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
+								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
+
+			var segundoResponsable = data.Parientes?
+				.FirstOrDefault(p => p.Estudiantes_responsables_familia?.Any(erf => erf.Parentesco_id == 10) == true)
+				?? data.Parientes?.FirstOrDefault(p => p != primerParienteConUserId && p.User_id != null);
+
+			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
+								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
 
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
 			{
 				var contratoEstudiante = plantilla;
-
-				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante.Nombre_completo)
-													   .Replace("{{ codigo_estudiante }}", estudiante.Codigo)
-													   .Replace("{{ codigo_familia }}", estudiante.Id_familia.ToString());
-
+				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
+													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
+													   .Replace("{{ codigo_familia }}", estudiante?.Id_familia?.ToString() ?? string.Empty);
 				contratos.Add(contratoEstudiante);
 			}
 
-			return contratos;
+			Body = string.Join(Environment.NewLine, contratos);
+
+			return this;
+		}
+
+		public DocumentsData GetBoletaFragment(UpdateData data)
+		{
+			var theme = new PageConfig();
+			var contratos = new List<string>();
+
+			var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+
+			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
+			DateTime fechaActual = DateTime.Now;
+
+			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+								 .Replace("{{ current_year }}", fechaActual.Year.ToString())
+								 .Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
+
+			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
+								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
+
+			var segundoResponsable = data.Parientes?
+				.FirstOrDefault(p => p.Estudiantes_responsables_familia?.Any(erf => erf.Parentesco_id == 10) == true)
+				?? data.Parientes?.FirstOrDefault(p => p != primerParienteConUserId && p.User_id != null);
+
+			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
+								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
+
+			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
+			{
+				var contratoEstudiante = plantilla;
+				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
+													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
+													   .Replace("{{ codigo_familia }}", estudiante?.Id_familia?.ToString() ?? string.Empty);
+				contratos.Add(contratoEstudiante);
+			}
+
+			Body = string.Join(Environment.NewLine, contratos);
+
+			return this;
 		}
 
 	}

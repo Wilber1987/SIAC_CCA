@@ -22,7 +22,7 @@ namespace CAPA_NEGOCIO.Oparations
 			await MigrateParentesco();
 			await MigrateFamilia();
 			await migrateEstudiantesSiac(_sshTunnelService);
-			await MigrateParientesAndUsers();
+			await MigrateParientesAndUsers();//MIGRARA LA IDENTIFICACION DEL PARIENTE IMPORTANTE
 			await migrateEstudiantesReponsablesFamilia();
 
 		}
