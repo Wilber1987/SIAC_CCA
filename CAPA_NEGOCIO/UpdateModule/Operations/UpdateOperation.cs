@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
@@ -34,11 +35,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					.SelectMany(e => e.Responsables ?? [])
 					.Select(r => r.Parientes ?? new Parientes()).ToList();
 
-				return new UpdateData
+				UpdateData updateData = new UpdateData
 				{
 					Estudiantes = estudiantes,
 					Parientes = parientes
 				};
+				updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+				return updateData;
 			}
 			return new UpdateData
 			{
@@ -240,7 +243,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							pariente.Update();
 						}
 						else
-						{							
+						{
+							pariente.Estudiantes_responsables_familia = null;							
 							pariente.Save();
 						}
 					});
@@ -252,8 +256,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante.Update();
 						}
 						else
-						{							
-							estudiante.Save();
+						{	
+							estudiante.Responsables = null;		
+							estudiante.Estudiante_clases = null;
+							if (estudiante?.Puntos_Transportes?.Count > 0)
+							{
+								estudiante.Usa_transporte = true;
+							}											
+							estudiante?.Save();
 						}
 					});
 					CommitGlobalTransaction();
@@ -267,7 +277,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			}
 			catch (System.Exception ex)
 			{
-
+				LoggerServices.AddMessageError("Error al guardar la informacion", ex);
 				throw;
 			}
 

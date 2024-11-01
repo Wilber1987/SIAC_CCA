@@ -11,6 +11,7 @@ import { Adress_ModelComponent, Estudiantes_ModelComponent } from "./Model/Estud
 import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { UpdateDataRequest } from "./Model/UpdateDataRequest.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -347,7 +348,7 @@ class UpdateView extends HTMLElement {
                 <button class="Btn check-icon" onclick="${() => {
                         document.body.append(new WModalForm({
                             title: "Contrato",
-                            ObjectModal: this.UpdateData?.Contrato,
+                            ObjectModal: html`<div class="WModalForm">${this.UpdateData?.Contrato}</div>`,
                         }))
                     }}">Ver contrato</button>
                 <button class="Btn check-icon" onclick="${() => {
@@ -356,9 +357,15 @@ class UpdateView extends HTMLElement {
                             this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
-                        this.append(ModalVericateAction(() => {
-                            this.UpdateData?.Save();
-                        }), "¿Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones, desea continuar?");
+                        this.append(ModalVericateAction(async () => {                           
+                            const response = await new UpdateDataRequest({
+                                Parientes: this.UpdateData?.Parientes,
+                                Estudiantes: this.UpdateData?.Estudiantes,
+                                // @ts-ignore
+                                AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
+                            }).Save();
+                            this.append(ModalMessege(response.message));
+                        }, "¿Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones, desea continuar?"));
 
                     }}">Aceptar</button>
             </section>`

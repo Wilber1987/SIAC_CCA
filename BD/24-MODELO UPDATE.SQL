@@ -40,7 +40,7 @@ CREATE TABLE update_data.estudiantes_data_update (
 
 	id_pais int NULL,
 	id_region int NULL,
-    puntos_transportes nvarchar(max) COLLATE Modern_Spanish_CI_AS NOT NULL,
+    puntos_transportes nvarchar(max) COLLATE Modern_Spanish_CI_AS  NULL,
     usa_transporte bit NULL,   
     
 	CONSTRAINT PK__estudian__3213E83FD683993A PRIMARY KEY (id)

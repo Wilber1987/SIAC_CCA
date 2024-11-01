@@ -11,5 +11,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public List<Estudiantes>? Estudiantes { get; set; }
 		public List<Parientes>? Parientes { get; set; }
 		public bool? SendAll { get; set; }
+		public string? Contrato { get; set; }
 	}
 }
