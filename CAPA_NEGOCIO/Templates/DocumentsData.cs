@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.UpdateModule.Model;
+using CAPA_NEGOCIO.Util;
 using CAPA_NEGOCIO.Utility;
 using DataBaseModel;
 
@@ -90,40 +92,41 @@ namespace CAPA_NEGOCIO.Templates
 		public DocumentsData GetBoletaFragment(UpdateData data)
 		{
 			var theme = new PageConfig();
-			var contratos = new List<string>();
+			var boletas = new List<string>();
 
-			var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
-
-			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
+			var plantillaBase = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			DateTime fechaActual = DateTime.Now;
 
-			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-								 .Replace("{{ current_year }}", fechaActual.Year.ToString())
-								 .Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
+			var boleta = new Pagos_alumnos_view();
+			boleta.SetConnection(MySqlConnections.Bellacom);
 
-			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
-								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
-
-			var segundoResponsable = data.Parientes?
-				.FirstOrDefault(p => p.Estudiantes_responsables_familia?.Any(erf => erf.Parentesco_id == 10) == true)
-				?? data.Parientes?.FirstOrDefault(p => p != primerParienteConUserId && p.User_id != null);
-
-			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
-								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
 
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes>())
 			{
-				var contratoEstudiante = plantilla;
-				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
-													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
-													   .Replace("{{ codigo_familia }}", estudiante?.Id_familia?.ToString() ?? string.Empty);
-				contratos.Add(contratoEstudiante);
+				var contratoEstudiante = plantillaBase;
+
+				var boletaMsql = boleta.Where<Pagos_alumnos_view>(FilterData.Equal("iddocumento", 1152936))
+									   .FirstOrDefault(); // TODO: Filtrar según el código del estudiante en lugar de un ID fijo
+				
+				var fechaVencimiento = boletaMsql.Fecha_documento.HasValue ? boletaMsql.Fecha_documento.Value.AddDays((double)boletaMsql.dias_plazo) : DateTime.Now;
+
+				contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+													   .Replace("{{ ciclo }}", (fechaActual.Year + 1).ToString())
+													   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
+													   .Replace("{{ no_expediente }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty)
+													   .Replace("{{ curso_actual }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con el curso real del estudiante
+													   .Replace("{{ promueve }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con la promoción del estudiante
+													   .Replace("{{ importe_matricula }}", boletaMsql?.Importe_md.ToString() ?? string.Empty) // TODO: Actualizar con el importe de matrícula real
+													   .Replace("{{ fecha_vencimiento }}", fechaVencimiento.ToString("dd/MM/yyyy"));
+				
+				boletas.Add(contratoEstudiante);
 			}
 
-			Body = string.Join(Environment.NewLine, contratos);
+			Body = string.Join(Environment.NewLine, boletas);
 
 			return this;
 		}
+
 
 	}
 }
