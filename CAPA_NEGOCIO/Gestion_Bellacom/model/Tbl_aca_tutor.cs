@@ -38,5 +38,6 @@ namespace DataBaseModel {
        public DateTime? Fechaactualizacion { get; set; }
        public bool? Actualizado { get; set; }
        public int? Noresponsable { get; set; }
+       public int? IdTitulo { get; set; }
    }
 }

@@ -73,6 +73,9 @@ namespace DataBaseModel
 		[ManyToOne(TableName = "profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]
 		public Profesiones? Profesion { get; set; } 
 
+		[ManyToOne(TableName = "titulos", KeyColumn = "id_titulo", ForeignKeyColumn = "id_titulo")]
+		public Titulos? Titulos { get; set; } 
+
 
 		#endregion
 
