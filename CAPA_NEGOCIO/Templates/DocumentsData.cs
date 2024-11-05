@@ -137,7 +137,7 @@ namespace CAPA_NEGOCIO.Templates
 						var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
 
 						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-															   .Replace("{{ ciclo }}", (fechaActual.Year + 1).ToString())
+															   .Replace("{{ ciclo }}", fechaActual.Year.ToString())
 															   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
 															   .Replace("{{ no_expediente }}", boletaMsql?.Codigo.ToString() ?? string.Empty)
 															   .Replace("{{ curso_actual }}", $"{boletaMsql?.GradoActual} {boletaMsql?.CursoActual}".Trim())
