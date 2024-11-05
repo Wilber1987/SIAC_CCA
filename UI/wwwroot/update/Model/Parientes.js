@@ -1,6 +1,7 @@
 //@ts-check
 import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
 class Parientes extends EntityClass {
+   
     /** @param {Partial<Parientes>} [props] */
     constructor(props) {
         super(props, 'Update');
@@ -35,6 +36,9 @@ class Parientes extends EntityClass {
     }
     GetParientesInvitados() {
         return this.GetData("ApiUpdate/GetParientesInvitados");
+    }
+    GetUpdatedData() {
+        return this.GetData("ApiUpdate/GetUpdatedData");
     }
 }
 export { Parientes };

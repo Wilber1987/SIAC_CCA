@@ -27,26 +27,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
-					var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
-							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-						.Get<Estudiantes_responsables_familia>();*/
-
-					var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
-
-					List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
-							FilterData.In("Id", parientesId)
-						).ToList();
-
-					UpdateData updateData = new UpdateData
-					{
-						Estudiantes = estudiantes,
-						Parientes = parientes
-					};
-					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-					return updateData;
+					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
 				{
@@ -79,6 +60,30 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				Parientes = []
 			};
 
+		}
+
+		private static UpdateData GetUpdatedData(Parientes_Data_Update? pariente, Periodo_lectivos? periodoLectivo)
+		{
+			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
+										FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+									).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+
+			/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
+				.Get<Estudiantes_responsables_familia>();*/
+
+			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
+
+			List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
+					FilterData.In("Id", parientesId)
+				).ToList();
+
+			UpdateData updateData = new UpdateData
+			{
+				Estudiantes = estudiantes,
+				Parientes = parientes
+			};
+			updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+			return updateData;
 		}
 
 		public ResponseService StartUpdateProcess(UpdateData updateData)
@@ -349,6 +354,17 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				}
 			});
 
+		}
+
+		public static UpdateData GetUpdateDataById(Parientes_Data_Update inst)
+		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = inst.Id }.Find<Parientes_Data_Update>();
+			if (pariente?.Actualizo == true)
+			{
+				return GetUpdatedData(pariente, periodoLectivo);
+			}
+			return new UpdateData();
 		}
 	}
 }
