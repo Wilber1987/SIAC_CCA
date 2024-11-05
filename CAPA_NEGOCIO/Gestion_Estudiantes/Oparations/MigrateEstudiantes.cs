@@ -22,7 +22,7 @@ namespace CAPA_NEGOCIO.Oparations
 			await MigrateParentesco();
 			await MigrateFamilia();
 			await migrateEstudiantesSiac(_sshTunnelService);
-			await MigrateParientesAndUsers();//MIGRARA LA IDENTIFICACION DEL PARIENTE IMPORTANTE
+			await MigrateParientesAndUsers();
 			await migrateEstudiantesReponsablesFamilia();
 
 		}
@@ -774,7 +774,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Primer_apellido = StringUtil.GetNombres(tn.Apellidos)[0];
 			existing.Segundo_apellido = StringUtil.GetNombres(tn.Apellidos)[1];
 			existing.Sexo = tn.Sexo;
-			//existing.Profesion = tn.Profesion;
+			existing.Identificacion = tn.Noidentificacion;
 			existing.Direccion = tn.Direccion;
 			existing.Lugar_trabajo = tn.Lugartrabajo;
 			existing.Telefono = tn.Telefono;
