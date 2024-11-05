@@ -65,6 +65,8 @@ namespace DataBaseModel
 				c.Nombre.Equals(ConfiguracionesThemeEnum.VERSION.ToString()))?.Valor ?? VERSION;
 			WATHERMARK = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.WATHERMARK.ToString()))?.Valor ?? VERSION;
+			URL_BASE = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.URL_BASE.ToString()))?.Valor ?? URL_BASE;
 
 
 		}
@@ -75,6 +77,7 @@ namespace DataBaseModel
 		public string LOGO_PRINCIPAL = "logo.png";
 		public string MEDIA_IMG_PATH = "/media/img/";
 		public string VERSION = "2024.07";
+		public string URL_BASE = "https://portal.ni-alpha.cloud/Security/Login";
 		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
 
 		public string WATHERMARK = "logo.png";
@@ -93,8 +96,9 @@ namespace DataBaseModel
 		TWILLIO_ACCOUNT,
 		TWILLIO_TOKEN,
 		TWILLIO_NUMBER,
-        SUB_TITULO2
-    }
+		SUB_TITULO2,
+		URL_BASE
+	}
 
 	public class Config
 	{
@@ -108,10 +112,10 @@ namespace DataBaseModel
 	{
 		public string TWILLIO_ACCOUNT = "";
 		public string TWILLIO_TOKEN = "";
-		public string TWILLIO_NUMBER = "";	
+		public string TWILLIO_NUMBER = "";
 		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
 
-			
+
 		public TwillioConfig()
 		{
 			configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
@@ -121,13 +125,13 @@ namespace DataBaseModel
 			TWILLIO_TOKEN = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_TOKEN.ToString()))?.Valor ?? TWILLIO_TOKEN;
 			TWILLIO_NUMBER = configuraciones.Find(c => c.Nombre != null &&
-				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_NUMBER.ToString()))?.Valor ?? TWILLIO_NUMBER;			
+				c.Nombre.Equals(ConfiguracionesThemeEnum.TWILLIO_NUMBER.ToString()))?.Valor ?? TWILLIO_NUMBER;
 
 
-		}		
+		}
 
 		public static TwillioConfig getTwillioConfig()
-		{			
+		{
 			return new TwillioConfig();
 		}
 	}

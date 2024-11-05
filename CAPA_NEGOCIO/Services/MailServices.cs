@@ -6,7 +6,6 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using CAPA_DATOS.Services;
-using iText.Forms.Xfdf;
 
 namespace CAPA_NEGOCIO.Services
 {
@@ -20,28 +19,17 @@ namespace CAPA_NEGOCIO.Services
         };
 
         public static async void SendMailInvitation<T>(List<string> toMails, string from, string subject, string templatePage, T model)
-        {            
-               // var templatePage = templatePage; //Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Mails"), path);
-                /*******modelo de prueba *****/               
-               await SMTPMailServices.SendMail(
-                    "reply@noreply.com",
-                    toMails,
-                    subject,
-                    ContractTemplateService.RenderTemplate(templatePage, model), null,null,
-                    config
-                );
-        }
-        public static async void SendMailContract<T>(List<string> toMails, string from, string subject, string templatePage, T model)
-        {            
-               // var templatePage = templatePage; //Path.Combine(System.IO.Path.GetFullPath("../UI/Pages/Mails"), path);
-                /*******modelo de prueba *****/               
-               await SMTPMailServices.SendMail(
-                    "reply@noreply.com",
-                    toMails,
-                    subject,
-                    ContractTemplateService.RenderTemplate(templatePage, model), null,null,
-                    config
-                );
+        {
+            
+            await SMTPMailServices.SendMail(
+                 "cca@noreply.com",//todo tomar el from
+                 toMails,
+                 subject,
+                 templatePage,
+                 null,
+                 null,
+                 config
+             );
         }
     }
 }

@@ -1,5 +1,6 @@
 using CAPA_DATOS.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
+using CAPA_NEGOCIO.UpdateModule.Operations;
 using DataBaseModel;
 
 namespace BackgroundJob.Cron.Jobs
@@ -19,7 +20,7 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  MigrateEstudiantesCronJob at {0}", DateTime.UtcNow);
             try
             {
-                    var job = new MigrateEstudiantes().Migrate();
+                var job = new MigrateEstudiantes().Migrate();
             }
             catch (System.Exception ex)
             {
@@ -50,7 +51,7 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  MigrateDocentesCronJob at {0}", DateTime.UtcNow);
             try
             {
-                    var job = new MigrateDocentes().Migrate();
+                var job = new MigrateDocentes().Migrate();
             }
             catch (System.Exception ex)
             {
@@ -81,7 +82,7 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  MigrateGestionCursosCronJob at {0}", DateTime.UtcNow);
             try
             {
-                    var job = new MigrateGestionCursos().Migrate();
+                var job = new MigrateGestionCursos().Migrate();
             }
             catch (System.Exception ex)
             {
@@ -97,7 +98,7 @@ namespace BackgroundJob.Cron.Jobs
         }
     }
 
-     public class MigrateNotasCronJob : CronBackgroundJob
+    public class MigrateNotasCronJob : CronBackgroundJob
     {
         private readonly ILogger<MigrateNotasCronJob> _log;
 
@@ -112,11 +113,42 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  MigrateNotasCronJob at {0}", DateTime.UtcNow);
             try
             {
-                    var job = new MigrateNotas().Migrate();
+                var job = new MigrateNotas().Migrate();
             }
             catch (System.Exception ex)
             {
                 _log.LogInformation(":::::::::::ERROR  MigrateNotasCronJob... at {0}", ex);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private IEnumerable<object> Get<T>()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SendInvitationToUpdateCronJob : CronBackgroundJob
+    {
+        private readonly ILogger<SendInvitationToUpdateCronJob> _log;
+
+        public SendInvitationToUpdateCronJob(CronSettings<SendInvitationToUpdateCronJob> settings, ILogger<SendInvitationToUpdateCronJob> log)
+            : base(settings.CronExpression, settings.TimeZone)
+        {
+            _log = log;
+        }
+
+        protected override Task DoWork(CancellationToken stoppingToken)
+        {
+            _log.LogInformation(":::::::::::Running...  SendInvitationToUpdateCronJob at {0}", DateTime.UtcNow);
+            try
+            {
+                new UpdateOperation().sendInvitations();
+            }
+            catch (System.Exception ex)
+            {
+                _log.LogInformation(":::::::::::ERROR  SendInvitationToUpdateCronJob... at {0}", ex);
             }
 
             return Task.CompletedTask;

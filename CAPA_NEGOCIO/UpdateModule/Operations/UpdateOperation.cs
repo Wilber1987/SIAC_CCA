@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
+using CAPA_NEGOCIO.Utility;
 using DataBaseModel;
+using MailKit;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
@@ -313,6 +316,38 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				throw;
 			}
 
+		}
+
+		public void sendInvitations()
+		{
+			var tutor = new Parientes_Data_Update();
+			var filter = FilterData.ISNull("correo_enviado");
+
+			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
+			var tutores = tutor.Where<Parientes_Data_Update>(new FilterData
+			{
+				PropName = "primer_apellido",
+				FilterType = "=",
+				Values = new List<string?> { "zurita" }
+			});
+
+			tutores.ForEach(t =>
+			{
+				try
+				{
+					Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+
+					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
+					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
+
+					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
+
+				}
+				catch (System.Exception ex)
+				{
+					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
+				}
+			});
 
 		}
 	}

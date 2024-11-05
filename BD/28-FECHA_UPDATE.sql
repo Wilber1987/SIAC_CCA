@@ -17,3 +17,15 @@ VALUES (
     )
 
 
+INSERT [administrative_access].[Transactional_Configuraciones] (
+        [Nombre],
+        [Descripcion],
+        [Valor],
+        [Tipo_Configuracion]
+    )
+VALUES (
+        N'URL_BASE',
+        N'Url base de la aplicacion, este valor no se debe editar',
+        N'https://portal.ni-alpha.cloud/Security/Login',
+        N'THEME'
+    )
