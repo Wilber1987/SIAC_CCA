@@ -60,6 +60,13 @@ namespace UI.Controllers
 		{
 			return UpdateOperation.GetParientesQueActulizaron(inst);
 		}
+		
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesQueNoLoguearon(inst);
+		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)

@@ -6,6 +6,12 @@ import { Religiones_ModelComponent } from '../../Model/ModelComponent/Religiones
 // @ts-ignore
 import { ModelProperty } from '../../WDevCore/WModules/CommonModel.js';
 import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
+export const sacramentos = [
+    { id: "-", descripcion: "Seleccione" },
+    { id: "B", descripcion: "Bautizo" },
+    { id: "P", descripcion: "Primera Comunión" },
+    { id: "C", descripcion: "Confirmación" }
+];
 class Estudiantes_ModelComponent extends EntityClass {
     /** @param {Partial<Estudiantes_ModelComponent>} [props] */
     constructor(props) {
@@ -17,21 +23,15 @@ class Estudiantes_ModelComponent extends EntityClass {
   
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
     /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true };
-        /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar" };
     /**@type {ModelProperty}*/ Vive_con = { type: 'text', label: "Con quién vive" };
-    /**@type {ModelProperty}*/ Colegio_procede = { type: 'text', label: "Colegio de procedencia" };
+    /**@type {ModelProperty}*/ Colegio_procede = { type: 'text',  label: "Colegio de procedencia" };
     /**@type {ModelProperty}*/ Sacramento = {
-        type: 'select', Dataset:
-            [
-                { id: "-", descripcion: "Seleccione" },
-                { id: "B", descripcion: "Bautizo" },
-                { id: "P", descripcion: "Primera Comunión" },
-                { id: "C", descripcion: "Confirmación" }
-            ]
-    }
-    /**@type {ModelProperty}*/ SaceamentoA = { type: 'number', label: "Año de Saceamento", max: 2030, min: 2000 };
+        type: 'select', Dataset: sacramentos , require: false}
+    /**@type {ModelProperty}*/ SacramentoA = { type: 'number', label: "Año de Saceamento",
+         max: 2030, min: 2000, require: false };
 
     //**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
     //**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };

@@ -13,7 +13,9 @@
     }
     UserModel user = AuthNetCore.User(identify);
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
+    string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "IP no disponible";
     pariente!.Entro_al_sistema = true;
+    pariente!.Ip_ingreso = ipAddress;
     pariente.Update();
 }
 <script type="module">

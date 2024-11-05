@@ -527,3 +527,18 @@ VALUES(173, 'MASTER EN ECONOMIA');
 INSERT INTO titulos
 (Id_Titulo, texto)
 VALUES(174, 'POST-GRADO DIDACTICA DEL INGLES');
+
+ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD Sacramento varchar(100) NULL;
+ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD SacramentoA int NULL;
+ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD Colegio_procede varchar(200) NULL;
+
+
+
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_region' , N'Region_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_pais' , N'Pais_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.parientes_data_update.id_region' , N'region_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_pais' , N'Pais_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_region' , N'Region_id', 'COLUMN';
+
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_region' , N'Region_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_pais' , N'Pais_id', 'COLUMN';

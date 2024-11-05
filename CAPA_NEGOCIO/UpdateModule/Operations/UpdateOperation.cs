@@ -27,6 +27,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
+					
 					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
@@ -49,7 +50,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
 					};
-					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+					GetBoletaContracts(updateData);
+
 					return updateData;
 				}
 
@@ -60,6 +62,20 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				Parientes = []
 			};
 
+		}
+
+		private static void GetBoletaContracts(UpdateData updateData)
+		{
+			try
+			{
+				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
+				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+			}
+			catch (System.Exception)
+			{
+				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
+			}
 		}
 
 		private static UpdateData GetUpdatedData(Parientes_Data_Update? pariente, Periodo_lectivos? periodoLectivo)
@@ -82,7 +98,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				Estudiantes = estudiantes,
 				Parientes = parientes
 			};
-			updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+			GetBoletaContracts(updateData);
+			//updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			return updateData;
 		}
 
@@ -325,6 +342,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
+			return;
 			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.ISNull("correo_enviado");
 
@@ -365,6 +383,15 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return GetUpdatedData(pariente, periodoLectivo);
 			}
 			return new UpdateData();
+		}
+
+		public static List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
+			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
+			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 	}
 }

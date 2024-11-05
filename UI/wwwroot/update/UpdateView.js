@@ -12,6 +12,7 @@ import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { UpdateDataRequest } from "./Model/UpdateDataRequest.js";
+import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -34,7 +35,10 @@ class UpdateView extends HTMLElement {
             html`<h3>Actualización de Datos de Familia</h3>`
         );
         this.UpdateData = new UpdateData();
+        /**@type {Array<WForm>} */
+        this.Forms = [];
         this.Draw();
+        
     }
     Draw = async () => {
         // @ts-ignore
@@ -90,6 +94,9 @@ class UpdateView extends HTMLElement {
      * @returns {HTMLElement} The card element
      */
     TutorCard(pariente) {
+        const original = new Parientes(pariente);
+        const form = this.buildUpdateParForm(pariente);
+        this.Forms.push(form)
         return html`<div class="element-detail" >
             <div class="element-title">${pariente.Nombre_completo}
                 <button class="Btn" onclick="${() => {
@@ -98,7 +105,7 @@ class UpdateView extends HTMLElement {
                     // @ts-ignore
                     pariente.Form.DrawComponent();
                 }
-                this.EditTutor(pariente)
+                this.EditTutor(pariente, original, form)
             }}">Actualizar datos</button>
             </div>
         </div>`;
@@ -111,6 +118,10 @@ class UpdateView extends HTMLElement {
      * @returns {HTMLElement} - The card element
      */
     EstudianteCard(estudiante) {
+        const original = new Estudiantes(estudiante);
+        const idaVueltaForm = this.IdaVueltaForm(estudiante);
+        const form = this.buildUpdateEstForm(estudiante);
+        this.Forms.push(form);
         const card = html`<div class="element-detail">
             <div class="element-title">
                 ${estudiante.Nombre_completo} - ${estudiante.Codigo}
@@ -118,7 +129,7 @@ class UpdateView extends HTMLElement {
                 if (estudiante.IdaVueltaForm && estudiante.IdaVueltaForm.Form) {
                     estudiante.IdaVueltaForm.Form.DrawComponent();
                 }
-                this.EditEstudiante(estudiante)
+                this.EditEstudiante(estudiante,original,idaVueltaForm,form)
             }}">Actualizar datos</button>
             </div>            
         </div>`
@@ -220,18 +231,18 @@ class UpdateView extends HTMLElement {
         return formIdaYVuelta;
     }
 
+   
     /**
-     * Navigates to the detailed view of the given student for editing purposes.
-     * It creates a form based on the student's data, allowing the user to update the student's details.
-     * Provides options to either save the changes or revert to the original data.
-     * 
+     * Navigates to a new tab with a form to edit the given student's details.
+     * The form is created with the student's data and allows the user to update the student's details.
+     * The form also has buttons to go back to the list of students and to save the changes.
      * @param {Estudiantes} estudiante - The student object to be edited.
+     * @param {Estudiantes} original - The student object with the original data.
+     * @param {HTMLElement} idaVueltaForm - The form element for selecting transportation options.
+     * @param {WForm} form - The form object for editing the student's details.
      */
-    EditEstudiante(estudiante) {
-        const original = new Estudiantes(estudiante);
-
-        const idaVueltaForm = this.IdaVueltaForm(estudiante);
-        const form = this.buildUpdateEstForm(estudiante);
+    EditEstudiante(estudiante,original,idaVueltaForm,form) {
+        
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
@@ -286,13 +297,9 @@ class UpdateView extends HTMLElement {
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
-    /**
-     * Edita la informacion de un tutor.
-     * @param {Parientes} pariente - El objeto pariente a ser editado.
-     */
-    EditTutor(pariente) {
-        const original = new Parientes(pariente);
-        const form = this.buildUpdateParForm(pariente);
+  
+    EditTutor(pariente, original, form) {
+       
         this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
             ${this.CustomStyle.cloneNode(true)}          
             <h3>${pariente.Nombre_completo}</h3>
@@ -325,12 +332,15 @@ class UpdateView extends HTMLElement {
     }
 
     GuardarPariente(pariente, original) {
+        console.log(pariente, original);
+        
         this.append(ModalVericateAction(() => {
             for (const prop in pariente) {
                 original[prop] = pariente[prop];
             }
             this.NavManager?.ActiveTab("Tutores");
         }, "¿Esta seguro que desea actualizar los datos del tutor?"));
+        
     }
     /**
    * Restores the estudiante object with the original data before editing.
@@ -370,7 +380,11 @@ class UpdateView extends HTMLElement {
                 <button class="Btn check-icon" onclick="${() => {
                         document.body.append(new WModalForm({
                             title: "Contrato",
-                            ObjectModal: html`<div class="WModalForm">${this.UpdateData?.Contrato}</div>`,
+                            ObjectModal: html`<div class="WModalForm">
+                                ${this.UpdateData?.Contrato}
+                                <hr>
+                                ${this.UpdateData?.Boleta}
+                            </div>`,
                         }))
                     }}">Ver contrato</button>
                 <button class="Btn check-icon" onclick="${async () => {
@@ -379,22 +393,25 @@ class UpdateView extends HTMLElement {
                             this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
-                        for (const pariente of this.UpdateData?.Parientes) {
-                            const form = this.buildUpdateParForm(pariente);
-                            await form.DrawComponent();
-                            if (!form.Validate()) {
+                        for (const pariente of this.UpdateData?.Parientes) {                            
+                            if (!WArrayF.ValidateByModel(pariente,  new Parientes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
-                            const form = this.buildUpdateEstForm(estudiante);
-                            await form.DrawComponent();
-                            if (!form.Validate()) {
+                            if (!WArrayF.ValidateByModel(estudiante,  new Estudiantes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
+                       /* for (const form of this.Forms) {
+                            //await form.DrawComponent();
+                            if (!form.Validate()) {
+                                this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
+                                return;
+                            }
+                        }*/
                         this.append(ModalVericateAction(async () => {
                             const response = await new UpdateDataRequest({
                                 Parientes: this.UpdateData?.Parientes,

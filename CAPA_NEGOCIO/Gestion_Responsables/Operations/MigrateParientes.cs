@@ -249,7 +249,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingPariente.Primer_apellido = est.Primer_apellido;
 						existingPariente.Segundo_apellido = est.Segundo_apellido;
 						existingPariente.Sexo = est.Sexo;
-						existingPariente.Profesion = est.Profesion;
+						//existingPariente.Profesion = est.Profesion;
 						existingPariente.Direccion = est.Direccion;
 						existingPariente.Lugar_trabajo = est.Lugar_trabajo;
 						existingPariente.Telefono = est.Telefono;

@@ -24,13 +24,16 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public DateTime? Fecha_actualizacion { get; set; }
 		public bool? Acepto_terminos { get; set; }		
 		public bool? Entro_al_sistema { get; set; }
-		public string? Ip_ingreso { get; set; }
+		public string? Ip_ingreso { get; set; }		
 		public DateTime? Fecha_ingreso_al_sistema { get; set; }
 		
 	}
 
 	public class Estudiantes_Data_Update : Estudiantes
 	{
+		public string? Sacramento { get; set; }
+		public string? Colegio_procede { get; set; }
+		public int? SacramentoA { get; set; }
 		public Estudiantes_Data_Update()
 		{
 
