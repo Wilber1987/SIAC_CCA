@@ -83,7 +83,13 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                     EntityModel: modelEntity,
                     Options: {
                         Filter: true,
-                        MultiSelect: true
+                        MultiSelect: true,
+                        UserActions: [{
+                            name: "Ver detalles", action: async ( /** @type {Parientes} */ Pariente) => {
+                                const response = await new Parientes({ Id: Pariente.Id }).GetUpdatedData();
+
+                            }
+                        }]
                     }
                 });
                 return html`<div class="w-table-container">                    

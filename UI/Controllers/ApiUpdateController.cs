@@ -66,5 +66,11 @@ namespace UI.Controllers
 		{
 			return UpdateOperation.GetParientesInvitados(inst);
 		}		
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public UpdateData GetUpdatedData(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetUpdateDataById(inst);
+		}	
 	}
 }
