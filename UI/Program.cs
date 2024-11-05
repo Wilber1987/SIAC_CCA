@@ -73,12 +73,11 @@ builder.Services.AddSession(options =>
 
 
 #region CRONJOB
-builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {
 	options.CronExpression = "* * * * *"; // Cada minuto
-	//options.CronExpression = "*/5 * * * *"; // Cada 5 minutos
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

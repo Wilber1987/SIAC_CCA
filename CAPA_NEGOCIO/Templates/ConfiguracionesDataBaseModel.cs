@@ -67,6 +67,8 @@ namespace DataBaseModel
 				c.Nombre.Equals(ConfiguracionesThemeEnum.WATHERMARK.ToString()))?.Valor ?? VERSION;
 			URL_BASE = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.URL_BASE.ToString()))?.Valor ?? URL_BASE;
+			FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES.ToString()))?.Valor ?? URL_BASE;
 
 
 		}
@@ -78,6 +80,7 @@ namespace DataBaseModel
 		public string MEDIA_IMG_PATH = "/media/img/";
 		public string VERSION = "2024.07";
 		public string URL_BASE = "https://portal.ni-alpha.cloud/Security/Login";
+		public string FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES = "N/D";
 		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
 
 		public string WATHERMARK = "logo.png";
@@ -97,7 +100,8 @@ namespace DataBaseModel
 		TWILLIO_TOKEN,
 		TWILLIO_NUMBER,
 		SUB_TITULO2,
-		URL_BASE
+		URL_BASE,
+		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES
 	}
 
 	public class Config

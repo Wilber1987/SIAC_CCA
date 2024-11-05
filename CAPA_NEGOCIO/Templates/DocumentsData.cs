@@ -112,8 +112,7 @@ namespace CAPA_NEGOCIO.Templates
 
 			var plantillaBase = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			DateTime fechaActual = DateTime.Now;
-
-			// Abrir una conexión SSH
+			
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
 				client.Connect();
@@ -122,29 +121,30 @@ namespace CAPA_NEGOCIO.Templates
 
 				try
 				{
-					var boleta = new Pagos_alumnos_view();
+					var boleta = new View_estudiantes_boletas();
 					boleta.SetConnection(MySqlConnections.BellacomTest);
 
 					foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 					{
 						var contratoEstudiante = plantillaBase;
+				
+						var boletaMsql = new View_estudiantes_boletas().Where<View_estudiantes_boletas>(
+										FilterData.Equal("idtestudiante", estudiante.Codigo),
+										FilterData.Equal("ejercicio", fechaActual.Year),
+										FilterData.Equal("idtperiodoacademico", fechaActual.Year+1)
+									).FirstOrDefault();
 
-						// Consultar la boleta filtrando según el código del estudiante
-						var boletaMsql = boleta.Where<Pagos_alumnos_view>(FilterData.Equal("iddocumento", 1152936))
-											   .FirstOrDefault(); // TODO: Filtrar según el código del estudiante en lugar de un ID fijo
-
-						var fechaVencimiento = boletaMsql?.Fecha_documento.HasValue == true
-							? boletaMsql.Fecha_documento.Value.AddDays((double)boletaMsql.dias_plazo)
-							: DateTime.Now;
+						var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
 
 						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 															   .Replace("{{ ciclo }}", (fechaActual.Year + 1).ToString())
 															   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
-															   .Replace("{{ no_expediente }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty)
-															   .Replace("{{ curso_actual }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con el curso real del estudiante
-															   .Replace("{{ promueve }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con la promoción del estudiante
-															   .Replace("{{ importe_matricula }}", boletaMsql?.Importe_md.ToString() ?? string.Empty) // TODO: Actualizar con el importe de matrícula real
-															   .Replace("{{ fecha_vencimiento }}", fechaVencimiento.ToString("dd/MM/yyyy"));
+															   .Replace("{{ no_expediente }}", boletaMsql?.Codigo.ToString() ?? string.Empty)
+															   .Replace("{{ curso_actual }}", $"{boletaMsql?.GradoActual} {boletaMsql?.CursoActual}".Trim())
+															   .Replace("{{ promueve }}", $"{boletaMsql?.GradoSiguiente} {boletaMsql?.CursoSiguiente}".Trim())
+															   .Replace("{{ moneda }}", boletaMsql?.IdTMoneda.ToString() ?? string.Empty)
+															   .Replace("{{ importe_matricula }}", boletaMsql?.ImporteNetoMD.ToString() ?? string.Empty)
+															   .Replace("{{ fecha_vencimiento }}", fechaVencimiento);
 
 						boletas.Add(contratoEstudiante);
 					}
@@ -167,7 +167,6 @@ namespace CAPA_NEGOCIO.Templates
 
 			return this;
 		}
-
 
 
 	}
