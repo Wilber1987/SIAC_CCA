@@ -144,7 +144,7 @@ namespace BackgroundJob.Cron.Jobs
 			_log.LogInformation(":::::::::::Running...  SendInvitationToUpdateCronJob at {0}", DateTime.UtcNow);
 			try
 			{				
-				//new UpdateOperation().sendInvitations();
+				new UpdateOperation().sendInvitations();
 			}
 			catch (System.Exception ex)
 			{
