@@ -121,14 +121,14 @@ namespace CAPA_NEGOCIO.Templates
 
 				try
 				{
-					var boleta = new View_estudiantes_boletas();
+					var boleta = new Viewestudiantesboletas();
 					boleta.SetConnection(MySqlConnections.BellacomTest);
 
 					foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 					{
 						var contratoEstudiante = plantillaBase;
 				
-						var boletaMsql = new View_estudiantes_boletas().Where<View_estudiantes_boletas>(
+						var boletaMsql = boleta.Where<Viewestudiantesboletas>(
 										FilterData.Equal("idtestudiante", estudiante.Codigo),
 										FilterData.Equal("ejercicio", fechaActual.Year),
 										FilterData.Equal("idtperiodoacademico", fechaActual.Year+1)

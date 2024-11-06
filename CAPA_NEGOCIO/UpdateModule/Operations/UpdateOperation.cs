@@ -277,6 +277,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 
@@ -324,7 +325,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						}
 					});
 					CommitGlobalTransaction();
-					return new ResponseService { status = 200, message = "solicitud guardada" };
+					return new ResponseService { status = 200, message = "Datos actualizados!" };
 
 				}
 				else

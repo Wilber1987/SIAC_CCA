@@ -3,7 +3,7 @@ using CAPA_DATOS;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
-    public class View_estudiantes_boletas : EntityClass
+    public class Viewestudiantesboletas : EntityClass
     {
         public int? IdTPeriodoAcademico { get; set; }
         public int? Ejercicio { get; set; }

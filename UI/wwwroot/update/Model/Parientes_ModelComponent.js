@@ -46,12 +46,12 @@ class Parientes_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar", hiddenFilter: true , hiddenInTable: true};
 
     /**@type {ModelProperty}*/ Titulo = { type: 'WSelect', ModelObject: () => new Titulos_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Ex_Alumno = { type: 'radio', Dataset: ["SI", "NO"], hiddenFilter: true, hiddenInTable: true };
+    /**@type {ModelProperty}*/ Ex_Alumno = { type: 'radio', Dataset: ["SI", "NO"], hiddenFilter: true, hiddenInTable: true, require: false };
     /**@type {ModelProperty}*/ EgresoExAlumno = { type: 'number', label: "Año de egreso",  max: 2030, min: 2000, hiddenFilter: true, hiddenInTable: true, require: false };
     //**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     //**@type {ModelProperty}*/ Religion_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     //**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true, hiddenFilter: true};
     //**@type {ModelProperty}*/ Updated_at = { type: 'date',  hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Ip_ingreso  = {type: "text", hidden: true}
+    /**@type {ModelProperty}*/ Ip_ingreso  = {type: "text", hidden: true, require: false}
 }
 export { Parientes_ModelComponent }
