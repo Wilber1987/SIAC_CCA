@@ -10,7 +10,7 @@ class Estudiantes extends EntityClass {
         this.IdaVueltaForm = {};
         for (const prop in props) {
             this[prop] = props[prop];
-        };       
+        };
     }
     /**@type {Number}*/ Id;
     /**@type {String}*/ Nombre_completo;
@@ -22,6 +22,11 @@ class Estudiantes extends EntityClass {
     /**@type {String}*/ Lugar_nacimiento;
     /**@type {String}*/ Sexo;
     /**@type {String}*/ Direccion;
+    /**@type {String}*/ Vive_con;
+    /**@type {String}*/ Colegio_procede;
+    /**@type {String}*/ Sacramento;
+    /**@type {Number}*/ SacramentoA;
+
     /**@type {String}*/ Codigo;
     /**@type {Number}*/ Religion_id;
     /**@type {Number}*/ Madre_id;
@@ -35,15 +40,18 @@ class Estudiantes extends EntityClass {
     /**@type {String}*/ Padecimientos;
     /**@type {String}*/ Alergias;
     /**@type {Number}*/ Recorrido_id;
-    /**@type {Boolean}*/ Activo;
-    /**@type {Array<Adress>}*/ Puntos_Transportes;
+    /**@type {Boolean}*/  Activo;
+    /**@type {Array<Adress>}*/ Puntos_Transportes;    
+    /**@type {Religiones}*/ Religion
+    /**@type {Paises}*/ Pais
+    /**@type {Regiones}*/ Region
 
 }
 export { Estudiantes };
 
 export class Adress {
-     /** @param {Partial<Adress>} [props] */
-     constructor(props) {
+    /** @param {Partial<Adress>} [props] */
+    constructor(props) {
         for (const prop in props) {
             this[prop] = props[prop];
         }
@@ -52,4 +60,20 @@ export class Adress {
     Direccion
     /** @type {String} IDA o VUELTA*/
     Trayecto
+}
+
+export class Religiones extends EntityClass {
+    /**@type {String} */Texto;
+}
+export class Paises extends EntityClass {
+    /**@type {String} */Texto;
+}
+export class Regiones extends EntityClass {
+    /**@type {String} */Texto;
+}
+export class Estados_Civiles extends EntityClass {
+    /**@type {String} */Texto;
+}
+export class Titulos extends EntityClass {
+    /**@type {String} */Texto;
 }

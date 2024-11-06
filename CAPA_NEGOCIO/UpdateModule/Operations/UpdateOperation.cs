@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
+using CAPA_NEGOCIO.Utility;
 using DataBaseModel;
+using MailKit;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
@@ -24,26 +27,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
-					var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
-							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-						.Get<Estudiantes_responsables_familia>();*/
-
-					var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
-
-					List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
-							FilterData.In("Id", parientesId)
-						).ToList();
-
-					UpdateData updateData = new UpdateData
-					{
-						Estudiantes = estudiantes,
-						Parientes = parientes
-					};
-					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-					return updateData;
+					
+					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
 				{
@@ -65,7 +50,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
 					};
-					updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+					GetBoletaContracts(updateData);
+
 					return updateData;
 				}
 
@@ -76,6 +62,45 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				Parientes = []
 			};
 
+		}
+
+		private static void GetBoletaContracts(UpdateData updateData)
+		{
+			try
+			{
+				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
+				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+			}
+			catch (System.Exception)
+			{
+				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
+			}
+		}
+
+		private static UpdateData GetUpdatedData(Parientes_Data_Update? pariente, Periodo_lectivos? periodoLectivo)
+		{
+			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
+										FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+									).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+
+			/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
+				.Get<Estudiantes_responsables_familia>();*/
+
+			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
+
+			List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
+					FilterData.In("Id", parientesId)
+				).ToList();
+
+			UpdateData updateData = new UpdateData
+			{
+				Estudiantes = estudiantes,
+				Parientes = parientes
+			};
+			GetBoletaContracts(updateData);
+			//updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+			return updateData;
 		}
 
 		public ResponseService StartUpdateProcess(UpdateData updateData)
@@ -252,6 +277,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 
@@ -299,7 +325,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						}
 					});
 					CommitGlobalTransaction();
-					return new ResponseService { status = 200, message = "solicitud guardada" };
+					return new ResponseService { status = 200, message = "Datos actualizados!" };
 
 				}
 				else
@@ -313,7 +339,60 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				throw;
 			}
 
+		}
 
+		public void sendInvitations()
+		{
+			return;
+			var tutor = new Parientes_Data_Update();
+			var filter = FilterData.ISNull("correo_enviado");
+
+			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
+			var tutores = tutor.Where<Parientes_Data_Update>(new FilterData
+			{
+				PropName = "primer_apellido",
+				FilterType = "=",
+				Values = new List<string?> { "zurita" }
+			});
+
+			tutores.ForEach(t =>
+			{
+				try
+				{
+					Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+
+					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
+					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
+
+					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
+
+				}
+				catch (System.Exception ex)
+				{
+					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
+				}
+			});
+
+		}
+
+		public static UpdateData GetUpdateDataById(Parientes_Data_Update inst)
+		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = inst.Id }.Find<Parientes_Data_Update>();
+			if (pariente?.Actualizo == true)
+			{
+				return GetUpdatedData(pariente, periodoLectivo);
+			}
+			return new UpdateData();
+		}
+
+		public static List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
+		{
+			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
+			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
+			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 	}
 }

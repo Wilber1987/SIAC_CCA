@@ -442,25 +442,31 @@ namespace API.Controllers
 		[AuthController]
 		public List<Estados_Civiles> GetEstados_Civiles(Estados_Civiles Inst)
 		{
-			return Inst.Where<Estados_Civiles>(FilterData.Limit(30));
+			return Inst.Where<Estados_Civiles>();
 		}
 		[HttpPost]
 		[AuthController]
 		public List<Regiones> GetRegiones(Regiones Inst)
 		{
-			return Inst.Where<Regiones>(FilterData.Limit(30));
+			return Inst.Where<Regiones>();
 		}
 		[HttpPost]
 		[AuthController]
 		public List<Religiones> GetReligiones(Religiones Inst)
 		{
-			return Inst.Where<Religiones>(FilterData.Limit(30));
+			return Inst.Where<Religiones>();
 		}
 		[HttpPost]
 		[AuthController]
 		public List<Paises> GetPaises(Paises Inst)
 		{
-			return Inst.Where<Paises>(FilterData.Limit(30));
+			return Inst.Where<Paises>();
+		}
+		[HttpPost]
+		[AuthController]
+		public List<Titulos> GetTitulos(Titulos Inst)
+		{
+			return Inst.Where<Titulos>();
 		}
 	}
 }

@@ -1,22 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
 using CAPA_NEGOCIO.Utility;
 using DataBaseModel;
+using Microsoft.Extensions.Configuration;
 
 namespace CAPA_NEGOCIO.Templates
 {
-	public class DocumentsData
+    public class DocumentsData
 	{
 		public string? Header { get; set; }
 		public string? WatherMark { get; set; }
 		public string? Body { get; set; }
 		public string? Footer { get; set; }
+
+		private readonly SshTunnelService _sshTunnelService;
+
+		public DocumentsData()
+		{
+			_sshTunnelService = new SshTunnelService(LoadConfiguration());
+		}
+
+		private IConfigurationRoot LoadConfiguration()
+		{
+			return new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+				.Build();
+		}
 		public DocumentsData GetBoletinDataFragments()
 		{
 			var theme = new PageConfig();
@@ -91,41 +103,65 @@ namespace CAPA_NEGOCIO.Templates
 
 		public DocumentsData GetBoletaFragment(UpdateData data)
 		{
-			return null;
-			/*var theme = new PageConfig();
+			var theme = new PageConfig();
 			var boletas = new List<string>();
 
 			var plantillaBase = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			DateTime fechaActual = DateTime.Now;
-
-			var boleta = new Pagos_alumnos_view();
-			boleta.SetConnection(MySqlConnections.Bellacom);
-
-
-			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
+			
+			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
-				var contratoEstudiante = plantillaBase;
+				client.Connect();
+				var forwardedPort = _sshTunnelService.GetForwardedPort("Bellacom", client, 3308);
+				forwardedPort.Start();
 
-				var boletaMsql = boleta.Where<Pagos_alumnos_view>(FilterData.Equal("iddocumento", 1152936))
-									   .FirstOrDefault(); // TODO: Filtrar según el código del estudiante en lugar de un ID fijo
-				
-				var fechaVencimiento = boletaMsql.Fecha_documento.HasValue ? boletaMsql.Fecha_documento.Value.AddDays((double)boletaMsql.dias_plazo) : DateTime.Now;
+				try
+				{
+					var boleta = new Viewestudiantesboletas();
+					boleta.SetConnection(MySqlConnections.BellacomTest);
 
-				contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-													   .Replace("{{ ciclo }}", (fechaActual.Year + 1).ToString())
-													   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
-													   .Replace("{{ no_expediente }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty)
-													   .Replace("{{ curso_actual }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con el curso real del estudiante
-													   .Replace("{{ promueve }}", boletaMsql?.Codigo_estudiante.ToString() ?? string.Empty) // TODO: Actualizar con la promoción del estudiante
-													   .Replace("{{ importe_matricula }}", boletaMsql?.Importe_md.ToString() ?? string.Empty) // TODO: Actualizar con el importe de matrícula real
-													   .Replace("{{ fecha_vencimiento }}", fechaVencimiento.ToString("dd/MM/yyyy"));
+					foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
+					{
+						var contratoEstudiante = plantillaBase;
 				
-				boletas.Add(contratoEstudiante);
+						var boletaMsql = boleta.Where<Viewestudiantesboletas>(
+										FilterData.Equal("idtestudiante", estudiante.Codigo),
+										FilterData.Equal("ejercicio", fechaActual.Year),
+										FilterData.Equal("idtperiodoacademico", fechaActual.Year+1)
+									).FirstOrDefault();
+
+						var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
+
+						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+															   .Replace("{{ ciclo }}", fechaActual.Year.ToString())
+															   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
+															   .Replace("{{ no_expediente }}", boletaMsql?.Codigo.ToString() ?? string.Empty)
+															   .Replace("{{ curso_actual }}", $"{boletaMsql?.GradoActual} {boletaMsql?.CursoActual}".Trim())
+															   .Replace("{{ promueve }}", $"{boletaMsql?.GradoSiguiente} {boletaMsql?.CursoSiguiente}".Trim())
+															   .Replace("{{ moneda }}", boletaMsql?.IdTMoneda.ToString() ?? string.Empty)
+															   .Replace("{{ importe_matricula }}", boletaMsql?.ImporteNetoMD.ToString() ?? string.Empty)
+															   .Replace("{{ fecha_vencimiento }}", fechaVencimiento);
+
+						boletas.Add(contratoEstudiante);
+					}
+
+					Body = string.Join(Environment.NewLine, boletas);
+				}
+				catch (System.Exception ex)
+				{
+					LoggerServices.AddMessageError("ERROR: GetBoletaFragment.", ex);
+					forwardedPort.Stop();
+					client.Disconnect();
+					throw;
+				}
+				finally
+				{
+					forwardedPort.Stop();
+					client.Disconnect();
+				}
 			}
 
-			Body = string.Join(Environment.NewLine, boletas);
-
-			return this;*/
+			return this;
 		}
 
 

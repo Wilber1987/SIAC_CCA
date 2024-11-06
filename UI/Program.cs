@@ -1,10 +1,11 @@
 using System.Text.Json.Serialization;
+using BackgroundJob.Cron.Jobs;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Operations;
 using CAPA_NEGOCIO.Oparations;
 using Microsoft.AspNetCore.ResponseCompression;
-
+using CAPA_DATOS.Cron.Jobs;
 //coneccion wilber
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
@@ -72,6 +73,12 @@ builder.Services.AddSession(options =>
 
 
 #region CRONJOB
+/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+{
+	options.CronExpression = "* * * * *"; // Cada minuto
+	options.TimeZone = TimeZoneInfo.Local;
+});*/
+
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";

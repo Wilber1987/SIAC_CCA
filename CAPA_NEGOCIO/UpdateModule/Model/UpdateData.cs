@@ -12,5 +12,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public List<Parientes_Data_Update>? Parientes { get; set; }
 		public bool? SendAll { get; set; }
 		public string? Contrato { get; set; }
-	}
+        public string? Boleta { get;  set; }
+    }
 }

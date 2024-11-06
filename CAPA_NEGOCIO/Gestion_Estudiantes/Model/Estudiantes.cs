@@ -37,7 +37,7 @@ namespace DataBaseModel
 		public int? Id_familia { get; set; }		
 		public String? Vive_con { get; set; }
 		public int? Religion_id { get; set; }	
-		public int? Id_pais { get; set; }	
+		public int? Pais_id { get; set; }	
 		public int? Region_id { get; set; }	
 		public int? EgresoExAlumno { get; set; }	
 
@@ -62,10 +62,10 @@ namespace DataBaseModel
 		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
 		public Religiones? Religion { get; set; }
 		
-		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Id_pais")]
+		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Pais_id")]
 		public Paises? Pais { get; set; }
 		
-		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Id_region")]
+		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Region_id")]
 		public Regiones? Region { get; set; }
 		
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
