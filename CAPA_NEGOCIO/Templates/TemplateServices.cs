@@ -45,7 +45,7 @@ namespace CAPA_NEGOCIO.Templates
 			templateContent = templateContent.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 				.Replace("{{ link }}", theme.URL_BASE)
 				.Replace("{{ usuario }}", model.Mail)
-				.Replace("{{ contrasena }}", EncrypterServices.Encrypt(model.Password))
+				.Replace("{{ contrasena }}", EncrypterServices.Decrypt(model.Password))
 				.Replace("{{ nombre }}", nombre_completo);
 
 			return templateContent;          

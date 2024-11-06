@@ -22,7 +22,7 @@ namespace CAPA_NEGOCIO.Services
         {
             
             await SMTPMailServices.SendMail(
-                 "cca@noreply.com",//todo tomar el from
+                 "",//todo tomar el from
                  toMails,
                  subject,
                  templatePage,
