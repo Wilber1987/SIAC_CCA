@@ -91,7 +91,8 @@ namespace CAPA_NEGOCIO.Templates
 
 		public DocumentsData GetBoletaFragment(UpdateData data)
 		{
-			var theme = new PageConfig();
+			return null;
+			/*var theme = new PageConfig();
 			var boletas = new List<string>();
 
 			var plantillaBase = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
@@ -124,7 +125,7 @@ namespace CAPA_NEGOCIO.Templates
 
 			Body = string.Join(Environment.NewLine, boletas);
 
-			return this;
+			return this;*/
 		}
 
 
