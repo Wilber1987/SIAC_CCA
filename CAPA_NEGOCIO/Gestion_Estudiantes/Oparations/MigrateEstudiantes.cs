@@ -115,7 +115,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
 					estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
- 
+					int i = 0;
 					using (var bellacomSshClient = sshService.GetSshClient("Bellacom"))
 					{
 						bellacomSshClient.Connect();
@@ -129,24 +129,20 @@ namespace CAPA_NEGOCIO.Oparations
 						foreach (var est in EstudiantesMsql)
 						{
 							var existingEstudiante = new Estudiantes() { Id = est.Id }.Find<Estudiantes>();
-
-							// Manejo de fechas
+							Console.Write("migrando estudiantes: " + i.ToString());i++;
 							est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
 							est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 							est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
 							est.Fecha_ingreso = DateUtil.ValidSqlDateTime(est.Fecha_ingreso.GetValueOrDefault());
 
 							if (existingEstudiante != null)
-							{
-								//buildEstudianteSiac(est, existingEstudiante, bellacomSshClient, sshService);
+							{								
 								buildEstudianteSiac(est, existingEstudiante, bellacomSshClient, siacSshClient, sshService);
-
 								existingEstudiante.Update();
 							}
 							else
 							{
-								var newEstudiante = new Estudiantes();
-								//buildEstudianteSiac(est, newEstudiante, bellacomSshClient, sshService);
+								var newEstudiante = new Estudiantes();								
 								buildEstudianteSiac(est, newEstudiante, bellacomSshClient, siacSshClient, sshService);
 
 								newEstudiante.Save();
@@ -173,17 +169,14 @@ namespace CAPA_NEGOCIO.Oparations
 
 		private static void buildEstudianteSiac(Estudiantes est, Estudiantes? existingEstudiante, SshClient bellacomSshClient, SshClient siacSshClient, SshTunnelService sshService)
 		{
-			// Utiliza la conexión existente para BellacomTest
 			var bellacomConnection = MySqlConnections.BellacomTest;
-
-			// Cargar la vista de estudiantes
 			var estudianteView = new ViewEstudiantesMigracion();
 			estudianteView.SetConnection(bellacomConnection);
 			estudianteView.CreateView();
 			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
 
-			if (estudiantesView != null)
-			{
+			/*if (estudiantesView != null)
+			{*/
 				// Obtener datos de la familia usando BellacomTest
 				var familiaJoin = new Tbl_aca_familia();
 				familiaJoin.SetConnection(bellacomConnection);
@@ -193,10 +186,11 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					existingEstudiante.Id_familia = familiaDatos.Idfamilia;
 				}
-			}
+			//}
 
 			// Asignación de datos básicos del estudiante
 			existingEstudiante.Id = est.Id;
+			existingEstudiante.Idbellacom = est.Idbellacom;
 			existingEstudiante.Primer_nombre = est.Primer_nombre;
 			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
 			existingEstudiante.Primer_apellido = est.Primer_apellido;
@@ -212,6 +206,8 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Id_cliente = est.Id_cliente;
 			existingEstudiante.Codigomed = est.Codigomed;
 			existingEstudiante.Saldoeamd = est.Saldoeamd;
+			existingEstudiante.Pais_id = est.Pais_id;
+			existingEstudiante.Region_id = est.Region_id;
 
 			// Verifica la foto de SIAC usando el cliente SSH pasado
 			var estudianteSiac = new Estudiantes();
@@ -541,12 +537,12 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->migrateEstudiantesReponsablesFamilia");
 			var familia = new Familias();
-			var familiasMsql = familia.Get<Familias>(
+			var familiasSqlserver = familia.Get<Familias>(
 			);
 			try
 			{
 				BeginGlobalTransaction();
-				familiasMsql.ForEach(f =>
+				familiasSqlserver.ForEach(f =>
 				{
 					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", f.Id));
 					var parientesFamilia = new Parientes().Where<Parientes>(FilterData.Equal("id_familia", f.Id));

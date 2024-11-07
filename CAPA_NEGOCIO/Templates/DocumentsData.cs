@@ -87,12 +87,16 @@ namespace CAPA_NEGOCIO.Templates
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
 
+			var familia = new Familias().Where<Familias>(
+										FilterData.Equal("id", primerParienteConUserId.Id_familia)										
+									).FirstOrDefault();
+
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
 				var contratoEstudiante = plantilla;
 				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
 													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
-													   .Replace("{{ codigo_familia }}", estudiante?.Id_familia?.ToString() ?? string.Empty);
+													   .Replace("{{ codigo_familia }}", familia?.Idtfamilia?.ToString() ?? string.Empty);
 				contratos.Add(contratoEstudiante);
 			}
 
