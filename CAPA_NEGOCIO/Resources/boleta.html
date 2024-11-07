@@ -2,8 +2,9 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Boleta</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,30 +72,25 @@
 </head>
 
 <body>
-
     <div class="container">
-
         <table class="header-table first" style="width:100%;">
             <tr>
                 <td><img class="logo" src="{{ logo }}" /></td>
-                <td style="text-align: center; font-size: 16px; padding-right: 38px; font-weight: bold" colspan="2">
+                <td style="text-align: center; font-size: 16px; padding-right: 38px; font-weight: bold;" colspan="2">
                     <div>COLEGIO CENTROAMERICA</div>
                     <div>AUTORIZACION DE MATRICULA</div>
                 </td>
             </tr>
         </table>
-
-
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
             <p style="flex: 1; text-align: center; margin: 0;">
                 <strong>NO. DE EXPEDIENTE: {{ no_expediente }}</strong>
             </p>
         </div>
-        <hr>
+        <hr/>
         <div class="header-contrato" style="width: 120PX; float: right; text-align: right;">
             <p><strong style="background-color: #DEDAD9; padding: 5px;">CICLO:</strong> {{ ciclo }}</p>
         </div>
-
         <table class="header-table first" style="width:100%;">
             <tr>
                 <td class="bg-gray" style="width: 250px;"><strong>NOMBRE:</strong></td>
@@ -127,17 +123,16 @@
                 </td>
             </tr>
         </table>
-
-        <hr>
-        <br><br>
-
+        <hr/>
+        <br/><br/>
         <div style="width: 100%; text-align: right;">
             <p style="text-align: center; width: 380px; border-top: 1px dashed black; float: right">
                 <strong>Firma y Sello</strong>
             </p>
         </div>
-        <br><br>
-        <hr>
+        <br/><br/>
+        <hr/>
+    </div>
 
 </body>
 

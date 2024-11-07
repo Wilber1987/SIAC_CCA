@@ -152,7 +152,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					}
 
 				});
-				CommitGlobalTransaction();
+				CommitGlobalTransaction();				
 				return new ResponseService { status = 200, message = "Actualizacion enviado" };
 
 			}
@@ -324,6 +324,16 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						}
 					});
 					CommitGlobalTransaction();
+					try
+					{
+						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
+						MailServices.SendMailAceptedContract(pariente, GetUpdateData(seassonKey));
+					}
+					catch (System.Exception ex)
+					{
+						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
+					}
+					
 					return new ResponseService { status = 200, message = "solicitud guardada" };
 
 				}
