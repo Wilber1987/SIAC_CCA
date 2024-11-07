@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
@@ -142,7 +143,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							Nombres = tn.Nombre_completo,
 							Estado = "ACTIVO",
 							Descripcion = tn.Nombre_completo,
-							Password = StringUtil.GeneratePassword(tn.Email, tn.Primer_nombre, tn.Primer_apellido),
+							Password = StringUtil.GenerateRandomPassword(),
 							Mail = StringUtil.GenerateNickName(tn.Primer_nombre, tn.Primer_apellido),
 							Token = null,
 							Password_Expiration_Date = DateTime.Now.AddDays(30),
@@ -154,7 +155,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					}
 
 				});
-				CommitGlobalTransaction();				
+				CommitGlobalTransaction();
 				return new ResponseService { status = 200, message = "Actualizacion enviado" };
 
 			}
@@ -335,7 +336,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					catch (System.Exception ex)
 					{
 						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
-					}					
+					}
 					return new ResponseService { status = 200, message = "Datos actualizados!" };
 
 				}
@@ -357,7 +358,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.ISNull("correo_enviado");
-			
+
 			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
@@ -383,7 +384,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				}
 			});
 
-			
+
 
 		}
 
@@ -405,6 +406,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
 			return inst.SimpleGet<Parientes_Data_Update>();
+		}
+		public static string GenerateRandomPassword(int length = 8)
+		{
+			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			var random = new Random();
+			var password = new StringBuilder();
+
+			for (int i = 0; i < length; i++)
+			{
+				password.Append(chars[random.Next(chars.Length)]);
+			}
+
+			return password.ToString();
 		}
 	}
 }
