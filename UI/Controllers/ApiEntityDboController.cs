@@ -448,19 +448,19 @@ namespace API.Controllers
 		[AuthController]
 		public List<Regiones> GetRegiones(Regiones Inst)
 		{
-			return Inst.Where<Regiones>();
+			return Inst.Where<Regiones>(FilterData.Limit(100));
 		}
 		[HttpPost]
 		[AuthController]
 		public List<Religiones> GetReligiones(Religiones Inst)
 		{
-			return Inst.Where<Religiones>();
+			return Inst.Where<Religiones>(FilterData.Limit(100));
 		}
 		[HttpPost]
 		[AuthController]
 		public List<Paises> GetPaises(Paises Inst)
 		{
-			return Inst.Where<Paises>();
+			return Inst.Where<Paises>(FilterData.Limit(100));
 		}
 		[HttpPost]
 		[AuthController]

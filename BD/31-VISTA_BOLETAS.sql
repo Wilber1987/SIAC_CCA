@@ -1,4 +1,5 @@
 
+
 DROP VIEW IF EXISTS viewestudiantesboletas;
 CREATE VIEW viewestudiantesboletas
 AS

@@ -3,7 +3,7 @@ using CAPA_DATOS;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
-    public class View_estudiantes_boletas : EntityClass
+    public class Viewestudiantesboletas : EntityClass
     {
         public int? IdTPeriodoAcademico { get; set; }
         public int? Ejercicio { get; set; }
@@ -25,9 +25,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }
         public int? Ciclo { get; set; }
-        public string? GradoActual { get; set; }
-        public string? CursoActual { get; set; }
-        public string? GradoSiguiente { get; set; }
-        public string? CursoSiguiente { get; set; }
+        public string? Grado_Actual { get; set; }
+        public string? Curso_Actual { get; set; }
+        public string? Grado_Siguiente { get; set; }
+        public string? Curso_Siguiente { get; set; }
+        public int? idfamilia { get; set; }
     }
 }

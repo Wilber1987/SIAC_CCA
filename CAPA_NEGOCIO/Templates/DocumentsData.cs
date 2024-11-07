@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.UpdateModule.Model;
@@ -84,19 +80,23 @@ namespace CAPA_NEGOCIO.Templates
 			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
 
-			var segundoResponsable = data.Parientes?
-				.FirstOrDefault(p => p.Estudiantes_responsables_familia?.Any(erf => erf.Parentesco_id == 10) == true)
-				?? data.Parientes?.FirstOrDefault(p => p != primerParienteConUserId && p.User_id != null);
+			 var segundoResponsable = data.Parientes?
+       					 .FirstOrDefault(p => p.User_id == null && p.Id != primerParienteConUserId?.Id);
+
 
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
+
+			var familia = new Familias().Where<Familias>(
+										FilterData.Equal("id", primerParienteConUserId.Id_familia)
+									).FirstOrDefault();
 
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
 				var contratoEstudiante = plantilla;
 				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
 													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
-													   .Replace("{{ codigo_familia }}", estudiante?.Id_familia?.ToString() ?? string.Empty);
+													   .Replace("{{ codigo_familia }}", familia?.Idtfamilia?.ToString() ?? string.Empty);
 				contratos.Add(contratoEstudiante);
 			}
 
@@ -112,7 +112,7 @@ namespace CAPA_NEGOCIO.Templates
 
 			var plantillaBase = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			DateTime fechaActual = DateTime.Now;
-			
+
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
 				client.Connect();
@@ -121,27 +121,29 @@ namespace CAPA_NEGOCIO.Templates
 
 				try
 				{
-					var boleta = new View_estudiantes_boletas();
+					var boleta = new Viewestudiantesboletas();
 					boleta.SetConnection(MySqlConnections.BellacomTest);
 
 					foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 					{
 						var contratoEstudiante = plantillaBase;
-				
-						var boletaMsql = new View_estudiantes_boletas().Where<View_estudiantes_boletas>(
+
+						var boletaMsql = boleta.Where<Viewestudiantesboletas>(
 										FilterData.Equal("idtestudiante", estudiante.Codigo),
 										FilterData.Equal("ejercicio", fechaActual.Year),
-										FilterData.Equal("idtperiodoacademico", fechaActual.Year+1)
+										FilterData.Equal("idtperiodoacademico", fechaActual.Year + 1)
 									).FirstOrDefault();
 
 						var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
 
+						var familia = new Familias().Where<Familias>(FilterData.Equal("id", boletaMsql.idfamilia)).FirstOrDefault();
+
 						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 															   .Replace("{{ ciclo }}", fechaActual.Year.ToString())
 															   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
-															   .Replace("{{ no_expediente }}", boletaMsql?.Codigo.ToString() ?? string.Empty)
-															   .Replace("{{ curso_actual }}", $"{boletaMsql?.GradoActual} {boletaMsql?.CursoActual}".Trim())
-															   .Replace("{{ promueve }}", $"{boletaMsql?.GradoSiguiente} {boletaMsql?.CursoSiguiente}".Trim())
+															   .Replace("{{ no_expediente }}", familia?.Idtfamilia.ToString() ?? string.Empty)
+															   .Replace("{{ curso_actual }}", $"{boletaMsql?.Grado_Actual} {boletaMsql?.Curso_Actual}".Trim())
+															   .Replace("{{ promueve }}", $"{boletaMsql?.Grado_Siguiente} {boletaMsql?.Curso_Siguiente}".Trim())
 															   .Replace("{{ moneda }}", boletaMsql?.IdTMoneda.ToString() ?? string.Empty)
 															   .Replace("{{ importe_matricula }}", boletaMsql?.ImporteNetoMD.ToString() ?? string.Empty)
 															   .Replace("{{ fecha_vencimiento }}", fechaVencimiento);

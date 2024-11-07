@@ -47,5 +47,6 @@ namespace CAPA_NEGOCIO.Services
 				 Config
 			 );
 		}
-	}
+        
+    }
 }

@@ -419,7 +419,7 @@ class UpdateView extends HTMLElement {
                                 // @ts-ignore
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
-                            this.append(ModalMessege(response.message));
+                            this.append(ModalMessege(response.message,undefined,true));
                         }, "¿Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones, desea continuar?"));
 
                     }}">Aceptar</button>

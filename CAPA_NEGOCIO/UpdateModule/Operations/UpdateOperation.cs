@@ -27,7 +27,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
-					
+
 					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
@@ -71,8 +71,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			}
-			catch (System.Exception)
+			catch (System.Exception ex)
 			{
+				var exep = ex;
 				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
 				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			}
@@ -277,6 +278,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
 			inst.filterData?.Add(FilterData.Limit(100));
+			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 
@@ -332,9 +334,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					catch (System.Exception ex)
 					{
 						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
-					}
-					
-					return new ResponseService { status = 200, message = "solicitud guardada" };
+					}					
+					return new ResponseService { status = 200, message = "Datos actualizados!" };
 
 				}
 				else
@@ -352,17 +353,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
-			return;
+
 			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.ISNull("correo_enviado");
-
+			
 			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
-			var tutores = tutor.Where<Parientes_Data_Update>(new FilterData
-			{
-				PropName = "primer_apellido",
-				FilterType = "=",
-				Values = new List<string?> { "zurita" }
-			});
+			tutor.filterData?.Add(FilterData.NotNull("User_id"));
+			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
 			tutores.ForEach(t =>
 			{
@@ -374,13 +371,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
 
 					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
-
+					BeginGlobalTransaction();
+					t.Correo_enviado = true;
+					t.Update();
+					CommitGlobalTransaction();
 				}
 				catch (System.Exception ex)
 				{
 					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
 				}
 			});
+
+			
 
 		}
 

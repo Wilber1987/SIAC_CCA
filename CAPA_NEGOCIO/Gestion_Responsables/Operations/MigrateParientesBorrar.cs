@@ -10,10 +10,12 @@ using Microsoft.Identity.Client;
 
 namespace CAPA_NEGOCIO.Oparations
 {
-	public class MigrateParientes : TransactionalClass
+	public class MigrateParientesBorrar : TransactionalClass
 	{
 		public bool Migrate()
 		{
+
+			//todo borrar esta clase que no se ocupa
 			/*var carajo = MySqlConnections.ConnectToMysql;
 			return false;*/
 			return MigrateFamilia() && MigrateParientesAndUsers();

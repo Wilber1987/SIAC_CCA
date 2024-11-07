@@ -53,6 +53,7 @@ namespace DataBaseModel
         public DateTime? Fecharetencion { get; set; }
         public Double? Saldoeamd { get; set; }
         public string? Foto { get; set; }
+        public string? Codigo { get; set; }
     }
 
     public class ViewEstudiantesMigracion : Tbl_aca_estudiante
@@ -61,7 +62,7 @@ namespace DataBaseModel
 
         public object? CreateView()
         {
-            String query = "DROP VIEW IF EXISTS viewestudiantesmigracion;CREATE VIEW viewestudiantesmigracion AS SELECT e.id, e.foto, tae.* FROM tbl_aca_estudiante tae INNER JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
+            String query = "DROP VIEW IF EXISTS viewestudiantesmigracion;CREATE VIEW viewestudiantesmigracion AS SELECT e.id as idbellacom, e.foto,e.codigo, tae.* FROM tbl_aca_estudiante tae LEFT JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
             return ExecuteSqlQuery(query);
         }
 

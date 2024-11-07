@@ -14,6 +14,7 @@ namespace DataBaseModel
 		[PrimaryKey(Identity = true)]
 		public int? Id { get; set; }
 		public int? Idtestudiante { get; set; }
+		public int? Idbellacom { get; set; }
 		public string? Primer_nombre { get; set; }
 		public string? Segundo_nombre { get; set; }
 		public string? Primer_apellido { get; set; }
@@ -34,12 +35,12 @@ namespace DataBaseModel
 		public string? Padecimientos { get; set; }
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
-		public int? Id_familia { get; set; }		
+		public int? Id_familia { get; set; }
 		public String? Vive_con { get; set; }
-		public int? Religion_id { get; set; }	
-		public int? Pais_id { get; set; }	
-		public int? Region_id { get; set; }	
-		public int? EgresoExAlumno { get; set; }	
+		public int? Religion_id { get; set; }
+		public int? Pais_id { get; set; }
+		public int? Region_id { get; set; }
+		public int? EgresoExAlumno { get; set; }
 
 		/***new properties **/
 
@@ -61,13 +62,13 @@ namespace DataBaseModel
 
 		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
 		public Religiones? Religion { get; set; }
-		
+
 		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Pais_id")]
 		public Paises? Pais { get; set; }
-		
+
 		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Region_id")]
 		public Regiones? Region { get; set; }
-		
+
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		//public List<Estudiante_Clases_View>? Clases { get; set; }
 
@@ -129,11 +130,13 @@ namespace DataBaseModel
 			int currentYear = MigrationDates.GetCurrentYear();
 
 			string query = $"DROP VIEW IF EXISTS viewestudiantesactivossiac; " +
-						   $"CREATE VIEW viewestudiantesactivossiac AS " +
-						   $"SELECT distinct e.* " +
-						   $"FROM estudiantes e " +
-						   $"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id";/* +
-						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto in ('2023','2024');";//'{currentYear}');";*/
+							$"CREATE VIEW viewestudiantesactivossiac AS " +
+							$"SELECT DISTINCT e.* " +
+							$"FROM estudiantes e " +
+							$"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +
+							// $"WHERE ec.periodo_lectivo_id = (SELECT id FROM periodo_lectivos pl WHERE pl.nombre_corto IN ('2023','2024')) " +
+							$"ORDER BY e.id DESC;";
+
 
 
 			return ExecuteSqlQuery(query);
