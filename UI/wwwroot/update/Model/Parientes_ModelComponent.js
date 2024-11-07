@@ -29,10 +29,10 @@ class Parientes_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Sexo = { type: 'select', Dataset: ["Femenino", "Masculino"], hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', hiddenFilter: true };
     //**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Estado_civil = { type: 'WSelect', ModelObject: () => new Estados_Civiles_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Estado_civil = { type: 'WSelect', ModelObject: () => new Estados_Civiles_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
     //pais
     //region
     /**@type {ModelProperty}*/ Telefono = { type: 'text', hiddenFilter: true };
@@ -45,8 +45,9 @@ class Parientes_ModelComponent extends EntityClass {
 
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar", hiddenFilter: true , hiddenInTable: true};
 
-    /**@type {ModelProperty}*/ Titulo = { type: 'WSelect', ModelObject: () => new Titulos_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Ex_Alumno = { type: 'radio', Dataset: ["SI", "NO"], hiddenFilter: true, hiddenInTable: true, require: false };
+    /**@type {ModelProperty}*/ Titulo = { type: 'WSelect', ModelObject: () => new Titulos_ModelComponent(), hiddenInTable: true, hiddenFilter: true, fullDetail: false , require: false};
+    /**@type {ModelProperty}*/ Ex_Alumno = { type: 'radio', Dataset: ["SI", "NO"], hiddenFilter: true, hiddenInTable: true };
+
     /**@type {ModelProperty}*/ EgresoExAlumno = { type: 'number', label: "Año de egreso",  max: 2030, min: 2000, hiddenFilter: true, hiddenInTable: true, require: false };
     //**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     //**@type {ModelProperty}*/ Religion_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };

@@ -22,9 +22,9 @@ class Estudiantes_ModelComponent extends EntityClass {
     }
   
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
-    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true };
-    /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true, fullDetail: false };
+    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar" };
     /**@type {ModelProperty}*/ Vive_con = { type: 'text', label: "Con quién vive" };
     /**@type {ModelProperty}*/ Colegio_procede = { type: 'text',  label: "Colegio de procedencia" };
