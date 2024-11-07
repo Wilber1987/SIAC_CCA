@@ -131,6 +131,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
 					if (pariente != null)
 					{
+						pariente.Correo_enviado = false;
 						pariente.Update();
 					}
 					else

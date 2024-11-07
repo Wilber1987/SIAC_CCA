@@ -2,6 +2,8 @@
 @using API.Controllers
 @using CAPA_DATOS.Security
 @using CAPA_NEGOCIO.UpdateModule.Model
+@using DataBaseModel
+@using System.Text.Json
 @{
     Layout = "_LayoutUpdates";
 
@@ -15,9 +17,21 @@
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
     string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "IP no disponible";
     pariente!.Entro_al_sistema = true;
-    
+    var Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
+    var Religiones = new Religiones().Get<Religiones>();
+    var Paises = new Paises().Get<Paises>();
+    var Regiones = new Regiones().Get<Regiones>();
+    var Titulos = new Titulos().Get<Titulos>();
+    // Convertir las listas en JSON para usarlas en JavaScript
+    string estadosCivilesJson = JsonSerializer.Serialize(Estados_Civiless);
+    string religionesJson = JsonSerializer.Serialize(Religiones);
+    string paisesJson = JsonSerializer.Serialize(Paises);
+    string regionesJson = JsonSerializer.Serialize(Regiones);
+    string titulosJson = JsonSerializer.Serialize(Titulos);
+
 }
-@if (pariente.Actualizo == true)
+
+@if (pariente.Acepto_terminos == true)
 {
     <h1>¡Datos actualizados! Gracias.</h1>
 }
@@ -25,10 +39,21 @@ else
 {
     pariente!.Ip_ingreso = ipAddress;
     pariente.Update();
-    <script type="module">
+    <script type="module">        
         import { UpdateView } from "/update/UpdateView.js";
+        const ESTADOS_CIVILES = @Html.Raw(estadosCivilesJson);
+        const RELIGIONES = @Html.Raw(religionesJson);
+        const PAISES = @Html.Raw(paisesJson);
+        const REGIONES = @Html.Raw(regionesJson);
+        const TITULOS = @Html.Raw(titulosJson);
         window.onload = () => {
-            Main.append(new UpdateView());
+            Main.append(new UpdateView({
+                ESTADOS_CIVILES: ESTADOS_CIVILES,
+                RELIGIONES: RELIGIONES,
+                PAISES: PAISES,
+                REGIONES: REGIONES,
+                TITULOS: TITULOS
+            }));
         }
     </script>
     <div id="Main" class="app-container"></div>
