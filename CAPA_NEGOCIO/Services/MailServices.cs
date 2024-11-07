@@ -38,7 +38,7 @@ namespace CAPA_NEGOCIO.Services
 			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Contrato aceptado y datos actualizados</p></div>";
 			await SMTPMailServices.SendMail(
 				 "cca@noreply.com",//todo tomar el from
-				 ["alderhernandez@gmail.com", "wilberj1987@gmail.com"], //TODO [tutor.Email]
+				 [tutor.Email],
 				 "Contrato aceptado y datos actualizados",
 				 templatePage,
 				 [FileService.HtmlToPdfBase64(updateData.Contrato,"contrato.pdf"),
