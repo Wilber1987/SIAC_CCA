@@ -71,8 +71,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			}
-			catch (System.Exception)
+			catch (System.Exception ex)
 			{
+				var exep = ex;
 				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
 				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			}
