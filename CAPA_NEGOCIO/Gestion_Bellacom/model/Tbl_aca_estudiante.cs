@@ -62,7 +62,7 @@ namespace DataBaseModel
 
         public object? CreateView()
         {
-            String query = "DROP VIEW IF EXISTS viewestudiantesmigracion;CREATE VIEW viewestudiantesmigracion AS SELECT e.id as idbellacom, e.foto,e.codigo, tae.* FROM tbl_aca_estudiante tae LEFT JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
+            String query = "DROP VIEW IF EXISTS viewestudiantesmigracion;CREATE VIEW viewestudiantesmigracion AS SELECT e.id as idbellacom, e.foto,tae.idtestudiante codigo, tae.* FROM tbl_aca_estudiante tae LEFT JOIN estudiantes e ON e.codigo = tae.idtestudiante;";
             return ExecuteSqlQuery(query);
         }
 

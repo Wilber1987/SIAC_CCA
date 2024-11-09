@@ -36,20 +36,18 @@ namespace DataBaseModel
 		public string? Alergias { get; set; }
 		public int? Recorrido_id { get; set; }
 		public int? Id_familia { get; set; }
-		public String? Vive_con { get; set; }
-		public int? Religion_id { get; set; }
-		public int? Pais_id { get; set; }
-		public int? Region_id { get; set; }
+		public String? Vivecon { get; set; }
+		public int? Id_religion { get; set; }
+		public int? Id_pais { get; set; }
+		public int? Id_region { get; set; }
 		public int? EgresoExAlumno { get; set; }
-
-		/***new properties **/
-
-		public DateTime? Fecha_ingreso { get; set; }//dejar
-		public int? Id_cliente { get; set; }//dejar
-		public string? Codigomed { get; set; }//dejar		
-		public Double? Saldoeamd { get; set; }//dejar
-
-		/***new properties **/
+		public DateTime? Fecha_ingreso { get; set; }
+		public int? Id_cliente { get; set; }
+		public string? Codigomed { get; set; }
+		public Double? Saldoeamd { get; set; }
+		public string? Sacramento { get; set; }
+		public int? Aniosacra { get; set; }
+		public string? Colegio_procede { get; set; }
 
 		public bool? Activo { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
@@ -60,13 +58,13 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]
 		public List<Estudiantes_responsables_familia>? Responsables { get; set; }
 
-		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
+		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Id_religion")]
 		public Religiones? Religion { get; set; }
 
-		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Pais_id")]
+		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Id_pais")]
 		public Paises? Pais { get; set; }
 
-		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Region_id")]
+		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Id_region")]
 		public Regiones? Region { get; set; }
 
 		//[OneToMany(TableName = "Estudiante_Clases_View", KeyColumn = "Id", ForeignKeyColumn = "Estudiante_id")]

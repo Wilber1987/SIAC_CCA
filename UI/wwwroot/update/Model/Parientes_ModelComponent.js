@@ -50,7 +50,7 @@ class Parientes_ModelComponent extends EntityClass {
 
     /**@type {ModelProperty}*/ EgresoExAlumno = { type: 'number', label: "Año de egreso",  max: 2030, min: 2000, hiddenFilter: true, hiddenInTable: true, require: false };
     //**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-    //**@type {ModelProperty}*/ Religion_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+    //**@type {ModelProperty}*/ Id_religion = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     //**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true, hiddenFilter: true};
     //**@type {ModelProperty}*/ Updated_at = { type: 'date',  hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Ip_ingreso  = {type: "text", hidden: true, require: false}

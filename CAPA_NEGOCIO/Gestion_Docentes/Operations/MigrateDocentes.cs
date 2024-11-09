@@ -77,7 +77,7 @@ namespace CAPA_NEGOCIO.Oparations
                             existingDocente.Celular = tn.Celular;
                             existingDocente.Email = tn.Email;
                             existingDocente.Estado_civil_id = tn.Estado_civil_id;
-                            existingDocente.Religion_id = tn.Religion_id;
+                            existingDocente.Id_religion = tn.Id_religion;
                             existingDocente.Escolaridad_id = tn.Escolaridad_id;
                             existingDocente.Foto = tn.Foto;
                             existingDocente.Updated_at = tn.Updated_at;

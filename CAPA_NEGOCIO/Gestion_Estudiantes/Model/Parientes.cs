@@ -44,11 +44,13 @@ namespace DataBaseModel
 	   	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
 		public String? Identificacion { get; set; }
-		public int? Pais_id { get; set; }
+		public int? Id_Pais { get; set; }
 		public int? Id_Region { get; set; }
 		public int? Id_Estado_Civil { get; set; }
-		public int? Religion_id { get; set; }
+		public int? Id_religion { get; set; }
 		public int? Id_profesion { get; set; }
+		public string? Profesion { get; set; }
+		public int? EgresoExAlumno { get; set; }
 
 		[JsonProp]
 		public List<ProfileRequest>? ProfileRequest { get; internal set; }
@@ -58,16 +60,16 @@ namespace DataBaseModel
 		[OneToMany(TableName = "Estudiantes_responsables_familia", KeyColumn = "Id", ForeignKeyColumn = "Pariente_id")]
 		public List<Estudiantes_responsables_familia>? Estudiantes_responsables_familia { get; set; }
 		
-		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "Religion_id")]
+		[ManyToOne(TableName = "religiones", KeyColumn = "id", ForeignKeyColumn = "id_religion")]
 		public Religiones? Religion { get; set; }
 
 		[ManyToOne(TableName = "estados_civiles", KeyColumn = "id", ForeignKeyColumn = "Id_Estado_Civil")]
 		public Estados_Civiles? Estado_civil { get; set; }
 
-		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Region_Id")]
+		[ManyToOne(TableName = "regiones", KeyColumn = "Id_region", ForeignKeyColumn = "Id_region")]
 		public Regiones? Region { get; set; } 
 
-		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Pais_id")]
+		[ManyToOne(TableName = "paises", KeyColumn = "Id_pais", ForeignKeyColumn = "Id_pais")]
 		public Paises? Pais { get; set; } 
 
 		//[ManyToOne(TableName = "profesiones", KeyColumn = "id_profesion", ForeignKeyColumn = "id_profesion")]

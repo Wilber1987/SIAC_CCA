@@ -30,10 +30,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 	}
 
 	public class Estudiantes_Data_Update : Estudiantes
-	{
-		public string? Sacramento { get; set; }
-		public string? Colegio_procede { get; set; }
-		public int? SacramentoA { get; set; }
+	{				
 		public Estudiantes_Data_Update()
 		{
 

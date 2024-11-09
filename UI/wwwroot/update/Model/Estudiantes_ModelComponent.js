@@ -45,7 +45,7 @@ class Estudiantes_ModelComponent extends EntityClass {
     
 
     ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };  
-    ///**@type {ModelProperty}*/ Religion_id = { type: 'number' };
+    ///**@type {ModelProperty}*/ Id_religion = { type: 'number' };
     ///**@type {ModelProperty}*/ Madre_id = { type: 'number' };
     ///**@type {ModelProperty}*/ Padre_id = { type: 'number' };
     ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};

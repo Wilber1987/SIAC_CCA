@@ -24,7 +24,6 @@ namespace CAPA_NEGOCIO.Oparations
 			await migrateEstudiantesSiac(_sshTunnelService);
 			await MigrateParientesAndUsers();
 			await migrateEstudiantesReponsablesFamilia();
-
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -113,6 +112,8 @@ namespace CAPA_NEGOCIO.Oparations
 					estudiante.SetConnection(MySqlConnections.SiacTest);
 					estudiante.CreateViewEstudiantesActivos();
 					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
+					//var EstudiantesMsql = estudiante.Where<ViewEstudiantesActivosSiac>(FilterData.In("codigo", 3723, 3724, 4635));
+
 					estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
 					int i = 0;
@@ -189,7 +190,7 @@ namespace CAPA_NEGOCIO.Oparations
 			//}
 
 			// Asignación de datos básicos del estudiante
-			existingEstudiante.Id = est.Id;
+			existingEstudiante.Id = estudiantesView.Idestudiante;
 			existingEstudiante.Idbellacom = est.Idbellacom;
 			existingEstudiante.Primer_nombre = est.Primer_nombre;
 			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
@@ -206,8 +207,13 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Id_cliente = est.Id_cliente;
 			existingEstudiante.Codigomed = est.Codigomed;
 			existingEstudiante.Saldoeamd = est.Saldoeamd;
-			existingEstudiante.Pais_id = est.Pais_id;
-			existingEstudiante.Region_id = est.Region_id;
+			existingEstudiante.Id_pais = estudiantesView.Idpais;
+			existingEstudiante.Id_region = estudiantesView.Idregion;			
+			existingEstudiante.Id_religion = estudiantesView.Idreligion;
+			existingEstudiante.Vivecon = estudiantesView.Vivecon;
+			existingEstudiante.Sacramento = estudiantesView.Sacramento;
+			existingEstudiante.Aniosacra = estudiantesView.Aniosacra;
+			
 
 			// Verifica la foto de SIAC usando el cliente SSH pasado
 			var estudianteSiac = new Estudiantes();
@@ -778,7 +784,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Telefono_trabajo = tn.Telefonotrabajo;
 			existing.Email = tn.Email;
 			existing.Estado_civil_id = tn.Idestadocivil;
-			existing.Religion_id = tn.Idreligion;
+			existing.Id_religion = tn.Idreligion;
 			existing.Id_Titulo = tn.Idtitulo;
 			existing.Id_Region = tn.Idregion;
 			existing.Id_Estado_Civil = tn.Idestadocivil;
