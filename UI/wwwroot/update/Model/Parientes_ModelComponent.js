@@ -24,9 +24,9 @@ class Parientes_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
 
     /**@type {ModelProperty}*/ Identificacion = { type: 'text', 
-        disabled: (pariente) => (pariente?.Identificacion == null || pariente?.Identificacion == undefined) ,
+        disabled: (pariente) => !(pariente?.Identificacion == null || pariente?.Identificacion == undefined) ,
         hiddenFilter: true }; 
-    /**@type {ModelProperty}*/ Sexo = { type: 'select', Dataset: ["Femenino", "Masculino"], hiddenInTable: true, hiddenFilter: true };
+    /**@type {ModelProperty}*/ Sexo = { type: 'select', Dataset: [{ id: "M", name: "Masculino" }, { id: "F", name: "Femenino" }], hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', hiddenFilter: true };
     //**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Estado_civil = { type: 'WSelect', ModelObject: () => new Estados_Civiles_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
