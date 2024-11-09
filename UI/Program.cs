@@ -22,7 +22,7 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_B
 // Migraciones
 //TODO crear conexion aparte para cronjob
 /*await new MigrateDocentes().Migrate();*/
-await new MigrateEstudiantes().Migrate();
+//await new MigrateEstudiantes().Migrate();
 /*await new MigrateGestionCursos().Migrate();
 await new MigrateNotas().Migrate();*/
 
@@ -69,11 +69,11 @@ builder.Services.AddSession(options =>
 
 
 #region CRONJOB
-/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {
 	options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

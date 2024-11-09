@@ -129,21 +129,21 @@ namespace CAPA_NEGOCIO.Oparations
 
 						foreach (var est in EstudiantesMsql)
 						{
-							var existingEstudiante = new Estudiantes() { Id = est.Id }.Find<Estudiantes>();
-							Console.Write("migrando estudiantes: " + i.ToString());i++;
+							var existingEstudiante = new Estudiantes() { Codigo = est.Codigo }.Find<Estudiantes>();
+							Console.Write("migrando estudiantes: " + i.ToString()); i++;
 							est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
 							est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 							est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
 							est.Fecha_ingreso = DateUtil.ValidSqlDateTime(est.Fecha_ingreso.GetValueOrDefault());
 
 							if (existingEstudiante != null)
-							{								
+							{
 								buildEstudianteSiac(est, existingEstudiante, bellacomSshClient, siacSshClient, sshService);
 								existingEstudiante.Update();
 							}
 							else
 							{
-								var newEstudiante = new Estudiantes();								
+								var newEstudiante = new Estudiantes();
 								buildEstudianteSiac(est, newEstudiante, bellacomSshClient, siacSshClient, sshService);
 
 								newEstudiante.Save();
@@ -175,22 +175,25 @@ namespace CAPA_NEGOCIO.Oparations
 			estudianteView.SetConnection(bellacomConnection);
 			estudianteView.CreateView();
 			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
+			if (estudiantesView == null)
+			{
+				Console.WriteLine($"Estudiante con código {est.Codigo} no encontrado en la vista de migración. Registro omitido.");
+				return;
+			}
+			
+			// Obtener datos de la familia usando BellacomTest
+			var familiaJoin = new Tbl_aca_familia();
+			familiaJoin.SetConnection(bellacomConnection);
+			var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
 
-			/*if (estudiantesView != null)
-			{*/
-				// Obtener datos de la familia usando BellacomTest
-				var familiaJoin = new Tbl_aca_familia();
-				familiaJoin.SetConnection(bellacomConnection);
-				var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
-
-				if (familiaDatos != null)
-				{
-					existingEstudiante.Id_familia = familiaDatos.Idfamilia;
-				}
-			//}
+			if (familiaDatos != null)
+			{
+				existingEstudiante.Id_familia = familiaDatos.Idfamilia;
+			}
+			
 
 			// Asignación de datos básicos del estudiante
-			existingEstudiante.Id = estudiantesView.Idestudiante;
+			existingEstudiante.Id = est.Id;
 			existingEstudiante.Idbellacom = est.Idbellacom;
 			existingEstudiante.Primer_nombre = est.Primer_nombre;
 			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
@@ -203,17 +206,18 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Codigo = est.Codigo;
 			existingEstudiante.Created_at = est.Created_at;
 			existingEstudiante.Updated_at = est.Updated_at;
-			existingEstudiante.Fecha_ingreso = est.Fecha_ingreso;
+			existingEstudiante.Fecha_ingreso = estudiantesView.Fechaingreso;
 			existingEstudiante.Id_cliente = est.Id_cliente;
 			existingEstudiante.Codigomed = est.Codigomed;
 			existingEstudiante.Saldoeamd = est.Saldoeamd;
 			existingEstudiante.Id_pais = estudiantesView.Idpais;
-			existingEstudiante.Id_region = estudiantesView.Idregion;			
+			existingEstudiante.Id_region = estudiantesView.Idregion;
 			existingEstudiante.Id_religion = estudiantesView.Idreligion;
 			existingEstudiante.Vivecon = estudiantesView.Vivecon;
 			existingEstudiante.Sacramento = estudiantesView.Sacramento;
 			existingEstudiante.Aniosacra = estudiantesView.Aniosacra;
-			
+			existingEstudiante.Colegio_procede = estudiantesView.Colegio;
+
 
 			// Verifica la foto de SIAC usando el cliente SSH pasado
 			var estudianteSiac = new Estudiantes();
@@ -800,6 +804,8 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.No_Responsable = tn.Noresponsable;
 			existing.Id_familia = tn.Idfamilia;
 			existing.Id_relacion_familiar = tn.Idrelacionfamiliar;
+			existing.Id_Pais = tn.Idpais;
+			
 		}
 
 	}
