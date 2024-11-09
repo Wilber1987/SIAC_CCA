@@ -68,11 +68,11 @@ builder.Services.AddSession(options =>
 
 
 #region CRONJOB
-/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {
 	options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

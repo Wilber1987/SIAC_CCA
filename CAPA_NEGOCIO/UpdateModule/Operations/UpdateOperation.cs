@@ -44,7 +44,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])
-						.Select(r => r.Parientes ?? new Parientes()).ToList();
+						.Select(r => r.Parientes ?? new Parientes())
+						.DistinctBy(p => p.Id)
+						.ToList();
 
 					UpdateData updateData = new UpdateData
 					{
@@ -73,7 +75,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			}
 			catch (System.Exception ex)
-			{				
+			{
 				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
 				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 			}
@@ -355,8 +357,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public void sendInvitations()
 		{
 
-			var tutor = new Parientes_Data_Update();
-			var filter = FilterData.NotIn("correo_enviado",1);
+			var tutor = new Parientes_Data_Update();			
+			var filter = FilterData.Or(
+				FilterData.ISNull("correo_enviado"),
+				FilterData.Equal("correo_enviado", false)
+			);
 
 			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
