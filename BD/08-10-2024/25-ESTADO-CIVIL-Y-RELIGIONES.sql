@@ -28,11 +28,11 @@ INSERT INTO religiones (id,idtreligion,texto) VALUES
 
 ALTER TABLE estudiantes
 ADD CONSTRAINT FK_estudiantes_religion
-FOREIGN KEY (religion_id) REFERENCES religiones(id);
+FOREIGN KEY (Id_religion) REFERENCES religiones(id);
 
 ALTER TABLE parientes
 ADD CONSTRAINT FK_parientes_religion
-FOREIGN KEY (religion_id) REFERENCES religiones(id);
+FOREIGN KEY (Id_religion) REFERENCES religiones(id);
 
 ALTER TABLE parientes
 ADD CONSTRAINT FK_parientes_estadocivil

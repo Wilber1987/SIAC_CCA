@@ -13,13 +13,16 @@ import { Parientes } from "./Model/Parientes.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { UpdateDataRequest } from "./Model/UpdateDataRequest.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
-
+/**
+ * @typedef {Object} ComponentConfig
+ * * @property {Object} [propierty]
+ */
 class UpdateView extends HTMLElement {
     /**
      * 
-     * @param {{ ESTADOS_CIVILES: [], RELIGIONES: [], PAISES:[], REGIONES: [],  TITULOS: [] }  } Config 
+     * @param {ComponentConfig} props 
      */
-    constructor(Config) {
+    constructor(props) {
         super();
         this.append(this.CustomStyle);
         this.TabContainer = WRender.Create({ className: "TabContainer", id: "content-container" });
@@ -35,21 +38,7 @@ class UpdateView extends HTMLElement {
         /**@type {Array<WForm>} */
         this.Forms = [];
         this.Draw();
-        this.EstudianteModel = new Estudiantes_ModelComponent({});
-        this.ParienteModel = new Parientes_ModelComponent({
-            Primer_nombre: undefined,
-            Segundo_nombre: undefined,
-            Primer_apellido: undefined,
-            Segundo_apellido: undefined
-        });
-        this.EstudianteModel.Pais.Dataset = Config.PAISES;
-        this.EstudianteModel.Region.Dataset = Config.REGIONES;
-        this.EstudianteModel.Religion.Dataset = Config.RELIGIONES;
-        this.ParienteModel.Pais.Dataset = Config.PAISES;
-        this.ParienteModel.Region.Dataset = Config.REGIONES;
-        this.ParienteModel.Estado_civil.Dataset = Config.ESTADOS_CIVILES;
-        this.ParienteModel.Religion.Dataset = Config.RELIGIONES;
-        this.ParienteModel.Titulo.Dataset = Config.TITULOS;
+        
     }
     Draw = async () => {
         // @ts-ignore
@@ -140,7 +129,7 @@ class UpdateView extends HTMLElement {
                 if (estudiante.IdaVueltaForm && estudiante.IdaVueltaForm.Form) {
                     estudiante.IdaVueltaForm.Form.DrawComponent();
                 }
-                this.EditEstudiante(estudiante, original, idaVueltaForm, form)
+                this.EditEstudiante(estudiante,original,idaVueltaForm,form)
             }}">Actualizar datos</button>
             </div>            
         </div>`
@@ -242,7 +231,7 @@ class UpdateView extends HTMLElement {
         return formIdaYVuelta;
     }
 
-
+   
     /**
      * Navigates to a new tab with a form to edit the given student's details.
      * The form is created with the student's data and allows the user to update the student's details.
@@ -252,8 +241,8 @@ class UpdateView extends HTMLElement {
      * @param {HTMLElement} idaVueltaForm - The form element for selecting transportation options.
      * @param {WForm} form - The form object for editing the student's details.
      */
-    EditEstudiante(estudiante, original, idaVueltaForm, form) {
-
+    EditEstudiante(estudiante,original,idaVueltaForm,form) {
+        
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
@@ -276,7 +265,7 @@ class UpdateView extends HTMLElement {
      */
     buildUpdateEstForm(estudiante) {
         return new WForm({
-            ModelObject: this.EstudianteModel,
+            ModelObject: new Estudiantes_ModelComponent(),
             EntityModel: new Estudiantes(),
             EditObject: estudiante,
             AutoSave: false,
@@ -308,9 +297,9 @@ class UpdateView extends HTMLElement {
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
-
+  
     EditTutor(pariente, original, form) {
-
+       
         this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
             ${this.CustomStyle.cloneNode(true)}          
             <h3>${pariente.Nombre_completo}</h3>
@@ -328,7 +317,12 @@ class UpdateView extends HTMLElement {
      */
     buildUpdateParForm(pariente) {
         return new WForm({
-            ModelObject: this.ParienteModel,
+            ModelObject: new Parientes_ModelComponent({
+                Primer_nombre: undefined,
+                Segundo_nombre: undefined,
+                Primer_apellido: undefined,
+                Segundo_apellido: undefined
+            }),
             EntityModel: new Parientes(),
             EditObject: pariente,
             AutoSave: false,
@@ -339,14 +333,14 @@ class UpdateView extends HTMLElement {
 
     GuardarPariente(pariente, original) {
         console.log(pariente, original);
-
+        
         this.append(ModalVericateAction(() => {
             for (const prop in pariente) {
                 original[prop] = pariente[prop];
             }
             this.NavManager?.ActiveTab("Tutores");
         }, "¿Esta seguro que desea actualizar los datos del tutor?"));
-
+        
     }
     /**
    * Restores the estudiante object with the original data before editing.
@@ -399,25 +393,25 @@ class UpdateView extends HTMLElement {
                             this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
-                        for (const pariente of this.UpdateData?.Parientes) {
-                            if (!WArrayF.ValidateByModel(pariente, new Parientes_ModelComponent())) {
+                        for (const pariente of this.UpdateData?.Parientes) {                            
+                            if (!WArrayF.ValidateByModel(pariente,  new Parientes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
-                            if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent())) {
+                            if (!WArrayF.ValidateByModel(estudiante,  new Estudiantes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
-                        /* for (const form of this.Forms) {
-                             //await form.DrawComponent();
-                             if (!form.Validate()) {
-                                 this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
-                                 return;
-                             }
-                         }*/
+                       /* for (const form of this.Forms) {
+                            //await form.DrawComponent();
+                            if (!form.Validate()) {
+                                this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
+                                return;
+                            }
+                        }*/
                         this.append(ModalVericateAction(async () => {
                             const response = await new UpdateDataRequest({
                                 Parientes: this.UpdateData?.Parientes,
@@ -425,8 +419,8 @@ class UpdateView extends HTMLElement {
                                 // @ts-ignore
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
-                            this.append(ModalMessege(response.message, undefined, true));
-                        }, "¿Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones, desea continuar?"));
+                            this.append(ModalMessege(response.message,undefined,true));
+                        }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                     }}">Aceptar</button>
             </section>`

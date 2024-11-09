@@ -1,6 +1,6 @@
 ALTER TABLE [security].Security_Users ADD Password_Expiration_Date datetime NULL;
 
-CREATE SCHEMA update_data;
+CREATE SCHEMA update_data; 
 -- dbo.estudiantes definition
 
 -- Drop table
@@ -17,7 +17,7 @@ CREATE TABLE update_data.estudiantes_data_update (
 	sexo nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	direccion nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	codigo nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
-	religion_id int NULL,
+	id_religion int NULL,
 	madre_id int NULL,
 	padre_id int NULL,
 	created_at datetime NULL,
@@ -36,10 +36,15 @@ CREATE TABLE update_data.estudiantes_data_update (
 	id_cliente int NULL,
 	codigomed varchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	saldo_eamd decimal(18,2) NULL,
-	vive_con nvarchar(150) COLLATE Modern_Spanish_CI_AS NULL,
-
-	id_pais int NULL,
 	id_region int NULL,
+	Id_pais int NULL,
+	Idbellacom int NULL,
+	vivecon nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
+	sacramento nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
+	aniosacra int NULL,
+	colegio_procede nvarchar(250) COLLATE Modern_Spanish_CI_AS NULL,
+
+
     puntos_transportes nvarchar(max) COLLATE Modern_Spanish_CI_AS  NULL,
     usa_transporte bit NULL,   
     
@@ -54,7 +59,7 @@ CREATE TABLE update_data.estudiantes_data_update (
  CREATE NONCLUSTERED INDEX update_index_estudiantes_on_recorrido_id ON update_data.estudiantes_data_update (  recorrido_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX update_index_estudiantes_on_religion_id ON update_data.estudiantes_data_update (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_Id_religion ON update_data.estudiantes_data_update (  Id_religion ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
  CREATE NONCLUSTERED INDEX update_index_estudiantes_on_madre_id ON update_data.estudiantes_data_update (  madre_id ASC  )  
@@ -66,7 +71,7 @@ CREATE TABLE update_data.estudiantes_data_update (
  CREATE NONCLUSTERED INDEX update_index_estudiantes_on_recorrido_id ON update_data.estudiantes_data_update (  recorrido_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX update_index_estudiantes_on_religion_id ON update_data.estudiantes_data_update (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_estudiantes_on_Id_religion ON update_data.estudiantes_data_update (  Id_religion ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
 
@@ -90,17 +95,16 @@ CREATE TABLE update_data.parientes_data_update (
 	telefono_trabajo nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	email nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	estado_civil_id int NULL,
-	religion_id int NULL,
+	id_religion int NULL,
 	created_at datetime NULL,
 	updated_at datetime NULL,
-	pais_id int NULL,
-	responsable_pago bit NULL,
+	resoponsable_pago bit NULL,
 	noidentificacion varchar(100) COLLATE Modern_Spanish_CI_AS NULL,
 	id_titulo int NULL,
-	id_region int NULL,
+	Id_Region int NULL,
 	id_estado_civil int NULL,
 	id_responsable_pago int NULL,
-	ex_alumno nvarchar(MAX) COLLATE Modern_Spanish_CI_AS NULL,
+	ex_alumno nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
 	fecha_nacimiento datetime NULL,
 	fecha_modificacion datetime NULL,
 	usuario_grabacion nvarchar(50) COLLATE Modern_Spanish_CI_AS NULL,
@@ -113,7 +117,7 @@ CREATE TABLE update_data.parientes_data_update (
 	id_familia int NULL,
 	identificacion nvarchar(150) COLLATE Modern_Spanish_CI_AS NULL,
 	id_pais int NULL,
-
+    egresoexalumno int null,
 
     correo_enviado bit NULL,
     actualizo bit NULL,
@@ -122,28 +126,27 @@ CREATE TABLE update_data.parientes_data_update (
     entro_al_sistema bit NULL,
     fecha_ingreso_al_sistema datetime NULL,
     ip_ingreso nvarchar(255) COLLATE Modern_Spanish_CI_AS NULL,
+    
 
 	CONSTRAINT PK__pariente__3213E83FC3C303EF PRIMARY KEY (id)
 );
  CREATE NONCLUSTERED INDEX update_index_parientes_on_estado_civil_id ON dbo.parientes (  estado_civil_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX update_index_parientes_on_religion_id ON dbo.parientes (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_parientes_on_Id_religion ON dbo.parientes (  Id_religion ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
  CREATE NONCLUSTERED INDEX update_index_parientes_on_estado_civil_id ON dbo.parientes (  estado_civil_id ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
- CREATE NONCLUSTERED INDEX update_index_parientes_on_religion_id ON dbo.parientes (  religion_id ASC  )  
+ CREATE NONCLUSTERED INDEX update_index_parientes_on_Id_religion ON dbo.parientes (  Id_religion ASC  )  
 	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
 	 ON [PRIMARY ] ;
 
 
 -- dbo.parientes foreign keys
 
-ALTER TABLE dbo.parientes ADD CONSTRAINT FK_parientes_Security_Users FOREIGN KEY (user_id) REFERENCES [security].Security_Users(Id_User);
+ALTER TABLE update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_Security_Users FOREIGN KEY (user_id) REFERENCES [security].Security_Users(Id_User);
+ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_estadocivil FOREIGN KEY (estado_civil_id) REFERENCES SIAC_CCA_BEFORE_DEMO.dbo.estados_civiles(id);
+ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_religion FOREIGN KEY (id_religion) REFERENCES SIAC_CCA_BEFORE_DEMO.dbo.religiones(id);
 
-
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.resoponsable_pago' , N'responsable_pago', 'COLUMN';
-
-ALTER TABLE OLIMPO.update_data.parientes_data_update ADD EgresoExAlumno numeric(38,0) NULL;

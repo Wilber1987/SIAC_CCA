@@ -25,7 +25,7 @@ class Parientes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Telefono_trabajo = { type: 'text' };
    /**@type {ModelProperty}*/ Email = { type: 'text' };
    /**@type {ModelProperty}*/ Estado_civil_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
-   /**@type {ModelProperty}*/ Religion_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };
+   /**@type {ModelProperty}*/ Id_religion = { type: 'number', hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true, hiddenFilter: true};
    /**@type {ModelProperty}*/ Updated_at = { type: 'date',  hiddenInTable: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail',  ModelObject: ()=> new Responsables_ModelComponent()};

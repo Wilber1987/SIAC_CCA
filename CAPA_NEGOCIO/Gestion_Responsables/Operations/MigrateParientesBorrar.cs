@@ -206,7 +206,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Telefono_trabajo = tn.Telefonotrabajo;
 			existing.Email = tn.Email;
 			existing.Estado_civil_id = tn.Idestadocivil;
-			existing.Religion_id = tn.Idreligion;
+			existing.Id_religion = tn.Idreligion;
 			existing.Id_Titulo = tn.Idtitulo;
 			existing.Id_Region = tn.Idregion;
 			existing.Id_Estado_Civil = tn.Idestadocivil;
@@ -258,7 +258,7 @@ namespace CAPA_NEGOCIO.Oparations
 						existingPariente.Celular = est.Celular;
 						existingPariente.Email = est.Email;
 						existingPariente.Estado_civil_id = est.Estado_civil_id;
-						existingPariente.Religion_id = est.Religion_id;
+						existingPariente.Id_religion = est.Id_religion;
 						existingPariente.Update();
 					}
 					else if (existingPariente == null)

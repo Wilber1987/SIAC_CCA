@@ -23,7 +23,7 @@ class Estudiantes extends EntityClass {
     /**@type {String}*/ Sexo;
     /**@type {String}*/ Direccion;
     /**@type {String}*/ Codigo;
-    /**@type {Number}*/ Religion_id;
+    /**@type {Number}*/ Id_religion;
     /**@type {Number}*/ Madre_id;
     /**@type {Number}*/ Padre_id;
     /**@type {Date}*/ Created_at;

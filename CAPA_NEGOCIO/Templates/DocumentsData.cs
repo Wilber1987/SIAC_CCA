@@ -74,7 +74,7 @@ namespace CAPA_NEGOCIO.Templates
 			DateTime fechaActual = DateTime.Now;
 
 			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-								 .Replace("{{ current_year }}", fechaActual.Year.ToString())
+								 .Replace("{{ current_year }}", (fechaActual.Year+1).ToString())
 								 .Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
 
 			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
@@ -139,7 +139,7 @@ namespace CAPA_NEGOCIO.Templates
 						var familia = new Familias().Where<Familias>(FilterData.Equal("id", boletaMsql.idfamilia)).FirstOrDefault();
 
 						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-															   .Replace("{{ ciclo }}", fechaActual.Year.ToString())
+															   .Replace("{{ ciclo }}", (fechaActual.Year+1).ToString())
 															   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
 															   .Replace("{{ no_expediente }}", familia?.Idtfamilia.ToString() ?? string.Empty)
 															   .Replace("{{ curso_actual }}", $"{boletaMsql?.Grado_Actual} {boletaMsql?.Curso_Actual}".Trim())

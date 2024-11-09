@@ -22,7 +22,7 @@ namespace DataBaseModel
         public string? Celular { get; set; }
         public string? Email { get; set; }
         public int? Estado_civil_id { get; set; }
-        public int? Religion_id { get; set; }
+        public int? Id_religion { get; set; }
         public int? Escolaridad_id { get; set; }
         public string? Foto { get; set; }
         public DateTime? Created_at { get; set; }

@@ -534,11 +534,11 @@ ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD Colegio_procede varch
 
 
 
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_region' , N'Region_id', 'COLUMN';
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_pais' , N'Pais_id', 'COLUMN';
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.parientes_data_update.id_region' , N'region_id', 'COLUMN';
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_pais' , N'Pais_id', 'COLUMN';
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_region' , N'Region_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_region' , N'Id_region', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.estudiantes_data_update.id_pais' , N'Id_pais', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.update_data.parientes_data_update.id_region' , N'Id_region', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_pais' , N'Id_pais', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.parientes.id_region' , N'Id_region', 'COLUMN';
 
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_region' , N'Region_id', 'COLUMN';
-EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_pais' , N'Pais_id', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_region' , N'Id_region', 'COLUMN';
+EXEC OLIMPO.sys.sp_rename N'OLIMPO.dbo.estudiantes.id_pais' , N'Id_pais', 'COLUMN';

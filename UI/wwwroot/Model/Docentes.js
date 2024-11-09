@@ -26,7 +26,7 @@ class Docentes extends EntityClass {
    /**@type {String}*/ Celular;
    /**@type {String}*/ Email;
    /**@type {Number}*/ Estado_civil_id;
-   /**@type {Number}*/ Religion_id;
+   /**@type {Number}*/ Id_religion;
    /**@type {String}*/ Foto;
    /**@type {Date}*/ Created_at;
    /**@type {Date}*/ Updated_at;

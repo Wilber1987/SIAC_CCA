@@ -10,7 +10,7 @@ ALTER TABLE dbo.estudiantes_responsables_familia ALTER COLUMN estudiante_id int 
 
 
 ---EXEC sys.sp_rename N'dbo.parientes', N'tutores', 'OBJECT';
-ALTER TABLE dbo.parientes ADD pais_id int NULL;
+ALTER TABLE dbo.parientes ADD Id_pais int NULL;
 ALTER TABLE dbo.parientes ADD responsablepago bit NULL;
 ALTER TABLE dbo.parientes ADD noidentificacion varchar(100) NULL;
 

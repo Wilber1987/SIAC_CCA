@@ -26,7 +26,7 @@ class Docentes_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Celular = { type: 'text' };
    /**@type {ModelProperty}*/ Email = { type: 'text' };
    /**@type {ModelProperty}*/ Estado_civil_id = { type: 'number' };
-   /**@type {ModelProperty}*/ Religion_id = { type: 'number' };
+   /**@type {ModelProperty}*/ Id_religion = { type: 'number' };
    /**@type {ModelProperty}*/ Foto = { type: 'text' };
    /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
    /**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
