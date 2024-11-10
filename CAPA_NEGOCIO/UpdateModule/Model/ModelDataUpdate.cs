@@ -18,20 +18,20 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		{
 			AdapterUtil.SetMatchingProperties(inst, this);
 		}
-		
-		
+
+
 		public bool? Correo_enviado { get; set; }
 		public bool? Actualizo { get; set; }
 		public DateTime? Fecha_actualizacion { get; set; }
-		public bool? Acepto_terminos { get; set; }		
+		public bool? Acepto_terminos { get; set; }
 		public bool? Entro_al_sistema { get; set; }
-		public string? Ip_ingreso { get; set; }		
+		public string? Ip_ingreso { get; set; }
 		public DateTime? Fecha_ingreso_al_sistema { get; set; }
-		
+
 	}
 
 	public class Estudiantes_Data_Update : Estudiantes
-	{				
+	{
 		public Estudiantes_Data_Update()
 		{
 
@@ -41,33 +41,36 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 			AdapterUtil.SetMatchingProperties(inst, this);
 		}
 		public bool? Usa_transporte { get; set; }
-		
+
 		[JsonProp]
-		public List<Adress>? Puntos_Transportes { get ; set; }
+		public List<Adress>? Puntos_Transportes { get; set; }
 	}
 
 	public class Adress
-	{		
+	{
 		public string? Direccion { get; set; }
 		public string? Trayecto { get; set; } //IDA y VUELTA
 	}
-	
-	
-	public class  UpdatedData: EntityClass 
+
+
+	public class UpdatedData : EntityClass
 	{
 		[PrimaryKey(Identity = true)]
 		public int? Id { get; set; }
-		public DataContract?  DataContract { get; set; }
+		[JsonProp]
+		public DataContract? DataContract { get; set; }
+		[JsonProp]
 		public List<ModelFiles>? Documents_Boletas { get; set; }
+		[JsonProp]
 		public List<ModelFiles>? Documents_Contracts { get; set; }
-		
-		
+
+
 	}
 
 	public class DataContract
 	{
 		public int? Id_Tutor_responsable { get; set; }
-		public List<int>? Estudiantes { get; set; }		
-		public  List<int>? Tutores { get; set; }		 
+		public List<int>? Estudiantes { get; set; }
+		public List<int>? Tutores { get; set; }
 	}
 }
