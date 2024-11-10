@@ -125,22 +125,20 @@ namespace CAPA_NEGOCIO.Templates
 
 						var boleta = new Viewestudiantesboletas();
 						boleta.SetConnection(MySqlConnections.BellacomTest);
+						boleta.IdTEstudiante = Convert.ToInt32(estudiante.Codigo);
+						boleta.Ejercicio =fechaActual.Year;
+						boleta.IdTPeriodoAcademico = fechaActual.Year + 1;
 
 						var contratoEstudiante = plantillaBase;
-						var codigo = estudiante.Codigo;
 						var anio = fechaActual.Year;
 						var nexanio = fechaActual.Year + 1;
 
-						var boletaMsql = boleta.Where<Viewestudiantesboletas>(
-											FilterData.Equal("idtestudiante", estudiante.Codigo),
-											FilterData.Equal("ejercicio", anio),
-											FilterData.Equal("idtperiodoacademico", nexanio)
-										 ).FirstOrDefault();
+						var boletaMsql = boleta.GetBoletas().FirstOrDefault();					
 
 						if (boletaMsql != null)
 						{
 							var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
-							var familia = new Familias().Where<Familias>(FilterData.Equal("id", boletaMsql.idfamilia)).FirstOrDefault();
+							var familia = new Familias().Where<Familias>(FilterData.Equal("id", estudiante.Id_familia)).FirstOrDefault();
 
 							contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 																   .Replace("{{ ciclo }}", nexanio.ToString())
@@ -156,7 +154,7 @@ namespace CAPA_NEGOCIO.Templates
 						}
 						else
 						{							
-							Console.Write($"No se encontró boleta para el estudiante con código {codigo}");
+							Console.Write($"No se encontró boleta para el estudiante con código {estudiante.Codigo}");
 						}
 
 						forwardedPort.Stop();

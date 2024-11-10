@@ -157,7 +157,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 				});
 				CommitGlobalTransaction();
-				return new ResponseService { status = 200, message = "Actualizacion enviado" };
+				return new ResponseService { status = 200, message = "Solicitudes de actualización enviadas" };
 
 			}
 			catch (System.Exception)
@@ -338,7 +338,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					{
 						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
 					}
-					return new ResponseService { status = 200, message = "Datos actualizados!" };
+					return new ResponseService { status = 200, message = "¡Datos actualizados!" };
 
 				}
 				else
@@ -363,7 +363,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				FilterData.Equal("correo_enviado", false)
 			);
 
-			//var tutores = tutor.Where<Parientes_Data_Update>(filter);
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
