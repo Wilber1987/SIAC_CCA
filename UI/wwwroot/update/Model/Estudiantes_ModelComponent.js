@@ -12,6 +12,11 @@ export const sacramentos = [
     { id: "P", descripcion: "Primera Comunión" },
     { id: "C", descripcion: "Confirmación" }
 ];
+export const sexos = [
+    { id: "m", descripcion: "Femenino" },
+    { id: "f", descripcion: "Masculino" }    
+];
+export const viveConJson = [{ "id": "A", "Descripcion": "Ambos Padres" }, { "id": "M", "Descripcion": "Madre" }, { "id": "P", "Descripcion": "Padre" }, { "id": "B", "Descripcion": "Abuelo(a)" }, { "id": "T", "Descripcion": "Tio(a)" }, { "id": "O", "Descripcion": "Otros" }];
 class Estudiantes_ModelComponent extends EntityClass {
     /** @param {Partial<Estudiantes_ModelComponent>} [props] */
     constructor(props) {
@@ -20,45 +25,46 @@ class Estudiantes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-  
+
+
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
-    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true, fullDetail: false, require: false };
     /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true, fullDetail: false };
-    /**@type {ModelProperty}*/ Region = { type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true , fullDetail: false};
+    /**@type {ModelProperty}*/ Region = { label:"Ciudad", type: 'WSelect', ModelObject: () => new Regiones_ModelComponent(), hiddenInTable: true, hiddenFilter: true, fullDetail: false };
     /**@type {ModelProperty}*/ Direccion = { type: 'textarea', label: "Dirección familiar" };
-    /**@type {ModelProperty}*/ Vive_con = { type: 'text', label: "Con quién vive" };
-    /**@type {ModelProperty}*/ Colegio_procede = { type: 'text',  label: "Colegio de procedencia" };
+    /**@type {ModelProperty}*/ Vive_con = { type: 'select', label: "Con quién vive", Dataset: viveConJson };
+    /**@type {ModelProperty}*/ Colegio_procede = { type: 'text', require: false, label: "Colegio de procedencia" };
     /**@type {ModelProperty}*/ Sacramento = {
-        type: 'select', Dataset: sacramentos , require: false}
-    /**@type {ModelProperty}*/ SacramentoA = { type: 'number', label: "Año de Saceamento",
-         max: 2030, min: 2000, require: false };
+            type: 'select', Dataset: sacramentos, require: false
+        }
+    /**@type {ModelProperty}*/ Aniosacra = { type: 'number', label: "Año de Sacramento", min: 1990, require: false };
 
-    //**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
-    //**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };
-    //**@type {ModelProperty}*/ Peso = { type: 'number', hiddenInTable: true };
-    //**@type {ModelProperty}*/ Altura = { type: 'number', hiddenInTable: true };
-    //**@type {ModelProperty}*/ Tipo_sangre = { type: 'text', hiddenInTable: true };
-    //**@type {ModelProperty}*/ Padecimientos = { type: 'text', hiddenInTable: true };
-    //**@type {ModelProperty}*/ Alergias = { type: 'text', hiddenInTable: true };
-    //**@type {ModelProperty}*/ Activo = { type: 'checkbox', hiddenInTable: true };
-    
-    
-
-    ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };  
-    ///**@type {ModelProperty}*/ Id_religion = { type: 'number' };
-    ///**@type {ModelProperty}*/ Madre_id = { type: 'number' };
-    ///**@type {ModelProperty}*/ Padre_id = { type: 'number' };
-    ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
-    ///**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
-    ///**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail', ModelObject: () => new Estudiante_clases_ModelComponent() };
-    ///**@type {ModelProperty}*/ Clase_Group = { type: 'MasterDetail', ModelObject: () => new Clase_Group() };
-    ///**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail', ModelObject: () => new Responsables_ModelComponent() };
+        //**@type {ModelProperty}*/ Lugar_nacimiento = { type: 'text', hiddenInTable: true, hidden: true };
+        //**@type {ModelProperty}*/ Sexo = { type: 'text', hiddenInTable: true, hidden: true };
+        //**@type {ModelProperty}*/ Peso = { type: 'number', hiddenInTable: true };
+        //**@type {ModelProperty}*/ Altura = { type: 'number', hiddenInTable: true };
+        //**@type {ModelProperty}*/ Tipo_sangre = { type: 'text', hiddenInTable: true };
+        //**@type {ModelProperty}*/ Padecimientos = { type: 'text', hiddenInTable: true };
+        //**@type {ModelProperty}*/ Alergias = { type: 'text', hiddenInTable: true };
+        //**@type {ModelProperty}*/ Activo = { type: 'checkbox', hiddenInTable: true };
 
 
-}
+
+        ///**@type {ModelProperty}*/ Recorrido_id = { type: 'number' };  
+        ///**@type {ModelProperty}*/ Id_religion = { type: 'number' };
+        ///**@type {ModelProperty}*/ Madre_id = { type: 'number' };
+        ///**@type {ModelProperty}*/ Padre_id = { type: 'number' };
+        ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};
+        ///**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
+        ///**@type {ModelProperty}*/ Estudiante_clases = { type: 'MasterDetail', ModelObject: () => new Estudiante_clases_ModelComponent() };
+        ///**@type {ModelProperty}*/ Clase_Group = { type: 'MasterDetail', ModelObject: () => new Clase_Group() };
+        ///**@type {ModelProperty}*/ Responsables = { type: 'MasterDetail', ModelObject: () => new Responsables_ModelComponent() };
+
+
+    }
 export { Estudiantes_ModelComponent }
 
-export class Adress_ModelComponent {    
+export class Adress_ModelComponent {
     /** @type {ModelProperty}*/
     Direccion = { type: 'textarea' };
     /** @type {ModelProperty} IDA o VUELTA*/

@@ -38,7 +38,7 @@ class UpdateView extends HTMLElement {
         /**@type {Array<WForm>} */
         this.Forms = [];
         this.Draw();
-        
+
     }
     Draw = async () => {
         // @ts-ignore
@@ -129,7 +129,7 @@ class UpdateView extends HTMLElement {
                 if (estudiante.IdaVueltaForm && estudiante.IdaVueltaForm.Form) {
                     estudiante.IdaVueltaForm.Form.DrawComponent();
                 }
-                this.EditEstudiante(estudiante,original,idaVueltaForm,form)
+                this.EditEstudiante(estudiante, original, idaVueltaForm, form)
             }}">Actualizar datos</button>
             </div>            
         </div>`
@@ -214,11 +214,11 @@ class UpdateView extends HTMLElement {
                     ${radiioSinIdaVuelta}
                 </div>
                 <div class="element-option">
-                    <label for="radioIda">Ida</label>
+                    <label for="radioIda">Solo Ida</label>
                     ${radioIda}
                 </div>
                 <div class="element-option">
-                    <label for="radioVuelta">Vuelta</label>
+                    <label for="radioVuelta">Solo Vuelta</label>
                     ${radioVuelta}                
                 </div>
                 <div class="element-option">
@@ -231,7 +231,7 @@ class UpdateView extends HTMLElement {
         return formIdaYVuelta;
     }
 
-   
+
     /**
      * Navigates to a new tab with a form to edit the given student's details.
      * The form is created with the student's data and allows the user to update the student's details.
@@ -241,8 +241,8 @@ class UpdateView extends HTMLElement {
      * @param {HTMLElement} idaVueltaForm - The form element for selecting transportation options.
      * @param {WForm} form - The form object for editing the student's details.
      */
-    EditEstudiante(estudiante,original,idaVueltaForm,form) {
-        
+    EditEstudiante(estudiante, original, idaVueltaForm, form) {
+
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
@@ -297,9 +297,9 @@ class UpdateView extends HTMLElement {
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
-  
+
     EditTutor(pariente, original, form) {
-       
+
         this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
             ${this.CustomStyle.cloneNode(true)}          
             <h3>${pariente.Nombre_completo}</h3>
@@ -333,14 +333,14 @@ class UpdateView extends HTMLElement {
 
     GuardarPariente(pariente, original) {
         console.log(pariente, original);
-        
+
         this.append(ModalVericateAction(() => {
             for (const prop in pariente) {
                 original[prop] = pariente[prop];
             }
             this.NavManager?.ActiveTab("Tutores");
         }, "¿Esta seguro que desea actualizar los datos del tutor?"));
-        
+
     }
     /**
    * Restores the estudiante object with the original data before editing.
@@ -381,37 +381,43 @@ class UpdateView extends HTMLElement {
                         document.body.append(new WModalForm({
                             title: "Contrato",
                             ObjectModal: html`<div class="WModalForm">
-                                ${this.UpdateData?.Contrato}
-                                <hr>
-                                ${this.UpdateData?.Boleta}
+                                ${this.UpdateData?.Contrato}                                
                             </div>`,
                         }))
                     }}">Ver contrato</button>
+                <button class="Btn check-icon" onclick="${() => {
+                        document.body.append(new WModalForm({
+                            title: "Boleta",
+                            ObjectModal: html`<div class="WModalForm">                              
+                                ${this.UpdateData?.Boleta}
+                            </div>`,
+                        }))
+                    }}">Ver boleta</button>
                 <button class="Btn check-icon" onclick="${async () => {
                         // @ts-ignore
                         if (inputTerminosYCondiciones.checked != true) {
                             this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
-                        for (const pariente of this.UpdateData?.Parientes) {                            
-                            if (!WArrayF.ValidateByModel(pariente,  new Parientes_ModelComponent())) {
+                        for (const pariente of this.UpdateData?.Parientes) {
+                            if (!WArrayF.ValidateByModel(pariente, new Parientes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
-                            if (!WArrayF.ValidateByModel(estudiante,  new Estudiantes_ModelComponent())) {
+                            if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent())) {
                                 this.append(ModalMessege(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
-                       /* for (const form of this.Forms) {
-                            //await form.DrawComponent();
-                            if (!form.Validate()) {
-                                this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
-                                return;
-                            }
-                        }*/
+                        /* for (const form of this.Forms) {
+                             //await form.DrawComponent();
+                             if (!form.Validate()) {
+                                 this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
+                                 return;
+                             }
+                         }*/
                         this.append(ModalVericateAction(async () => {
                             const response = await new UpdateDataRequest({
                                 Parientes: this.UpdateData?.Parientes,
@@ -419,7 +425,7 @@ class UpdateView extends HTMLElement {
                                 // @ts-ignore
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
-                            this.append(ModalMessege(response.message,undefined,true));
+                            this.append(ModalMessege(response.message, undefined, true));
                         }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                     }}">Aceptar</button>
