@@ -150,3 +150,4 @@ ALTER TABLE update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update
 ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_estadocivil FOREIGN KEY (estado_civil_id) REFERENCES SIAC_CCA_BEFORE_DEMO.dbo.estados_civiles(id);
 ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_religion FOREIGN KEY (id_religion) REFERENCES SIAC_CCA_BEFORE_DEMO.dbo.religiones(id);
 
+alter table [update_data].[parientes_data_update] add profesion nvarchar(250) null;
