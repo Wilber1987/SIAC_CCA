@@ -151,3 +151,11 @@ ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAIN
 ALTER TABLE SIAC_CCA_BEFORE_DEMO.update_data.parientes_data_update ADD CONSTRAINT FK_parientes_update_religion FOREIGN KEY (id_religion) REFERENCES SIAC_CCA_BEFORE_DEMO.dbo.religiones(id);
 
 alter table [update_data].[parientes_data_update] add profesion nvarchar(250) null;
+
+CREATE TABLE OLIMPO.update_data.UpdatedData (
+	Id int IDENTITY(0,1) NOT NULL,
+	DataContract nvarchar(MAX) NULL,
+	Documents_Boletas nvarchar(MAX) NULL,
+	Documents_Contracts nvarchar(MAX) NULL,
+	CONSTRAINT ContractsData_PK PRIMARY KEY (Id)
+);

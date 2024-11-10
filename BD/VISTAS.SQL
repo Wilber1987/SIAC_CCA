@@ -49,7 +49,8 @@ SELECT ec.transferido,
     e2.codigo, 
     e2.sexo,
     e2.estatus as estado,
-    c2.observaciones
+    c2.observaciones,
+    e2.id_familia
 from dbo.estudiante_clases ec 
 INNER JOIN dbo.estudiantes e2 on ec.estudiante_id = e2.id 
 inner join dbo.clases c   on ec.clase_id  = c.id

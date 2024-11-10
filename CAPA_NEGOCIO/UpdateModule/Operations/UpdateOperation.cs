@@ -133,7 +133,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
 					if (pariente != null)
 					{
-						pariente.Correo_enviado = false;
+						pariente.Correo_enviado = null;
 						pariente.Update();
 					}
 					else
@@ -257,15 +257,26 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static List<Parientes>? GetParientesToInvite(Parientes inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			//inst.Responsable_Pago = true;
+			var clases = new Estudiante_clases
+			{
+				filterData = [FilterData.In("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)]
+			}.SimpleGet<Estudiante_clases>();
+			
+			var estudiantes = new Estudiantes
+			{
+				filterData = [FilterData.In("Id", clases.Select(x => x.Estudiante_id).ToArray())]
+			}.SimpleGet<Estudiantes>();			
+			
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
+			inst.filterData?.Add(FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray()));
 			return inst.SimpleGet<Parientes>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.Entro_al_sistema = true;
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
 
@@ -273,14 +284,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		}
 		public static List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.Actualizo = true;
 			//inst.filterData?.Add(FilterData.Equal("Actualizo", 1));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			return inst.SimpleGet<Parientes_Data_Update>();
 		}
@@ -328,6 +339,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante?.Save();
 						}
 					});
+					
 					CommitGlobalTransaction();
 					try
 					{
