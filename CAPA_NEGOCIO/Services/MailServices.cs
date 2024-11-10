@@ -37,18 +37,30 @@ namespace CAPA_NEGOCIO.Services
 
 			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Contrato aceptado y datos actualizados</p></div>";
 			List<ModelFiles> Attach_Files = [
-				FileService.HtmlToPdfBase64(updateData.Contrato,"contrato.pdf"),
-				FileService.HtmlToPdfBase64(updateData.Boleta,"boletas.pdf")
+				FileService.HtmlToPdfBase64(updateData.Contrato,"contrato_.pdf"),
+				FileService.HtmlToPdfBase64(updateData.Boleta,"boletas_.pdf")
 			];
+
 			foreach (var file in Attach_Files ?? new List<ModelFiles>())
 			{
-				ModelFiles Response = (ModelFiles)FileService.upload("Attach\\", file).body;
-				file.Value = Response.Value;
-				file.Type = Response.Type;
+				ModelFiles? Response = (ModelFiles?)FileService.upload("Attach\\", file).body;
+				file.Value = Response?.Value;
+				file.Type = Response?.Type;
 			}
 
+			//guardo los archivos con su ruta
+			new UpdatedData
+			{
+				DataContract = new DataContract
+				{
+					Id_Tutor_responsable = tutor.Id,
+					Estudiantes = updateData.Estudiantes.Select(e => e.Id.GetValueOrDefault()).ToList(),
+					Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList()
+				},
+				Documents_Contracts = [Attach_Files?[0]],
+				Documents_Boletas = [Attach_Files?[1]]
 
-
+			}.Save();
 
 			await SMTPMailServices.SendMail(
 				"cca@noreply.com",//todo tomar el from

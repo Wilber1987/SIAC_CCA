@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_DATOS.Services;
 using DataBaseModel;
 
 namespace CAPA_NEGOCIO.UpdateModule.Model
@@ -49,5 +50,24 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 	{		
 		public string? Direccion { get; set; }
 		public string? Trayecto { get; set; } //IDA y VUELTA
+	}
+	
+	
+	public class  UpdatedData: EntityClass 
+	{
+		[PrimaryKey(Identity = true)]
+		public int? Id { get; set; }
+		public DataContract?  DataContract { get; set; }
+		public List<ModelFiles>? Documents_Boletas { get; set; }
+		public List<ModelFiles>? Documents_Contracts { get; set; }
+		
+		
+	}
+
+	public class DataContract
+	{
+		public int? Id_Tutor_responsable { get; set; }
+		public List<int>? Estudiantes { get; set; }		
+		public  List<int>? Tutores { get; set; }		 
 	}
 }

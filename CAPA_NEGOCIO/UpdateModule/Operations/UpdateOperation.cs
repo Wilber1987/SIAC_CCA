@@ -339,6 +339,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante?.Save();
 						}
 					});
+					
 					CommitGlobalTransaction();
 					try
 					{
