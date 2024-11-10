@@ -259,8 +259,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
 			//inst.Responsable_Pago = true;
+			var clases = new Estudiante_clases
+			{
+				filterData = [FilterData.In("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)]
+			}.SimpleGet<Estudiante_clases>();
+			
+			var estudiantes = new Estudiantes
+			{
+				filterData = [FilterData.In("Id", clases.Select(x => x.Estudiante_id).ToArray())]
+			}.SimpleGet<Estudiantes>();			
+			
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
+			inst.filterData?.Add(FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray()));
 			return inst.SimpleGet<Parientes>();
 		}
 		public static List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
