@@ -372,7 +372,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			var tutor = new Parientes_Data_Update();			
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
-				FilterData.Equal("correo_enviado", false)
+				FilterData.Equal("correo_enviado", false),
+				FilterData.ISNull("correo_enviado")
 			);
 
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
