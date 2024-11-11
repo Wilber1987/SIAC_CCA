@@ -24,6 +24,16 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
         super();
         this.props = props;
         this.append(this.CustomStyle);
+
+        this.Draw();
+    }
+    Draw = async () => {
+        this.dataEntityInvitados = await new Parientes().GetParientesInvitados();
+        this.dataEntityParientesLoguearon = await new Parientes().GetParientesQueLoguearon();
+        this.dataEntityParientesNoLoguearon = await new Parientes().GetParientesQueNoLoguearon();
+        this.dataEntityParientesActualizaron = await new Parientes().GetParientesQueActulizaron();
+        this.dataEntityToInvite = await new Parientes().Get();
+
         this.NavManager = new WAppNavigator({
             NavStyle: "tab",
             Inicialize: true,
@@ -35,20 +45,18 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             StylesControlsV3.cloneNode(true),
             this.NavManager,
         );
-        this.Draw();
-    }
-    Draw = async () => {
-
     }
 
 
     NavElements() {
         return [{
-            name: "Tutores invitados", action: () => {
+            name: `<div>Tutores invitados - <span>${this.dataEntityInvitados?.length}</span></div>` , action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesInvitados() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso : {type: "text"}}),
+                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
                     EntityModel: modelEntity,
+                    AddItemsFromApi: false,
+                    Dataset:  this.dataEntityInvitados,
                     Options: {
                         Filter: true,
                         //FilterDisplay: true,
@@ -61,14 +69,17 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                             Reenviar invitación</button>
                     </div>
                     ${this.ParientesTable}
+                    ${this.CustomStyle.cloneNode(true)}
                 </div>`
             }
         }, {
-            name: "Tutores que ingresaron", action: () => {
+            name: `<div>Tutores que ingresaron - <span>${this.dataEntityParientesLoguearon?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueLoguearon() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso : {type: "text"}}),
+                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
                     EntityModel: modelEntity,
+                    AddItemsFromApi: false,
+                    Dataset: this.dataEntityParientesLoguearon,
                     Options: {
                         Filter: true,
                         MultiSelect: true
@@ -76,29 +87,35 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 });
                 return html`<div class="w-table-container">
                     ${this.ParientesTable}
-                </div>`
-            }
-        },{
-            name: "Tutores que no ingresaron", action: () => {
-                const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueNoLoguearon() })
-                this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso : {type: "text"}}),
-                    EntityModel: modelEntity,
-                    Options: {
-                        Filter: true,
-                        MultiSelect: true
-                    }
-                });
-                return html`<div class="w-table-container">
-                    ${this.ParientesTable}
+                    ${this.CustomStyle.cloneNode(true)}
                 </div>`
             }
         }, {
-            name: "Tutores que actualizarón", action: () => {
+            name: `<div>Tutores que no ingresaron - <span>${this.dataEntityParientesNoLoguearon?.length}</span></div>`, action: () => {
+                const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueNoLoguearon() })
+                this.ParientesTable = new WTableComponent({
+                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
+                    EntityModel: modelEntity,
+                    AddItemsFromApi: false,
+                    Dataset: this.dataEntityParientesNoLoguearon,
+                    Options: {
+                        Filter: true,
+                        MultiSelect: true
+                    }
+                });
+                return html`<div class="w-table-container">
+                    ${this.ParientesTable}
+                    ${this.CustomStyle.cloneNode(true)}
+                </div>`
+            }
+        }, {
+            name: `<div>Tutores que actualizarón - <span>${this.dataEntityParientesActualizaron?.length}</span></div>` , action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueActulizaron() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso : {type: "text"}}),
+                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
                     EntityModel: modelEntity,
+                    AddItemsFromApi: false,
+                    Dataset: this.dataEntityParientesActualizaron,
                     Options: {
                         Filter: true,
                         MultiSelect: true,
@@ -129,13 +146,16 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 });
                 return html`<div class="w-table-container">                    
                     ${this.ParientesTable}
+                    ${this.CustomStyle.cloneNode(true)}
                 </div>`
             }
         }, {
-            name: "Envio de invitaciones", action: () => {
+            name: `<div>Envio de invitaciones - <span>${this.dataEntityToInvite?.length}</span></div>` , action: () => {
                 this.ParientesTable = new WTableComponent({
                     ModelObject: new Parientes_ModelComponent(),
                     EntityModel: new Parientes(),
+                    Dataset: this.dataEntityToInvite,
+                    AddItemsFromApi: false,
                     Options: {
                         Filter: true,
                         MultiSelect: true
@@ -146,6 +166,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                         <button class="BtnPrimary" onclick="${(/** @type {any} */ ev) => this.SendNotificaciones(this.ParientesTable)}">Enviar</button>
                     </div>
                     ${this.ParientesTable}
+                    ${this.CustomStyle.cloneNode(true)}
                 </div>`
             }
         },]
@@ -173,7 +194,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 </div>
                 <div class="element-data">
                     <span>Vive con:</span>
-                    ${estudiante.Vive_con ?? "No especificado" }                    
+                    ${estudiante.Vive_con ?? "No especificado"}                    
                 </div>
                 <div class="element-data">
                     <span>Colegio de procedencia:</span>
@@ -310,6 +331,12 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             font-size: 16px;
             & span {
                 font-size: 12px;
+            }
+        }
+        .tab .elementNavActive, .tab .elementNav {
+            & span {
+                padding-left: 10px;
+                font-weight: bold;
             }
         }
     `

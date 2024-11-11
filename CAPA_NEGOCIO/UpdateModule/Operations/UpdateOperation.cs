@@ -133,7 +133,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
 					if (pariente != null)
 					{
-						pariente.Correo_enviado = null;
+						pariente.Correo_enviado = false;
 						pariente.Update();
 					}
 					else
@@ -371,7 +371,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 			var tutor = new Parientes_Data_Update();			
 			var filter = FilterData.Or(
-				FilterData.ISNull("correo_enviado"),
+				FilterData.Distinc("correo_enviado", true),
 				FilterData.Equal("correo_enviado", false)
 			);
 

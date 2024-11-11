@@ -37,20 +37,20 @@ class Parientes extends EntityClass {
     /**@type {Regiones}*/ Region
     /**@type {Estados_Civiles}*/ Estado_civil
     /**@type {Titulos}*/ Titulo
-    GetParientesQueLoguearon() {
-        return this.GetData("ApiUpdate/GetParientesQueLoguearon");
+    async GetParientesQueLoguearon() {
+        return await this.GetData("ApiUpdate/GetParientesQueLoguearon");
     }
-    GetParientesQueActulizaron() {
-        return this.GetData("ApiUpdate/GetParientesQueActulizaron");
+    async GetParientesQueActulizaron() {
+        return await this.GetData("ApiUpdate/GetParientesQueActulizaron");
     }
-    GetParientesInvitados() {
-        return this.GetData("ApiUpdate/GetParientesInvitados");
+    async GetParientesInvitados() {
+        return await this.GetData("ApiUpdate/GetParientesInvitados");
     }
-    GetUpdatedData() {
-        return this.GetData("ApiUpdate/GetUpdatedData");
+    async GetUpdatedData() {
+        return await this.GetData("ApiUpdate/GetUpdatedData");
     }
-    GetParientesQueNoLoguearon() {
-        return this.GetData("ApiUpdate/GetParientesQueNoLoguearon");
+    async GetParientesQueNoLoguearon() {
+        return await this.GetData("ApiUpdate/GetParientesQueNoLoguearon");
     }
 }
 export { Parientes };
