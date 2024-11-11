@@ -19,11 +19,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate()
 		{
-			await MigrateParentesco();
+			//await MigrateParentesco();
 			await MigrateFamilia();
-			await migrateEstudiantesSiac(_sshTunnelService);
+			/*await migrateEstudiantesSiac(_sshTunnelService);
 			await MigrateParientesAndUsers();
-			await migrateEstudiantesReponsablesFamilia();
+			await migrateEstudiantesReponsablesFamilia();*/
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -262,8 +262,11 @@ namespace CAPA_NEGOCIO.Oparations
 							Id = tn.Idfamilia
 						}.Find<Familias>();
 
-						if (existingFamilia != null && (existingFamilia.Fecha_ultima_notificacion != tn.Fechaultimanotificacion))
+						if (existingFamilia != null /*&& (existingFamilia.Fecha_ultima_notificacion != tn.Fechaultimanotificacion)*/)
 						{
+							if (tn.Idtfamilia == null || tn.Idtfamilia == ""){
+								Console.Write("-->idtfamilia nulo para la familia: "+tn.Idfamilia);
+							}
 							existingFamilia.Idtfamilia = tn.Idtfamilia;
 							existingFamilia.Descripcion = tn.Texto;
 							existingFamilia.Estado = tn.Estatus;

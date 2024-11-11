@@ -23,7 +23,7 @@ namespace CAPA_NEGOCIO.Services
 		{
 
 			await SMTPMailServices.SendMail(
-				 "cca@noreply.com",//todo tomar el from
+				 "notificacionesportal@cca.edu.ni",//todo tomar el from
 				 toMails,
 				 subject,
 				 templatePage,
@@ -63,7 +63,7 @@ namespace CAPA_NEGOCIO.Services
 			}.Save();
 
 			await SMTPMailServices.SendMail(
-				"cca@noreply.com",//todo tomar el from
+				"notificacionesportal@cca.edu.ni",//todo tomar el from
 				[tutor.Email],
 				"Contrato aceptado y datos actualizados",
 				templatePage,
