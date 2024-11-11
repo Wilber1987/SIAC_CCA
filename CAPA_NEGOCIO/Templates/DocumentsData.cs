@@ -143,7 +143,7 @@ namespace CAPA_NEGOCIO.Templates
 							contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 																   .Replace("{{ ciclo }}", nexanio.ToString())
 																   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
-																   .Replace("{{ no_expediente }}", familia?.Idtfamilia.ToString() ?? string.Empty)
+																   .Replace("{{ no_expediente }}", familia?.Idtfamilia?.ToString() ?? string.Empty)
 																   .Replace("{{ curso_actual }}", $"{boletaMsql?.Grado_Actual} {boletaMsql?.Curso_Actual}".Trim())
 																   .Replace("{{ promueve }}", $"{boletaMsql?.Grado_Siguiente} {boletaMsql?.Curso_Siguiente}".Trim())
 																   .Replace("{{ moneda }}", boletaMsql?.IdTMoneda.ToString() ?? string.Empty)

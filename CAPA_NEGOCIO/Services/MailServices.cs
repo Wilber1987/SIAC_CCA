@@ -13,10 +13,10 @@ namespace CAPA_NEGOCIO.Services
 	public class MailServices
 	{
 		static readonly MailConfig Config = new()
-		{
-			HOST = "smtp.gmail.com",
-			PASSWORD = "nbixjsqrnhkblxag",
-			USERNAME = "alderhernandez@gmail.com"
+		{			
+            HOST = "smtp.gmail.com",
+			PASSWORD = "czavspiafvhcttdg",
+			USERNAME = "notificacionesportal@cca.edu.ni"
 		};
 
 		public static async void SendMailInvitation<T>(List<string> toMails, string from, string subject, string templatePage, T model)
