@@ -16,7 +16,9 @@
     UserModel user = AuthNetCore.User(identify);
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
     string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "IP no disponible";
-    pariente!.Entro_al_sistema = true;
+    if(pariente != null){
+        pariente.Entro_al_sistema = true;
+    }
     var Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
     var Religiones = new Religiones().Get<Religiones>();
     var Paises = new Paises().Get<Paises>();
@@ -31,14 +33,16 @@
 
 }
 
-@if (pariente.Acepto_terminos == true)
+@if (pariente != null && pariente.Acepto_terminos == true)
 {
     <h1 style="text-align: center;">¡Datos actualizados! Revise la información enviada a su correo.</h1>
 }
 else
 {
-    pariente!.Ip_ingreso = ipAddress;
-    pariente.Update();
+    if(pariente!= null){
+        pariente!.Ip_ingreso = ipAddress;
+        pariente.Update();
+    }
     <script type="module">        
         import { UpdateView } from "/update/UpdateView.js";
         const ESTADOS_CIVILES = @Html.Raw(estadosCivilesJson);
