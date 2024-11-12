@@ -24,7 +24,7 @@ namespace CAPA_NEGOCIO.Services
 		{
 
 			await SMTPMailServices.SendMail(
-				 "notificacionesportal@cca.edu.ni",//todo tomar el from
+				 "",//todo tomar el from
 				 toMails,
 				 subject,
 				 templatePage,
@@ -35,7 +35,8 @@ namespace CAPA_NEGOCIO.Services
 		}
 		public static async void SendMailAceptedContract(Parientes_Data_Update tutor, UpdateData updateData)
 		{
-			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Contrato aceptado y datos actualizados</p></div>";
+
+			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Hemos adjuntado los contratos y boletas, favor descarguelos</p></div>";
 			List<ModelFiles> Attach_Files = [
 				FileService.HtmlToPdfBase64(updateData.Contrato, "contrato_"),
 				FileService.HtmlToPdfBase64(updateData.Boleta, "boletas_")
@@ -69,7 +70,7 @@ namespace CAPA_NEGOCIO.Services
 			}
 
 			await SMTPMailServices.SendMail(
-				"notificacionesportal@cca.edu.ni",//todo tomar el from
+				"",//todo tomar el from
 				[tutor.Email],
 				"Contrato aceptado y datos actualizados",
 				templatePage,
