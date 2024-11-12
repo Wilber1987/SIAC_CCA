@@ -65,8 +65,10 @@ namespace CAPA_NEGOCIO.Services
 					DataContract = new DataContract
 					{
 						Id_Tutor_responsable = tutor.Id,
+                        Tutor_responsable = tutor.Nombre_completo,
 						Estudiantes = updateData.Estudiantes.Select(e => e.Id.GetValueOrDefault()).ToList(),
-						Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList()
+						Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList(),
+                        Fecha = DateTime.Now
 					},
 					Documents_Contracts = [contrato],
 					Documents_Boletas = [boleta]
