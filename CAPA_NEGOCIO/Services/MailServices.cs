@@ -37,17 +37,26 @@ namespace CAPA_NEGOCIO.Services
 		{
 
 			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Hemos adjuntado los contratos y boletas, favor descarguelos</p></div>";
-			List<ModelFiles> Attach_Files = [
-				FileService.HtmlToPdfBase64(updateData.Contrato, "contrato_"),
-				FileService.HtmlToPdfBase64(updateData.Boleta, "boletas_")
-			];
-
+			List<ModelFiles> Attach_Files = [];
+			ModelFiles boleta = new ModelFiles();
+			ModelFiles contrato = new ModelFiles();
+			if (updateData.Contrato != null && updateData.Contrato != "")	
+			{
+				contrato = FileService.HtmlToPdfBase64(updateData.Contrato, "contrato_"); 
+				Attach_Files.Add(contrato);
+			} 
+			if (updateData.Boleta != null && updateData.Boleta != "")
+			{
+				boleta = FileService.HtmlToPdfBase64(updateData.Boleta, "boleta_");
+				Attach_Files.Add(boleta);
+			}	
 			foreach (var file in Attach_Files ?? new List<ModelFiles>())
 			{
 				ModelFiles? Response = (ModelFiles?)FileService.upload("Attach\\", file).body;
 				file.Value = Response?.Value;
 				file.Type = Response?.Type;
 			}
+			
 			try
 			{
 				// guardo los archivos con su ruta
@@ -59,8 +68,8 @@ namespace CAPA_NEGOCIO.Services
 						Estudiantes = updateData.Estudiantes.Select(e => e.Id.GetValueOrDefault()).ToList(),
 						Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList()
 					},
-					Documents_Contracts = [Attach_Files?[0]],
-					Documents_Boletas = [Attach_Files?[1]]
+					Documents_Contracts = [contrato],
+					Documents_Boletas = [boleta]
 
 				}.Save();
 			}

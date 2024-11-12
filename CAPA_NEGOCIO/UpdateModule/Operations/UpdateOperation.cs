@@ -73,14 +73,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-				if (updateData.Contrato == "")
+				/*if (updateData.Contrato == "")
 				{
 					updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
 				}
 				if (updateData.Boleta == "") 
 				{
 					updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
-				}
+				}*/
 				
 			}
 			catch (System.Exception)
