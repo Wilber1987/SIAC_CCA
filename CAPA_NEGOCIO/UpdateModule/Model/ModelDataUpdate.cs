@@ -70,7 +70,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 	public class DataContract
 	{
 		public int? Id_Tutor_responsable { get; set; }
+		public string? Tutor_responsable { get; set;}
 		public List<int>? Estudiantes { get; set; }
 		public List<int>? Tutores { get; set; }
+		public DateTime? Fecha { get; set;}
+		
 	}
 }
