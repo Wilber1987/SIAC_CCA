@@ -3,6 +3,9 @@
 @using CAPA_DATOS.Security;
 @{
     string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";  
+    /*var admin = new Security_Users { Id_User = 1}.Find<Security_Users>();
+    admin.Password = EncrypterServices.Encrypt("Acceso1");
+    admin.Update();*/
 
     if (!SecurityController.Auth(identify))
     {

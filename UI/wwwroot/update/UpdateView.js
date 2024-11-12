@@ -389,7 +389,7 @@ class UpdateView extends HTMLElement {
                         document.body.append(new WModalForm({
                             title: "Boleta",
                             ObjectModal: html`<div class="WModalForm">                              
-                                ${this.UpdateData?.Boleta}
+                                ${this.UpdateData?.Boleta == "" ? "No se encuentra boleta de matrícula, ponerse en contacto con el colegio" : this.UpdateData?.Boleta}
                             </div>`,
                         }))
                     }}">Ver boleta</button>
