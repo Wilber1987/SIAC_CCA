@@ -153,8 +153,11 @@ namespace CAPA_NEGOCIO.Templates
 							boletas.Add(contratoEstudiante);
 						}
 						else
-						{							
+						{
+							forwardedPort.Stop();
+							client.Disconnect();							
 							Console.Write($"No se encontró boleta para el estudiante con código {estudiante.Codigo}");
+							throw new Exception("No se encontró boleta para el estudiante con código " + estudiante.Codigo);
 						}
 
 						forwardedPort.Stop();
