@@ -169,8 +169,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return new ResponseService { status = 200, message = "Solicitudes de actualización enviadas" };
 
 			}
-			catch (System.Exception)
+			catch (System.Exception ex)
 			{
+				LoggerServices.AddMessageError("Error en StartUpdateProcess", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}
