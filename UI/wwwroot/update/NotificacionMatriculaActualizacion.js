@@ -29,9 +29,11 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             Ip_ingreso: { type: "text" },
             Fecha_Nacimiento: {
                 type: "operation", action: (element) => {
-                    console.log(element);
-                    
                     return new DateTime(element.Fecha_Nacimiento).toDDMMYYYY()
+                }
+            }, Fecha_Actualizacion: {
+                type: "operation", label: "Fecha de actualización", action: (element) => {
+                    return new DateTime(element.Fecha_actualizacion).toDDMMYYYY()
                 }
             }
         });
@@ -205,7 +207,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 </div>
                 <div class="element-data">
                     <span>Vive con:</span>
-                    ${estudiante.Vive_con ?? "No especificado"}                    
+                    ${estudiante.Vivecon ?? "No especificado"}                    
                 </div>
                 <div class="element-data">
                     <span>Colegio de procedencia:</span>
