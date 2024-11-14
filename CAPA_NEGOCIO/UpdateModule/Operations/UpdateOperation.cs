@@ -169,8 +169,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return new ResponseService { status = 200, message = "Solicitudes de actualización enviadas" };
 
 			}
-			catch (System.Exception)
+			catch (System.Exception ex)
 			{
+				LoggerServices.AddMessageError("Error en StartUpdateProcess", ex);
 				RollBackGlobalTransaction();
 				throw;
 			}
@@ -403,13 +404,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					t.Update();
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
 				}
 			});
-
-
 
 		}
 
@@ -426,7 +425,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));

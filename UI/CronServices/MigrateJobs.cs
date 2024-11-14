@@ -146,7 +146,7 @@ namespace BackgroundJob.Cron.Jobs
 			{				
 				new UpdateOperation().sendInvitations();
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				_log.LogInformation(":::::::::::ERROR  SendInvitationToUpdateCronJob... at {0}", ex);
 			}
