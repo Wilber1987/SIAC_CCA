@@ -36,7 +36,7 @@ CREATE TABLE update_data.estudiantes_data_update (
 	id_cliente int NULL,
 	codigomed varchar(255) COLLATE Modern_Spanish_CI_AS NULL,
 	saldo_eamd decimal(18,2) NULL,
-	vive_con nvarchar(150) COLLATE Modern_Spanish_CI_AS NULL,
+	vivecon nvarchar(150) COLLATE Modern_Spanish_CI_AS NULL,
 
 	id_pais int NULL,
 	id_region int NULL,

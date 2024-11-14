@@ -22,7 +22,7 @@ class Estudiantes extends EntityClass {
     /**@type {String}*/ Lugar_nacimiento;
     /**@type {String}*/ Sexo;
     /**@type {String}*/ Direccion;
-    /**@type {String}*/ Vive_con;
+    /**@type {String}*/ Vivecon;
     /**@type {String}*/ Colegio_procede;
     /**@type {String}*/ Sacramento;
     /**@type {Number}*/ SacramentoA;
