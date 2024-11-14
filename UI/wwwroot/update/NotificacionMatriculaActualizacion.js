@@ -11,6 +11,7 @@ import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Estudiantes } from "./Model/Estudiantes.js";
 import { sacramentos } from "./Model/Estudiantes_ModelComponent.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -24,8 +25,18 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
         super();
         this.props = props;
         this.append(this.CustomStyle);
-
+        this.parienteModelComponent = new Parientes_ModelComponent({
+            Ip_ingreso: { type: "text" },
+            Fecha_Nacimiento: {
+                type: "operation", action: (element) => {
+                    console.log(element);
+                    
+                    return new DateTime(element.Fecha_Nacimiento).toDDMMYYYY()
+                }
+            }
+        });
         this.Draw();
+
     }
     Draw = async () => {
         this.dataEntityInvitados = await new Parientes().GetParientesInvitados();
@@ -50,13 +61,13 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
 
     NavElements() {
         return [{
-            name: `<div>Tutores invitados - <span>${this.dataEntityInvitados?.length}</span></div>` , action: () => {
+            name: `<div>Tutores invitados - <span>${this.dataEntityInvitados?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesInvitados() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
+                    ModelObject: this.parienteModelComponent,
                     EntityModel: modelEntity,
                     AddItemsFromApi: false,
-                    Dataset:  this.dataEntityInvitados,
+                    Dataset: this.dataEntityInvitados,
                     Options: {
                         Filter: true,
                         //FilterDisplay: true,
@@ -76,7 +87,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             name: `<div>Tutores que ingresaron - <span>${this.dataEntityParientesLoguearon?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueLoguearon() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
+                    ModelObject: this.parienteModelComponent,
                     EntityModel: modelEntity,
                     AddItemsFromApi: false,
                     Dataset: this.dataEntityParientesLoguearon,
@@ -94,7 +105,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             name: `<div>Tutores que no ingresaron - <span>${this.dataEntityParientesNoLoguearon?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueNoLoguearon() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
+                    ModelObject: this.parienteModelComponent,
                     EntityModel: modelEntity,
                     AddItemsFromApi: false,
                     Dataset: this.dataEntityParientesNoLoguearon,
@@ -109,10 +120,10 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 </div>`
             }
         }, {
-            name: `<div>Tutores que actualizarón - <span>${this.dataEntityParientesActualizaron?.length}</span></div>` , action: () => {
+            name: `<div>Tutores que actualizarón - <span>${this.dataEntityParientesActualizaron?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueActulizaron() })
                 this.ParientesTable = new WTableComponent({
-                    ModelObject: new Parientes_ModelComponent({ Ip_ingreso: { type: "text" } }),
+                    ModelObject: this.parienteModelComponent,
                     EntityModel: modelEntity,
                     AddItemsFromApi: false,
                     Dataset: this.dataEntityParientesActualizaron,
@@ -150,7 +161,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 </div>`
             }
         }, {
-            name: `<div>Envio de invitaciones - <span>${this.dataEntityToInvite?.length}</span></div>` , action: () => {
+            name: `<div>Envio de invitaciones - <span>${this.dataEntityToInvite?.length}</span></div>`, action: () => {
                 this.ParientesTable = new WTableComponent({
                     ModelObject: new Parientes_ModelComponent(),
                     EntityModel: new Parientes(),
