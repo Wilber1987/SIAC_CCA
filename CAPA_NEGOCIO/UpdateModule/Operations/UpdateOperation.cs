@@ -81,7 +81,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
 				}*/
-				
+
 			}
 			catch (System.Exception)
 			{
@@ -273,12 +273,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				filterData = [FilterData.In("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)]
 			}.SimpleGet<Estudiante_clases>();
-			
+
 			var estudiantes = new Estudiantes
 			{
 				filterData = [FilterData.In("Id", clases.Select(x => x.Estudiante_id).ToArray())]
-			}.SimpleGet<Estudiantes>();			
-			
+			}.SimpleGet<Estudiantes>();
+
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
 			inst.filterData?.Add(FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray()));
@@ -349,7 +349,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante?.Save();
 						}
 					});
-					
+
 					CommitGlobalTransaction();
 					try
 					{
@@ -379,7 +379,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public void sendInvitations()
 		{
 
-			var tutor = new Parientes_Data_Update();			
+			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
 				FilterData.Equal("correo_enviado", false),
@@ -399,14 +399,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
 
 					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
-					BeginGlobalTransaction();
-					t.Correo_enviado = true;
-					t.Update();
-					CommitGlobalTransaction();
+
 				}
 				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
+				}
+				finally
+				{
+					/*BeginGlobalTransaction();
+					t.Correo_enviado = true;
+					t.Update();
+					CommitGlobalTransaction();*/
 				}
 			});
 
