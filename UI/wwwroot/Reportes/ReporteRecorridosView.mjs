@@ -10,6 +10,7 @@ import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { Estudiantes } from "../update/Model/Estudiantes.js";
 import { Estudiantes_ModelComponent } from "../update/Model/Estudiantes_ModelComponent.js";
 import { PageType, WReportComponent } from "../WDevCore/WComponents/WReportComponent.js";
+import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -116,7 +117,7 @@ export function ReportEstudiantesRecorridos(dataEntityRecorridos) {
             Direccion: estudiante.Puntos_Transportes[0].Direccion
         }
     })
-   
+
     const table = html`<table class="table table-striped mb-0">
         <thead>
             <th>N°</th><th>Tutor</th><th>Nombre del alumno</th><th>Correo</th><th>Télefono</th><th>Nivel</th><th>Dirección</th>           
@@ -125,7 +126,7 @@ export function ReportEstudiantesRecorridos(dataEntityRecorridos) {
     </table>`
     dataSet.forEach(element => {
         table.append(WRender.Create({
-            tagName: "tr", children: [              
+            tagName: "tr", children: [
                 { tagName: "td", innerText: element.No },
                 { tagName: "td", innerText: element.Tutor },
                 { tagName: "td", innerText: element.Nombre_del_Alumno },
@@ -139,21 +140,75 @@ export function ReportEstudiantesRecorridos(dataEntityRecorridos) {
     const encodedText = "Colegio Centro Am&#xE9;rica";
     const parser = new DOMParser();
     const decodedText = parser.parseFromString(encodedText, "text/html").documentElement.textContent;
-    
+
     return html`<div class="w-table-container">                    
         <div class="OptionsContainer">
             
         </div>
         <div class="">
-             ${ new WReportComponent({
-                Dataset: dataSet,
-                Logo: `${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}`,
-                Header: decodedText ?? "",
-                SubHeader: "Listado de alumnos que requieren Recorrido 2025",
-                PageType: PageType.OFICIO_HORIZONTAL,
-                //ModelObject: model
-            })}
+             ${new WReportComponent({
+        Dataset: dataSet,
+        Logo: `${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}`,
+        Header: decodedText ?? "",
+        SubHeader: "Listado de alumnos que requieren Recorrido 2025",
+        PageType: PageType.OFICIO_HORIZONTAL,
+        /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
+             const htmlString = htmlNode.outerHTML;
+             // Codificar la cadena en Base64
+             const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
+                 return rgbToHex(match); // Convierte rgb a hexadecimal
+             }))));
+             // Crear el objeto para enviar al endpoint
+             console.log(htmlBase64);
+ 
+             const payload = {
+                 DocumentHtml: htmlBase64
+             };
+             //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
+             const response = await fetch('../api/ApiReportes/ExportToExcel', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(payload)
+             });
+ 
+             // Verificar si la respuesta es correcta
+             if (!response.ok) {
+                 throw new Error(`Error en la exportación: ${response.statusText}`);
+             }
+ 
+             // Convertir la respuesta en un blob (archivo)
+             const blob = await response.blob();
+ 
+             // Crear un enlace para descargar el archivo
+             const url = window.URL.createObjectURL(blob);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = filename;
+             document.body.appendChild(a);
+             a.click();
+             a.remove();
+ 
+             // Liberar la URL del objeto
+             window.URL.revokeObjectURL(url);
+         }*/
+        //ModelObject: model
+    })}
         </div>
        
     </div>`
+}
+
+function rgbToHex(rgb) {
+    // Regex para extraer valores de RGB
+    const result = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    if (result) {
+        // Convertir valores de RGB a Hexadecimal
+        const r = parseInt(result[1]).toString(16).padStart(2, '0');
+        const g = parseInt(result[2]).toString(16).padStart(2, '0');
+        const b = parseInt(result[3]).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+    }
+    return rgb; // Si no es RGB, retorna el valor original
 }
