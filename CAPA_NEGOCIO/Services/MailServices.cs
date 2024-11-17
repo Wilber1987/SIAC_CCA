@@ -30,7 +30,7 @@ namespace CAPA_NEGOCIO.Services
 				var account = emailService.GetAvailableEmailAccount();
 
 				await SMTPMailServices.SendMail(
-					 "cca.edu.ni@noreply.com",//todo tomar el from
+					 "",//todo tomar el from
 					 toMails,
 					 subject,
 					 templatePage,

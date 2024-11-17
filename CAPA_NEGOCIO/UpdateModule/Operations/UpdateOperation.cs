@@ -143,7 +143,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					if (pariente != null)
 					{
 						pariente.Correo_enviado = false;
-						var user = new Security_Users {Id_User = pariente.User_id}.Find<Security_Users>();
+						var user = new Security_Users { Id_User = pariente.User_id }.Find<Security_Users>();
 						user!.Password = StringUtil.GenerateRandomPassword();
 						user?.Update();
 						pariente.Update();
@@ -390,31 +390,31 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			);
 
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
+			tutor.filterData?.Add(FilterData.Limit(25));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
 			tutores.ForEach(t =>
 			{
 				try
 				{
+					BeginGlobalTransaction();
+
 					Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
 
 					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
 
 					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
-
+				
+					t.Correo_enviado = true;
+					t.Update();
+					CommitGlobalTransaction();
 				}
 				catch (Exception ex)
 				{
+					RollBackGlobalTransaction();
 					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
-				}
-				finally
-				{
-					/*BeginGlobalTransaction();
-					t.Correo_enviado = true;
-					t.Update();
-					CommitGlobalTransaction();*/
-				}
+				}			
 			});
 
 		}

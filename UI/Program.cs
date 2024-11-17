@@ -71,7 +71,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {	
-	options.CronExpression = "* * * * *";
+	options.CronExpression = "*/4 * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
