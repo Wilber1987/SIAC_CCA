@@ -1,8 +1,11 @@
 //@ts-check
+import { Estudiante_clases } from "../../Model/Estudiante_clases.js";
+import { Responsables } from "../../Model/Responsables.js";
 import { EntityClass } from "../../WDevCore/WModules/EntityClass.js";
 
 
 class Estudiantes extends EntityClass {
+    
 
     /** @param {Partial<Estudiantes>} [props] */
     constructor(props) {
@@ -45,6 +48,15 @@ class Estudiantes extends EntityClass {
     /**@type {Religiones}*/ Religion
     /**@type {Paises}*/ Pais
     /**@type {Regiones}*/ Region
+    /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
+    /**@type {Array<any>} OneToMany*/ Responsables;
+
+    /**
+    * @returns {Promise<Array<Estudiantes>>}
+    */
+    async GetEstudiantesConRecorridos() {
+        return await this.GetData("ApiReportes/GetEstudiantesConRecorridos");
+    }
 
 }
 export { Estudiantes };

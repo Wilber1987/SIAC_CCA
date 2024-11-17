@@ -44,6 +44,27 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 
 		[JsonProp]
 		public List<Adress>? Puntos_Transportes { get; set; }
+
+		public List<Estudiantes_Data_Update> GetEstudiantesConRecorridos()
+		{
+			if (filterData?.Count == 0)
+			{
+				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+				return Where<Estudiantes_Data_Update>(
+					FilterData.NotNull("Puntos_Transportes"),
+					FilterData.Distinc("Puntos_Transportes", "[]")
+				).Where(e =>
+					e.Puntos_Transportes?.Count > 0 &&
+					e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null
+				).ToList();
+			}
+			return Where<Estudiantes_Data_Update>(
+				FilterData.NotNull("Puntos_Transportes"),
+				FilterData.Distinc("Puntos_Transportes", "[]")
+			).Where(e =>
+				e.Puntos_Transportes?.Count > 0
+			).ToList();
+		}
 	}
 
 	public class Adress
@@ -70,10 +91,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 	public class DataContract
 	{
 		public int? Id_Tutor_responsable { get; set; }
-		public string? Tutor_responsable { get; set;}
+		public string? Tutor_responsable { get; set; }
 		public List<int>? Estudiantes { get; set; }
 		public List<int>? Tutores { get; set; }
-		public DateTime? Fecha { get; set;}
-		
+		public DateTime? Fecha { get; set; }
+
 	}
 }
