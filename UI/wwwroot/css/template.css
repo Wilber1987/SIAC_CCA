@@ -2,49 +2,59 @@
     padding: 30px;
 }
 
-#Main, .Main {
-   
+#Main,
+.Main {
+
     color: #000;
     border-radius: 0.3cm;
     min-height: 500px;
-  /*   box-shadow: 0 0 5px 0 #b3b3b3; */
+    /*   box-shadow: 0 0 5px 0 #b3b3b3; */
     margin: 20px 0px;
     padding: 20px;
     display: block;
-    
+
 }
-.TabContainer, .aside-container, .OptionContainer {
+
+.TabContainer,
+.aside-container,
+.OptionContainer {
     background-color: #fff;
     padding: 20px;
     border-radius: 20px;
     box-shadow: rgb(212 212 212) 0 0 3px 0;
 }
+
 .form-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
+
 #Main.tpv-container {
     display: grid;
     grid-template-columns: 50% 50%;
     gap: 20px;
 }
+
 .tpv-icons {
     display: flex;
 }
+
 .pago-monto {
     font-size: 20px;
     font-weight: bold;
     margin: 0;
     padding: 0;
-} 
+}
+
 .pago-monto-max {
     font-size: 30px;
     font-weight: bold;
     margin: 0;
     padding: 0;
     justify-self: self-end;
-} 
+}
+
 .detail-pago-container {
     display: flex;
     flex-direction: column;
@@ -52,6 +62,7 @@
     position: relative;
     box-sizing: border-box;
     padding-bottom: 50px;
+
     & .detail {
         display: grid;
         grid-template-columns: 3fr 1fr 1fr;
@@ -59,18 +70,20 @@
         align-items: baseline;
         border-bottom: solid 1px #e3e3e3;
     }
-    & .pago-total {	
+
+    & .pago-total {
         grid-template-columns: 1fr 1fr 3fr;
         position: absolute;
-        font-size: 30px; 
+        font-size: 30px;
         bottom: 30px;
         border-bottom: unset;
         border-top: solid 1px #e3e3e3;
         padding-top: 10px;
         width: calc(100% - 40px);
         height: 40px;
-    }    
-} 
+    }
+}
+
 .pagos-alert {
     position: absolute;
     right: 50%;
@@ -83,15 +96,21 @@
     transform: translateX(50%);
     font-weight: bold;
 }
-@media (max-width: 600px)  {
-    .TabContainer, .aside-container, .OptionContainer {
+
+@media (max-width: 600px) {
+
+    .TabContainer,
+    .aside-container,
+    .OptionContainer {
         padding: 10px;
         border-radius: 10px;
     }
+
     .page-content {
         padding: 75px 0;
     }
 }
+
 /*body {
     margin: 0px;
     padding: 0px;
@@ -322,10 +341,174 @@
     }
 }
     */
-    @media(max-width: 700px) {
-        #Main {
-            padding: 5px;
-            margin: 10px 0px;
-        }
-    
+@media(max-width: 700px) {
+    #Main {
+        padding: 5px;
+        margin: 10px 0px;
     }
+
+}
+
+/*PRINT*/
+.A4,
+.A4-horizontal,
+.carta,
+.oficio,
+.carta-horizontal,
+.oficio-horizontal {
+    padding: 60px 60px;
+    border: 1px solid #D2D2D2;
+    background: #fff;
+    box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.3);
+    width: 210mm;
+    height: 297mm;
+    border: 1px solid #cccccc;
+    box-sizing: border-box;
+    margin: 5mm auto;
+    overflow: hidden;
+    position: relative;
+    page-break-after: always;
+}
+
+.A4-horizontal {
+    width: 297mm;
+    min-height: 210mm;
+}
+
+/* Tamaño carta (8.5in x 11in) */
+.carta {
+    width: 8.5in;
+    height: 11in;
+}
+
+/* Tamaño oficio (8.5in x 14in) */
+.oficio {
+    width: 8.5in;
+    height: 14in;
+}
+
+/* Tamaño carta horizontal (11in x 8.5in) */
+.carta-horizontal {
+    width: 11in;
+    height: 8.5in;
+}
+
+/* Tamaño oficio vertical (14in x 8.5in) */
+.oficio-horizontal {
+    width: 14in;
+    height: 8.5in;
+}
+
+.row-title,
+.row-number,
+.row-string,
+.report-title {
+    display: flex;
+    flex: 1;
+    font-size: 12px;
+    font-family: "Open Sans", sans-serif;
+}
+
+.row-title,
+.row-footer,
+.row-number,
+.row-string {
+    padding: 5px 10px;
+    font-size: 12px;
+    border: 1px solid #dadada;
+}
+
+.row-title,
+.row-footer {
+    padding: 5px 10px;
+    color: #5D6975;
+    background-color: #f1f1f1;
+    white-space: nowrap;
+    font-weight: normal;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.row-number {
+    justify-content: flex-end;
+}
+
+.container {
+    flex: 8;
+    display: grid;
+    flex-direction: column;
+    border: 1px #cdcbcb solid;
+    grid-auto-rows: min-content;
+}
+
+.container label {
+    padding: 5px;
+}
+
+.header-container {
+    display: grid;
+    grid-template-columns: 100px calc(100% - 120px);
+    gap: 15px 30px;
+    margin-bottom: 20px;
+}
+
+.header-container .logo {
+    grid-row: span 3;
+    width: 100%;
+}
+
+.header,
+.sub-header {
+    margin: 0px;
+    font-weight: bold;
+}
+
+.report-container {
+    border-collapse: collapse;
+    border: 1px solid #D2D2D2;
+}
+
+.child {
+    border: none;
+    padding: 0px;
+}
+
+.child-object {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.report-container:first-child {
+    border-left: 1px solid #D2D2D2;
+}
+
+@media print {
+
+    .A4,
+    .A4-horizontal,
+    .carta,
+    .oficio,
+    .carta-horizontal,
+    .oficio-horizontal {
+        border: none;
+        /* Optional: Remove border for printing */
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        /* Optional: Remove any shadow for printing */
+        page-break-after: always;
+        /* Ensure each .page-container starts on a new page */
+    }
+    .A4-horizontal {
+        width: 297mm;
+        height: 210mm;
+    }
+
+    .container-break-page {
+        page-break-before: always;
+    }
+
+}

@@ -19,11 +19,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate()
 		{
-			//await MigrateParentesco();
+			await MigrateParentesco();
 			await MigrateFamilia();
-			/*await migrateEstudiantesSiac(_sshTunnelService);
+			await migrateEstudiantesSiac(_sshTunnelService);
 			await MigrateParientesAndUsers();
-			await migrateEstudiantesReponsablesFamilia();*/
+			await migrateEstudiantesReponsablesFamilia();
 		}
 
 		private IConfigurationRoot LoadConfiguration()

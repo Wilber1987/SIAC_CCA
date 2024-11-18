@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
 using DataBaseModel;
@@ -39,16 +40,35 @@ namespace CAPA_NEGOCIO.Templates
         }
 
         public static string RenderTemplateInvitacion(string templateContent, Security_Users model, string? nombre_completo)
-        {            
-            var theme = new PageConfig();						
-			
-			templateContent = templateContent.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-				.Replace("{{ link }}", theme.URL_BASE)
-				.Replace("{{ usuario }}", model.Mail)
-				.Replace("{{ contrasena }}", EncrypterServices.Decrypt(model.Password))
-				.Replace("{{ nombre }}", nombre_completo);
+        {
+            if (string.IsNullOrWhiteSpace(templateContent))
+                throw new ArgumentException("El contenido de la plantilla no puede estar vacío.", nameof(templateContent));
 
-			return templateContent;          
+            if (model == null)
+                throw new ArgumentNullException(nameof(model), "El modelo no puede ser nulo.");
+
+            var theme = new PageConfig();
+
+            try
+            {
+                var decryptedPassword = EncrypterServices.Decrypt(model.Password);
+                var sanitizedNombreCompleto = nombre_completo ?? string.Empty;
+
+                var sb = new StringBuilder(templateContent);
+                sb.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+                  .Replace("{{ link }}", theme.URL_BASE)
+                  .Replace("{{ usuario }}", model.Mail ?? string.Empty)
+                  .Replace("{{ contrasena }}", decryptedPassword)
+                  .Replace("{{ nombre }}", sanitizedNombreCompleto);
+
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "";
+                //throw new InvalidOperationException("Error al procesar la plantilla de invitación.", ex);
+            }
         }
+
     }
 }
