@@ -139,6 +139,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				BeginGlobalTransaction();
 				parientes?.ForEach(tn =>
 				{
+					//MailServices.SendMailAceptedContract(pariente, GetUpdateData(seassonKey));
 					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
 					if (pariente != null)
 					{
@@ -381,7 +382,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
-			var conection = SqlADOConexion.BuildDataMapper(".", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+			//var conection = SqlADOConexion.BuildDataMapper(".", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+			var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
+
 
 			var tutor = new Parientes_Data_Update();
 			tutor.SetConnection(conection);
@@ -392,6 +395,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			);
 
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
+			tutor.filterData?.Add(FilterData.Equal("Id", 2508));
 			tutor.filterData?.Add(FilterData.Limit(25));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
@@ -404,13 +408,16 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					Security_Users? usuario = new Security_Users().withConection(conection).Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
 					usuario!.Password = StringUtil.GenerateRandomPassword();
 					var save = usuario?.Save_User(null);
-					
+
 
 
 					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
+					string currentDate = DateTime.Now.ToString("dd/MM/yyyy"); 
+					string subject = $"Actualización de datos {currentDate.Replace("/", "-")}";
 
-					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, conection);
+					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, subject, template, conection);
+
 
 					t.Correo_enviado = true;
 					t.Update();
