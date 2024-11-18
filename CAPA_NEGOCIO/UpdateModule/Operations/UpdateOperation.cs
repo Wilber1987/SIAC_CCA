@@ -427,7 +427,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
-			inst.filterData?.Add(FilterData.Limit(100));
+			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
