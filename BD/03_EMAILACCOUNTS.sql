@@ -9,10 +9,10 @@ CREATE TABLE EmailAccounts (
 
 
 INSERT INTO EmailAccounts (Email, Password, Host) VALUES
-('notificacionesportal@cca.edu.ni', 'czavspiafvhcttdg', 'smtp.gmail.com'),
-('envios@cca.edu.ni', 'arygcknlahvibkkn', 'smtp.gmail.com'),
-('envio1@cca.edu.ni', 'rpvkltzqrtgmqvor', 'smtp.gmail.com'),
-('envio2@cca.edu.ni', 'jiudjfilraebipoh', 'smtp.gmail.com'),
-('envio3@cca.edu.ni', 'cpksqycdsuoytypa', 'smtp.gmail.com'),
+('envio5@cca.edu.ni', 'hcesrkwnythjlvcu', 'smtp.gmail.com'),
 ('envio4@cca.edu.ni', 'xwzcrndsvyiltogp', 'smtp.gmail.com'),
-('envio5@cca.edu.ni', 'hcesrkwnythjlvcu', 'smtp.gmail.com');
+('envio3@cca.edu.ni', 'cpksqycdsuoytypa', 'smtp.gmail.com'),
+('envio2@cca.edu.ni', 'jiudjfilraebipoh', 'smtp.gmail.com'),
+('envio1@cca.edu.ni', 'rpvkltzqrtgmqvor', 'smtp.gmail.com'),
+('envios@cca.edu.ni', 'arygcknlahvibkkn', 'smtp.gmail.com'),
+('notificacionesportal@cca.edu.ni', 'czavspiafvhcttdg', 'smtp.gmail.com');
