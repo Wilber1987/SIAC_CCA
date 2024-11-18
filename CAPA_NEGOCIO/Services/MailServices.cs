@@ -79,7 +79,7 @@ namespace CAPA_NEGOCIO.Services
 			try
 			{
 				// guardo los archivos con su ruta
-				new UpdatedData
+				new UpdatedData//todo meter en el try catch solo si se envia el correo
 				{
 					DataContract = new DataContract
 					{
@@ -121,7 +121,7 @@ namespace CAPA_NEGOCIO.Services
 				emailService.IncrementEmailSentCount(account.Email);
 
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError($"error enviando correos de contrato y boleta", ex);
 			}
