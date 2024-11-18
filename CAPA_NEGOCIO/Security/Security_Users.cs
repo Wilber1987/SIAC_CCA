@@ -50,6 +50,11 @@ namespace CAPA_NEGOCIO
 		{
 			return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault(), this);
 		}
+
+		public Security_Users withConection(CAPA_DATOS.BDCore.Abstracts.WDataMapper mapper){
+			this.SetConnection(mapper);
+			return this;
+		}
 	}
 	public class Tbl_Profile : CAPA_DATOS.Security.Tbl_Profile
 	{

@@ -1,4 +1,5 @@
 using CAPA_DATOS;
+using CAPA_DATOS.BDCore.Abstracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,10 @@ namespace DataBaseModel {
        public string? Host { get; set; }
        public int? SentCount { get; set; }
        public DateTime? LastUsedDate { get; set; }
+
+       public EmailAccounts withConection(WDataMapper conection){
+            this.SetConnection(conection);
+            return this;
+       }
    }
 }

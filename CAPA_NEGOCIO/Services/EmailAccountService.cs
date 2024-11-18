@@ -1,13 +1,14 @@
 using CAPA_DATOS;
+using CAPA_DATOS.BDCore.Abstracts;
 using DataBaseModel;
 
-public class EmailAccountService
+public class EmailAccountService : TransactionalClass
 {
     public EmailAccounts GetAvailableEmailAccount()
     {
         var today = DateTime.Today;
 
-        var accounts = new EmailAccounts()
+        var accounts = new EmailAccounts().withConection(this.MTConnection)
             .Where<EmailAccounts>(FilterData.Or(
                 FilterData.Less("SentCount", 450),
                 FilterData.Less("LastUsedDate", today)
@@ -34,7 +35,7 @@ public class EmailAccountService
     {
         var filter = FilterData.Equal("Email", email);
 
-        var account = new EmailAccounts().Where<EmailAccounts>(filter).FirstOrDefault();
+        var account = new EmailAccounts().withConection(this.MTConnection).Where<EmailAccounts>(filter).FirstOrDefault();
         if (account != null)
         {
             account.SentCount = (account.SentCount ?? 0) + 1;

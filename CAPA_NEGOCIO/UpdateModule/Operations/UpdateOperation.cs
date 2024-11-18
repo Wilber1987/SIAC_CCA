@@ -145,7 +145,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						pariente.Correo_enviado = false;
 						var user = new Security_Users { Id_User = pariente.User_id }.Find<Security_Users>();
 						user!.Password = StringUtil.GenerateRandomPassword();
-						user?.Update();
+						user?.Save_User(null);
 						pariente.Update();
 					}
 					else
@@ -381,8 +381,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
+			var conection = SqlADOConexion.BuildDataMapper(".", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
 
 			var tutor = new Parientes_Data_Update();
+			tutor.SetConnection(conection);
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
 				FilterData.Equal("correo_enviado", false),
@@ -399,13 +401,17 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					BeginGlobalTransaction();
 
-					Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+					Security_Users? usuario = new Security_Users().withConection(conection).Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+					usuario!.Password = StringUtil.GenerateRandomPassword();
+					var save = usuario?.Save_User(null);
+					
+
 
 					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
 
-					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, new { numero_contrato = 123 } as dynamic);
-				
+					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, "Actualización de datos", template, conection);
+
 					t.Correo_enviado = true;
 					t.Update();
 					CommitGlobalTransaction();
@@ -414,9 +420,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					RollBackGlobalTransaction();
 					LoggerServices.AddMessageError("Error al enviar correo de invitacion correo:", ex);
-				}			
+				}
 			});
-
 		}
 
 		public static UpdateData GetUpdateDataById(Parientes_Data_Update inst)

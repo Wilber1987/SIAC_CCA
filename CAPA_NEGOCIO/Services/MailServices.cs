@@ -6,6 +6,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using CAPA_DATOS;
+using CAPA_DATOS.BDCore.Abstracts;
 using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.UpdateModule.Model;
 
@@ -21,12 +22,12 @@ namespace CAPA_NEGOCIO.Services
 			APIKEY = ""
 		};
 
-		public static async void SendMailInvitation<T>(List<string> toMails, string from, string subject, string templatePage, T model)
+		public static async void SendMailInvitation(List<string> toMails, string from, string subject, string templatePage, WDataMapper conection)
 		{
 			try
 			{
 				var emailService = new EmailAccountService();
-
+                emailService.SetConnection(conection);
 				var account = emailService.GetAvailableEmailAccount();
 
 				await SMTPMailServices.SendMail(
