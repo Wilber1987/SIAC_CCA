@@ -362,7 +362,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					}
 					catch (Exception ex)
 					{
-						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
+						LoggerServices.AddMessageError("Error al enviar correo de actualizacion (userid: "+user.UserId+") ", ex);
 					}
 					return new ResponseService { status = 200, message = "¡Datos actualizados!" };
 

@@ -113,16 +113,19 @@
             </ul>
         </li>
     }
-    <li class="menuParentOption">
-        <a class="has-arrow" href="javascript: void(0);">
-           <i class="icon nav-icon fa fa-file" aria-hidden="true"></i>
-            <span class="menu-item" data-key="t-report">Informes</span>
-            @* <span class="badge rounded-pill bg-primary">2</span> *@
-        </a>
-        <ul class="sub-menu" aria-expanded="false">
-            <li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li>
-        </ul>
-    </li>
+    @if (SecurityController.IsAdmin(Identify) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))
+    {    
+        <li class="menuParentOption">
+            <a class="has-arrow" href="javascript: void(0);">
+            <i class="icon nav-icon fa fa-file" aria-hidden="true"></i>
+                <span class="menu-item" data-key="t-report">Informes</span>
+                @* <span class="badge rounded-pill bg-primary">2</span> *@
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li>
+            </ul>
+        </li>
+    }
 </ul>
 
 
