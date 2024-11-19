@@ -360,7 +360,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
 						MailServices.SendMailAceptedContract(pariente, GetUpdateData(seassonKey));
 					}
-					catch (System.Exception ex)
+					catch (Exception ex)
 					{
 						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
 					}
@@ -382,9 +382,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
-			//var conection = SqlADOConexion.BuildDataMapper(".", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+			
 			var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
-
+			//var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
 
 			var tutor = new Parientes_Data_Update();
 			tutor.SetConnection(conection);
@@ -413,11 +413,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 					var plantillaString = HtmlContentGetter.ReadHtmlFile("invitacionTemplate.html", "Resources");
 					var template = TemplateServices.RenderTemplateInvitacion(plantillaString, usuario, t.Nombre_completo);
-					string currentDate = DateTime.Now.ToString("dd/MM/yyyy"); 
+					string currentDate = DateTime.Now.ToString("dd/MM/yyyy");
 					string subject = $"Actualización de datos {currentDate.Replace("/", "-")}";
 
 					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, subject, template, conection);
-
 
 					t.Correo_enviado = true;
 					t.Update();
