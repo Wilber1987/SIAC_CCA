@@ -324,7 +324,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
 						if (parienteF != null)
 						{
-							pariente.Actualizo = user.UserId == parienteF.User_id ? true : false;
+							pariente.Actualizo = true;
 							pariente.Acepto_terminos = true;
 							pariente.User_id = parienteF.User_id;
 							pariente.Update();
