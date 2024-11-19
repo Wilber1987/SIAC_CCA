@@ -144,9 +144,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					{
 						pariente.Correo_enviado = false;
 						pariente.Acepto_terminos = false;
-						var user = new Security_Users { Id_User = pariente.User_id }.Find<Security_Users>();
-						user!.Password = StringUtil.GenerateRandomPassword();
-						user?.Save_User(null);
+						var user = new Security_Users { Id_User = pariente.User_id }.SimpleFind<Security_Users>();
+						user!.Password = EncrypterServices.Encrypt(StringUtil.GenerateRandomPassword());
+						user?.Update();
 						pariente.Update();
 					}
 					else
