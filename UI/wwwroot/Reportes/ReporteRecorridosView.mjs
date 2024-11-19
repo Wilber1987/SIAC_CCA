@@ -47,7 +47,7 @@ const ModelFilter = {
     }
 };
 class ModelReport {
-    No = { type: "text" };
+    //No = { type: "text" };
     Tutor = { type: "text" };
     Nombre_del_Alumno = { type: "text" };
     Correo = { type: "text" };
@@ -82,7 +82,7 @@ class ReporteRecorridosView extends HTMLElement {
             const Clase = estudiante.Estudiante_clases[0].Clases
             const nombre_nivel = `${Clase.Nombre_Grado} ${Clase.Niveles.Nombre_grado}`
             return {
-                No: (index + 1).toString(),
+                //No: (index + 1).toString(),
                 Tutor: responsable.Nombre_completo,
                 Nombre_del_Alumno: estudiante.Nombre_completo,
                 Correo: responsable.Email,

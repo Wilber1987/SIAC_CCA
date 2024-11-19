@@ -144,9 +144,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					if (pariente != null)
 					{
 						pariente.Correo_enviado = false;
-						var user = new Security_Users { Id_User = pariente.User_id }.Find<Security_Users>();
-						user!.Password = StringUtil.GenerateRandomPassword();
-						user?.Save_User(null);
+						pariente.Acepto_terminos = false;
+						var user = new Security_Users { Id_User = pariente.User_id }.SimpleFind<Security_Users>();
+						user!.Password = EncrypterServices.Encrypt(StringUtil.GenerateRandomPassword());
+						user?.Update();
 						pariente.Update();
 					}
 					else
@@ -324,7 +325,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
 						if (parienteF != null)
 						{
-							pariente.Actualizo = user.UserId == parienteF.User_id ? true : false;
+							pariente.Actualizo = true;
 							pariente.Acepto_terminos = true;
 							pariente.User_id = parienteF.User_id;
 							pariente.Update();
@@ -362,7 +363,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					}
 					catch (Exception ex)
 					{
-						LoggerServices.AddMessageError("Error al enviar correo de actualizacion", ex);
+						LoggerServices.AddMessageError("Error al enviar correo de actualizacion (userid: "+user.UserId+") ", ex);
 					}
 					return new ResponseService { status = 200, message = "¡Datos actualizados!" };
 
