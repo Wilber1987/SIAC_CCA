@@ -159,4 +159,35 @@ namespace BackgroundJob.Cron.Jobs
 			throw new NotImplementedException();
 		}
 	}
+
+	public class UpdateDataBellacomCronJob : CronBackgroundJob
+	{
+		private readonly ILogger<UpdateDataBellacomCronJob> _log;
+
+		public UpdateDataBellacomCronJob(CronSettings<UpdateDataBellacomCronJob> settings, ILogger<UpdateDataBellacomCronJob> log)
+			: base(settings.CronExpression, settings.TimeZone)
+		{
+			_log = log;
+		}
+
+		protected override Task DoWork(CancellationToken stoppingToken)
+		{
+			_log.LogInformation(":::::::::::Running...  UpdateDataBellacomCronJob at {0}", DateTime.UtcNow);
+			try
+			{				
+				new BellacomUpdateOperation().updateBellacomData();
+			}
+			catch (Exception ex)
+			{
+				_log.LogInformation(":::::::::::ERROR  UpdateDataBellacomCronJob... at {0}", ex);
+			}
+
+			return Task.CompletedTask;
+		}
+
+		private IEnumerable<object> Get<T>()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

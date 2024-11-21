@@ -1,11 +1,7 @@
 using CAPA_DATOS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-namespace DataBaseModel {
-   public class Tbl_aca_tutor : EntityClass {
+namespace DataBaseModel
+{
+    public class Tbl_aca_tutor : EntityClass {
        [PrimaryKey(Identity = false)]
        public int? Idtutor { get; set; }
        public int? Idfamilia { get; set; }
@@ -37,7 +33,6 @@ namespace DataBaseModel {
        public string? Usuariomodificacion { get; set; }
        public DateTime? Fechaactualizacion { get; set; }
        public bool? Actualizado { get; set; }
-       public int? Noresponsable { get; set; }
-       public int? IdTitulo { get; set; }
+       public int? Noresponsable { get; set; }       
    }
 }

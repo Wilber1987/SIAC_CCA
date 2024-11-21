@@ -1,10 +1,5 @@
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 namespace DataBaseModel
 {
     public class Tbl_aca_estudiante : EntityClass

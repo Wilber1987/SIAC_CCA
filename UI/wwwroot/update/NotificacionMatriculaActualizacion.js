@@ -126,7 +126,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 </div>`
             }
         }, {
-            name: `<div>Tutores que actualizarón - <span>${this.dataEntityParientesActualizaron?.length}</span></div>`, action: () => {
+            name: `<div>Tutores que actualizaron - <span>${this.dataEntityParientesActualizaron?.length}</span></div>`, action: () => {
                 const modelEntity = new Parientes({ Get: () => modelEntity.GetParientesQueActulizaron() })
                 this.ParientesTableActualizaron = new WTableComponent({
                     ModelObject: this.parienteModelComponent,

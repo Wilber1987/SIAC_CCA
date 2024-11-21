@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using DataBaseModel;
 
 namespace CAPA_NEGOCIO.UpdateModule.Model
 {
-	public class Parientes_Data_Update : Parientes
+    public class Parientes_Data_Update : Parientes
 	{
 
 		public Parientes_Data_Update()
@@ -27,6 +23,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public bool? Entro_al_sistema { get; set; }
 		public string? Ip_ingreso { get; set; }
 		public DateTime? Fecha_ingreso_al_sistema { get; set; }
+		public bool? Migrado { get; set;}
 
 	}
 

@@ -182,7 +182,7 @@ namespace CAPA_NEGOCIO.Oparations
 						i++;
 					});
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: migrateCalificaciones.Migrate.", ex);
 				}
