@@ -54,6 +54,7 @@ class ModelReport {
     Telefono = { type: "text" };
     Nivel = { type: "text" };
     Direccion = { type: "text" };
+    Direccion_Responsable = { type: "text" };
     Grado = { type: "text", hidden: true };
     Niveles = { type: "text", hidden: true };
 }
@@ -89,6 +90,7 @@ class ReporteRecorridosView extends HTMLElement {
                 Telefono: responsable.Celular,
                 Nivel: nombre_nivel,
                 Direccion: estudiante.Puntos_Transportes[0].Direccion,
+                Direccion_Responsable: responsable.Direccion,
                 Grado: Clase.Grado,
                 Niveles: Clase.Nivel_id
             }
