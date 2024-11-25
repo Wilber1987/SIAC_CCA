@@ -21,6 +21,7 @@ class Parientes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
+    /**@type {ModelProperty}*/ Id_familia = { type: 'text' };
     /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
     /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text', require: false };
     /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };

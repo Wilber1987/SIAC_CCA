@@ -384,8 +384,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public void sendInvitations()
 		{
 			
-			var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
-			//var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+			//var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
+			var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
 
 			var tutor = new Parientes_Data_Update();
 			tutor.SetConnection(conection);
@@ -396,7 +396,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			);
 
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
-			tutor.filterData?.Add(FilterData.Equal("Id", 2508));
+			//tutor.filterData?.Add(FilterData.Equal("Id", 2508));
 			tutor.filterData?.Add(FilterData.Limit(25));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
