@@ -19,7 +19,8 @@ namespace CAPA_NEGOCIO.Util
         {
             get
             {
-                return MySQLConnection.BuildDataMapper("127.0.0.1", "root", "LY2016$root", "bellacom_dbcca", 3308);
+                //return MySQLConnection.BuildDataMapper("127.0.0.1", "root", "LY2016$root", "bellacom_dbcca", 3308);
+                return MySQLConnection.BuildDataMapper("localhost", "root", "", "bellacom_dbcca", 3306);
             }
         }
 

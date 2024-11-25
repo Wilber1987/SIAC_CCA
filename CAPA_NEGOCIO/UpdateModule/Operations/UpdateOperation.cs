@@ -270,7 +270,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			};
 		}
 
-		public static List<Parientes>? GetParientesToInvite(Parientes inst)
+		public static List<ViewParientesUpdate>? GetParientesToInvite(Parientes inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
 			//inst.Responsable_Pago = true;
@@ -287,28 +287,49 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			inst.filterData?.Add(FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()));
 			inst.filterData?.Add(FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray()));
-			return inst.SimpleGet<Parientes>();
+			//return inst.SimpleGet<Parientes>();
+
+			var parientes = new ViewParientesUpdate
+			{
+				filterData = new List<FilterData>
+				{
+					FilterData.Equal("Entro_al_sistema", true),					
+					FilterData.NotNull("User_id"),
+					FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()),
+					FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray())
+				}
+			};
+			
+			return parientes.SimpleGet<ViewParientesUpdate>();
 		}
-		public static List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
+		public static List<ViewParientesUpdate>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
-			inst.Entro_al_sistema = true;
+			//inst.Entro_al_sistema = true;
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
 
-			return inst.SimpleGet<Parientes_Data_Update>();
+			//return inst.SimpleGet<Parientes_Data_Update>();
+
+			var parientes = new ViewParientesUpdate();
+			return parientes.Where<ViewParientesUpdate>(FilterData.Equal("Entro_al_sistema", true));
 		}
-		public static List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
+		public static List<ViewParientesUpdate>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
-			inst.Actualizo = true;
+			//inst.Actualizo = true;
 			//inst.filterData?.Add(FilterData.Equal("Actualizo", 1));
-			return inst.SimpleGet<Parientes_Data_Update>();
+			//return inst.SimpleGet<Parientes_Data_Update>();
+
+			var parientes = new ViewParientesUpdate();
+			return parientes.Where<ViewParientesUpdate>(FilterData.Equal("Actualizo", true));
 		}
-		public static List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
+		public static List<ViewParientesUpdate>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
-			inst.filterData?.Add(FilterData.NotNull("User_id"));
-			return inst.SimpleGet<Parientes_Data_Update>();
+			var parientes = new ViewParientesUpdate();
+			return parientes.Where<ViewParientesUpdate>(FilterData.NotNull("User_id"));
+			/*inst.filterData?.Add(FilterData.NotNull("User_id"));
+			return inst.SimpleGet<Parientes_Data_Update>();*/
 		}
 
 		public ResponseService Save(string? seassonKey, UpdateDataRequest inst)
@@ -363,7 +384,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					}
 					catch (Exception ex)
 					{
-						LoggerServices.AddMessageError("Error al enviar correo de actualizacion (userid: "+user.UserId+") ", ex);
+						LoggerServices.AddMessageError("Error al enviar correo de actualizacion (userid: " + user.UserId + ") ", ex);
 					}
 					return new ResponseService { status = 200, message = "¡Datos actualizados!" };
 
@@ -383,7 +404,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
-			
+
 			var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
 			//var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
 
@@ -442,13 +463,20 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			return new UpdateData();
 		}
 
-		public static List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
+		public static List<ViewParientesUpdate>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
 			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
 			inst.filterData?.Add(FilterData.NotNull("User_id"));
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
-			return inst.SimpleGet<Parientes_Data_Update>();
+			//return inst.SimpleGet<Parientes_Data_Update>();
+
+
+					
+			var parientes = new ViewParientesUpdate();
+			parientes.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
+			parientes.filterData?.Add(FilterData.NotNull("User_id"));
+			return parientes.Where<ViewParientesUpdate>(FilterData.NotNull("User_id"));
 		}
 		public static string GenerateRandomPassword(int length = 8)
 		{

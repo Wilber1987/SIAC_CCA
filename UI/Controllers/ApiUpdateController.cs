@@ -44,32 +44,32 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public List<Parientes>? GetParientes(Parientes inst)
+		public List<ViewParientesUpdate>? GetParientes(Parientes inst)
 		{
 			return UpdateOperation.GetParientesToInvite(inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public List<Parientes_Data_Update>? GetParientesQueLoguearon(Parientes_Data_Update inst)
+		public List<ViewParientesUpdate>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetParientesQueLoguearon(inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public List<Parientes_Data_Update>? GetParientesQueActulizaron(Parientes_Data_Update inst)
+		public List<ViewParientesUpdate>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetParientesQueActulizaron(inst);
 		}
 		
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public List<Parientes_Data_Update>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
+		public List<ViewParientesUpdate>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetParientesQueNoLoguearon(inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public List<Parientes_Data_Update>? GetParientesInvitados(Parientes_Data_Update inst)
+		public List<ViewParientesUpdate>? GetParientesInvitados(ViewParientesUpdate inst)
 		{
 			return UpdateOperation.GetParientesInvitados(inst);
 		}		

@@ -27,6 +27,15 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 
 	}
 
+	public class ViewParientesUpdate : Parientes_Data_Update
+	{
+		public ViewParientesUpdate()
+		{
+		}
+		public string? Idtfamilia { get; set;}
+
+	}
+
 	public class Estudiantes_Data_Update : Estudiantes
 	{
 		public Estudiantes_Data_Update()
@@ -81,6 +90,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public List<ModelFiles>? Documents_Boletas { get; set; }
 		[JsonProp]
 		public List<ModelFiles>? Documents_Contracts { get; set; }
+		[JsonProp]
+		public string? Data_Before_Update_Padres { get; set; }
+		[JsonProp]
+		public string? Data_Before_Update_Alumnos { get; set; }
 
 
 	}
