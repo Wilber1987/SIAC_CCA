@@ -121,6 +121,10 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                     }
                 });
                 return html`<div class="w-table-container">
+                    <div class="OptionsContainer">
+                        <button class="BtnPrimary" onclick="${(/** @type {any} */ ev) => this.SendNotificaciones(this.ParientesTableNoLoguearon)}">
+                          Reenviar invitación</button>
+                    </div>
                     ${this.ParientesTableNoLoguearon}
                     ${this.CustomStyle.cloneNode(true)}
                 </div>`

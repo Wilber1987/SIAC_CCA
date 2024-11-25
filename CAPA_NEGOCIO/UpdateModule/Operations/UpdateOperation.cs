@@ -417,7 +417,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			);
 
 			tutor.filterData?.Add(FilterData.NotNull("User_id"));
-			tutor.filterData?.Add(FilterData.Equal("Id", 2508));
+			//tutor.filterData?.Add(FilterData.Equal("Id", 2508));
 			tutor.filterData?.Add(FilterData.Limit(25));
 			var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
