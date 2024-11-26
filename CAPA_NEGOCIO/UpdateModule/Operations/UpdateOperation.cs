@@ -293,17 +293,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				filterData = new List<FilterData>
 				{
-					FilterData.Equal("Entro_al_sistema", true),					
+					FilterData.Equal("Entro_al_sistema", true),
 					FilterData.NotNull("User_id"),
 					FilterData.NotIn("Id", new Parientes_Data_Update().SimpleGet<Parientes_Data_Update>().Select(x => x.Id).ToArray()),
 					FilterData.In("Id_familia", estudiantes.Select(x => x.Id_familia).ToArray())
 				}
 			};
-			
+
 			return parientes.SimpleGet<ViewParientesUpdate>();
 		}
 		public static List<ViewParientesUpdate>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
+			UpdateFechaActualizacion();
 			//inst.filterData?.Add(FilterData.Limit(100));
 			//inst.Entro_al_sistema = true;
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
@@ -315,6 +316,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		}
 		public static List<ViewParientesUpdate>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
+			UpdateFechaActualizacion();
 			//inst.filterData?.Add(FilterData.Limit(100));
 			//inst.Actualizo = true;
 			//inst.filterData?.Add(FilterData.Equal("Actualizo", 1));
@@ -325,6 +327,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		}
 		public static List<ViewParientesUpdate>? GetParientesInvitados(Parientes_Data_Update inst)
 		{
+			UpdateFechaActualizacion();
 			//inst.filterData?.Add(FilterData.Limit(100));
 			var parientes = new ViewParientesUpdate();
 			return parientes.Where<ViewParientesUpdate>(FilterData.NotNull("User_id"));
@@ -349,11 +352,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							pariente.Actualizo = true;
 							pariente.Acepto_terminos = true;
 							pariente.User_id = parienteF.User_id;
+							pariente.Fecha_actualizacion = DateTime.Now;
 							pariente.Update();
 						}
 						else
 						{
 							pariente.Estudiantes_responsables_familia = null;
+							pariente.Fecha_actualizacion = DateTime.Now;
 							pariente.Save();
 						}
 					});
@@ -472,11 +477,35 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			//return inst.SimpleGet<Parientes_Data_Update>();
 
 
-					
+
 			var parientes = new ViewParientesUpdate();
 			parientes.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
 			parientes.filterData?.Add(FilterData.NotNull("User_id"));
 			return parientes.Where<ViewParientesUpdate>(FilterData.NotNull("User_id"));
+		}
+
+		public static void UpdateFechaActualizacion()
+		{
+			var parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
+				FilterData.ISNull("Fecha_actualizacion"),
+				FilterData.NotNull("User_id")
+			);
+			parientes.ForEach(pariente =>
+			{
+				var updatedDataQuery = new UpdatedData
+				{
+					filterData = [new FilterData
+					{
+						ObjectName = "DataContract",
+						PropName = "Id_Tutor_responsable",
+						FilterType = "JSONPROP_EQUAL",
+						PropSQLType = "int",
+						Values = new List<string?> { pariente.Id.ToString() },
+					}]
+				}.Find<UpdatedData>();
+				pariente.Fecha_actualizacion = updatedDataQuery?.DataContract?.Fecha;
+				pariente.Update();
+			});
 		}
 		public static string GenerateRandomPassword(int length = 8)
 		{

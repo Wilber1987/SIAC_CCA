@@ -29,11 +29,11 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
             Ip_ingreso: { type: "text" },
             Fecha_Nacimiento: {
                 type: "operation", action: (element) => {
-                    return new DateTime(element.Fecha_Nacimiento).toDDMMYYYY()
+                    return element.Fecha_actualizacion ?  new DateTime(element.Fecha_Nacimiento).toDDMMYYYY(): "-"
                 }
             }, Fecha_Actualizacion: {
                 type: "operation", label: "Fecha de actualización", action: (element) => {
-                    return new DateTime(element.Fecha_actualizacion).toDDMMYYYY()
+                    return element.Fecha_actualizacion ? new DateTime(element.Fecha_actualizacion).toDDMMYYYY() : "-"
                 }
             }
         });
