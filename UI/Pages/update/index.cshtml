@@ -42,6 +42,7 @@ else
     if(pariente!= null){
         pariente!.Ip_ingreso = ipAddress;
         pariente.Update();
+        pariente.Fecha_ingreso_al_sistema = DateTime.Now;
     }
     <script type="module">        
         import { UpdateView } from "/update/UpdateView.js";

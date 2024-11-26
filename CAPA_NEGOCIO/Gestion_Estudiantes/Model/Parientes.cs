@@ -40,7 +40,7 @@ namespace DataBaseModel
 		public Double? Ejercicio { get; set; }
 		public bool? Actualizado { get; set; }
 		public int? No_Responsable { get; set; }
-		public int? Id_familia { get; set; }	
+		public int? Id_familia { get; set; }
 	   	public int? Id_relacion_familiar { get; set; }
 		public int? User_id { get; set; }
 		public String? Identificacion { get; set; }
