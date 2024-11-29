@@ -91,9 +91,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		[JsonProp]
 		public List<ModelFiles>? Documents_Contracts { get; set; }
 		[JsonProp]
-		public string? Data_Before_Update_Padres { get; set; }
+		public List<Tbl_aca_tutor>? Data_Before_Update_Padres { get; set; }
 		[JsonProp]
-		public string? Data_Before_Update_Alumnos { get; set; }
+		public List<Tbl_aca_estudiante>? Data_Before_Update_Alumnos { get; set; }
 
 
 	}

@@ -39,6 +39,7 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 hidden: false, hiddenFilter: false, type: 'text', label: "Cod Familia"
             }
         });
+        //this.parienteModelComponent.Idtfamilia.hidden = false;
         this.Draw();
 
     }
