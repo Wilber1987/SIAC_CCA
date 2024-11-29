@@ -410,8 +410,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public void sendInvitations()
 		{
 
-			var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
-			//var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+			//var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
+			var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
 
 			var tutor = new Parientes_Data_Update();
 			tutor.SetConnection(conection);
@@ -471,8 +471,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<ViewParientesUpdate>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
 			//inst.filterData?.Add(FilterData.Limit(100));
-			inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
-			inst.filterData?.Add(FilterData.NotNull("User_id"));
+			//inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
+			//inst.filterData?.Add(FilterData.NotNull("User_id"));
 			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
 			//return inst.SimpleGet<Parientes_Data_Update>();
 
@@ -486,7 +486,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static void UpdateFechaActualizacion()
 		{
-			var parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
+			return;
+			/*var parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
 				FilterData.ISNull("Fecha_actualizacion"),
 				FilterData.NotNull("User_id")
 			);
@@ -505,7 +506,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				}.Find<UpdatedData>();
 				pariente.Fecha_actualizacion = updatedDataQuery?.DataContract?.Fecha;
 				pariente.Update();
-			});
+			});*/
 		}
 		public static string GenerateRandomPassword(int length = 8)
 		{

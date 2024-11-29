@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.ResponseCompression;
 using CAPA_DATOS.Cron.Jobs;
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //coneccion alder
-SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
 
 //AppGeneratorProgram.Main(); //generador de codigo
