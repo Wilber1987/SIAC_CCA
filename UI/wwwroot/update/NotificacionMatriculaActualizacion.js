@@ -35,8 +35,11 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
                 type: "operation", label: "Fecha de actualización", action: (element) => {
                     return element.Fecha_actualizacion ? new DateTime(element.Fecha_actualizacion).toDDMMYYYY() : "-"
                 }
+            }, Idtfamilia: {
+                hidden: false, hiddenFilter: false, type: 'text', label: "Cod Familia"
             }
         });
+        //this.parienteModelComponent.Idtfamilia.hidden = false;
         this.Draw();
 
     }

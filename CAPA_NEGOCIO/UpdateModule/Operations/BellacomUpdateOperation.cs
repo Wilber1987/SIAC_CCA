@@ -31,17 +31,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
             try
             {
                 //manejo conexion por aparte, todo cambiar estas credenciales a configuracion
-                var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
+                //var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");                
+                var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
                 var tutor = new Parientes_Data_Update();
                 tutor.SetConnection(conection);
                 var filter = FilterData.Or(
                     FilterData.Distinc("migrado", true),
-                    FilterData.Equal("migrado", false),
+                    FilterData.Equal("migrado", true),
                     FilterData.ISNull("migrado")
                 );
-                tutor.filterData.Add(FilterData.Equal("id",5046));//todo quitar en produccion
+                tutor.filterData.Add(FilterData.NotNull("user_id"));
+                tutor.filterData.Add(FilterData.Equal("id",197));//todo quitar en produccion
                 var tutores = tutor.Where<Parientes_Data_Update>(filter);
-
                 foreach (var t in tutores)
                 {
                     //obtenemos los datos de las nuevas actualizaciones para trasladarlos a bellacom
@@ -71,15 +72,16 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     var listaPadres = ultimoRegistro?.DataContract?.Tutores;
                     var misEstudiantes = ultimoRegistro?.DataContract?.Estudiantes;
 
-                    var datosOriginalesPadre = new List<string>();
-                    var datosOriginalesEstudiantes = new List<string>();
+                    var datosOriginalesPadre = new List<Tbl_aca_tutor>();
+                    var datosOriginalesEstudiantes = new List<Tbl_aca_estudiante>();
+         
                     
                     //actualizacion datos del padre
-                    /*using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+                    using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
                     {
                         siacSshClient.Connect();
                         var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
-                        siacTunnel.Start();*/
+                        siacTunnel.Start();
                         
                         try
                         {
@@ -89,29 +91,34 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                                 data.SetConnection(MySqlConnections.BellacomTest);
 
                                 var dataMsql = data.Where<Tbl_aca_tutor>(FilterData.Equal("idtutor", padre)).FirstOrDefault();
+                                dataMsql?.SetConnection(MySqlConnections.BellacomTest);
                                 if (dataMsql != null)
                                 {
-                                    string json = JsonConvert.SerializeObject(dataMsql);
-                                    datosOriginalesPadre.Add(json);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
-
-                                    dataMsql.Nombres = t.Primer_nombre + " " + t.Segundo_nombre;
-                                    dataMsql.Apellidos = t.Primer_apellido + " " + t.Segundo_apellido;
-                                    dataMsql.Sexo = t.Sexo;
-                                    dataMsql.Fechanacimiento = t.Fecha_Nacimiento;
-                                    dataMsql.Idestadocivil = t.Id_Estado_Civil;
-                                    dataMsql.Idpais = (short?)t.Id_Pais;
-                                    dataMsql.Idregion = (short?)t.Id_Region;
-                                    dataMsql.Direccion = t.Direccion;
-                                    dataMsql.Telefono = t.Telefono;
-                                    dataMsql.Lugartrabajo = t.Lugar_trabajo;
-                                    dataMsql.Telefonotrabajo = t.Telefono_trabajo;
-                                    dataMsql.Email = t.Email;
-                                    //dataMsql.//religion
-                                    dataMsql.Idreligion = t.Id_religion;
-                                    dataMsql.Exalumno = t.Ex_Alumno;
+                                    dataMsql.BeginGlobalTransaction();
+                                    datosOriginalesPadre.Add(dataMsql);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
+                                    var datosaActualizacionPadre = new Parientes_Data_Update().Where<Parientes_Data_Update>(FilterData.Equal("id", padre)).FirstOrDefault();
+                                    if (datosaActualizacionPadre == null)
+                                    {
+                                        dataMsql.CommitGlobalTransaction();
+                                        LoggerServices.AddMessageError("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en bellacom id:" + padre+ ". el id del responsable de familia es : "+t.Id, new Exception("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en bellacom id:" + padre+ ". el id del responsable de familia es : "+t.Id));
+                                        continue;
+                                    }
+                                    
+                                    //dataMsql.Fechanacimiento = datosaActualizacionPadre.Fecha_Nacimiento;
+                                    dataMsql.Idestadocivil = datosaActualizacionPadre.Id_Estado_Civil;
+                                    dataMsql.Idpais = (short?)datosaActualizacionPadre.Id_Pais;
+                                    dataMsql.Idregion = (short?)datosaActualizacionPadre.Id_Region;
+                                    dataMsql.Direccion = datosaActualizacionPadre.Direccion;
+                                    dataMsql.Telefono = datosaActualizacionPadre.Telefono;
+                                    dataMsql.Lugartrabajo = datosaActualizacionPadre.Lugar_trabajo;
+                                    dataMsql.Telefonotrabajo = datosaActualizacionPadre.Telefono_trabajo;
+                                    //dataMsql.Email = datosaActualizacionPadre.Email;                                    
+                                    dataMsql.Idreligion = datosaActualizacionPadre.Id_religion;
+                                    dataMsql.Exalumno = datosaActualizacionPadre.Ex_Alumno;
                                     dataMsql.Fechamodificacion = DateTime.Now.Date;
+                                    dataMsql.Ejercicio = datosaActualizacionPadre.EgresoExAlumno;
                                     dataMsql.Update();
-
+                                    dataMsql.CommitGlobalTransaction();
                                 }
                             }
                         }
@@ -122,10 +129,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                         }
                         finally
                         {
-                            /*siacTunnel.Stop();
-                            siacSshClient.Disconnect();*/
+                            siacTunnel.Stop();
+                            siacSshClient.Disconnect();
                         }
-                    //}
+                    }
 
                     foreach (var est in misEstudiantes)
                     {
@@ -134,41 +141,38 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
                         var estudiantesDataSql = estudiante.Where<Estudiantes_Data_Update>(FilterData.Equal("id", est)).FirstOrDefault();
                         if (estudiantesDataSql != null)
-                        {
+                        {                            
                             
-                            
-                            /*using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+                            using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
                             {
                                 siacSshClient.Connect();
                                 var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
-                                siacTunnel.Start();*/
+                                siacTunnel.Start();
 
                                 try
                                 {
                                     var data = new Tbl_aca_estudiante();
                                     data.SetConnection(MySqlConnections.BellacomTest);
                                     var dataMsql = data.Where<Tbl_aca_estudiante>(FilterData.Equal("idtestudiante", estudiantesDataSql.Codigo)).FirstOrDefault();
+                                    dataMsql?.SetConnection(MySqlConnections.BellacomTest);
 
                                     if (dataMsql != null)
                                     {
-                                        string json = JsonConvert.SerializeObject(dataMsql);
-                                        datosOriginalesEstudiantes.Add(json);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
-
-                                        dataMsql.Nombres = estudiantesDataSql.Primer_nombre + " " + estudiantesDataSql.Segundo_nombre;
-                                        dataMsql.Apellidos = estudiantesDataSql.Primer_apellido + " " + estudiantesDataSql.Segundo_apellido;
-                                        dataMsql.Idreligion = estudiantesDataSql.Id_religion;
-                                        dataMsql.Fechanacimiento = estudiantesDataSql.Fecha_nacimiento;
-                                        dataMsql.Idpais = (short?)estudiantesDataSql.Id_pais;
+                                        dataMsql.BeginGlobalTransaction();
+                                        datosOriginalesEstudiantes.Add(dataMsql);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
+                    
+                                        dataMsql.Idreligion = estudiantesDataSql.Id_religion;                                        
+                                        dataMsql.Idpais =  (short?)estudiantesDataSql.Id_pais;
                                         dataMsql.Idregion = (short?)estudiantesDataSql.Id_region;
                                         dataMsql.Direccion = estudiantesDataSql.Direccion;
                                         dataMsql.Vivecon = estudiantesDataSql.Vivecon;
-                                        dataMsql.Colegio = estudiantesDataSql.Colegio_procede;
-                                        dataMsql.Idreligion = estudiantesDataSql.Id_religion;
+                                        dataMsql.Colegio =  estudiantesDataSql.Colegio_procede;
                                         dataMsql.Sacramento = estudiantesDataSql.Sacramento;
                                         dataMsql.Aniosacra = estudiantesDataSql.Aniosacra;
                                         dataMsql.Fechamodificacion = DateTime.Now.Date;
 
-                                        dataMsql.Update();                                       
+                                        dataMsql.Update();    
+                                        dataMsql.CommitGlobalTransaction();                                   
 
                                     }
                                     else
@@ -184,15 +188,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                                 }
                                 finally
                                 {
-                                    /*siacTunnel.Stop();
-                                    siacSshClient.Disconnect();*/
+                                    siacTunnel.Stop();
+                                    siacSshClient.Disconnect();
                                 }
                             }
-                        //}
+                        }
                     }
-                    ultimoRegistro.Data_Before_Update_Padres = JsonConvert.SerializeObject(datosOriginalesPadre);
-                    ultimoRegistro.Data_Before_Update_Alumnos = JsonConvert.SerializeObject(datosOriginalesEstudiantes);
-                    //ultimoRegistro.Update();
+
+                    ultimoRegistro.Data_Before_Update_Alumnos = datosOriginalesEstudiantes;
+                    ultimoRegistro.Data_Before_Update_Padres = datosOriginalesPadre;
+                    ultimoRegistro.Update();                  
+                    
+                    t.Migrado = true;
+                    t.Update();
                 };
 
             }
