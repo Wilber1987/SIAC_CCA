@@ -14,7 +14,7 @@
 <script type="module">
     import {ReporteRecorridosView} from "/Reportes/ReporteRecorridosView.mjs";
     window.onload = ()=> {
-        Main.append(new ReporteRecorridosView());
+        Main.append(new ReporteRecorridosView({initialize: true}));
     } 
 </script>
 <div id="Main"></div>

@@ -62,6 +62,7 @@ class ModelReport {
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
+ * * @property {boolean} [initialize]
  */
 class ReporteRecorridosView extends HTMLElement {
     /**
@@ -77,70 +78,70 @@ class ReporteRecorridosView extends HTMLElement {
 
     }
     Draw = async () => {
-        this.dataEntityRecorridos = await new Estudiantes().GetEstudiantesConRecorridos();
-        const dataSet = this.dataEntityRecorridos?.map((estudiante, index) => {
-            const responsable = estudiante.Responsables.find(r => r.Parientes.User_id != null).Parientes
-            const Clase = estudiante.Estudiante_clases[0].Clases
-            const nombre_nivel = `${Clase.Nombre_Grado} ${Clase.Niveles.Nombre_grado}`
-            return {
-                //No: (index + 1).toString(),
-                Tutor: responsable.Nombre_completo,
-                Nombre_del_Alumno: estudiante.Nombre_completo,
-                Correo: responsable.Email,
-                Telefono: responsable.Celular,
-                Nivel: nombre_nivel,
-                Direccion: estudiante.Puntos_Transportes[0].Direccion,
-                Direccion_Responsable: responsable.Direccion,
-                Grado: Clase.Grado,
-                Niveles: Clase.Nivel_id
-            }
-        })
-        this.ReportWrapper = html`<div class="report-wrapper"></div>`
-        this.Report = this.ReportEstudiantesRecorridos(dataSet);
-        this.ReportWrapper.appendChild(this.Report)
-
-        this.Header = html`<div class="">
-            <h2>Informe de Recorridos 2025</h2>
-            ${new WFilterOptions({
-            ModelObject: ModelFilter,
-            Dataset: dataSet,
-            UseEntityMethods: false,
-            Display: true,
-            FilterFunction: async (Dfilter) => {
-                // @ts-ignore
-                this.ReportWrapper.innerHTML = "";
-                const niveles = Dfilter.find(a => a.PropName == "Niveles");
-                const grados = Dfilter.find(a => a.PropName == "Grado");
-                let filtDataSet = dataSet
-                if (niveles && grados) {
-                    filtDataSet = dataSet.filter(o =>
-                        grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0 &&
-                        niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
-                    );
-                } else if (grados) {
-                    filtDataSet = dataSet.filter(o =>
-                        grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0
-                    );
-                } else if (niveles) {
-                    filtDataSet = dataSet.filter(o =>
-                        niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
-                    );
+        if (this.props.initialize == true) {
+            this.dataEntityRecorridos = await new Estudiantes().GetEstudiantesConRecorridos();
+            const dataSet = this.dataEntityRecorridos?.map((estudiante, index) => {
+                const responsable = estudiante.Responsables.find(r => r.Parientes.User_id != null).Parientes
+                const Clase = estudiante.Estudiante_clases[0].Clases
+                const nombre_nivel = `${Clase.Nombre_Grado} ${Clase.Niveles.Nombre_grado}`
+                return {
+                    //No: (index + 1).toString(),
+                    Tutor: responsable.Nombre_completo,
+                    Nombre_del_Alumno: estudiante.Nombre_completo,
+                    Correo: responsable.Email,
+                    Telefono: responsable.Celular,
+                    Nivel: nombre_nivel,
+                    Direccion: estudiante.Puntos_Transportes[0].Direccion,
+                    Direccion_Responsable: responsable.Direccion,
+                    Grado: Clase.Grado,
+                    Niveles: Clase.Nivel_id
                 }
-                this.ReportWrapper?.append(this.ReportEstudiantesRecorridos(filtDataSet))
-            }
-        })}
-        <hr/>
-        </div>`;
+            })
+            this.ReportWrapper = html`<div class="report-wrapper"></div>`
+            this.Report = this.ReportEstudiantesRecorridos(dataSet);
+            this.ReportWrapper.appendChild(this.Report)
 
+            this.Header = html`<div class="">
+                <h2>Informe de Recorridos 2025</h2>
+                ${new WFilterOptions({
+                    ModelObject: ModelFilter,
+                    Dataset: dataSet,
+                    UseEntityMethods: false,
+                    Display: true,
+                    FilterFunction: async (Dfilter) => {
+                        // @ts-ignore
+                        this.ReportWrapper.innerHTML = "";
+                        const niveles = Dfilter.find(a => a.PropName == "Niveles");
+                        const grados = Dfilter.find(a => a.PropName == "Grado");
+                        let filtDataSet = dataSet
+                        if (niveles && grados) {
+                            filtDataSet = dataSet.filter(o =>
+                                grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0 &&
+                                niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
+                            );
+                        } else if (grados) {
+                            filtDataSet = dataSet.filter(o =>
+                                grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0
+                            );
+                        } else if (niveles) {
+                            filtDataSet = dataSet.filter(o =>
+                                niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
+                            );
+                        }
+                        this.ReportWrapper?.append(this.ReportEstudiantesRecorridos(filtDataSet))
+                    }
+                })}
+            <hr/>
+            </div>`;
+            this.append(
+                StylesControlsV2.cloneNode(true),
+                StyleScrolls.cloneNode(true),
+                StylesControlsV3.cloneNode(true),
+                this.Header,
+                this.ReportWrapper,
+            );
+        }
 
-
-        this.append(
-            StylesControlsV2.cloneNode(true),
-            StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            this.Header,
-            this.ReportWrapper,
-        );
     }
 
     /**
