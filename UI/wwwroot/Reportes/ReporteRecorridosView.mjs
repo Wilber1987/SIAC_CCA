@@ -71,14 +71,14 @@ class ReporteRecorridosView extends HTMLElement {
      */
     constructor(props) {
         super();
-        this.props = props;
+        this.props = props ?? {};
         this.append(this.CustomStyle);
 
         this.Draw();
 
     }
     Draw = async () => {
-        if (this.props.initialize == true) {
+        if (this.props?.initialize == true) {
             this.dataEntityRecorridos = await new Estudiantes().GetEstudiantesConRecorridos();
             const dataSet = this.dataEntityRecorridos?.map((estudiante, index) => {
                 const responsable = estudiante.Responsables.find(r => r.Parientes.User_id != null).Parientes
