@@ -31,8 +31,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		public List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
 		{
-			return new List<Tbl_Pago>();
-			/*var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			//return new List<Tbl_Pago>();
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			var pagosP = new Tbl_Pago()
 			{
@@ -55,10 +55,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
 
 				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(
-					//FilterData.ISNull("fecha_anulacion"),
-					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray())
+					FilterData.ISNull("fecha_anulacion"),
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
 					//,
-					//FilterData.Greater("importe_saldo_md", 0)
+					FilterData.Greater("importe_saldo_md", 0)
 				).ToList();
 
 				siacTunnel.Stop();
@@ -73,8 +73,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
-			);*/
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.ISNull("Fecha_anulacion"),
+				FilterData.Greater("Monto_Pendiente", 0)
+			);
 
 		}
 
@@ -177,7 +179,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			};
 		}
 
-		public static ResponseService EjecutarPago(TPV datosDePago, string? identify)
+		public static async Task<ResponseService> EjecutarPago(TPV datosDePago, string? identify)
 		{
 			try
 			{
@@ -204,7 +206,12 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = "Datos de la tarjeta no validos"
 					};
 				}
-				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES
+				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES				
+				datosDePago.pagosRequest = pagosRequest;
+				var pagosAuthResponse = await TPVService.AuthenticateAsync(datosDePago);
+				var pagosResponse = await TPVService.SalesAsync(datosDePago);
+							
+				
 				pagosRequest!.Referencia = Guid.NewGuid().ToString();
 				pagosRequest!.Fecha = DateTime.Now;
 				pagosRequest!.Estado = PagosState.PAGADO.ToString();

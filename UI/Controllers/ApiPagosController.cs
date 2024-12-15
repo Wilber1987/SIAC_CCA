@@ -29,18 +29,20 @@ namespace UI.Controllers
 			return PagosOperation.SetPagosRequest(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
 		[HttpPost]
-        [AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
-        public List<PagosRequest> GetPagosRequest(PagosRequest Inst)
-        {
-            return PagosRequest.GetPagosRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
-        }
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
+		public List<PagosRequest> GetPagosRequest(PagosRequest Inst)
+		{
+			return PagosRequest.GetPagosRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
+		}
 		[HttpPost]
 		public IActionResult EjecutarPago([FromForm] TPV datosDePago)
 		{
 			// Obtener el objeto PagosRequest desde la base de datos o la sesión según el Id
+			
 			var response = PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
-			if (response.status == 200) return RedirectToAction("PagoExitoso");
-			else return BadRequest(response.message);
+			return RedirectToAction("PagoExitoso");
+			/*if (response.status == 200) return RedirectToAction("PagoExitoso");
+			else return BadRequest(response.message);*/
 		}
 
 		/*[HttpPost]

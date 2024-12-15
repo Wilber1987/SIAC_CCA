@@ -154,6 +154,8 @@ namespace CAPA_NEGOCIO.Templates
 						var nexanio = fechaActual.Year + 1;
 
 						var boletaMsql = boleta.GetBoletas().FirstOrDefault();
+						forwardedPort.Stop();
+						client.Disconnect();
 
 						if (boletaMsql != null)
 						{
@@ -180,8 +182,7 @@ namespace CAPA_NEGOCIO.Templates
 							//throw new Exception("No se encontró boleta para el estudiante con código " + estudiante.Codigo);
 						}
 
-						forwardedPort.Stop();
-						client.Disconnect();
+						
 					}
 				}
 				catch (System.Exception ex)
