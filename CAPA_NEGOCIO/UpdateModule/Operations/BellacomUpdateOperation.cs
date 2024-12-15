@@ -37,12 +37,15 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 tutor.SetConnection(conection);
                 var filter = FilterData.Or(
                     FilterData.Distinc("migrado", true),
-                    FilterData.Equal("migrado", true),
+                    FilterData.Equal("migrado", false),
                     FilterData.ISNull("migrado")
                 );
                 tutor.filterData.Add(FilterData.NotNull("user_id"));
-                tutor.filterData.Add(FilterData.Equal("id",197));//todo quitar en produccion
+
+                //tutor.filterData.Add(FilterData.Equal("id",197));//TODO quitar en produccion
+
                 var tutores = tutor.Where<Parientes_Data_Update>(filter);
+
                 foreach (var t in tutores)
                 {
                     //obtenemos los datos de las nuevas actualizaciones para trasladarlos a bellacom
