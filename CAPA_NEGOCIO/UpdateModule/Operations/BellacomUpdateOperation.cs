@@ -40,9 +40,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     FilterData.Equal("migrado", false),
                     FilterData.ISNull("migrado")
                 );
-                tutor.filterData.Add(FilterData.NotNull("user_id"));
-
-                //tutor.filterData.Add(FilterData.Equal("id",197));//TODO quitar en produccion
+                tutor.filterData.Add(FilterData.NotNull("user_id"));                
 
                 var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
