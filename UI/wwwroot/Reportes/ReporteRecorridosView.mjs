@@ -104,33 +104,33 @@ class ReporteRecorridosView extends HTMLElement {
             this.Header = html`<div class="">
                 <h2>Informe de Recorridos 2025</h2>
                 ${new WFilterOptions({
-                    ModelObject: ModelFilter,
-                    Dataset: dataSet,
-                    UseEntityMethods: false,
-                    Display: true,
-                    FilterFunction: async (Dfilter) => {
-                        // @ts-ignore
-                        this.ReportWrapper.innerHTML = "";
-                        const niveles = Dfilter.find(a => a.PropName == "Niveles");
-                        const grados = Dfilter.find(a => a.PropName == "Grado");
-                        let filtDataSet = dataSet
-                        if (niveles && grados) {
-                            filtDataSet = dataSet.filter(o =>
-                                grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0 &&
-                                niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
-                            );
-                        } else if (grados) {
-                            filtDataSet = dataSet.filter(o =>
-                                grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0
-                            );
-                        } else if (niveles) {
-                            filtDataSet = dataSet.filter(o =>
-                                niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
-                            );
-                        }
-                        this.ReportWrapper?.append(this.ReportEstudiantesRecorridos(filtDataSet))
+                ModelObject: ModelFilter,
+                Dataset: dataSet,
+                UseEntityMethods: false,
+                Display: true,
+                FilterFunction: async (Dfilter) => {
+                    // @ts-ignore
+                    this.ReportWrapper.innerHTML = "";
+                    const niveles = Dfilter.find(a => a.PropName == "Niveles");
+                    const grados = Dfilter.find(a => a.PropName == "Grado");
+                    let filtDataSet = dataSet
+                    if (niveles && grados) {
+                        filtDataSet = dataSet.filter(o =>
+                            grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0 &&
+                            niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
+                        );
+                    } else if (grados) {
+                        filtDataSet = dataSet.filter(o =>
+                            grados?.Values.filter(g => g.toString() == o.Grado.toString()) > 0
+                        );
+                    } else if (niveles) {
+                        filtDataSet = dataSet.filter(o =>
+                            niveles?.Values.filter(g => g.toString() == o.Niveles.toString()) > 0
+                        );
                     }
-                })}
+                    this.ReportWrapper?.append(this.ReportEstudiantesRecorridos(filtDataSet))
+                }
+            })}
             <hr/>
             </div>`;
             this.append(
@@ -187,54 +187,56 @@ class ReporteRecorridosView extends HTMLElement {
         </div>
         <div class="">
              ${new WReportComponent({
-            ModelObject: new ModelReport(),
-            Dataset: dataSet,
-            Logo: `${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}`,
-            Header: decodedText ?? "",
-            SubHeader: "Listado de alumnos que requieren Recorrido 2025",
-            PageType: PageType.OFICIO_HORIZONTAL,
-            /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
-                const htmlString = htmlNode.outerHTML;
-                // Codificar la cadena en Base64
-                const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
-                    return rgbToHex(match); // Convierte rgb a hexadecimal
-                }))));
-                // Crear el objeto para enviar al endpoint
-                console.log(htmlBase64);
-    
-                const payload = {
-                    DocumentHtml: htmlBase64
-                };
-                //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
-                const response = await fetch('../api/ApiReportes/ExportToExcel', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-    
-                // Verificar si la respuesta es correcta
-                if (!response.ok) {
-                    throw new Error(`Error en la exportación: ${response.statusText}`);
-                }
-    
-                // Convertir la respuesta en un blob (archivo)
-                const blob = await response.blob();
-    
-                // Crear un enlace para descargar el archivo
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-    
-                // Liberar la URL del objeto
-                window.URL.revokeObjectURL(url);
-            }*/
-            //ModelObject: model
+                ModelObject: new ModelReport(),
+                Dataset: dataSet,
+                Logo: `${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}`,
+                Header: decodedText ?? "",
+                SubHeader: "Listado de alumnos que requieren Recorrido 2025",
+                PageType: PageType.OFICIO_HORIZONTAL,
+                exportXls: true,
+                exportPdfApi: true
+                /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
+                    const htmlString = htmlNode.outerHTML;
+                    // Codificar la cadena en Base64
+                    const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
+                        return rgbToHex(match); // Convierte rgb a hexadecimal
+                    }))));
+                    // Crear el objeto para enviar al endpoint
+                    console.log(htmlBase64);
+        
+                    const payload = {
+                        DocumentHtml: htmlBase64
+                    };
+                    //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
+                    const response = await fetch('../api/ApiReportes/ExportToExcel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+        
+                    // Verificar si la respuesta es correcta
+                    if (!response.ok) {
+                        throw new Error(`Error en la exportación: ${response.statusText}`);
+                    }
+        
+                    // Convertir la respuesta en un blob (archivo)
+                    const blob = await response.blob();
+        
+                    // Crear un enlace para descargar el archivo
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+        
+                    // Liberar la URL del objeto
+                    window.URL.revokeObjectURL(url);
+                }*/
+                //ModelObject: model
         })}
         </div>
        
