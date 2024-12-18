@@ -16,7 +16,13 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.104.2" />
-    <PackageReference Include="MySqlConnector" Version="2.3.7" />  
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
+    <PackageReference Include="itext7" Version="8.0.0" />
+    <PackageReference Include="itext7.pdfhtml" Version="5.0.0" />
+    
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.0" />
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    <PackageReference Include="WkHtmlToPdf.NetCore" Version="3.0.2" /> 
   </ItemGroup>
 
 </Project>
