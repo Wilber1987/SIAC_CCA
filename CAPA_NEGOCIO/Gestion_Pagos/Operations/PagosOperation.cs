@@ -6,6 +6,7 @@ using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
+using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
@@ -53,20 +54,23 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 				var pagosAlumnosView = new Pagos_alumnos_view();
 				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
-
-				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(
-					FilterData.ISNull("fecha_anulacion"),
+				List<FilterData> filters = [FilterData.ISNull("fecha_anulacion"),
 					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
-					//,
 					FilterData.Greater("importe_saldo_md", 0)
-				).ToList();
+				];
+				if (pagosP.Count > 0)
+				{
+					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
+				}
+
+				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
 
 				siacTunnel.Stop();
 				siacSshClient.Disconnect();
 			}
 			var recienTraidosPagos = recientraidos.SelectMany(x =>
 			{
-				return buildCuentasPorCobrar(x, responsable);
+				return BuildCuentasPorCobrar(x, responsable);
 			}).ToList();
 
 			return new Tbl_Pago
@@ -82,7 +86,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 
 
-		private static List<Tbl_Pago> buildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
+		private static List<Tbl_Pago> BuildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
 		{
 			MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
 			if (x?.Texto_corto != null)
@@ -142,6 +146,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
 		{
+			inst.Monto = inst.Detalle_Pago!.Sum(x => x.Total);
+			inst.Moneda = inst.Detalle_Pago.First().Pago!.Money.ToString();
+			
 			SeasonServices.Set("PagosRequest", inst, identify);
 			return new ResponseService
 			{
@@ -208,11 +215,26 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				}
 				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES				
 				datosDePago.pagosRequest = pagosRequest;
-				var pagosAuthResponse = await TPVService.AuthenticateAsync(datosDePago);
-				var pagosResponse = await TPVService.SalesAsync(datosDePago);
-							
-				
-				pagosRequest!.Referencia = Guid.NewGuid().ToString();
+				TPVService tPVService = new TPVService();
+				PowerTranzTpvResponse pagosAuthResponse = await tPVService.AuthenticateAsync(datosDePago);
+				if (pagosAuthResponse.Errors?.Count > 0)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = string.Join(" - ", pagosAuthResponse.Errors.Select(e => e.Message).ToList())
+					};
+				}
+				PowerTranzTpvResponse pagosResponse = await tPVService.SalesAsync(datosDePago);
+				if (pagosResponse.Errors?.Count > 0)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = string.Join(" - ", pagosResponse.Errors.Select(e => e.Message).ToList())
+					};
+				}
+				pagosRequest!.Referencia = pagosResponse.TransactionIdentifier;
 				pagosRequest!.Fecha = DateTime.Now;
 				pagosRequest!.Estado = PagosState.PAGADO.ToString();
 				pagosRequest!.Responsable_Id = responsable.Pariente_id;

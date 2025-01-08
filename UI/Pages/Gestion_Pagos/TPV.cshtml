@@ -109,8 +109,8 @@
                         </div>
                         <div class="col-6">
                             <label for="ExpYear">Año de expiración</label>
-                            <input class="" id="ExpYear" name="ExpYear" required type="number" min="@DateTime.Now.Year"
-                                placeholder="YYYY" title="Año de expiración (4 dígitos)">
+                            <input class="" id="ExpYear" name="ExpYear" required type="number" min="25"
+                                placeholder="YY" title="Año de expiración (últimos 2 dígitos)">
                         </div>
                     </div>
                     <div class="">
@@ -133,6 +133,7 @@
             pagoTotal += detalle.Monto.GetValueOrDefault();
             <div class="detail">
                 <label for="">@detalle.Pago?.Estudiante?.Nombre_completo</label>
+                <label for="">@detalle.Pago?.Concepto</label>
                 <label for="">@detalle.Pago?.Mes</label>
                 <label for="" class="pago-monto">@(detalle.Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(detalle.Monto)</label>
             </div>

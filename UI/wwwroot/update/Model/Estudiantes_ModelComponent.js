@@ -32,8 +32,6 @@ class Estudiantes_ModelComponent extends EntityClass {
             this[prop] = props[prop];
         }
     }
-
-
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
     /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true, fullDetail: false, require: false };
     /**@type {ModelProperty}*/ Pais = { type: 'WSelect', ModelObject: () => new Paises_ModelComponent(), hiddenInTable: true, hiddenFilter: true, fullDetail: false };

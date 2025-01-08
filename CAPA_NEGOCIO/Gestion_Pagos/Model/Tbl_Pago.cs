@@ -25,6 +25,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha_Limite { get; set; }
 		public DateTime? Fecha { get; set; }
 		public string? Estado { get; set; }
+		[ManyToOne(TableName = "Estudiantes", KeyColumn  = "Id", ForeignKeyColumn = "Estudiante_Id")]
 		public Estudiantes? Estudiante { get; set; }
 
 		//nuevas propiedades luego del alter 23
