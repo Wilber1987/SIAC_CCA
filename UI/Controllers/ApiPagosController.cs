@@ -35,14 +35,14 @@ namespace UI.Controllers
 			return PagosRequest.GetPagosRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
 		[HttpPost]
-		public IActionResult EjecutarPago([FromForm] TPV datosDePago)
+		public async Task<IActionResult> EjecutarPago([FromForm] TPV datosDePago)
 		{
 			// Obtener el objeto PagosRequest desde la base de datos o la sesión según el Id
 			
-			var response = PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
-			return RedirectToAction("PagoExitoso");
-			/*if (response.status == 200) return RedirectToAction("PagoExitoso");
-			else return BadRequest(response.message);*/
+			var response = await PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
+			//return RedirectToAction("PagoExitoso");
+			if (response.status == 200) return RedirectToAction("PagoExitoso");
+			else return BadRequest(response.message);
 		}
 
 		/*[HttpPost]

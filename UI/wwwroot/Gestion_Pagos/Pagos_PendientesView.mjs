@@ -16,8 +16,10 @@ class Pagos_PendientesView extends HTMLElement {
         this.TabContainer = WRender.Create({
             class: 'TabContainer', style: {
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-end"
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                gap: "15px",
+                transition: "all 0.5s"
             }, id: "TabContainer"
         });
         //this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
@@ -26,8 +28,20 @@ class Pagos_PendientesView extends HTMLElement {
             Inicialize: true,
             Elements: this.NavElements()
         })
-        this.label = html`<label class="pago-monto">Total: $ 0.00</label>`;
-        this.TabContainer.append(this.label, this.PayButton());
+        this.DetailContainer = html`<div class="pago-detail"></div>`;
+        this.TotalContainer = html`<div class="pago-monto ">
+                <div class="pago-details-container">
+                <div>Total</div>                 
+                <div>0.00</div>                
+            </div>
+        </div>`;
+        
+        this.TabContainer.append(
+            html`<h3>Detalle de pagos</h3>`,
+            this.DetailContainer, 
+            this.TotalContainer, 
+            this.PayButton()
+        );
         /**@type {Array<Detalle_Pago>} */
         this.pagosSeleccionados = [];
         this.pagosSeleccionadosProxy = new Proxy(this.pagosSeleccionados, {
@@ -52,11 +66,21 @@ class Pagos_PendientesView extends HTMLElement {
     UpdatePagos() {
         let total = 0;
         console.log(this.pagosSeleccionados);
+        this.DetailContainer.innerHTML = "";
+        this.TotalContainer.innerHTML = "";
 
         this.pagosSeleccionados.forEach(detalle => {
+            this.DetailContainer.append(html`<div class="pago-details-container">
+                <div>${detalle.Pago?.Concepto}</div>                 
+                <div>${WOrtograficValidation.es(detalle.Pago?.Money)} ${ConvertToMoneyString(detalle.Monto ?? 0)}</div>                
+            </div>`);
             total += detalle.Total ?? 0;
         });
-        this.label.innerHTML = `Total: ${WOrtograficValidation.es(this.pagosSeleccionados[0]?.Pago?.Money)} ${ConvertToMoneyString(total)}`;
+
+        this.TotalContainer.append(html`<div class="pago-details-container">
+            <div>Total</div>                 
+            <div>${WOrtograficValidation.es(this.pagosSeleccionados[0]?.Pago?.Money)} ${ConvertToMoneyString(total)}</div>                
+        </div>`);
     }
 
     PayButton() {
@@ -91,20 +115,21 @@ class Pagos_PendientesView extends HTMLElement {
                     </div>`;
                     /**@type {Array<Tbl_Pago>} */
                     const pagos = await new Tbl_Pago().Get();
-                    // @ts-ignore
-                    const pagosGroup = Object.groupBy(pagos, p => p.Mes);
-
-                    for (const pagosMes in pagosGroup) {
-                        const mesContainer = html`<div class="mes-container">
-                            <h3>${pagosMes}</h3>
+                    // @ts-ignore                    
+                    const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
+                    for (const estudianteId in pagosEstudiante) {
+                        /**@type {Tbl_Pago} */
+                        const pago = pagosEstudiante[estudianteId][0];
+                        const estudianteContainer = html`<div class="estudiante-container">
+                            <h3>${pago.Estudiante?.Nombre_completo}</h3>
                         </div>`;
-                        pagosGroup[pagosMes].forEach(pago => {
-                            const card = this.PagosCard(pago, this.pagosSeleccionadosProxy, pagos);
-                            this.Controls.push(card);
-                            mesContainer.append(card);
+                        pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
+                            const pagoMes = this.BuildPagosMes(pagos);
+                            estudianteContainer.append(pagoMes);
                         });
-                        div.append(mesContainer);
+                        div.append(estudianteContainer);
                     }
+                    //const pagoMes = this.BuildPagosMes(pagos);
                     return div;
                 }
             }, {
@@ -116,6 +141,32 @@ class Pagos_PendientesView extends HTMLElement {
         ];
     }
 
+
+    /**
+     * Construye los pagos del mes y los agrega al contenedor
+     * @param {Tbl_Pago[]} pagos - Lista de pagos
+     * @returns {HTMLElement} - Contenedor de los pagos
+     */
+    BuildPagosMes(pagos) {
+        const div = html`<div class="pago-mes-container"></div>`;
+        // @ts-ignore
+        const pagosGroup = Object.groupBy(pagos, p => p.Mes);
+
+        for (const pagosMes in pagosGroup) {
+            const mesContainer = html`<div class="mes-container">
+                <!-- <h3>${WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
+                pagosMes - 1])}
+                </h3> -->
+            </div>`;
+            pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
+                const card = this.PagosCard(pago, this.pagosSeleccionadosProxy, pagos);
+                this.Controls.push(card);
+                mesContainer.append(card);
+            });
+            div.append(mesContainer);
+        }
+        return div;
+    }
 
     connectedCallback() { }
     /**
@@ -131,8 +182,8 @@ class Pagos_PendientesView extends HTMLElement {
         }}" />`
         return html`<div class="pago-card" id="pago${pago.Id_Pago}">
         <div class="pago-detail">
-            <div class="pago-title">${pago.Estudiante?.Nombre_completo}</div>
-            <div class="pago-subtitle">${pago.Concepto}</div>
+            <div class="pago-title">${pago.Concepto}</div>
+            <!-- <div class="pago-subtitle">${pago.Concepto}</div> -->
             <div class="pago-details-container">
                 <div class="pago-subtitle">Documento: ${pago.Documento}</div>
                 <div class="pago-subtitle">Fecha de pago: ${new DateTime(pago.Fecha).toDateFormatEs()}</div>
@@ -202,6 +253,12 @@ class Pagos_PendientesView extends HTMLElement {
         }
     }
     Style = css`
+        w-pagos-view {
+            display: grid;
+            grid-template-columns: 70% 30%;
+            gap: 30px;
+            padding-top: 30px;
+        }
         w-app-navigator {
             display: block;
             max-height: calc(100vh - 280px);
@@ -221,7 +278,9 @@ class Pagos_PendientesView extends HTMLElement {
             display: flex;
             flex-direction: column;
             gap: 5px;
+            flex: 1;
         }
+        
         .pago-title, .pago-monto {
             font-size: 20px;
             font-weight: bold;
@@ -235,6 +294,7 @@ class Pagos_PendientesView extends HTMLElement {
             margin: 5px;
         }
         .pago-details-container {
+            justify-content: space-between;
             display: flex;
             gap: 20px;
         }
