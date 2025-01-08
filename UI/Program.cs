@@ -76,7 +76,7 @@ builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 
 builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {	
-	options.CronExpression = "30 22 * * *";
+	options.CronExpression = "44 10 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
