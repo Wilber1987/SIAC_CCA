@@ -38,13 +38,13 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				// Manejo de errores
 				throw new ApplicationException($"Error durante la venta: {ex.Message}", ex);
 			}
-		}		
+		}
 
-		public async Task<PowerTranzTpvResponse> PaymentAsync(TPV datosDePago)
+		public async Task<PowerTranzTpvResponse> PaymentAsync(string? spiToken)
 		{
 			try
 			{
-				PowerTranzTpvResponse responseData = await ExecuteRequest("Api/spi/Payment", SPI);
+				PowerTranzTpvResponse responseData = await Execute("Api/spi/Payment", spiToken);
 				return responseData;
 			}
 			catch (Exception ex)
@@ -53,7 +53,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				throw new ApplicationException($"Error durante la venta: {ex.Message}", ex);
 			}
 		}
-		
+
 		public async Task<PowerTranzTpvResponse> RiskMgmtAsync(TPV datosDePago)
 		{
 			try
@@ -111,7 +111,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						""ChallengeWindowSize"": 4,
 						""ChallengeIndicator"": ""01""
 					},
-					""MerchantResponseUrl"":  ""https://localhost:44393/MerchantResponseURL""
+					""MerchantResponseUrl"":  ""https://localhost:10003/ApiPagos/MerchantResponseURL""
 				}
 			}";
 		}
@@ -135,6 +135,35 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				}
 			}";
 		}
+		private async Task<PowerTranzTpvResponse> Execute(string url, string jsonContent)
+		{
+			using HttpClient _httpClient = new HttpClient();
+
+			// Agregar encabezados requeridos
+			_httpClient.DefaultRequestHeaders.Add("Host", "staging.ptranz.com");
+			_httpClient.DefaultRequestHeaders.Add("Accept", "text/plain");
+
+			HttpResponseMessage response;
+			try
+			{
+				// Configurar el contenido como un string simple (no JSON objeto)
+				var content = new StringContent($"\"{jsonContent}\"" , Encoding.UTF8, "application/json");
+
+				// Enviar la solicitud POST
+				response = await _httpClient.PostAsync(GLOBAL_URL + url, content);
+
+				// Verificar el código de estado HTTP
+				response.EnsureSuccessStatusCode();
+
+				return await response.Content.ReadAsAsync<PowerTranzTpvResponse>();
+			}
+			catch (HttpRequestException ex)
+			{
+				// Leer contenido de error si está disponible
+				//var errorContent = response != null ? await response.Content.ReadAsStringAsync() : "No response content";
+				throw new Exception($"Request failed: {ex.Message}");
+			}
+		}
 		private async Task<PowerTranzTpvResponse> ExecuteRequest(string url, string jsonContent)
 		{
 			using HttpClient _httpClient = new HttpClient();
@@ -144,7 +173,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			_httpClient.DefaultRequestHeaders.Add("PowerTranz-PowerTranzPassword", POWERTRANZ_PASSWORD);
 			//_httpClient.DefaultRequestHeaders.Add("PowerTranz-PowerTranzPassword", POWERTRANZ_PASSWORD);
 			//_httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			
+
 			StringContent? content;
 			HttpResponseMessage? response;
 			if (jsonContent == null)

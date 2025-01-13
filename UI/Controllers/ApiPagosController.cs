@@ -41,6 +41,16 @@ namespace UI.Controllers
 			
 			var response = await PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
 			//return RedirectToAction("PagoExitoso");
+			if (response.status == 200) return RedirectToAction("MerchantResponseURL");
+			else return BadRequest(response.message);
+		}
+		[HttpGet]
+		public async Task<IActionResult> AutorizarPago()
+		{
+			// Obtener el objeto PagosRequest desde la base de datos o la sesión según el Id
+			
+			var response = await PagosOperation.AutorizarPago(HttpContext.Session.GetString("seassonKey"));
+			//return RedirectToAction("PagoExitoso");
 			if (response.status == 200) return RedirectToAction("PagoExitoso");
 			else return BadRequest(response.message);
 		}

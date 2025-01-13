@@ -148,7 +148,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			inst.Monto = inst.Detalle_Pago!.Sum(x => x.Total);
 			inst.Moneda = inst.Detalle_Pago.First().Pago!.Money.ToString();
-			
+
 			SeasonServices.Set("PagosRequest", inst, identify);
 			return new ResponseService
 			{
@@ -216,7 +216,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES				
 				datosDePago.pagosRequest = pagosRequest;
 				TPVService tPVService = new TPVService();
-				PowerTranzTpvResponse pagosAuthResponse = await tPVService.AuthenticateAsync(datosDePago);
+				/*PowerTranzTpvResponse pagosAuthResponse = await tPVService.AuthenticateAsync(datosDePago);
 				if (pagosAuthResponse.Errors?.Count > 0)
 				{
 					return new ResponseService
@@ -224,7 +224,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						status = 403,
 						message = string.Join(" - ", pagosAuthResponse.Errors.Select(e => e.Message).ToList())
 					};
-				}
+				}*/
 				PowerTranzTpvResponse pagosResponse = await tPVService.SalesAsync(datosDePago);
 				if (pagosResponse.Errors?.Count > 0)
 				{
@@ -234,7 +234,48 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = string.Join(" - ", pagosResponse.Errors.Select(e => e.Message).ToList())
 					};
 				}
-				pagosRequest!.Referencia = pagosResponse.TransactionIdentifier;
+				else
+				{
+					SeasonServices.Set("PAGO_PROCESO_SERVICE", tPVService, identify);
+					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, identify);
+					SeasonServices.Set("PAGO_PROCESO_RESPONSE", pagosResponse, identify);
+					return new ResponseService
+					{
+						status = 200,
+						message = "PAGO_PROCESO"
+					};
+				}
+			}
+			catch (System.Exception e)
+			{
+				return new ResponseService
+				{
+					status = 500,
+					message = e.Message
+				};
+			}
+
+		}
+		public static async Task<ResponseService> AutorizarPago(string? identify)
+		{
+			TPVService? tPVService = SeasonServices.Get<TPVService>("PAGO_PROCESO_SERVICE", identify);
+			PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", identify);
+			PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
+			PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(pagosResponse.SpiToken );
+			if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
+			{
+				return new ResponseService
+				{
+					status = 403,
+					message = string.Join(" - ", pagosResponseAutorizarPago.Errors.Select(e => e.Message).ToList())
+				};
+			}
+			else
+			{
+				var user = AuthNetCore.User(identify);
+				var responsable = Tbl_Profile.Get_Profile(user);
+
+				pagosRequest!.Referencia = pagosResponse?.TransactionIdentifier;
 				pagosRequest!.Fecha = DateTime.Now;
 				pagosRequest!.Estado = PagosState.PAGADO.ToString();
 				pagosRequest!.Responsable_Id = responsable.Pariente_id;
@@ -265,17 +306,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					message = "Pago realizado"
 				};
 			}
-			catch (System.Exception e)
-			{
-				return new ResponseService
-				{
-					status = 500,
-					message = e.Message
-				};
-			}
-
 		}
 	}
+
 
 	public class InfoPagos
 	{
