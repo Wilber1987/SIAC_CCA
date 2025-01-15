@@ -19,7 +19,7 @@
     PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
 }
 <div>
-    <iframe src="data:text/html;charset=utf-8,@pagosResponse.RedirectData" frameborder="0"></iframe>
+    <iframe style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse.RedirectData" frameborder="0"></iframe>
     
    @*  @Html.Raw(pagosResponse.RedirectData);*@
 </div>
