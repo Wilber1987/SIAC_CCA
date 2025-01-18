@@ -4,7 +4,6 @@
 @using CAPA_DATOS;
 @using CAPA_DATOS.Services
 @using CAPA_NEGOCIO.Gestion_Pagos.Model
-@using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @using DataBaseModel;
 @{
@@ -14,18 +13,31 @@
         Response.Redirect("/Security/Login");
         return;
     }
-    // double pagoTotal = 0;
-    //PagosRequest? pagosRequest = PagosOperation.GetPagoARealizar(identify);
-    PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
+    double pagoTotal = 0;
+    PagosRequest? pagosRequest = PagosOperation.GetPagoARealizar(identify);
 }
-<div>
-    <iframe style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse.RedirectData" frameborder="0"></iframe>
-    
-   @*  @Html.Raw(pagosResponse.RedirectData);*@
-</div>
-<form method="get" asp-controller="ApiPagos" asp-action="AutorizarPago">
 
-    <div>
-        <button class="btn btn-success" type="submit">Pagar</button>
+<script type="module">
+</script>
+<div id="Main" class="tpv-container">
+    <div class="TabContainer">        
+        <h3>PAGO EXITOSO</h3>
     </div>
-</form>
+    <div class="TabContainer detail-pago-container">
+        <h3>DETALLES DEL PAGO</h3>
+        @foreach (var pago in pagosRequest?.Detalle_Pago ?? [])
+        {
+            pagoTotal += pago.Monto.GetValueOrDefault();
+            <div class="detail">
+                <label for="">@pago.Pago?.Estudiante?.Nombre_completo</label>
+                <label for="">@pago.Pago?.Mes</label>
+                <label for="" class="pago-monto">@(pago.Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
+            </div>
+        }
+        <div class="detail pago-total">
+            <label for="">Total</label>
+            <label for=""></label>
+            <label for="" class="pago-monto-max">@(pagosRequest?.Detalle_Pago?[0].Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pagoTotal)</label>
+        </div>
+    </div>
+</div>

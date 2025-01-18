@@ -111,7 +111,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						""ChallengeWindowSize"": 4,
 						""ChallengeIndicator"": ""01""
 					},
-					""MerchantResponseUrl"":  ""https://localhost:10003/ApiPagos/MerchantResponseURL""
+					""MerchantResponseUrl"":  ""https://4e0c-186-77-132-139.ngrok-free.app/api/ApiPagos/MerchantResponseURL""
 				}
 			}";
 		}

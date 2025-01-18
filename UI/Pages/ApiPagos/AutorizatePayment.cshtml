@@ -1,0 +1,31 @@
+@page
+@using API.Controllers;
+@using CAPA_DATOS.Security;
+@using CAPA_DATOS;
+@using CAPA_DATOS.Services
+@using CAPA_NEGOCIO.Gestion_Pagos.Model
+@using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv
+@using CAPA_NEGOCIO.Gestion_Pagos.Operations
+@using DataBaseModel;
+@{
+    string? identify = HttpContext?.Session.GetString("seassonKey");
+    if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+    {
+        Response.Redirect("/Security/Login");
+        return;
+    }
+    // double pagoTotal = 0;
+    //PagosRequest? pagosRequest = PagosOperation.GetPagoARealizar(identify);
+    PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
+}
+<div>
+    <iframe style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse.RedirectData" frameborder="0"></iframe>
+    
+   @*  @Html.Raw(pagosResponse.RedirectData);*@
+</div>
+@* <form method="get" asp-controller="ApiPagos" asp-action="AutorizarPago">
+
+    <div>
+        <button class="btn btn-success" type="submit">Pagar</button>
+    </div>
+</form> *@

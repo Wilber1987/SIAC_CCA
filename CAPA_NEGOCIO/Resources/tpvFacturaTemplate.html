@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Factura</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .details, .items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .details td, .items td, .items th { border: 1px solid #ddd; padding: 8px; }
+        .items th { background-color: #f4f4f4; }
+        .total { text-align: right; font-weight: bold; }
+    </style>
+</head>
+<body>
+    {{ HEADER }}
+    <div class='header'>
+        <h1>Factura</h1>
+        <p>Referencia: {{ Referencia }}</p>
+    </div>
+    <table class='details'>
+        <tr>
+            <td><strong>Creador:</strong> {{ Creador }}</td>
+            <td><strong>Fecha:</strong> {{ Fecha }}</td>
+        </tr>
+        <tr>
+            <td><strong>Estado:</strong> {{ Estado }}</td>
+            <td><strong>Moneda:</strong> {{ Moneda }}</td>
+        </tr>
+    </table>
+    <p><strong>Descripción:</strong> {{ Descripcion }}</p>
+    <table class='items'>
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ Detalle_Pago }}
+        </tbody>
+    </table>
+    <p class='total'>Monto Total: {{ Monto }}</p>
+</body>
+</html>

@@ -104,6 +104,7 @@ class Detalle_Pago extends EntityClass {
     static CrearPago(pago) {
         return new Detalle_Pago({
             Pago: pago,
+            Concepto: pago.Concepto,
             Monto: pago.Monto_Pendiente,
             Cantidad: 1,
             Total: pago.Monto_Pendiente,
