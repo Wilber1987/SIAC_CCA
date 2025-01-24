@@ -1,24 +1,82 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
-    <title>Factura</title>
+    <title>RECIBO DE CAJA</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .details, .items { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .details td, .items td, .items th { border: 1px solid #ddd; padding: 8px; }
-        .items th { background-color: #f4f4f4; }
-        .total { text-align: right; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;            
+        }
+        label {
+            color: #1083e2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            width: 80%;
+            max-width: 500px;
+            
+            margin: 0 auto;
+        }
+
+        .details,
+        .items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .details td,
+        .items td,
+        .items th {
+            padding: 8px;
+        }
+
+        .items th {
+            background-color: #f4f4f4;
+        }
+
+        .total {
+            text-align: right;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
-    {{ HEADER }}
-    <div class='header'>
-        <h1>Factura</h1>
-        <p>Referencia: {{ Referencia }}</p>
-    </div>
-    <table class='details'>
+    <div class="container">
+        <div class='header'>
+            <h1><label>RECIBO DE CAJA</label></h1>
+            <table class='details'>
+                <tr>
+                    <td style="text-align: left;"><label>Colegio Centroamerica</label></td>
+                    <td><label>RUC: {{ Ruc }}</label></td>
+                    <td style="text-align:right;"><label>No. RECIBO:</label> {{ NoRecibo }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>PAGO EN CONCEPTO:</label> {{ Concepto }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>FECHA:</label> {{ Fecha }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;"><label>ENTRANTE:</label> {{ Creador }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+
+        </div>
+        <!-- <table class='details'>
         <tr>
             <td><strong>Creador:</strong> {{ Creador }}</td>
             <td><strong>Fecha:</strong> {{ Fecha }}</td>
@@ -28,18 +86,28 @@
             <td><strong>Moneda:</strong> {{ Moneda }}</td>
         </tr>
     </table>
-    <p><strong>Descripción:</strong> {{ Descripcion }}</p>
-    <table class='items'>
-        <thead>
-            <tr>
-                <th>Concepto</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{ Detalle_Pago }}
-        </tbody>
-    </table>
-    <p class='total'>Monto Total: {{ Monto }}</p>
+    <p><strong>Descripción:</strong> {{ Descripcion }}</p> -->
+        <table class='items'>
+            <thead>
+                <tr>
+                    <th><label>DESCRIPCIÓN</label></th>
+                    <th><label>MONTO</label></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ Detalle_Pago }}
+            </tbody>
+        </table>
+        <p class='total'>TOTAL: {{ Monto_C }}</p>
+        <p class='total'>T.C. OFICIAL BCN: {{ Monto_TC }}</p>
+        <p class='total'>TOTAL EN DÓLARES: {{ Monto }}</p>
+        <h3><label>SUJETO A MANTENIMIENTO DE VALOR, ARTO 16 LEY MONETARIA</label></h3>
+        <h3 style="display: flex; justify-content: space-between">
+            <label style="color: RED;">COLEGIO</label>
+            <label>No. <span style="color: RED;">{{ NoRecibo }}</span></label>
+            
+        </h3>
+    </div>
 </body>
+
 </html>

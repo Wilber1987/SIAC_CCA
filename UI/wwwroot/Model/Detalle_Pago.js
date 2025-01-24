@@ -18,70 +18,70 @@ class Detalle_Pago extends EntityClass {
         }
     }
     /**
-     * @type {?number}
+     * @type {number}
      * @description Identificador del detalle de pago (Primary Key)
      */
-    Id_Detalle = null;
+    Id_Detalle;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Identificador del pago
      */
-    Id_Pago = null;
+    Id_Pago;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Total del detalle de pago
      */
-    Total = null;
+    Total;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Cantidad relacionada con el detalle del pago
      */
-    Cantidad = null;
+    Cantidad;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Monto correspondiente a este detalle
      */
-    Monto = null;
+    Monto;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Impuesto aplicado al detalle del pago
      */
-    Impuesto = null;
+    Impuesto;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Concepto relacionado con el pago
      */
-    Concepto = null;
+    Concepto;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Identificador del pago request (Foreign Key a PagosRequest)
      */
-    Id_Pago_Request = null;
+    Id_Pago_Request;
 
     /**
-     * @type {?Tbl_Pago}
+     * @type {Tbl_Pago}
      * @description Estado anterior del pago (almacenado como JSON)
      */
-    Estado_Anterior_Pago = null;
+    Estado_Anterior_Pago;
 
     /**
-     * @type {?PagosRequest}
+     * @type {PagosRequest}
      * @description Relación muchos a uno con PagosRequest
      */
-    PagosRequest = null;
+    PagosRequest;
 
     /**
-     * @type {?Tbl_Pago}
+     * @type {Tbl_Pago}
      * @description Relación muchos a uno con Tbl_Pago
      */
-    Pago = null;
+    Pago;
 
     /**
      * Actualiza el monto del detalle del pago, 

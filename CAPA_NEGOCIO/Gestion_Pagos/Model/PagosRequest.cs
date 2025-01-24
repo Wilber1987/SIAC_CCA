@@ -19,6 +19,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha { get; set; } 
 		public string? Creador { get; set; }
 		public  string? Estado { get;  set; }
+		public  double? TasaCambio { get;  set; }
 		public double? Monto { get; set; }
 		public string? Moneda { get;  set; }
 		[OneToMany(TableName = "Detalle_Pago", KeyColumn = "Id_Pago_Request", ForeignKeyColumn = "Id_Pago_Request")]
@@ -27,10 +28,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public static List<PagosRequest> GetPagosRealizados(PagosRequest inst, string? identify)
 		{
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			if (inst.Responsable_Id == null)
+			/*if (inst.Responsable_Id == null)
 			{
 				return [];
-			}
+			}*/
 			return inst.Where<PagosRequest>(
 				FilterData.Equal("Responsable_Id", responsable.Pariente_id)
 			);
@@ -51,7 +52,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		[JsonProp]
 		public Tbl_Pago? Estado_Anterior_Pago { get; set; }
 
-		[ManyToOne(TableName = "PagosRequest", KeyColumn = "Id_Pago_Request", ForeignKeyColumn = "Id_Pago_Request")]
+		//[ManyToOne(TableName = "PagosRequest", KeyColumn = "Id_Pago_Request", ForeignKeyColumn = "Id_Pago_Request")]
 		public PagosRequest? PagosRequest { get; set; }
 		
 		[ManyToOne(TableName = "Tbl_Pago", KeyColumn = "Id_Pago", ForeignKeyColumn = "Id_Pago")]

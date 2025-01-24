@@ -27,6 +27,12 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
+		public List<Tbl_Pago> GetTbl_Pagos(Tbl_Pago Inst)
+		{
+			return new PagosOperation().GetPagos(Inst, HttpContext.Session.GetString("seassonKey"));
+		}
+		[HttpPost]
+		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService SavePagosRequest(PagosRequest Inst)
 		{
 			return PagosOperation.SetPagosRequest(Inst, HttpContext.Session.GetString("seassonKey"));

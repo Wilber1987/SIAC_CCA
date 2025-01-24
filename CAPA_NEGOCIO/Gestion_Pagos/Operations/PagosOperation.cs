@@ -286,6 +286,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				pagosRequest!.Id_User = user.UserId;
 				pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
 				pagosRequest!.Creador = user.UserData?.Descripcion;
+				pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
+				pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
 				pagosRequest?.Detalle_Pago!.ForEach(detalle =>
 				{
 					detalle.Pago!.Monto_Pendiente = detalle.Pago.Monto_Pendiente - detalle.Monto;
@@ -313,8 +315,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 		}
 
-       
-    }
+	   
+	}
 
 
 	public class InfoPagos

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.Utility;
+using DataBaseModel;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {
@@ -19,13 +20,22 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 			// Reemplazo de los valores simples
 			html = html.Replace("{{ HEADER }}", documentos.Header ?? "");
+			
+			
+			html = html.Replace("{{ NoRecibo }}", request.Id_Pago_Request?.ToString("D9"));
+			html = html.Replace("{{ Ruc }}", Config.pageConfig().RUC);
+			
 			html = html.Replace("{{ Referencia }}", request.Referencia ?? "");
 			html = html.Replace("{{ Creador }}", request.Creador ?? "");
 			html = html.Replace("{{ Fecha }}", request.Fecha?.ToString("yyyy-MM-dd") ?? "");
 			html = html.Replace("{{ Estado }}", request.Estado ?? "");
 			html = html.Replace("{{ Moneda }}", request.Moneda ?? "");
-			html = html.Replace("{{ Descripcion }}", request.Descripcion ?? "");
+			html = html.Replace("{{ Concepto }}", request.Descripcion ?? "");
+			
+			var totalC = request.Monto * (request.TasaCambio ?? 1);
+			html = html.Replace("{{ Monto_C }}", totalC?.ToString("F2") ?? "0.00");
 			html = html.Replace("{{ Monto }}", request.Monto?.ToString("F2") ?? "0.00");
+			html = html.Replace("{{ Monto_TC }}", request.TasaCambio?.ToString("F2") ?? "0.00");
 
 			// Construcción de los detalles del pago
 			string detallePagoHtml = "";
@@ -33,9 +43,11 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				foreach (var detalle in request.Detalle_Pago)
 				{
-					detallePagoHtml += $"<tr><td>{detalle.Concepto}</td><td>{detalle.Total?.ToString("F2")}</td></tr>";
+					var totalDetalle = detalle.Total * (request.TasaCambio ?? 1);
+					detallePagoHtml += $"<tr><td>{detalle.Concepto}</td><td>{totalDetalle?.ToString("F2")}</td></tr>";
 				}
 			}
+			
 			html = html.Replace("{{ Detalle_Pago }}", detallePagoHtml);
 
 			return html;
