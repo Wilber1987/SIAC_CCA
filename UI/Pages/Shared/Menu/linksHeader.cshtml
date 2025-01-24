@@ -135,19 +135,17 @@
                         <h6 class="mb-0"> @perfil.GetNombreCompleto()</h6>
                         <p class="mb-0 font-size-11 text-muted"> @perfil.Correo_institucional</p>
                     </div>
-                    @if (SecurityController.HavePermission(identify, Permissions.PERFIL_ACCESS))
+                    @if (!SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(identify, Permissions.PERFIL_ACCESS))
                     {
                         <a class="dropdown-item" href="~/Gestion_Usuarios/Perfil"><i
                                 class="mdi mdi-account-circle text-muted font-size-16 align-middle me-2"></i> <span
                                 class="align-middle">Ver Perfil</span></a>
                     }
-                    @if (SecurityController.IsAdmin(identify))
+                    @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
                     {
                         <a class="dropdown-item" href="~/Admin/Index"><i
-                                class="mdi  text-muted font-size-16 align-middle me-2"></i> <span class="align-middle">Admin
-                                Panel</span></a>
+                                class="mdi  text-muted font-size-16 align-middle me-2"></i> <span class="align-middle">Admin Panel</span></a>
                     }
-
                     @* <a class="dropdown-item" href="apps-chat.html"><i
                 class="mdi mdi-message-text-outline text-muted font-size-16 align-middle me-2"></i>
                 <span class="align-middle">Messages</span></a>

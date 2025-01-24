@@ -57,8 +57,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
                                 and (cargo.ejercicio = " + this.Ejercicio + @" or cargo.ejercicio = " + (this.Ejercicio + 1) + @" )
                                 and idservicio in (7,2,39)                                
                                 and cargo.periodo = 1
-                                and (cargo.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico =  " + (this.Ejercicio + 1) + @")
-                                /*or cargo.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + this.Ejercicio + @")*/)
+                                /*and (cargo.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico =  " + (this.Ejercicio + 1) + @")
+                                or cargo.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + this.Ejercicio + @"))*/
                             group by
                             cargo.ejercicio,cargo.tipo, cargo.idperiodoacademico, cargo.idestudiante, est.idtestudiante, cargo.periodo, cargo.idmoneda,tgm.idtmoneda
                         , cargo.estatus,  cargo.fechagrabacion, est.idestudiante, est.nombres, est.apellidos, YEAR(current_date)
