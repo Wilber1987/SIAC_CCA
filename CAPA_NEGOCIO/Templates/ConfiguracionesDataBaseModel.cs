@@ -51,24 +51,36 @@ namespace DataBaseModel
 			configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
 			TITULO = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.TITULO.ToString()))?.Valor ?? TITULO;
+				
 			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
+				
 			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO2.ToString()))?.Valor ?? SUB_TITULO2;
+				
 			NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.NOMBRE_EMPRESA.ToString()))?.Valor ?? NOMBRE_EMPRESA;
+				
 			LOGO_PRINCIPAL = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.LOGO_PRINCIPAL.ToString()))?.Valor ?? LOGO_PRINCIPAL;
+				
 			MEDIA_IMG_PATH = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.MEDIA_IMG_PATH.ToString()))?.Valor ?? MEDIA_IMG_PATH;
+				
 			VERSION = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.VERSION.ToString()))?.Valor ?? VERSION;
+				
 			WATHERMARK = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.WATHERMARK.ToString()))?.Valor ?? VERSION;
+				
 			URL_BASE = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.URL_BASE.ToString()))?.Valor ?? URL_BASE;
+				
 			FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES.ToString()))?.Valor ?? URL_BASE;
+				
+			RUC = configuraciones.Find(c => c.Nombre != null &&
+				c.Nombre.Equals(ConfiguracionesThemeEnum.RUC.ToString()))?.Valor ?? RUC;
 
 
 		}
@@ -84,6 +96,14 @@ namespace DataBaseModel
 		public List<Transactional_Configuraciones> configuraciones = new List<Transactional_Configuraciones>();
 
 		public string WATHERMARK = "logo.png";
+
+		public string RUC { get;  set; } = "0000000000000";
+
+		internal static double? GetTasaCambio(string? moneda)
+		{
+			//TODO: Implementar el servicio de tasa de cambio
+			return 36.10;
+		}
 	}
 
 	public enum ConfiguracionesTypeEnum
@@ -101,8 +121,9 @@ namespace DataBaseModel
 		TWILLIO_NUMBER,
 		SUB_TITULO2,
 		URL_BASE,
-		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES
-	}
+		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES,
+        RUC
+    }
 
 	public class Config
 	{

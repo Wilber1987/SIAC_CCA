@@ -1,3 +1,4 @@
+using System.Security.Cryptography.Pkcs;
 using CAPA_DATOS;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.UpdateModule.Model;
@@ -198,7 +199,21 @@ namespace CAPA_NEGOCIO.Templates
 			return this;
 		}
 
+		public DocumentsData GetGeneralFragments()
+		{
+			var theme = new PageConfig();
+			Header = HtmlContentGetter.ReadHtmlFile("header.html", "Resources");
+			WatherMark = HtmlContentGetter.ReadHtmlFile("wathermark.html", "Resources/BoletinFragments");
+			Footer = HtmlContentGetter.ReadHtmlFile("footer.html", "Resources/BoletinFragments");
+			//build header
+			Header = Header.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+				.Replace("{{ titulo }}", theme.TITULO)
+				.Replace("{{ sub-titulo }}", "Calificaciones");
 
+			WatherMark = WatherMark.Replace("url-wattermark", theme.MEDIA_IMG_PATH + theme.WATHERMARK);
+
+			return this;
+		}
 
 	}
 }

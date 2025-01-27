@@ -10,7 +10,7 @@ using iText.Layout;
 using iText.Html2pdf;
 using iText.Layout.Properties;
 using iText.Kernel.Geom;
-
+//using Microsoft.Playwright;
 
 namespace UI.Controllers
 {
@@ -82,6 +82,17 @@ namespace UI.Controllers
 				return memoryStream.ToArray();
 			}
 		}
+		/*public async Task<byte[]> GeneratePdfWithPlaywright(string htmlContent, string? pageType)
+		{
+			using var playwright = await Playwright.CreateAsync();
+			await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
+			var page = await browser.NewPageAsync();
+			await page.SetContentAsync(htmlContent);
+			var pdfStream = await page.PdfStreamAsync(new PagePdfOptions { Format =  pageType ?? "A4"  });
+			using var memoryStream = new MemoryStream();
+			await pdfStream.CopyToAsync(memoryStream);
+			return memoryStream.ToArray();
+		}*/
 		private iText.Kernel.Geom.PageSize GetPageSize(string? pageType)
 		{
 			switch (pageType)

@@ -17,8 +17,9 @@ namespace CAPA_NEGOCIO
 
 		public static object Login(UserModel Inst, string? idetify)
 		{
-			AuthNetCore.loginIN(Inst.mail, Inst.password, idetify);						
+			var usere = AuthNetCore.loginIN(Inst.mail, Inst.password, idetify);						
 			var user = AuthNetCore.User(idetify);
+			user.message = usere.message;
 			
 			Tbl_Profile? profile = new Tbl_Profile();
 			if (user.status == 200)

@@ -13,9 +13,9 @@ class Periodo_lectivos_ModelComponent extends EntityClass {
    }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Nombre = { type: 'text' };
-   /**@type {ModelProperty}*/ Nombre_corto = { type: 'text' };
-   /**@type {ModelProperty}*/ Inicio = { type: 'date' };
-   /**@type {ModelProperty}*/ Fin = { type: 'date' };
+   /**@type {ModelProperty}*/ Nombre_corto = {hiddenInTable: true, type: 'text' };
+   /**@type {ModelProperty}*/ Inicio = { type: 'date', hiddenInTable:true };
+   /**@type {ModelProperty}*/ Fin = { type: 'date', hiddenInTable:true };
    ///**@type {ModelProperty}*/ Observaciones = { type: 'text' };
    ///**@type {ModelProperty}*/ Config = { type: 'text' };
    ///**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha"};

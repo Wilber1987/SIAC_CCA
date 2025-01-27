@@ -14,70 +14,70 @@ class PagosRequest extends EntityClass {
         }
     }
     /**
-     * @type {?number}
+     * @type {number}
      * @description Identificador del pago request (Primary Key)
      */
-    Id_Pago_Request = null;
+    Id_Pago_Request;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Referencia del pago
      */
-    Referencia = null;
+    Referencia;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Descripción del pago
      */
-    Descripcion = null;
+    Descripcion;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description ID del responsable
      */
-    Responsable_Id = null;
+    Responsable_Id;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description ID del usuario
      */
-    Id_User = null;
+    Id_User;
 
     /**
-     * @type {?Date}
+     * @type {Date}
      * @description Fecha de creación
      */
-    Fecha = null;
+    Fecha;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Usuario creador del registro
      */
-    Creador = null;
+    Creador;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Estado actual del pago
      */
-    Estado = null;
+    Estado;
 
     /**
-     * @type {?number}
+     * @type {number}
      * @description Monto total del pago
      */
-    Monto = null;
+    Monto;
 
     /**
-     * @type {?string}
+     * @type {string}
      * @description Moneda en la que se realiza el pago
      */
-    Moneda = null;
+    Moneda;
 
     /**
-     * @type {?Detalle_Pago[]}
+     * @type {Detalle_Pago[]}
      * @description Lista de detalles del pago (relación uno a muchos con Detalle_Pago)
      */
-    Detalle_Pago = null;
+    Detalle_Pago;
 }
 
 export { PagosRequest };
