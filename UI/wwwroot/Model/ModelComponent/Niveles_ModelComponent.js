@@ -14,7 +14,7 @@ class Niveles_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
    /**@type {ModelProperty}*/ Nombre = { type: 'text' };
    /**@type {ModelProperty}*/ Nombre_corto = { type: 'text' , hiddenInTable: true};
-   /**@type {ModelProperty}*/ Nombre_grado = { type: 'text', label: "asds" };
+   /**@type {ModelProperty}*/ Nombre_grado = { type: 'text'};
    ///**@type {ModelProperty}*/ Numero_grados = { type: 'number' };
    /**@type {ModelProperty}*/ Observaciones = { type: 'text' };
    /**@type {ModelProperty}*/ Habilitado = { type: 'checkbox', hiddenInTable: true };

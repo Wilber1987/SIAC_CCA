@@ -434,6 +434,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 					Security_Users? usuario = new Security_Users().withConection(conection).Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
 					usuario!.Password = StringUtil.GenerateRandomPassword();
+					usuario!.Password_Expiration_Date = DateTime.Now.AddDays(60);
 					var save = usuario?.Save_User(null);
 
 

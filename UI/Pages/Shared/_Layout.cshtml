@@ -26,7 +26,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
-    @if (SecurityController.IsAdmin(identify))
+    @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
     {
         <link rel="stylesheet" href="~/css/admin.css">
     }    
@@ -63,7 +63,7 @@
             <partial name="Menu/pagosNotification" />
         </header>
 
-        @if (!SecurityController.IsAdmin(identify))
+        @if (!SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
         {
             <!-- ========== Left Sidebar Start ========== -->
             <div class="vertical-menu">
@@ -83,7 +83,7 @@
 
         @* RenderBody() contenido de las paginas que usan el layout razor *@
         <div class="main-content">
-            @if (SecurityController.IsAdmin(identify))
+            @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
             {
                 <div class="admin-menu">
                     <partial name="Menu/MainMenu" />
@@ -122,7 +122,7 @@
     <script src="~/js/template/simplebar.min.js"></script>
     <script src="~/js/template/eva.min.js"></script>
     <script src="~/js/template/app.js"></script>
-    @if (SecurityController.IsAdmin(identify))
+    @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
     {
         
         <script src="~/js/adminMenu.js"></script>

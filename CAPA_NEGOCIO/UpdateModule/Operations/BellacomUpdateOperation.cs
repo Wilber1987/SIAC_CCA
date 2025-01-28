@@ -41,6 +41,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     FilterData.ISNull("migrado")
                 );
                 tutor.filterData.Add(FilterData.NotNull("user_id"));                
+                tutor.filterData.Add(FilterData.Equal("id_familia","1712"));                
 
                 var tutores = tutor.Where<Parientes_Data_Update>(filter);
 
@@ -101,7 +102,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                                     if (datosaActualizacionPadre == null)
                                     {
                                         dataMsql.CommitGlobalTransaction();
-                                        LoggerServices.AddMessageError("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en bellacom id:" + padre+ ". el id del responsable de familia es : "+t.Id, new Exception("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en bellacom id:" + padre+ ". el id del responsable de familia es : "+t.Id));
+                                        LoggerServices.AddMessageError("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en SIGE id:" + padre+ ". el id del responsable de familia es : "+t.Id, new Exception("ERROR: updateBellacomData error actualizando padres, no se encontro el tutor en bellacom id:" + padre+ ". el id del responsable de familia es : "+t.Id));
                                         continue;
                                     }
                                     
@@ -112,12 +113,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                                     dataMsql.Direccion = datosaActualizacionPadre.Direccion;
                                     dataMsql.Telefono = datosaActualizacionPadre.Telefono;
                                     dataMsql.Lugartrabajo = datosaActualizacionPadre.Lugar_trabajo;
-                                    dataMsql.Telefonotrabajo = datosaActualizacionPadre.Telefono_trabajo;
-                                    //dataMsql.Email = datosaActualizacionPadre.Email;                                    
+                                    dataMsql.Telefonotrabajo = datosaActualizacionPadre.Telefono_trabajo == null ? "" : datosaActualizacionPadre.Telefono_trabajo;//**
+                                    dataMsql.Email = datosaActualizacionPadre.Email;                                    
                                     dataMsql.Idreligion = datosaActualizacionPadre.Id_religion;
                                     dataMsql.Exalumno = datosaActualizacionPadre.Ex_Alumno;
                                     dataMsql.Fechamodificacion = DateTime.Now.Date;
                                     dataMsql.Ejercicio = datosaActualizacionPadre.EgresoExAlumno;
+                                    dataMsql.Celular = datosaActualizacionPadre.Celular;//**
                                     dataMsql.Update();
                                     dataMsql.CommitGlobalTransaction();
                                 }

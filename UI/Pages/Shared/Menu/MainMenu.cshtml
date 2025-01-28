@@ -46,22 +46,22 @@
                 <span class="menu-item" data-key="t-boletin">Acta en Línea</span>
             </a>
             <ul class="sub-menu" aria-expanded="false">
-                @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES))
+                @if (!SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES))
                 {
                     <li><a href="~/Gestion_Cursos/Materias" data-key="t-ecommerce">Materias</a></li>
                 }
                 @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES))
                 {
-                    <li><a href="~/Gestion_Cursos/Gestion_Grados" data-key="t-ecommerce">Grados</a></li>
+                    <li><a href="~/Gestion_Cursos/Gestion_Grados" data-key="t-ecommerce">Generar Baremos</a></li>
                 }
-                @if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES_ASIGNADAS))
+                @if (!SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES_ASIGNADAS))
                 {
                     <li><a href="~/Gestion_Cursos/Materias_Docente" data-key="t-ecommerce">Mis Materias</a></li>
                 }
             </ul>
         </li>
     }
-    @if (!SecurityController.IsAdmin(Identify) && SecurityController.HavePermission(Identify,
+    @if (!SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify,
     Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
         <li class="menuParentOption">
@@ -97,8 +97,7 @@
             </ul>
         </li>
     }
-    @if (SecurityController.HavePermission(Identify,
-    Permissions.GESTION_ESTUDIANTES_PROPIOS))
+    @if (!SecurityController.HavePermission(Identify,Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify,Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
 
         <li class="menuParentOption">
@@ -113,7 +112,7 @@
             </ul>
         </li>
     }
-    @if (SecurityController.IsAdmin(Identify) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))
+    @if (SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))
     {    
         <li class="menuParentOption">
             <a class="has-arrow" href="javascript: void(0);">

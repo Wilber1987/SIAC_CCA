@@ -36,7 +36,7 @@ namespace API.Controllers
         }
         public static bool IsAdmin(string? seassonKey)
         {
-            return AuthNetCore.HavePermission(Permissions.ADMIN_ACCESS.ToString(), seassonKey);
+            return AuthNetCore.HavePermission(Permissions.ADMIN_PANEL_ACCESS.ToString(), seassonKey);
         }       
         public static bool HavePermission(string permission, string? seassonKey)
         {

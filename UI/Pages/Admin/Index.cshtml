@@ -5,7 +5,7 @@
 @{
     string identify = HttpContext.Session.GetString("seassonKey");
     var pageConfig = Config.pageConfig();
-    if (!SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+    if (!SecurityController.HavePermission(HttpContext.Session.GetString("seassonKey"), Permissions.ADMIN_PANEL_ACCESS))
     {
         Response.Redirect("./login");
         return;
@@ -14,11 +14,11 @@
 <script type="module">
    
 </script>
-@if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+@if (SecurityController.HavePermission(HttpContext.Session.GetString("seassonKey"), Permissions.ADMIN_PANEL_ACCESS))
 {
     <script src="~/WDevCore/Security/AdminSecurity.js" type="module"></script>
 } 
-@if (SecurityController.IsAdmin(HttpContext.Session.GetString("seassonKey")))
+@if (SecurityController.HavePermission(HttpContext.Session.GetString("seassonKey"), Permissions.ADMIN_PANEL_ACCESS))
 {
     <script  src="~/Admin/AdminConfig.js" type="module"></script>
 } 

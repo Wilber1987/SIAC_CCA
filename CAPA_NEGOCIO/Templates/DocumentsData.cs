@@ -79,10 +79,11 @@ namespace CAPA_NEGOCIO.Templates
 			var mes = fechaManana.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"));
 			var anio = fechaManana.Year;
 
+    		int currentYear = (fechaActual.Month == 12) ? fechaActual.Year + 1 : fechaActual.Year;
 
 			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-								 .Replace("{{ current_year }}", (fechaActual.Year + 1).ToString())
-								 .Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
+								.Replace("{{ current_year }}", currentYear.ToString())
+								.Replace("{{ impresion }}", fechaActual.ToString("dd.MM.yyyy"));
 
 			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
