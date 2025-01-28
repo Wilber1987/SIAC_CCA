@@ -29,7 +29,7 @@ namespace UI.Controllers
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public List<Tbl_Pago> GetTbl_Pagos(Tbl_Pago Inst)
 		{
-			return new PagosOperation().GetPagos(Inst, HttpContext.Session.GetString("seassonKey"));
+			return new PagosOperation().GetPagosAllPagos(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]

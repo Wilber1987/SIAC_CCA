@@ -1,6 +1,7 @@
 //@ts-check
 
 import { Detalle_Pago } from "../Model/Detalle_Pago.js";
+import { Estudiantes } from "../Model/Estudiantes.js";
 import { PagosRequest_ModelComponent } from "../Model/ModelComponent/PagosRequest_ModelComponent.js";
 import { Tbl_Pagos_ModelComponent } from "../Model/ModelComponent/Tbl_Pagos_ModelComponent.js";
 import { PagosRequest } from "../Model/PagosRequest.js";
@@ -17,6 +18,9 @@ import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevC
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
+const route = location.origin
+const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
+
 /**
  * @typedef {Object} Historial_PagosViewConfig
  * * @property {Object} [propierty]
@@ -31,13 +35,38 @@ class Historial_PagosView extends HTMLElement {
         this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
         this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.append(this.CustomStyle);
+        const container = WRender.Create({ className: "component" });
+        this.Filter = new WFilterOptions({
+            AutoSetDate: true,
+            AutoFilter: true,
+            ModelObject: new Tbl_Pagos_ModelComponent(),
+            UseEntityMethods: true,
+            Display: true,
+            Dataset: [],
+            FilterFunction: async (filterData) => {
+                //container.innerHTML = "";
+                //console.log(this.Filter.ModelObject);
+                const facturas = await new PagosRequest().Where(
+                    this.Filter.ModelObject.FilterData[0]
+                )
+                this.DrawInformePagos(filterData, facturas);
+                //container.appendChild(this.DrawInformePagos(filterData, facturas));
+            }
+        });
+        this.OptionContainer.append(new WPrintExportToolBar({
+            ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
+                const body = container.cloneNode(true);
+                body.appendChild(this.CustomStyle.cloneNode(true));
+                tool.ExportPdf(body, PageType.A4)
+            }
+        }));
         this.append(
             StylesControlsV2.cloneNode(true),
             StyleScrolls.cloneNode(true),
-            StylesControlsV3.cloneNode(true),
-            //this.OptionContainer,
-            //this.TabContainer
+            StylesControlsV3.cloneNode(true), this.OptionContainer, this.Filter,
+            this.TabContainer
         );
+        this.Informes = {};
         this.Draw();
     }
     Draw = async () => {
@@ -48,31 +77,7 @@ class Historial_PagosView extends HTMLElement {
 
     }
     async MainComponent() {
-        const container = WRender.Create({ className: "component" });
-        this.Filter = new WFilterOptions({
-            AutoSetDate: true,
-            AutoFilter: true,
-            ModelObject: new Tbl_Pagos_ModelComponent(),
-            UseEntityMethods: true,
-            Display: true,
-            Dataset: [],
-            FilterFunction: async (filterData) => {
-                container.innerHTML = "";
-                //console.log(this.Filter.ModelObject);
-                const facturas = await new PagosRequest().Where(
-                    this.Filter.ModelObject.FilterData[0]
-                )
-                //console.log(facturas);
-                container.appendChild(this.DrawInformePagos(filterData, facturas));
-            }
-        });
-        this.append(new WPrintExportToolBar({
-            ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool)=> {
-                const body = container.cloneNode(true);
-                body.appendChild(this.CustomStyle.cloneNode(true));
-                tool.ExportPdf(body, PageType.A4)
-            }
-        }), this.Filter, container);
+
         //return container;
     }
 
@@ -82,6 +87,44 @@ class Historial_PagosView extends HTMLElement {
      * @returns {HTMLElement}
      */
     DrawInformePagos(pagos, facturas) {
+
+        // @ts-ignore                    
+        const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
+
+        if (!this.containerEstudiantes) {
+            const studiantesCard = [];
+            let i = 0;
+            for (const estudianteId in pagosEstudiante) {
+                if (i == 0) {
+                    this.selectedID = estudianteId;
+                }
+                const estudiante = pagosEstudiante[estudianteId][0].Estudiante;
+                studiantesCard.push(this.BuildEstudiantes(new Estudiantes(estudiante), facturas, pagosEstudiante, estudianteId));
+                i++;
+            }
+            this.containerEstudiantes = html`<section class="Historial">             
+                <div class="alumnos-container aside-container">                
+                    ${studiantesCard}
+                </div>
+            </section>`;
+            this.OptionContainer.append(this.containerEstudiantes);
+        }
+
+        if (!this.Informes[this.selectedID]) {
+            this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
+        } else {
+            console.log("actualizando");
+
+            const informeActualizado = this.ViewEstudianteInforme(facturas, pagosEstudiante);
+            this.Informes[this.selectedID].innerHTML = "";
+            this.Informes[this.selectedID].innerHTML = informeActualizado.innerHTML;
+        }
+        this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[this.selectedID]);
+    }
+    ViewEstudianteInforme(facturas, pagosEstudiante) {
+        // @ts-ignore
+        const facturasEstudiante = Object.groupBy(facturas.flatMap(p => p.Detalle_Pago), p => p.Pago.Estudiante_Id);
+        //console.log(facturasEstudiante);
         const div = html`<div class="pago-container">
         <style>
             .pago-container {
@@ -92,32 +135,44 @@ class Historial_PagosView extends HTMLElement {
             }
             </style>            
         </div>`;
-
-        // @ts-ignore                    
-        const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
-        // @ts-ignore                    
-        const facturasEstudiante = Object.groupBy(facturas.flatMap(p => p.Detalle_Pago), p => p.Pago.Estudiante_Id);
-        //console.log(facturasEstudiante);
-
-        for (const estudianteId in pagosEstudiante) {
+        if (this.selectedID && pagosEstudiante[this.selectedID ?? 0]) {
             /**@type {Tbl_Pago} */
-            const pago = pagosEstudiante[estudianteId][0];
+            const pago = pagosEstudiante[this.selectedID ?? 0][0];
             const estudianteContainer = html`<div class="estudiante-container">
-                <h3>${pago.Estudiante?.Nombre_completo}</h3>
-            </div>`;
+                 <h3>${pago.Estudiante?.Nombre_completo}</h3>
+             </div>`;
 
             //estudianteContainer.append(html`<h3>Cargo</h3>`);
-
             //pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
-            const  pagoMes = this.BuildPagosMes(pagosEstudiante[estudianteId], facturasEstudiante[estudianteId]);
+            const pagoMes = this.BuildPagosMes(pagosEstudiante[this.selectedID ?? 0], facturasEstudiante[this.selectedID ?? 0]);
             estudianteContainer.append(pagoMes);
             //});
-
-
             div.append(estudianteContainer);
         }
+        //for (const estudianteId in pagosEstudiante) {
+
+        //}
         //const pagoMes = this.BuildPagosMes(pagos);
         return div;
+    }
+
+    BuildEstudiantes(/** @type {Estudiantes} */ Estudiante, facturas, pagosEstudiante, estudianteId) {
+        return html`<div class="estudiante-card-container" onclick="${() => {
+            this.selectedID = estudianteId;
+            if (!this.Informes[this.selectedID]) {
+                this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
+            }
+            this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteId])
+        }}">            
+            <div class="estudiante-card">
+            <img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
+                : route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
+            <div class="flex-1 ms-2 ps-1">
+                <h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
+                <label class="text-muted text-uppercase font-size-12">${Estudiante.Codigo}</label>
+                </div>
+            </div>
+        </div>`
     }
     /**
      * Construye los pagos del mes y los agrega al contenedor
@@ -129,7 +184,7 @@ class Historial_PagosView extends HTMLElement {
         // @ts-ignore
         const pagosGroup = Object.groupBy(pagos, p => p.Mes);
         // @ts-ignore
-        const facturaGroup = Object.groupBy(facturasEstudiante, p => p.Pago.Mes);
+        const facturaGroup = Object.groupBy(facturasEstudiante ?? [], p => p.Pago.Mes);
 
         let totalCargos = 0;
 
@@ -169,25 +224,25 @@ class Historial_PagosView extends HTMLElement {
             const subTotalAbonos = facturaGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
             mesContainer.append(html`<div class="pago-details-container">
                 <div class="pago-title" style="grid-column: span 5"> </div>
-                <div class="pago-title value">${subTotalAbonos}</div>
+                <div class="pago-title value">${subTotalAbonos?.toFixed(2) ?? "0.00"}</div>
                 <div class="pago-title"></div>
             </div>`);
-            const total = subTotalCargos - subTotalAbonos;
+            const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
             mesContainer.append(html`<div class="pago-details-container">
                 <div class="pago-title" style="grid-column: span 5">Sub-Total mensual</div>
-                <div class="pago-title value">${total}</div>
+                <div class="pago-title value">${total.toFixed(2)  ?? "0.00"}</div>
                 <div class="pago-title"></div>
             </div>`);
 
             div.append(mesContainer);
-            
+
             totalCargos += total;
 
         }
-        
+
         div.append(html`<div class="mes-container total-container">
             <div class="pago-title" style="grid-column: span 5">Total</div>
-            <div class="pago-title total-cargos">${totalCargos}</div>
+            <div class="pago-title total-cargos">${totalCargos.toFixed(2)  ?? "0.00"}</div>
             <div class="pago-title"></div>
         </div>`);
         return div;
@@ -202,7 +257,7 @@ class Historial_PagosView extends HTMLElement {
             <div class="pago-value">${pago.Documento}</div>
             <div class="pago-value">${pago.Concepto}</div>
             <div class="pago-value">${pago.Money}</div>
-            <div class="pago-value value">${pago.Monto}</div>  
+            <div class="pago-value value">${pago.Monto.toFixed(2)  ?? "0.00"}</div>  
             <div class="pago-value ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}">
                 ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}
             </div>                   
@@ -218,7 +273,7 @@ class Historial_PagosView extends HTMLElement {
             <div class="pago-value">${pago.Pago.Documento}</div>
             <div class="pago-value">${pago.Pago.Concepto}</div>
             <div class="pago-value">${pago.Pago.Money}</div>
-            <div class="pago-value value">${pago.Monto}</div>
+            <div class="pago-value value">${pago.Monto.toFixed(2)}</div>
             <div class="pago-value CANCELADO">
                 EFECTUADO
             </div>
@@ -264,6 +319,61 @@ class Historial_PagosView extends HTMLElement {
         .value, .total-cargos {
             text-align: right;
         }  
+        .Historial{
+            display: flex;
+            flex-direction: column;            
+            gap: 20px;
+        }   
+        .Historial .options-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            grid-column: span 2;
+        }
+        .estudiante-card-container {
+            display: flex;
+            border: 1px solid #d6d6d6;;
+            border-radius: 10px;
+            cursor: pointer;
+            padding: 10px;
+            max-width: 400px; 
+        }
+        .estudiante-card {
+            display: flex;         
+            gap: 10px;
+            min-width: 400px;
+            align-items: center;
+        }
+        .alumnos-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .TabContainer {
+            border-left: 1px solid #d6d6d6;;
+            padding-left: 20px;
+            min-height: 400px;
+        }
+        .avatar-est{
+            height: 100px;
+            width: 80px;
+            min-width: 80px;
+            border-radius: 10px !important;
+            object-fit: cover;
+        }
+        @media (max-width: 768px) {
+            .Historial{               
+                grid-template-columns: 100%;
+            } 
+            .Historial .options-container {
+                grid-column: span 1;
+            }
+            .TabContainer {
+                border-left: unset;
+                padding-left: unset;                
+            }
+        }
     `
 }
 customElements.define('w-component', Historial_PagosView);

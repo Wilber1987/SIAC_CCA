@@ -83,9 +83,18 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			);
 
 		}
-
-
-
+		
+		public List<Tbl_Pago> GetPagosAllPagos(Tbl_Pago pago, string identify)
+		{
+			//return new List<Tbl_Pago>();
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));	
+			pago.orderData = [OrdeData.Asc("Fecha")];
+			return pago.Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.ISNull("Fecha_anulacion")
+			);
+		}
 		private static List<Tbl_Pago> BuildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
 		{
 			MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
@@ -141,7 +150,6 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 			return pagos;
 		}
-
 
 
 		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
