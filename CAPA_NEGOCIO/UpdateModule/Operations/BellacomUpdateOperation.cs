@@ -31,8 +31,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
             try
             {
                 //manejo conexion por aparte, todo cambiar estas credenciales a configuracion
-                //var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");                
-                var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+                var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");                
+                //var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
                 var tutor = new Parientes_Data_Update();
                 tutor.SetConnection(conection);
                 var filter = FilterData.Or(

@@ -27,7 +27,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			
 			html = html.Replace("{{ Referencia }}", request.Referencia ?? "");
 			html = html.Replace("{{ Creador }}", request.Creador ?? "");
-			html = html.Replace("{{ Fecha }}", request.Fecha?.ToString("yyyy-MM-dd") ?? "");
+			html = html.Replace("{{ Fecha }}", request.Fecha?.ToString("yyyy-MM-dd HH:mm") ?? "");
 			html = html.Replace("{{ Estado }}", request.Estado ?? "");
 			html = html.Replace("{{ Moneda }}", request.Moneda ?? "");
 			html = html.Replace("{{ Concepto }}", request.Descripcion ?? "");

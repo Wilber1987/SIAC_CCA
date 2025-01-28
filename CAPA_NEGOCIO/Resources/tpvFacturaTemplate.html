@@ -45,33 +45,40 @@
             text-align: right;
             font-weight: bold;
         }
+        p, label, td {
+            font-size: 15px;
+        }
+        p.total{
+            margin-top: 0px;
+            margin-bottom: 0px;
+            text-align: right;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class='header'>
-            <h1><label>RECIBO DE CAJA</label></h1>
+            <h2><label>RECIBO DE CAJA</label></h2>
             <table class='details'>
                 <tr>
-                    <td style="text-align: left;"><label>Colegio Centroamerica</label></td>
+                    <td style="text-align: left;"><label>COLEGIO CENTROAMERICA</label></td>
                     <td><label>RUC: {{ Ruc }}</label></td>
                     <td style="text-align:right;"><label>No. RECIBO:</label> {{ NoRecibo }}</td>
                 </tr>
-                <tr>
+                <!--<tr>
                     <td style="text-align: left;"><label>PAGO EN CONCEPTO:</label> {{ Concepto }}</td>
                     <td></td>
                     <td></td>
-                </tr>
+                </tr>-->
                 <tr>
                     <td style="text-align: left;"><label>FECHA:</label> {{ Fecha }}</td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td style="text-align: left;"><label>ENTRANTE:</label> {{ Creador }}</td>
-                    <td></td>
-                    <td></td>
+                    <td style="text-align: left;" colspan="3"><label>ENTRANTE:</label> {{ Creador }}</td>
+                    
                 </tr>
             </table>
 
@@ -98,15 +105,32 @@
                 {{ Detalle_Pago }}
             </tbody>
         </table>
-        <p class='total'>TOTAL: {{ Monto_C }}</p>
-        <p class='total'>T.C. OFICIAL BCN: {{ Monto_TC }}</p>
-        <p class='total'>TOTAL EN DÓLARES: {{ Monto }}</p>
-        <h3><label>SUJETO A MANTENIMIENTO DE VALOR, ARTO 16 LEY MONETARIA</label></h3>
-        <h3 style="display: flex; justify-content: space-between">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th style="width: 130px;"></th>
+                <th><p class='total'>TOTAL:</p></th>
+                <th><p class='total'>{{ Monto_C }}</p></th>
+            </tr>
+            <tr>
+                <th style="width: 130px;"></th>
+                <th><p class='total'>T.C. OFICIAL BCN:</p></th>
+                <th><p class='total'>{{ Monto_TC }}</p></th>
+            </tr>
+            <tr>
+                <th style="width: 130px;"></th>
+                <th><p class='total'>TOTAL EN DÓLARES:</p></th>
+                <th><p class='total'>{{ Monto }}</p></th>
+            </tr>
+        </table>
+        
+        
+
+        <h5 style="text-align: center;"><label>SUJETO A MANTENIMIENTO DE VALOR, ARTO 16 LEY MONETARIA</label></h5>
+        <h4 style="display: flex; justify-content: space-between">
             <label style="color: RED;">COLEGIO</label>
             <label>No. <span style="color: RED;">{{ NoRecibo }}</span></label>
             
-        </h3>
+        </h4>
     </div>
 </body>
 
