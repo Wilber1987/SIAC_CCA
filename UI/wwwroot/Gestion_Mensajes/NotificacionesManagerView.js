@@ -6,8 +6,10 @@ import { NotificationRequest_ModelComponent, NotificationTypeEnum } from "../Mod
 import { Parientes_ModelComponent } from "../Model/ModelComponent/Parientes_ModelComponent.js";
 import { Responsables_ModelComponent } from "../Model/ModelComponent/Responsables_ModelComponent.js";
 import { Secciones_ModelComponent } from "../Model/ModelComponent/Secciones_ModelComponent.js";
+import { Niveles } from "../Model/Niveles.js";
 import { NotificationRequest } from "../Model/NotificationRequest.js";
 import { Parientes } from "../Model/Parientes.js";
+import { Periodo_lectivos } from "../Model/Periodo_lectivos.js";
 import { Responsables } from "../Model/Responsables.js";
 import { Secciones } from "../Model/Secciones.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
@@ -58,8 +60,8 @@ class NotificacionesManagerView extends HTMLElement {
             Inicialize: true,
             Elements: [
                 {
-                    name: "Clase", action: () => {
-                        return this.ClasesComponent();
+                    name: "Clase", action: async () => {
+                        return await this.ClasesComponent();
                     }
                 }, {
                     name: "Secciones", action: () => {
@@ -75,11 +77,14 @@ class NotificacionesManagerView extends HTMLElement {
         this.Navigator.className = "TabContainer"
         this.append(this.Navigator);
     }
-    ClasesComponent() {
+    async ClasesComponent() {
+        const model = new Clases_ModelComponent();
+        model.Periodo_lectivos.Dataset = await new Periodo_lectivos().Get();
+        model.Niveles.Dataset = await new Niveles().Get();
         this.NotificationType = NotificationTypeEnum.CLASE;
         if (!this.ClaseComponent) {
             this.ClaseComponent = new WTableComponent({
-                ModelObject: new Clases_ModelComponent(),
+                ModelObject: model,
                 EntityModel: new Clases(),
                 AutoSave: true,
                 Options: {
