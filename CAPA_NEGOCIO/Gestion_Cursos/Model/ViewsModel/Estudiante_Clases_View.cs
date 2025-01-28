@@ -47,6 +47,10 @@ namespace DataBaseModel
 		public string? Estado { get; set; } 
 		public string? Id_familia { get; set; } 
 		public string? Observaciones { get;  set; }
+		
+		public string? Nombre_completo { get { return $"{Nombre_Estudiantes}"; } }
+
+
 
 		public string? Descripcion
 		{

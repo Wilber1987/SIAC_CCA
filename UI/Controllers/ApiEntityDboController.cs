@@ -23,13 +23,13 @@ namespace API.Controllers
 			return Inst.Find<Asignaturas>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveAsignaturas(Asignaturas inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateAsignaturas(Asignaturas inst)
 		{
 			return inst.Update();
@@ -48,13 +48,13 @@ namespace API.Controllers
 			return Inst.Find<Calificaciones>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveCalificaciones(Calificaciones inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateCalificaciones(Calificaciones inst)
 		{
 			return inst.Update();
@@ -74,13 +74,13 @@ namespace API.Controllers
 			return Inst.Find<Clases>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveClases(Clases inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateClases(Clases inst)
 		{
 			return inst.Update();
@@ -99,26 +99,26 @@ namespace API.Controllers
 			return Inst.Find<Docente_asignaturas>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveDocente_asignaturas(Docente_asignaturas inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateDocente_asignaturas(Docente_asignaturas inst)
 		{
 			return inst.Update();
 		}
 		/* 
 		[HttpPost]
-		 [AuthController(Permissions.ADMIN_ACCESS)]
+		 [AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		 public object? saveMaterias(Materias inst)
 		 {
 			 return inst.Save();
 		 }
 		 [HttpPost]
-		 [AuthController(Permissions.ADMIN_ACCESS)]
+		 [AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		 public object? updateMaterias(Materias inst)
 		 {
 			 return inst.Update();
@@ -137,12 +137,12 @@ namespace API.Controllers
 			return Inst.Find<Docente_materias>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveDocente_materias(Docente_materias inst) {
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateDocente_materias(Docente_materias inst) {
 			return inst.Update();
 		} */
@@ -160,13 +160,13 @@ namespace API.Controllers
 			return Inst.Find<Docentes>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveDocentes(Docentes inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateDocentes(Docentes inst)
 		{
 			return inst.Update();
@@ -185,13 +185,13 @@ namespace API.Controllers
 			return Inst.Find<Escolaridades>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveEscolaridades(Escolaridades inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateEscolaridades(Escolaridades inst)
 		{
 			return inst.Update();
@@ -212,13 +212,13 @@ namespace API.Controllers
 			return Inst.Find<Evaluaciones>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveEvaluaciones(Evaluaciones inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateEvaluaciones(Evaluaciones inst)
 		{
 			return inst.Update();
@@ -238,20 +238,20 @@ namespace API.Controllers
 			return Inst.Find<Niveles>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveNiveles(Niveles inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateNiveles(Niveles inst)
 		{
 			return inst.Update();
 		}
 		//Parientes
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public List<Parientes> getParientes(Parientes Inst)
 		{
 			return Inst.Where<Parientes>(FilterData.Limit(30));
@@ -270,13 +270,13 @@ namespace API.Controllers
 			return Inst.Find<Parientes>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveParientes(Parientes inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateParientes(Parientes inst)
 		{
 			return inst.Update();
@@ -295,13 +295,13 @@ namespace API.Controllers
 			return Inst.Find<Periodo_lectivos>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? savePeriodo_lectivos(Periodo_lectivos inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updatePeriodo_lectivos(Periodo_lectivos inst)
 		{
 			return inst.Update();
@@ -320,13 +320,13 @@ namespace API.Controllers
 			return Inst.Find<Secciones>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveSecciones(Secciones inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateSecciones(Secciones inst)
 		{
 			return inst.Update();
@@ -345,13 +345,13 @@ namespace API.Controllers
 			return Inst.Find<Tipo_notas>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveTipo_notas(Tipo_notas inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateTipo_notas(Tipo_notas inst)
 		{
 			return inst.Update();
@@ -370,13 +370,13 @@ namespace API.Controllers
 			return Inst.Find<CAPA_DATOS.Log>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveLog(CAPA_DATOS.Log inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateLog(CAPA_DATOS.Log inst)
 		{
 			return inst.Update();
@@ -395,13 +395,13 @@ namespace API.Controllers
 			return Inst.Find<Estudiantes_responsables_familia>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveEstudiantes_responsables_familia(Estudiantes_responsables_familia inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateEstudiantes_responsables_familia(Estudiantes_responsables_familia inst)
 		{
 			return inst.Update();
@@ -419,13 +419,13 @@ namespace API.Controllers
 			return Inst.Find<Familias>();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? saveFamilias(Familias inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
-		[AuthController(Permissions.ADMIN_ACCESS)]
+		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
 		public object? updateFamilias(Familias inst)
 		{
 			return inst.Update();

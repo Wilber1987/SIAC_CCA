@@ -3,6 +3,7 @@
 import { Responsables } from './Responsables.js';
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 import { Estudiantes } from './Estudiantes.js';
+import { Estudiante_Clases_View } from './Estudiante_Clases_View.js';
 class Tbl_Pago extends EntityClass {
     /** @param {Partial<Tbl_Pago>} [props] */
     constructor(props) {
@@ -102,7 +103,7 @@ class Tbl_Pago extends EntityClass {
     Estado;
 
     /**
-     * @type {?Estudiantes}
+     * @type {?Estudiante_Clases_View}
      * @description Relación muchos a uno con la entidad Estudiantes
      */
     Estudiante;

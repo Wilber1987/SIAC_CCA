@@ -84,7 +84,6 @@ class Historial_PagosView extends HTMLElement {
     /**
      * @param {Array<Tbl_Pago>} pagos 
      * @param {Array<PagosRequest>} facturas 
-     * @returns {HTMLElement}
      */
     DrawInformePagos(pagos, facturas) {
 
@@ -113,8 +112,6 @@ class Historial_PagosView extends HTMLElement {
         if (!this.Informes[this.selectedID]) {
             this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
         } else {
-            console.log("actualizando");
-
             const informeActualizado = this.ViewEstudianteInforme(facturas, pagosEstudiante);
             this.Informes[this.selectedID].innerHTML = "";
             this.Informes[this.selectedID].innerHTML = informeActualizado.innerHTML;
@@ -139,7 +136,20 @@ class Historial_PagosView extends HTMLElement {
             /**@type {Tbl_Pago} */
             const pago = pagosEstudiante[this.selectedID ?? 0][0];
             const estudianteContainer = html`<div class="estudiante-container">
-                 <h3>${pago.Estudiante?.Nombre_completo}</h3>
+                <div class="estudiante">
+                    <div class="data-container">
+                        <label class="estudiante-prop">NOMBRE:</label>
+                        <label>${pago.Estudiante?.Codigo} - </label>
+                        <label>${pago.Estudiante?.Nombre_completo}</label>
+                    </div>
+                    <div class="data-container">
+                        <label class="estudiante-prop">NIVEL:</label>
+                        <label>${pago.Estudiante?.Nombre_nivel}</label>
+                        <label class="estudiante-prop">CLASE:</label>
+                        <label>${pago.Estudiante?.Descripcion}</label>
+                    </div>
+                </div>
+                
              </div>`;
 
             //estudianteContainer.append(html`<h3>Cargo</h3>`);
@@ -212,7 +222,7 @@ class Historial_PagosView extends HTMLElement {
             const subTotalCargos = pagosGroup[pagosMes].reduce((acc, pago) => acc + pago.Monto, 0);
             mesContainer.append(html`<div class="pago-details-container">
                 <div class="pago-title" style="grid-column: span 5"></div>
-                <div class="pago-title value">${subTotalCargos}</div>
+                <div class="pago-title value">${subTotalCargos?.toFixed(2) ?? "0.00"}</div>
                 <div class="pago-title"></div>
             </div>`)
             //-------------------->
@@ -362,6 +372,38 @@ class Historial_PagosView extends HTMLElement {
             border-radius: 10px !important;
             object-fit: cover;
         }
+        
+        .aside-container {            
+            padding: 0;
+            border-radius: 0;
+            box-shadow: unset
+        }
+        .estudiante-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            padding: 10px;
+            border: 1px solid #d6d6d6;
+            border-radius: 10px;
+            & .estudiante {
+                margin-bottom: 20px;
+            }
+            & .data-container {
+                display: flex;
+                justify-content: flex-start;
+                border-top: 1px solid #d6d6d6;
+                border-bottom: 1px solid #d6d6d6;
+                & .estudiante-prop {
+                    background-color: #f1f1f1;
+                    width: 100px;
+                }
+                & label {
+                    padding: 10px;
+                    margin-bottom: 0;
+                }
+            }
+        }
+        
         @media (max-width: 768px) {
             .Historial{               
                 grid-template-columns: 100%;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using DataBaseModel;
 using DataBaseModel.SimpleModel;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
@@ -25,8 +26,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha_Limite { get; set; }
 		public DateTime? Fecha { get; set; }
 		public string? Estado { get; set; }
-		[ManyToOne(TableName = "Estudiantes", KeyColumn  = "Id", ForeignKeyColumn = "Estudiante_Id")]
-		public Estudiantes? Estudiante { get; set; }
+		
+		[ManyToOne(TableName = "Estudiantes", KeyColumn  = "Estudiante_Id", ForeignKeyColumn = "Estudiante_Id")]
+		public Estudiante_Clases_View? Estudiante { get; set; }
 
 		//nuevas propiedades luego del alter 23
 		public int? Id_plazo { get; set; }

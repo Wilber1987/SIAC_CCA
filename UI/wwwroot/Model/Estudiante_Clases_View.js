@@ -50,6 +50,9 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {String}*/ Primer_apellido;
    /**@type {String}*/ Segundo_apellido;
    /**@type {String}*/ Nombre_Docente;
+   /**@type {String}*/ Nombre_completo;
+   /**@type {String}*/ Codigo;
+   /**@type {String}*/ Descripcion
 
     /**
     * @returns {Promise<Clase_Group>}
