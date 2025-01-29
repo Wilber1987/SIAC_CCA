@@ -444,9 +444,9 @@ namespace CAPA_NEGOCIO.Oparations
 									Token = null,
 									Security_Users_Roles = new List<Security_Users_Roles>
 									{
-								new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
+										new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
 									}
-								}.Save_User(null);
+								}.DoSaveUser(null);
 
 								newPariente.User_id = user.Id_User;
 							}
