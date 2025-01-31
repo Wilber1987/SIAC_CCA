@@ -13,7 +13,7 @@ namespace CAPA_NEGOCIO.Oparations
 {
     public class MigrateDocentes: TransactionalClass
     {
-				private readonly SshTunnelService _sshTunnelService;
+		private readonly SshTunnelService _sshTunnelService;
 
 		public MigrateDocentes()
 		{
