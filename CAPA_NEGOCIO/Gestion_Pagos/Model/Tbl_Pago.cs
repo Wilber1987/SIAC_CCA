@@ -12,7 +12,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 	{
 		[PrimaryKey(Identity = true)]
 		public int? Id_Pago { get; set; }
-		public int? Estudiante_Id { get; set; }
+		public int? Estudiante_Id { get; set; }//codigo del estudiante
 		public int? Responsable_Id { get; set; }
 		public double? Monto { get; set; }
 		public double? Monto_Pagado { get; set; }
@@ -27,7 +27,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha { get; set; }
 		public string? Estado { get; set; }
 		
-		[ManyToOne(TableName = "Estudiantes", KeyColumn  = "Estudiante_Id", ForeignKeyColumn = "Estudiante_Id")]
+		[ManyToOne(TableName = "Estudiante_Clases_View", KeyColumn  = "Codigo", ForeignKeyColumn = "Estudiante_Id")]
 		public Estudiante_Clases_View? Estudiante { get; set; }
 
 		//nuevas propiedades luego del alter 23
