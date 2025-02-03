@@ -16,7 +16,6 @@ namespace CAPA_NEGOCIO.Oparations
 			_sshTunnelService = new SshTunnelService(LoadConfiguration());
 		}
 
-
 		public async Task Migrate()
 		{
 			await MigrateParentesco();
@@ -79,10 +78,10 @@ namespace CAPA_NEGOCIO.Oparations
 				catch (System.Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);
-					RollBackGlobalTransaction();
-					forwardedPort.Stop();
-					client.Disconnect();
-					throw;
+					//RollBackGlobalTransaction();
+					//forwardedPort.Stop();
+					//client.Disconnect();
+					//throw;
 				}
 				finally
 				{
@@ -93,7 +92,6 @@ namespace CAPA_NEGOCIO.Oparations
 
 			return true;
 		}
-
 
 		public async Task<bool> migrateEstudiantesSiac(SshTunnelService sshService)
 		{
@@ -161,7 +159,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 				return true;
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateEstudiantes.", ex);
 				return false;
@@ -312,76 +310,6 @@ namespace CAPA_NEGOCIO.Oparations
 			return true;
 		}
 
-		public async Task<bool> MigrateFamiliaOld()
-		{
-
-			Console.Write("-->MigrateFamilia");
-			var rol = validateRolPariente();
-			if (rol == null)
-			{
-				return false;
-			}
-
-			var familias = new Tbl_aca_familia();
-			familias.SetConnection(MySqlConnections.Bellacom);
-			var familiasMsql = familias.Get<Tbl_aca_familia>();
-
-			try
-			{
-				BeginGlobalTransaction();
-				familiasMsql.ForEach(tn =>
-				{
-					var existingFamilia = new Familias()
-					{
-						Id = tn.Idfamilia
-					}.Find<Familias>();
-
-					if (existingFamilia != null && (existingFamilia.Fecha_ultima_notificacion != existingFamilia.Fecha_ultima_notificacion))
-					{
-
-						existingFamilia.Idtfamilia = tn.Idtfamilia;
-						existingFamilia.Descripcion = tn.Texto;
-						existingFamilia.Estado = tn.Estatus;
-						existingFamilia.Saldo = tn.Saldomd;
-						existingFamilia.Actualizado = tn.Actualizado;
-						existingFamilia.Aceptacion = tn.Aceptacion;
-						existingFamilia.Periodo_aceptacion = tn.Periodoaceptacion;
-						existingFamilia.Fecha_actualizacion = tn.Fechaactualizacion;
-						existingFamilia.Fecha_ultima_notificacion = tn.Fechaultimanotificacion;
-						existingFamilia.Update();
-					}
-					else if (existingFamilia == null)
-					{
-						Familias newFamilia = new Familias
-						{
-							Id = tn.Idfamilia,
-							Idtfamilia = tn.Idtfamilia,
-							Descripcion = tn.Texto,
-							Estado = tn.Estatus,
-							Saldo = tn.Saldomd,
-							Fecha_actualizacion = tn.Fechaactualizacion,
-							Fecha_ultima_notificacion = tn.Fechaultimanotificacion,
-							Actualizado = tn.Actualizado,
-							Aceptacion = tn.Aceptacion,
-							Periodo_aceptacion = tn.Periodoaceptacion
-						};
-
-						newFamilia.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
-				//RollBackGlobalTransaction();
-				//throw;
-			}
-
-			return true;
-		}
-
 		public async Task<bool> MigrateParientesAndUsers()
 		{
 			Console.Write("-->MigrateParientesAndUsers");
@@ -440,13 +368,13 @@ namespace CAPA_NEGOCIO.Oparations
 									Estado = "ACTIVO",
 									Descripcion = tn.Nombres + " " + tn.Apellidos,
 									Password = StringUtil.GeneratePassword(tn.Email, tn.Nombres, tn.Apellidos),
-									Mail = StringUtil.GenerateNickName(tn.Nombres, tn.Apellidos),
+									Mail = tn.Email, //StringUtil.GenerateNickName(tn.Nombres, tn.Apellidos),
 									Token = null,
 									Security_Users_Roles = new List<Security_Users_Roles>
 									{
 										new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
 									}
-								}.DoSaveUser(null);
+								}.Save_User(null);
 
 								newPariente.User_id = user.Id_User;
 							}
@@ -470,79 +398,6 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 			}
 
-			return true;
-		}
-
-		public async Task<bool> MigrateParientesAndUsersOld()
-		{
-			Console.Write("-->MigrateParientesAndUsers");
-			//si no eixiste el rol de pariente se debe crear para asignarselo al usuario de cada responsable 
-			// ya que se crea un usuario por cada miembro de falia que tenga el check de responsable
-			var rolResponsable = validateRolPariente();
-			if (rolResponsable == null)
-			{
-				return false;
-			}
-
-			var data = new Tbl_aca_tutor();
-			data.SetConnection(MySqlConnections.Bellacom);
-			var dataMsql = data.Get<Tbl_aca_tutor>();// data.Where<Tbl_aca_tutor>(FilterData.Equal("responsablepago", "1"));
-
-			try
-			{
-				BeginGlobalTransaction();
-				dataMsql.ForEach(static tn =>
-				{
-					var existing = new Parientes()
-					{
-						Id = tn.Idtutor
-					}.Find<Parientes>();
-
-					tn.Fechagrabacion = DateUtil.ValidSqlDateTime(tn.Fechagrabacion.GetValueOrDefault());
-					tn.Fechamodificacion = DateUtil.ValidSqlDateTime(tn.Fechamodificacion.GetValueOrDefault());
-					tn.Fechaactualizacion = DateUtil.ValidSqlDateTime(tn.Fechaactualizacion.GetValueOrDefault());
-					tn.Fechanacimiento = DateUtil.ValidSqlDateTime(tn.Fechanacimiento.GetValueOrDefault());
-
-					if (existing != null /*&& existing.Fecha_Modificacion != tn.Fechamodificacion*/)
-					{
-						buildPariente(tn, existing);
-						existing.Update();
-
-					}
-					else if (existing == null)
-					{
-						Parientes newPariente = new Parientes();
-						buildPariente(tn, newPariente);
-						if (newPariente.Responsable_Pago == true && StringUtil.IsValidEmail(tn.Email))
-						{//se crea usuario ya que es responsable de pago y por ende de familia
-							var rolPadreResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
-							var user = (Security_Users?)new Security_Users
-							{
-								Nombres = tn.Nombres + " " + tn.Apellidos,
-								Estado = "ACTIVO",
-								Descripcion = tn.Nombres + " " + tn.Apellidos,
-								Password = StringUtil.GeneratePassword(tn.Email, tn.Nombres, tn.Apellidos),
-								Mail = StringUtil.GenerateNickName(tn.Nombres, tn.Apellidos),
-								Token = null,
-								Security_Users_Roles = new List<Security_Users_Roles>
-									{
-										new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
-									}
-							}.Save_User(null);
-							newPariente.User_id = user.Id_User;
-						}
-						newPariente.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
-				//RollBackGlobalTransaction();
-				//throw;
-			}
 			return true;
 		}
 
@@ -603,152 +458,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			return true;
 		}
-
-		private static void buildEstudianteSiacOld(Estudiantes est, Estudiantes? existingEstudiante, SshTunnelService sshService)
-		{
-			ViewEstudiantesMigracion estudiantesView = null;  // Declarar la variable fuera del bloque `using`
-
-			// Obtener el cliente SSH y el túnel para BellacomTest
-			using (var bellacomSshClient = sshService.GetSshClient("Bellacom"))
-			{
-				bellacomSshClient.Connect();
-				var bellacomTunnel = sshService.GetForwardedPort("Bellacom", bellacomSshClient, 3308);
-				bellacomTunnel.Start();
-
-				var bellacomConnection = MySqlConnections.BellacomTest;
-
-				// Cargar la vista de estudiantes
-				var estudianteView = new ViewEstudiantesMigracion();
-				estudianteView.SetConnection(bellacomConnection);
-				estudianteView.CreateView();
-				estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("codigo", est.Codigo)).FirstOrDefault();
-
-				if (estudiantesView == null)
-				{
-					return;
-				}
-
-				// Obtener datos de la familia usando BellacomTest
-				var familiaJoin = new Tbl_aca_familia();
-				familiaJoin.SetConnection(bellacomConnection);
-				var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
-
-				if (familiaDatos == null)
-				{
-					return;
-				}
-
-				existingEstudiante.Id_familia = familiaDatos.Idfamilia;
-
-				// Cerrar el túnel y la conexión de BellacomTest
-				bellacomTunnel.Stop();
-				bellacomSshClient.Disconnect();
-			}
-
-			// Asignación de datos básicos del estudiante
-			existingEstudiante.Id = est.Id;
-			existingEstudiante.Primer_nombre = est.Primer_nombre;
-			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
-			existingEstudiante.Primer_apellido = est.Primer_apellido;
-			existingEstudiante.Segundo_apellido = est.Segundo_apellido;
-			existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
-			existingEstudiante.Sexo = est.Sexo;
-			existingEstudiante.Foto = estudiantesView?.Foto ?? est.Foto;  // Usa el operador null conditional
-			existingEstudiante.Direccion = est.Direccion;
-			existingEstudiante.Codigo = est.Codigo;
-			existingEstudiante.Created_at = est.Created_at;
-			existingEstudiante.Updated_at = est.Updated_at;
-			existingEstudiante.Fecha_ingreso = est.Fecha_ingreso;
-			existingEstudiante.Id_cliente = est.Id_cliente;
-			existingEstudiante.Codigomed = est.Codigomed;
-			existingEstudiante.Saldoeamd = est.Saldoeamd;
-
-			// Si no se encontró una foto, buscar en el sistema SIAC usando la otra conexión
-			using (var siacSshClient = sshService.GetSshClient("Siac"))
-			{
-				siacSshClient.Connect();
-				var siacTunnel = sshService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
-
-				var siacConnection = MySqlConnections.SiacTest;
-
-				var estudianteSiac = new Estudiantes();
-				estudianteSiac.SetConnection(siacConnection);
-				var existeRelacion = estudianteSiac.Where<Estudiantes>(FilterData.Equal("codigo", existingEstudiante.Codigo)).FirstOrDefault();
-
-				if (existeRelacion != null)
-				{
-					existingEstudiante.Foto = existeRelacion.Foto;
-				}
-
-				// Cerrar el túnel y la conexión de SiacTest
-				siacTunnel.Stop();
-				siacSshClient.Disconnect();
-			}
-		}
-
-		private static void buildEstudianteSiacOld(Estudiantes est, Estudiantes? existingEstudiante)
-		{
-			// Reutiliza la misma conexión para todas las operaciones relacionadas con Bellacom
-			var connection = MySqlConnections.BellacomTest;
-
-			// Carga la vista de estudiante
-			var estudianteView = new ViewEstudiantesMigracion();
-			estudianteView.SetConnection(connection);
-			estudianteView.CreateView();
-			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("codigo", est.Codigo)).FirstOrDefault();
-
-			// Si no se encuentra el estudiante en la vista, retornar
-			if (estudiantesView == null)
-			{
-				return;
-			}
-
-			// Carga los datos de la familia si están disponibles
-			var familiaJoin = new Tbl_aca_familia();
-			familiaJoin.SetConnection(connection);
-			var familiaDatos = familiaJoin.Where<Tbl_aca_familia>(FilterData.Equal("idfamilia", estudiantesView.Idfamilia)).FirstOrDefault();
-
-			// Si no tiene familia, omitir al estudiante
-			if (familiaDatos == null)
-			{
-				return;
-			}
-
-			existingEstudiante.Id_familia = familiaDatos.Idfamilia;
-
-			// Asignación de datos básicos del estudiante
-			existingEstudiante.Id = est.Id;
-			existingEstudiante.Primer_nombre = est.Primer_nombre;
-			existingEstudiante.Segundo_nombre = est.Segundo_nombre;
-			existingEstudiante.Primer_apellido = est.Primer_apellido;
-			existingEstudiante.Segundo_apellido = est.Segundo_apellido;
-			existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
-			existingEstudiante.Sexo = est.Sexo;
-			existingEstudiante.Foto = estudiantesView.Foto ?? est.Foto;
-			existingEstudiante.Direccion = est.Direccion;
-			existingEstudiante.Codigo = est.Codigo;
-			existingEstudiante.Created_at = est.Created_at;
-			existingEstudiante.Updated_at = est.Updated_at;
-			existingEstudiante.Fecha_ingreso = est.Fecha_ingreso;
-			existingEstudiante.Id_cliente = est.Id_cliente;
-			existingEstudiante.Codigomed = est.Codigomed;
-			existingEstudiante.Saldoeamd = est.Saldoeamd;
-
-			// Si no se encontró una foto, se busca en el sistema SIAC
-			if (string.IsNullOrEmpty(existingEstudiante.Foto))
-			{
-				var estudianteSiac = new Estudiantes();
-				estudianteSiac.SetConnection(MySqlConnections.SiacTest);
-				var existeRelacion = estudianteSiac.Where<Estudiantes>(FilterData.Equal("codigo", existingEstudiante.Codigo)).FirstOrDefault();
-
-				if (existeRelacion != null)
-				{
-					existingEstudiante.Foto = existeRelacion.Foto;
-				}
-			}
-		}
-
+		
 		public Security_Roles validateRolPariente()
 		{
 			try

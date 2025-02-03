@@ -56,7 +56,6 @@ namespace CAPA_NEGOCIO.Oparations
 
 				try
 				{
-
 					// Establecer conexión con la base de datos SiacTest
 					var nivel = new Niveles();
 					nivel.SetConnection(MySqlConnections.SiacTest);

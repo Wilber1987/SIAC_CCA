@@ -39,7 +39,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
-				FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray())				
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())			
 			);
 			//List<Pagos_alumnos_view> recientraidos = null;
 			List<Pagos_alumnos_view> recientraidos;
