@@ -90,7 +90,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));	
 			pago.orderData = [OrdeData.Asc("Fecha")];
 			return pago.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
 				FilterData.ISNull("Fecha_anulacion")
 			);
 		}
@@ -106,7 +106,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 
 				new Tbl_Pago {
-					Estudiante_Id = x.Id_estudiante,
+					Estudiante_Id = x.Codigo_estudiante,
 					Responsable_Id = responsable.Pariente_id,
 					Monto = x.Importe_saldo_md,
 					Monto_Pagado = 0,
