@@ -4,6 +4,7 @@ using DataBaseModel;
 using CAPA_DATOS.Security;
 using Microsoft.Extensions.Configuration;
 using Renci.SshNet;
+using CAPA_NEGOCIO.Services;
 
 namespace CAPA_NEGOCIO.Oparations
 {
@@ -18,11 +19,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate()
 		{
-			await MigrateParentesco();
+			/*await MigrateParentesco();
 			await MigrateFamilia();
-			await migrateEstudiantesSiac(_sshTunnelService);
+			await migrateEstudiantesSiac(_sshTunnelService);*/
 			await MigrateParientesAndUsers();
-			await migrateEstudiantesReponsablesFamilia();
+			//await migrateEstudiantesReponsablesFamilia();
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -77,11 +78,9 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 				catch (System.Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);
-					//RollBackGlobalTransaction();
-					//forwardedPort.Stop();
-					//client.Disconnect();
-					//throw;
+					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);					
+					forwardedPort.Stop();
+					client.Disconnect();					
 				}
 				finally
 				{
@@ -89,7 +88,6 @@ namespace CAPA_NEGOCIO.Oparations
 					client.Disconnect();
 				}
 			}
-
 			return true;
 		}
 
@@ -99,6 +97,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 			try
 			{
+				
 				using (var siacSshClient = sshService.GetSshClient("Siac"))
 				{
 					siacSshClient.Connect();
@@ -109,8 +108,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var estudiante = new ViewEstudiantesActivosSiac();
 					estudiante.SetConnection(MySqlConnections.SiacTest);
 					estudiante.CreateViewEstudiantesActivos();
-					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();
-					//var EstudiantesMsql = estudiante.Where<ViewEstudiantesActivosSiac>(FilterData.In("codigo", 3723, 3724, 4635));
+					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();				
 
 					estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
@@ -238,6 +236,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 			var familias = new Tbl_aca_familia();
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("FAMILIA");
 
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
@@ -246,10 +245,15 @@ namespace CAPA_NEGOCIO.Oparations
 				forwardedPort.Start();
 
 				familias.SetConnection(MySqlConnections.BellacomTest);
+				var filter = new FilterData
+				{
+					PropName = "fechaactualizacion",
+					FilterType = ">=",
+					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+				};
+				var familiasMsql = familias.Where<Tbl_aca_familia>(filter);
 
-				var familiasMsql = familias.Get<Tbl_aca_familia>();
-				forwardedPort.Stop();
-				client.Disconnect();
+				
 				try
 				{
 					BeginGlobalTransaction();
@@ -296,13 +300,19 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 
 					});
+					MigrateService.UpdateLastUpdate("FAMILIA");
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
 					//RollBackGlobalTransaction(); // Descomentar para revertir la transacción en caso de error
 					//throw;
+				}
+				finally
+				{
+					forwardedPort.Stop();
+					client.Disconnect();
 				}
 
 			}
@@ -316,6 +326,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 			// Si no existe el rol de pariente, se debe crear para asignárselo al usuario de cada responsable.
 			// Ya que se crea un usuario por cada miembro de familia que tenga el check de responsable.
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("PARIENTESUSUARIOS");
 			var rolResponsable = validateRolPariente();
 			if (rolResponsable == null)
 			{
@@ -333,7 +344,14 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					var data = new Tbl_aca_tutor();
 					data.SetConnection(MySqlConnections.BellacomTest);
-					var dataMsql = data.Get<Tbl_aca_tutor>();
+
+					var filter = new FilterData
+					{
+						PropName = "fechamodificacion",
+						FilterType = ">=",
+						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+					};					
+					var dataMsql = data.Where<Tbl_aca_tutor>(filter);
 
 					BeginGlobalTransaction();
 
@@ -382,7 +400,7 @@ namespace CAPA_NEGOCIO.Oparations
 							newPariente.Save();
 						}
 					});
-
+					MigrateService.UpdateLastUpdate("PARIENTESUSUARIOS");
 					CommitGlobalTransaction();
 				}
 				catch (Exception ex)

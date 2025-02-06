@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
@@ -96,6 +97,7 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateCalificaciones()
 		{
 			Console.Write("--> migrateCalificaciones");
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("CALIFICACIONES");
 
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
@@ -104,12 +106,17 @@ namespace CAPA_NEGOCIO.Oparations
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
 				siacTunnel.Start();
 
-				// Instancia para manejar los datos de la vista
 				var calificacion = new ViewCalificacionesActivasSiac();
 				calificacion.SetConnection(MySqlConnections.SiacTest);
 				calificacion.CreateViewEstudiantesActivos();
 
 				// Obtener los registros desde la vista
+				var filter = new FilterData
+				{
+					PropName = "updated_at",
+					FilterType = ">=",
+					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+				};
 				var calificacionMsql = calificacion.Get<ViewCalificacionesActivasSiac>();
 
 				// Destruir la vista después de obtener los datos
@@ -181,6 +188,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 						i++;
 					});
+					MigrateService.UpdateLastUpdate("CALIFICACIONES");
 				}
 				catch (Exception ex)
 				{
@@ -201,7 +209,7 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateEvaluaciones()
 		{
 			Console.Write("--> migrateEvaluaciones");
-
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("EVALUACIONES");
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
@@ -212,16 +220,15 @@ namespace CAPA_NEGOCIO.Oparations
 				// Establecer conexión con la base de datos SiacTest
 				var Evaluacion = new Evaluaciones();
 				Evaluacion.SetConnection(MySqlConnections.SiacTest);
-
-				var currentYear = MigrationDates.GetCurrentYear(); // Obtiene el año actual (por ejemplo, 2024)
+				
 				var filter = new FilterData
 				{
-					PropName = "YEAR(fecha)", // Extrae el año de la columna fecha
-					FilterType = "=",
-					Values = new List<string?> { "2024" /*currentYear.ToString()*/ } //TODO DESCOMENTARIAR
+					PropName = "updated_at", 
+					FilterType = ">=",
+					Values = new List<string?> {fechaUltimaActualizacion.ToString()}
 				};
-				//var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
-				var EvaluacionMsql = Evaluacion.Where<Evaluaciones>();
+				
+				var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
 
 				try
 				{
@@ -246,24 +253,22 @@ namespace CAPA_NEGOCIO.Oparations
 							existingEvaluacion.Updated_at = evaluacion.Updated_at;
 							existingEvaluacion.Periodo = evaluacion.Periodo;
 							existingEvaluacion.Nota_maxima = evaluacion.Nota_maxima;
-
 							// Guardar los cambios en la evaluación existente
 							existingEvaluacion.Update();
 						}
 						else
-						{
-							// Guardar nueva evaluación
+						{							
 							evaluacion.Save();
 						}
 					});
+					MigrateService.UpdateLastUpdate("EVALUACIONES");
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
 				}
 				finally
-				{
-					// Detener el túnel SSH
+				{				
 					siacTunnel.Stop();
 					siacSshClient.Disconnect();
 				}
