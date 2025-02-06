@@ -22,14 +22,14 @@
     <link rel="stylesheet" href="~/css/icons.css">
     <link rel="stylesheet" href="~/css/app.css">
     <link rel="stylesheet" href="~/css/site.css">
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
     @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
     {
         <link rel="stylesheet" href="~/css/admin.css">
-    }    
+    }
     @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
@@ -124,9 +124,9 @@
     <script src="~/js/template/app.js"></script>
     @if (SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS))
     {
-        
+
         <script src="~/js/adminMenu.js"></script>
-    } 
+    }
 </body>
 
 </html>
