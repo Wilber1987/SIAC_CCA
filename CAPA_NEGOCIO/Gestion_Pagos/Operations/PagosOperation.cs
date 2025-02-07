@@ -33,7 +33,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(),true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			var pagosP = new Tbl_Pago()
 			{
@@ -86,7 +86,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public List<Tbl_Pago> GetPagosAllPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(),true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));	
 			pago.orderData = [OrdeData.Asc("Fecha")];
 			return pago.Where<Tbl_Pago>(
