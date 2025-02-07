@@ -330,7 +330,7 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateMateria()
 		{
 			Console.Write("-->migrateMateria");
-			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("MATERIA");
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("MATERIAS");
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
@@ -385,7 +385,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					MigrateService.UpdateLastUpdate("MATERIA");
+					MigrateService.UpdateLastUpdate("MATERIAS");
 					CommitGlobalTransaction();
 				}
 				catch (System.Exception ex)

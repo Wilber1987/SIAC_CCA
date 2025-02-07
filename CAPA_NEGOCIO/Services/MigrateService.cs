@@ -30,6 +30,8 @@ namespace CAPA_NEGOCIO.Services
 						{
 							Descripcion = tipo
 						}.Find<ActualizacionesCron>();
+
+
 			existing.Fecha_Actualizacion = DateTime.Now.AddMinutes(-120);
 			existing.Update();
 		}

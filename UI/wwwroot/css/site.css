@@ -19,7 +19,7 @@
 }
 
 .vertical-menu{
-    background-color:var(--font-primary-color) !important;
+    background-color:var(--primary-color) !important;
     box-shadow: 0 0 5px #0000002f;
 }
 

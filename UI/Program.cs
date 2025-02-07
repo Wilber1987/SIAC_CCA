@@ -17,15 +17,6 @@ SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_B
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
-// Migraciones
-//TODO crear conexion aparte para cronjob
-//await new MigrateDocentes().Migrate();
-await new MigrateEstudiantes().Migrate();
-/*await new MigrateGestionCursos().Migrate();
-await new MigrateNotas().Migrate();*/
-
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
@@ -70,16 +61,20 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {	
-	options.CronExpression = "*/4 * * * *";
+	options.CronExpression = "*/4 8-20 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
 builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {		
-	options.CronExpression = "33 10 * * *";
+	options.CronExpression = "0 19 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-
+builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
+{		
+	options.CronExpression = "5 16 * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

@@ -33,15 +33,14 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public List<Tbl_Pago> GetPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(),true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			var pagosP = new Tbl_Pago()
 			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
 				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())			
-			);
-			//List<Pagos_alumnos_view> recientraidos = null;
+			);			
 			List<Pagos_alumnos_view> recientraidos;
 
 
@@ -86,7 +85,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public List<Tbl_Pago> GetPagosAllPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes());
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(),true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));	
 			pago.orderData = [OrdeData.Asc("Fecha")];
 			return pago.Where<Tbl_Pago>(

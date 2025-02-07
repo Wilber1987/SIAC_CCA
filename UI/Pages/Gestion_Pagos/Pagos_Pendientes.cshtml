@@ -1,22 +1,36 @@
 @page
 @using API.Controllers;
-@using CAPA_DATOS.Security; 
+@using CAPA_DATOS.Security;
 @using CAPA_DATOS;
+@using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @using DataBaseModel;
 @{
     string? identify = HttpContext?.Session.GetString("seassonKey");
-     if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+    var pagos = PagosOperation.GetSaldoPendiente(identify);
+    if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
         Response.Redirect("/Security/Login");
         return;
     }
 
+
 }
-<script src="~/js/html2pdf.js"></script>
-<script type="module" >
-    import {Pagos_PendientesView} from "/Gestion_Pagos/Pagos_PendientesView.mjs";
-    window.onload = ()=> {
-        Main.append(new Pagos_PendientesView());
-    }
-</script>
-<div id="Main" class="app-container"></div>
+
+@if (pagos.Amount > 0)
+{
+    <script src="~/js/html2pdf.js"></script>
+    <script type="module">
+        import { Pagos_PendientesView } from "/Gestion_Pagos/Pagos_PendientesView.mjs";
+        window.onload = () => {
+            Main.append(new Pagos_PendientesView());
+        }
+    </script>
+    <div id="Main" class="app-container"></div>
+}
+else
+{
+    <div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <i class="mdi mdi-alert-outline label-icon"></i>Actualmente no tiene pagos pendientes
+    </div>
+}
