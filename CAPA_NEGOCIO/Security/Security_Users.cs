@@ -26,16 +26,15 @@ namespace CAPA_NEGOCIO
 			if (user.status == 200)
 			{
 				profile = Tbl_Profile.Get_Profile(user);
+				try
+				{
+					new PagosOperation().UpdatePagosFromBellacon(idetify);
+				}
+				catch (System.Exception ex)
+				{
+					LoggerServices.AddMessageError($"error actualizando pagos {user.mail}", ex);
+				}
 			}
-			try
-			{
-				new PagosOperation().UpdatePagosFromBellacon(idetify);
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError($"error actualizando pagos {user.mail}", ex);
-			}
-
 			return new
 			{
 				UserId = user.UserId,
