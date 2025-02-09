@@ -81,20 +81,24 @@ namespace DataBaseModel
 
 		#endregion
 
-		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante)
+		public static List<Estudiantes> GetOwEstudiantes(string? identity, Estudiantes estudiante, bool ignorarPeriodoLectivo = false)
 		{
 			UserModel user = AuthNetCore.User(identity);
 			Parientes? pariente = new Parientes{User_id = user.UserId}.Find<Parientes>();
-			if (pariente?.Estudiantes_responsables_familia != null)
+			if (pariente?.Estudiantes_responsables_familia != null && !ignorarPeriodoLectivo)
 			{
 				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-			}
-			//throw new Exception("No posee estudiantes asociados");
+			}else{
+				return estudiante.Where<Estudiantes>(
+					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+				).ToList();
+			}			
 			return [];
 		}
+
 
 		public object GetResponsables()
 		{
