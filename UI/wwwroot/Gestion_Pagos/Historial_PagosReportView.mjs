@@ -153,6 +153,7 @@ class Historial_PagosReportView extends HTMLElement {
 
 		console.log(PagosGroup);
 		let totalCargos = 0;
+		let totalCargosC = 0;
 		for (const pagosMes in PagosGroup) {
 			div.append(html`<h3>${pagosMes.toUpperCase()}</h3>`)
 			const mesContainer = html`<table class="mes-container">				
@@ -176,7 +177,8 @@ class Historial_PagosReportView extends HTMLElement {
 				});
 
 			});
-			const subTotalAbonos = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.reduce((acc, pago) => acc + pago.Monto, 0);
+			const subTotalAbonos = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
+			const subTotalAbonosC = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
 			
 			div.append(mesContainer);
 			/*div.append(html`<div class="data-details-container total-container">
@@ -185,16 +187,25 @@ class Historial_PagosReportView extends HTMLElement {
 			</div>`);*/
 			div.append(html`<div class="data-details-container total-container">
 				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
-				<div class="pago-title value">${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
+				<div class="pago-title value">C$ ${subTotalAbonosC.toFixed(2)  ?? "0.00"}</div>
+			</div>`);
+			div.append(html`<div class="data-details-container total-container">
+				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
+				<div class="pago-title value">$ ${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
 			</div>`);
 			//-------------------->
 			//mesContainer.append(html`<h3>Resumen</h3>`);
 			totalCargos += subTotalAbonos;
+			totalCargosC += subTotalAbonosC;
 
 		}
 		div.append(html`<div class="data-details-container total-container">
 			<div class="pago-title" style="margin-right: 40px">Total</div>
-			<div class="pago-title value total-cargos">${totalCargos.toFixed(2)}</div>
+			<div class="pago-title value total-cargos">C$ ${totalCargosC.toFixed(2)}</div>
+		</div>`);
+		div.append(html`<div class="data-details-container total-container">
+			<div class="pago-title" style="margin-right: 40px">Total</div>
+			<div class="pago-title value total-cargos">$ ${totalCargos.toFixed(2)}</div>
 		</div>`);
 		return div;
 	}
