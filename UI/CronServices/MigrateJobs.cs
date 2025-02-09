@@ -21,8 +21,8 @@ namespace BackgroundJob.Cron.Jobs
 
 			try
 			{
-				//await new MigrateDocentes().Migrate();
-				//await new MigrateEstudiantes().Migrate();
+				await new MigrateDocentes().Migrate();
+				await new MigrateEstudiantes().Migrate();
 				await new MigrateGestionCursos().Migrate();
 				await new MigrateNotas().Migrate();
 			}
