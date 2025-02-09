@@ -13,13 +13,13 @@ class PagosRequest_ModelComponent extends EntityClass {
      * @type {ModelProperty}
      * @description Identificador del pago request (Primary Key)
      */
-    Id_Pago_Request = { type : "number", primary : true }
+    Id_Pago_Request = { type : "number", primary : true, hiddenFilter: true }
 
     /**
      * @type {ModelProperty}
      * @description Referencia del pago
      */
-    Referencia = { type : "text"}
+    Referencia = { type : "text", hiddenFilter: true}
 
     /**
      * @type {ModelProperty}
@@ -49,7 +49,7 @@ class PagosRequest_ModelComponent extends EntityClass {
      * @type {ModelProperty}
      * @description Estado actual del pago
      */
-    Estado = { type : "text"}
+    Estado = { type : "text", hiddenFilter: true}
 
     /**
      * @type {ModelProperty}

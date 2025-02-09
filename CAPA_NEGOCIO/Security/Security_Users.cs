@@ -5,28 +5,36 @@ using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Security;
+using CAPA_NEGOCIO.Gestion_Pagos.Operations;
 using DataBaseModel;
 
 namespace CAPA_NEGOCIO
 {
 	public class Security_Users : CAPA_DATOS.Security.Security_Users
 	{
-		
+
 
 		public new Tbl_Profile? Tbl_Profile { get; set; }
 
 		public static object Login(UserModel Inst, string? idetify)
 		{
-			var usere = AuthNetCore.loginIN(Inst.mail, Inst.password, idetify);						
+			var usere = AuthNetCore.loginIN(Inst.mail, Inst.password, idetify);
 			var user = AuthNetCore.User(idetify);
 			user.message = usere.message;
-			
+
 			Tbl_Profile? profile = new Tbl_Profile();
 			if (user.status == 200)
 			{
 				profile = Tbl_Profile.Get_Profile(user);
+				try
+				{
+					new PagosOperation().UpdatePagosFromBellacon(idetify);
+				}
+				catch (System.Exception ex)
+				{
+					LoggerServices.AddMessageError($"error actualizando pagos {user.mail}", ex);
+				}
 			}
-			
 			return new
 			{
 				UserId = user.UserId,
@@ -43,7 +51,7 @@ namespace CAPA_NEGOCIO
 				Celular = profile.Celular,
 				Codigo_Familia = profile.Codigo_Familia,
 				Correo = profile.Correo_institucional,
-				Foto  = profile.Foto
+				Foto = profile.Foto
 			};
 		}
 
@@ -52,7 +60,8 @@ namespace CAPA_NEGOCIO
 			return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault(), this);
 		}
 
-		public Security_Users withConection(CAPA_DATOS.BDCore.Abstracts.WDataMapper mapper){
+		public Security_Users withConection(CAPA_DATOS.BDCore.Abstracts.WDataMapper mapper)
+		{
 			this.SetConnection(mapper);
 			return this;
 		}
@@ -79,11 +88,11 @@ namespace CAPA_NEGOCIO
 		{
 			Docentes? docente = new Docentes { Id_User = UserId }.SimpleFind<Docentes>();
 			Parientes? pariente = new Parientes { User_id = UserId }.Find<Parientes>();
-			Tbl_Profile? tbl_Profile = new Tbl_Profile { IdUser = UserId}.SimpleFind<Tbl_Profile>();
+			Tbl_Profile? tbl_Profile = new Tbl_Profile { IdUser = UserId }.SimpleFind<Tbl_Profile>();
 			if (tbl_Profile != null)
 			{
 				tbl_Profile.ProfileType = CAPA_NEGOCIO.ProfileType.USER;
-				return tbl_Profile;                
+				return tbl_Profile;
 			}
 			List<Estudiantes_responsables_familia> familia = [];
 			if (pariente != null && pariente.Estudiantes_responsables_familia != null)
