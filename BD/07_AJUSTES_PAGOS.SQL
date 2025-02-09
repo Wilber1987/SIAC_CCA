@@ -1,0 +1,1 @@
+ALTER TABLE facturacion.PagosRequest ADD TpvInfo nvarchar(max) NULL;

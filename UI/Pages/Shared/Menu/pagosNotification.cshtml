@@ -7,30 +7,34 @@
 	if (Identify != null)
 	{
 		var estudiantes = Parientes.GetOwEstudiantes(Identify, new Estudiantes());
-		if (estudiantes.Count == 0)
+		if (!AuthNetCore.User(Identify).isAdmin && AuthNetCore.HavePermission(Identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
 		{
-			<div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
-				<i class="mdi mdi-alert-outline label-icon"></i>Actualmente no cuenta con estudiantes matriculados
-			</div>
-		}
-		else
-		{
-			var pagos = PagosOperation.GetSaldoPendiente(Identify);
-			if (pagos.Amount > 0)
+			if (estudiantes.Count == 0)
 			{
 				<div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
-					<i class="mdi mdi-alert-outline label-icon"></i>Insolvente desde <strong>"@pagos.Mes"</strong>
-					<a href="~/Gestion_Pagos/Pagos_Pendientes">Estado de cuenta/Pagar aquí</a>
+					<i class="mdi mdi-alert-outline label-icon"></i>Actualmente no cuenta con estudiantes matriculados
 				</div>
 			}
 			else
 			{
-				<div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					<i class="mdi mdi-alert-outline label-icon"></i>Actualmente no tiene pagos pendientes
-				</div>
+				var pagos = PagosOperation.GetSaldoPendiente(Identify);
+				if (pagos.Amount > 0)
+				{
+					<div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
+						<i class="mdi mdi-alert-outline label-icon"></i>Insolvente desde <strong>"@pagos.Mes"</strong>
+						<a href="~/Gestion_Pagos/Pagos_Pendientes">Estado de cuenta/Pagar aquí</a>
+					</div>
+				}
+				else
+				{
+					<div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						<i class="mdi mdi-alert-outline label-icon"></i>Actualmente no tiene pagos pendientes
+					</div>
+				}
 			}
 		}
+
 	}
 
 }

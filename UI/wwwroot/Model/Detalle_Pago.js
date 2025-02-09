@@ -15,7 +15,8 @@ class Detalle_Pago extends EntityClass {
         super(props, 'Pagos');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
+		
     }
     /**
      * @type {number}
