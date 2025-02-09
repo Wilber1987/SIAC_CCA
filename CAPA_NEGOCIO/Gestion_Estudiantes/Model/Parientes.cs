@@ -95,10 +95,10 @@ namespace DataBaseModel
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id",	pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				).ToList();
-			}
-			//throw new Exception("No posee estudiantes asociados");
+			}			
 			return [];
 		}
+
 
 		public object GetResponsables()
 		{

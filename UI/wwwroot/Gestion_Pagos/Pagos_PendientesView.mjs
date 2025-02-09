@@ -132,12 +132,12 @@ class Pagos_PendientesView extends HTMLElement {
                     //const pagoMes = this.BuildPagosMes(pagos);
                     return div;
                 }
-            }, {
+            }/*, {
                 name: "Pagos realizados", url: "#",
                 action: async (ev) => {
                     window.location.href = "/Gestion_Pagos/Historial_Pagos";
                 }
-            }
+            }*/
         ];
     }
 

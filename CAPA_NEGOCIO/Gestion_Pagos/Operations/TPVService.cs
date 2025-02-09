@@ -111,7 +111,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						""ChallengeWindowSize"": 4,
 						""ChallengeIndicator"": ""01""
 					},
-					""MerchantResponseUrl"":  ""https://portal.cca.edu.ni/api/ApiPagos/MerchantResponseURL""
+					""MerchantResponseUrl"":  ""https://28c3-186-1-23-18.ngrok-free.app/api/ApiPagos/MerchantResponseURL""
 				}
 			}";
 		}

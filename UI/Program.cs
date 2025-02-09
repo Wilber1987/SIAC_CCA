@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using CAPA_DATOS.Cron.Jobs;
 
 //coneccion wilber
-///SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
 SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //coneccion alder
@@ -16,15 +16,6 @@ SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CC
 
 
 //AppGeneratorProgram.Main(); //generador de codigo
-
-// Migraciones
-//TODO crear conexion aparte para cronjob
-/*await new MigrateDocentes().Migrate();
-await new MigrateEstudiantes().Migrate();
-await new MigrateGestionCursos().Migrate();
-await new MigrateNotas().Migrate();*/
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,16 +61,20 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {	
-	options.CronExpression = "*/4 * * * *";
+	options.CronExpression = "*/4 8-20 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
 builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {		
-	options.CronExpression = "33 10 * * *";
+	options.CronExpression = "0 19 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-
+builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
+{		
+	options.CronExpression = "0 20 * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

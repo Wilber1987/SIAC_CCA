@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CAPA_DATOS;
+using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
@@ -74,7 +75,7 @@ namespace CAPA_NEGOCIO.Oparations
 						niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
 						niv.Updated_at = DateUtil.ValidSqlDateTime(niv.Updated_at.GetValueOrDefault());
 
-						if (existingNivel != null && existingNivel.Updated_at != niv.Updated_at)
+						if (existingNivel != null)
 						{
 							// Actualizar el registro existente en Niveles
 							existingNivel.Nombre = niv.Nombre;
@@ -97,16 +98,16 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);					
 				}
 				finally
 				{
-					// Detener el túnel SSH					
-					siacTunnel.Stop();
-
+					if (siacTunnel.IsStarted)
+					{
+						siacTunnel.Stop();
+					}					
 					siacSshClient.Disconnect();
 				}
 			}
@@ -123,13 +124,11 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				// Conectar el cliente SSH
 				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
+
 				try
 				{
-					// Establecer conexión con la base de datos SiacTest
 					var seccion = new Secciones();
 					seccion.SetConnection(MySqlConnections.SiacTest);
 					var seccionsMsql = seccion.Get<Secciones>();
@@ -163,10 +162,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateSecciones.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
 				}
 				finally
 				{
@@ -232,10 +230,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migratePeriodosLectivos.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -285,7 +283,7 @@ namespace CAPA_NEGOCIO.Oparations
 						asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
 						asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
 
-						if (existingAsignatura != null && existingAsignatura.Updated_at != asig.Updated_at)
+						if (existingAsignatura != null)
 						{
 							// Actualizar el registro existente en Asignaturas
 							existingAsignatura.Nombre = asig.Nombre;
@@ -306,10 +304,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateAsignaturas.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -329,7 +327,7 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateMateria()
 		{
 			Console.Write("-->migrateMateria");
-
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("MATERIAS");
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
@@ -342,11 +340,16 @@ namespace CAPA_NEGOCIO.Oparations
 				try
 				{
 
-
 					// Establecer conexión con la base de datos SiacTest
 					var mat = new Materias();
 					mat.SetConnection(MySqlConnections.SiacTest);
-					var matsMsql = mat.Get<Materias>();
+					var filter = new FilterData
+					{
+						PropName = "updated_at",
+						FilterType = ">=",
+						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+					};
+					var matsMsql = mat.Where<Materias>(filter);
 
 					BeginGlobalTransaction();
 
@@ -378,12 +381,13 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
+					MigrateService.UpdateLastUpdate("MATERIAS");
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -452,10 +456,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateClases.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateClases.", ex);					
 				}
 				finally
 				{
@@ -498,7 +501,6 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						return false;
 					}
-
 					// Establecer conexión con la base de datos SiacTest y obtener estudiantes clases
 					var clase = new Estudiante_clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
@@ -511,7 +513,6 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 
 					siacSshClient.Disconnect();
-					//BeginGlobalTransaction();
 
 					clasesMsql.ForEach(clase =>
 					{
@@ -557,10 +558,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					//CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 			}
 
@@ -602,7 +603,7 @@ namespace CAPA_NEGOCIO.Oparations
 						docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
 						docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
 
-						if (existingClase != null && existingClase.Updated_at != docAsig.Updated_at)
+						if (existingClase != null /*&& existingClase.Updated_at != docAsig.Updated_at*/)
 						{
 							existingClase.Docente_id = docAsig.Docente_id;
 							existingClase.Asignatura_id = docAsig.Asignatura_id;
@@ -619,10 +620,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -689,10 +690,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);					
 				}
 				finally
 				{
@@ -708,434 +708,6 @@ namespace CAPA_NEGOCIO.Oparations
 
 			return true;
 		}
-
-
-		public async Task<bool> migrateNivelesOld()
-		{
-			Console.Write("-->migrateNiveles");
-			var nivel = new Niveles();
-			nivel.SetConnection(MySqlConnections.SiacTest);
-			var nivelsMsql = nivel.Get<Niveles>();
-			try
-			{
-				BeginGlobalTransaction();
-				nivelsMsql.ForEach(niv =>
-				{
-					var existingNivel = new Niveles()
-					{
-						Id = niv.Id
-					}.Find<Niveles>();
-					niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
-					niv.Updated_at = DateUtil.ValidSqlDateTime(niv.Updated_at.GetValueOrDefault());
-					if (existingNivel != null && existingNivel.Updated_at != niv.Updated_at)
-					{
-						existingNivel.Nombre = niv.Nombre;
-						existingNivel.Nombre_corto = niv.Nombre_corto;
-						existingNivel.Nombre_grado = niv.Nombre_grado;
-						existingNivel.Numero_grados = niv.Numero_grados;
-						existingNivel.Observaciones = niv.Observaciones;
-						existingNivel.Habilitado = niv.Habilitado;
-						existingNivel.Orden = niv.Orden;
-						existingNivel.Inicio_grado = niv.Inicio_grado;
-						existingNivel.Updated_at = niv.Updated_at;
-						existingNivel.Update();
-					}
-					else if (existingNivel == null)
-					{
-						niv.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateSeccionesOld()
-		{
-			Console.Write("-->migrateSecciones");
-			var seccion = new Secciones();
-			seccion.SetConnection(MySqlConnections.SiacTest);
-			var seccionsMsql = seccion.Get<Secciones>();
-			try
-			{
-				BeginGlobalTransaction();
-				seccionsMsql.ForEach(secc =>
-				{
-					var existingSeccion = new Secciones()
-					{
-						Id = secc.Id
-					}.Find<Secciones>();
-
-					if (existingSeccion != null)
-					{
-						existingSeccion.Nombre = secc.Nombre;
-						existingSeccion.Clase_id = secc.Clase_id;
-						existingSeccion.Docente_id = secc.Docente_id;
-						existingSeccion.Observaciones = secc.Observaciones;
-						existingSeccion.Updated_at = secc.Updated_at;
-						existingSeccion.Update();
-					}
-					else
-					{
-						secc.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateSecciones.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migratePeriodosLectivosOld()
-		{
-			Console.Write("-->migratePeriodosLectivos");
-			var periodo = new Periodo_lectivos();
-			periodo.SetConnection(MySqlConnections.SiacTest);
-			var periodosMsql = periodo.Get<Periodo_lectivos>();
-			try
-			{
-				BeginGlobalTransaction();
-				periodosMsql.ForEach(periodo =>
-				{
-					var existingPeriodo = new Periodo_lectivos()
-					{
-						Id = periodo.Id
-					}.Find<Periodo_lectivos>();
-
-					if (existingPeriodo != null && existingPeriodo.Updated_at != periodo.Updated_at)
-					{
-						existingPeriodo.Nombre = periodo.Nombre;
-						existingPeriodo.Nombre_corto = periodo.Nombre_corto;
-						existingPeriodo.Observaciones = periodo.Observaciones;
-						existingPeriodo.Config = periodo.Config;
-						existingPeriodo.Abierto = periodo.Abierto;
-						existingPeriodo.Oculto = periodo.Oculto;
-						existingPeriodo.Update();
-					}
-					else if (existingPeriodo == null)
-					{
-						periodo.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migratePeriodosLectivos.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateAsignaturasOld()
-		{
-			Console.Write("-->migrateAsignaturas");
-			var asig = new Asignaturas();
-			asig.SetConnection(MySqlConnections.SiacTest);
-			var asigsMsql = asig.Get<Asignaturas>();
-			try
-			{
-				BeginGlobalTransaction();
-				asigsMsql.ForEach(asig =>
-				{
-					var existingAsignatura = new Asignaturas()
-					{
-						Id = asig.Id
-					}.Find<Asignaturas>();
-
-
-					asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
-					asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
-					if (existingAsignatura != null && existingAsignatura.Updated_at != asig.Updated_at)
-					{
-						existingAsignatura.Nombre = asig.Nombre;
-						existingAsignatura.Nombre_corto = asig.Nombre_corto;
-						existingAsignatura.Observaciones = asig.Observaciones;
-						existingAsignatura.Nivel_id = asig.Nivel_id;
-						existingAsignatura.Habilitado = asig.Habilitado;
-						existingAsignatura.Updated_at = asig.Updated_at;
-						existingAsignatura.Orden = asig.Orden;
-						existingAsignatura.Update();
-					}
-					else if (existingAsignatura == null)
-					{
-						asig.Save();
-					}
-
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateAsignaturas.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateMateriaOld()
-		{
-			Console.Write("-->migrateMateria");
-			var mat = new Materias();
-			mat.SetConnection(MySqlConnections.SiacTest);
-			var matsMsql = mat.Get<Materias>();
-			try
-			{
-				BeginGlobalTransaction();
-				matsMsql.ForEach(mat =>
-				{
-
-					var existingMateria = new Materias()
-					{
-						Id = mat.Id
-					}.Find<Materias>();
-					mat.Created_at = DateUtil.ValidSqlDateTime(mat.Created_at.GetValueOrDefault());
-					mat.Updated_at = DateUtil.ValidSqlDateTime(mat.Updated_at.GetValueOrDefault());
-					if (existingMateria != null && existingMateria.Updated_at != mat.Updated_at)
-					{
-						existingMateria.Clase_id = mat.Clase_id;
-						existingMateria.Asignatura_id = mat.Asignatura_id;
-						existingMateria.Observaciones = mat.Observaciones;
-						existingMateria.Config = mat.Config;
-						existingMateria.Lock_version = mat.Lock_version;
-						existingMateria.Updated_at = mat.Updated_at;
-						existingMateria.Update();
-					}
-					else if (existingMateria == null)
-					{
-						mat.Save();
-					}
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateClasesOld()
-		{
-			Console.Write("-->migrateClases");
-			var clase = new Clases();
-			clase.SetConnection(MySqlConnections.SiacTest);
-			var clasesMsql = clase.Get<Clases>();
-			try
-			{
-				BeginGlobalTransaction();
-				clasesMsql.ForEach(clase =>
-				{
-
-					var existingClase = new Clases()
-					{
-						Id = clase.Id
-					}.Find<Clases>();
-
-					clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
-					clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
-					if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
-					{
-						existingClase.Grado = clase.Grado;
-						existingClase.Nivel_id = clase.Nivel_id;
-						existingClase.Observaciones = clase.Observaciones;
-						existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
-						existingClase.Updated_at = clase.Updated_at;
-						existingClase.Update();
-					}
-					else if (existingClase == null)
-					{
-						clase.Save();
-					}
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateClases.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateEstudiantesClasesOld()
-		{
-			Console.Write("-->migrateEstudiantesClases");
-			var clase = new Estudiante_clases();
-			clase.SetConnection(MySqlConnections.SiacTest);
-			//var clasesMsql = clase.Get<Estudiante_clases>();
-			var periodo_lectivo = new Periodo_lectivos();
-			var periodo = periodo_lectivo.Where<Periodo_lectivos>(new FilterData
-			{
-				PropName = "nombre_corto",
-				FilterType = "=",
-				Values = new List<string?> { MigrationDates.GetCurrentYear().ToString() }
-			}).FirstOrDefault();
-
-			if (periodo == null)
-			{
-				return false;
-			}
-
-			var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));
-
-			try
-			{
-				BeginGlobalTransaction();
-				clasesMsql.ForEach(clase =>
-				{
-					var existingClase = new Estudiante_clases()
-					{
-						Id = clase.Id
-					}.Find<Estudiante_clases>();
-
-					clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
-					clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
-
-					if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
-					{
-						existingClase.Estudiante_id = clase.Estudiante_id;
-						existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
-						existingClase.Clase_id = clase.Clase_id;
-						existingClase.Seccion_id = clase.Seccion_id;
-						existingClase.Retirado = clase.Retirado;
-						existingClase.Observaciones = clase.Observaciones;
-						existingClase.Updated_at = clase.Updated_at;
-						existingClase.Promedio = clase.Promedio;
-						existingClase.Repitente = clase.Repitente;
-						existingClase.Reprobadas = clase.Reprobadas;
-						existingClase.Update();
-					}
-					else if (existingClase == null)
-					{
-						clase.Save();
-					}
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
-				//RollBackGlobalTransaction();
-				//throw;
-			}
-
-			return true;
-		}
-
-
-		public async Task<bool> migrateDocentesAsignaturasOld()
-		{
-			Console.Write("-->migrateDocentesAsignaturas");
-			var docAsig = new Docente_asignaturas();
-			docAsig.SetConnection(MySqlConnections.SiacTest);
-			var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
-			try
-			{
-				BeginGlobalTransaction();
-				docAsigsMsql.ForEach(docAsig =>
-				{
-
-					var existingClase = new Docente_asignaturas()
-					{
-						Id = docAsig.Id
-					}.Find<Docente_asignaturas>();
-
-					docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
-					docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
-					if (existingClase != null && existingClase.Updated_at != docAsig.Updated_at)
-					{
-						existingClase.Docente_id = docAsig.Docente_id;
-						existingClase.Asignatura_id = docAsig.Asignatura_id;
-						existingClase.Jefe = docAsig.Jefe;
-						existingClase.Observaciones = docAsig.Observaciones;
-						existingClase.Updated_at = docAsig.Updated_at;
-						existingClase.Update();
-					}
-					else if (existingClase == null)
-					{
-						docAsig.Save();
-					}
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
-
-		public async Task<bool> migrateDocentesMateriasOld()
-		{
-			Console.Write("-->migrateDocentesMaterias");
-			var docMat = new Docente_materias();
-			docMat.SetConnection(MySqlConnections.SiacTest);
-			var docMatsMsql = docMat.Get<Docente_materias>();
-			try
-			{
-				BeginGlobalTransaction();
-				docMatsMsql.ForEach(docMat =>
-				{
-
-					var existingClase = new Docente_materias()
-					{
-						Id = docMat.Id
-					}.Find<Docente_materias>();
-
-					docMat.Created_at = DateUtil.ValidSqlDateTime(docMat.Created_at.GetValueOrDefault());
-					docMat.Updated_at = DateUtil.ValidSqlDateTime(docMat.Updated_at.GetValueOrDefault());
-					if (existingClase != null && existingClase.Updated_at != docMat.Updated_at)
-					{
-						existingClase.Materia_id = docMat.Materia_id;
-						existingClase.Seccion_id = docMat.Seccion_id;
-						existingClase.Docente_id = docMat.Docente_id;
-						existingClase.Updated_at = docMat.Updated_at;
-						existingClase.Update();
-					}
-					else if (existingClase == null)
-					{
-						docMat.Save();
-					}
-				});
-				CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);
-				/*RollBackGlobalTransaction();
-				throw;*/
-			}
-
-			return true;
-		}
+				
 	}
 }
