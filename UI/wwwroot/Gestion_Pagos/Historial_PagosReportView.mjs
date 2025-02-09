@@ -75,7 +75,7 @@ class Historial_PagosReportView extends HTMLElement {
 		this.Draw();
 	}
 	Draw = async () => {
-		this.MainComponent();
+		this.MainComponent(); 
 	}
 
 	async SetOption() {
