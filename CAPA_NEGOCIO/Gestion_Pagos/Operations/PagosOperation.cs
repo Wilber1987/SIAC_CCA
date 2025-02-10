@@ -89,16 +89,20 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			return estudiantes;
 		}
 
-		public List<Tbl_Pago> GetPagosAllPagos(Tbl_Pago pago, string identify)
+		public Object GetPagosAllPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(),true);
-			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));	
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
+			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			pago.orderData = [OrdeData.Asc("Fecha")];
-			return pago.Where<Tbl_Pago>(
-				FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
-				FilterData.ISNull("Fecha_anulacion")
-			);
+			return new
+			{
+				Estudiantes = estudiantes,
+				Pagos = pago.Where<Tbl_Pago>(
+					FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.ISNull("Fecha_anulacion")
+				)
+			};
 		}
 		private static List<Tbl_Pago> BuildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
 		{
@@ -175,7 +179,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 
 		public static InfoPagos GetSaldoPendiente(string? identify)
-		{			
+		{
 			var user = AuthNetCore.User(identify);
 			var pagos = new PagosOperation().GetPagos(new Tbl_Pago(), identify);
 			double Amount = 0.0;
@@ -185,7 +189,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 			MoneyEnum? moneyEnumValue = null;
 			if (Amount > 0.0 && pagos.First()?.Money != null)
-			{				
+			{
 				moneyEnumValue = pagos.First()?.Money; // Si la conversión es exitosa, asignamos el valor al moneyEnumValue
 			}
 			return new InfoPagos
@@ -248,9 +252,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				else
 				{
 					SeasonServices.Set("PAGO_PROCESO_SERVICE", tPVService, pagosResponse.SpiToken);
-					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);					
+					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
 					SeasonServices.Set("PAGO_PROCESO_USER", user, pagosResponse.SpiToken);
-					
+
 					SeasonServices.Set("PAGO_PROCESO_RESPONSE", pagosResponse, identify);
 					return new ResponseService
 					{
@@ -272,11 +276,11 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public static async Task<ResponseService> AutorizarPago(string? identify, PT3DSResponse PT3DSResponse)
 		{
 			TPVService? tPVService = SeasonServices.Get<TPVService>("PAGO_PROCESO_SERVICE", PT3DSResponse.SpiToken);
-			PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);			
+			PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);
 			UserModel? user = SeasonServices.Get<UserModel>("PAGO_PROCESO_USER", PT3DSResponse.SpiToken);
-						
+
 			//PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE",  PT3DSResponse.SpiToken);
-			PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken );
+			PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
 			if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
 			{
 				return new ResponseService
@@ -328,10 +332,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 
 		public List<PagosRequest> GetManagePagos(PagosRequest inst, string? identify)
-		{			
+		{
 			inst.orderData = [OrdeData.Asc("Fecha")];
 			return inst.Where<PagosRequest>(
-				//FilterData.Equal("Responsable_Id", responsable.Pariente_id)
+			//FilterData.Equal("Responsable_Id", responsable.Pariente_id)
 			);
 		}
 	}

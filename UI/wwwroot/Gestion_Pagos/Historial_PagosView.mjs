@@ -78,25 +78,32 @@ class Historial_PagosView extends HTMLElement {
 	}
 
 	/**
-	 * @param {Array<Tbl_Pago>} pagos 
+	 * @param {{ Pagos:Array<Tbl_Pago>, Estudiantes: Array<Estudiantes> }} pagos 
 	 * @param {Array<PagosRequest>} facturas 
 	 */
 	DrawInformePagos(pagos, facturas) {
 
 		// @ts-ignore                    
-		const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
+		const pagosEstudiante = Object.groupBy(pagos.Pagos, p => p.Estudiante_Id);
 
 		if (!this.containerEstudiantes) {
 			const studiantesCard = [];
 			let i = 0;
-			for (const estudianteId in pagosEstudiante) {
+			pagos.Estudiantes.forEach((estudianteObject, i) => {
+				if (i == 0) {
+					this.selectedID = estudianteObject.Codigo;
+				}
+				const estudiante = estudianteObject;
+				studiantesCard.push(this.BuildEstudiantes(new Estudiantes(estudiante), facturas, pagosEstudiante, estudianteObject.Codigo));
+			})
+			/*for (const estudianteId in pagos.Estudiantes) {
 				if (i == 0) {
 					this.selectedID = estudianteId;
 				}
 				const estudiante = pagosEstudiante[estudianteId][0].Estudiante;
 				studiantesCard.push(this.BuildEstudiantes(new Estudiantes(estudiante), facturas, pagosEstudiante, estudianteId));
 				i++;
-			}
+			}*/
 			this.containerEstudiantes = html`<section class="Historial">             
 				<div class="alumnos-container aside-container">                
 					${studiantesCard}
@@ -162,9 +169,16 @@ class Historial_PagosView extends HTMLElement {
 		return div;
 	}
 
-	BuildEstudiantes(/** @type {Estudiantes} */ Estudiante, facturas, pagosEstudiante, estudianteId) {
+	/**
+	 * @param {Estudiantes} Estudiante
+	 * @param {Array<PagosRequest>} facturas
+	 * @param {Object.<number, Array<Tbl_Pago>>} pagosEstudiante
+	 * @param {string} estudianteId
+	 * @returns {HTMLElement}
+	 */
+	BuildEstudiantes(Estudiante, facturas, pagosEstudiante, estudianteId) {
 		return html`<div class="estudiante-card-container" onclick="${() => {
-			this.selectedID = estudianteId;
+			this.selectedID = Estudiante.Id;
 			if (!this.Informes[this.selectedID]) {
 				this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
 			}

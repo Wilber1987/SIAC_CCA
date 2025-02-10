@@ -32,9 +32,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			html = html.Replace("{{ Moneda }}", request.Moneda ?? "");
 			html = html.Replace("{{ Concepto }}", request.Descripcion ?? "");
 			
-			var totalC = request.Monto * (request.TasaCambio ?? 1);
+			
+			
+			var totalC =  request.Moneda == MoneyEnum.DOLARES.ToString() ?  request.Monto * (request.TasaCambio ?? 1) : request.Monto;
+			var totalDolares  =  request.Moneda == MoneyEnum.DOLARES.ToString() ?  request.Monto : request.Monto / (request.TasaCambio ?? 1);
+			
+			
 			html = html.Replace("{{ Monto_C }}", totalC?.ToString("F2") ?? "0.00");
-			html = html.Replace("{{ Monto }}", request.Monto?.ToString("F2") ?? "0.00");
+			html = html.Replace("{{ Monto }}", totalDolares?.ToString("F2") ?? "0.00");
+			//html = html.Replace("{{ Moneda }}", request.Moneda == MoneyEnum.DOLARES.ToString() ? "DÓLARES" : "CORDOBAS");
 			html = html.Replace("{{ Monto_TC }}", request.TasaCambio?.ToString("F2") ?? "0.00");
 
 			// Construcción de los detalles del pago
