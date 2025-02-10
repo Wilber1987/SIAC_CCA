@@ -318,7 +318,11 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
 					}
 					detalle.Pago!.Monto_Pagado = detalle.Pago.Monto_Pagado + detalle.Monto;
-					detalle.Pago?.Update();
+					var updateResponse = detalle.Pago.Update();
+					if (updateResponse.status != 200)
+					{
+						throw new Exception("Error al actualizar el pago");
+					}
 				});
 				//pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Pagos!.Select(x => x.Estudiante?.Nombre_completo))}";
 				pagosRequest?.Save();

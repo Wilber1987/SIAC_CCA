@@ -89,6 +89,7 @@ class Historial_PagosView extends HTMLElement {
 		if (!this.containerEstudiantes) {
 			const studiantesCard = [];
 			let i = 0;
+			//pagos.Estudiantes.push(new Estudiantes({ Nombre_completo: "test", Codigo: "test"}))
 			pagos.Estudiantes.forEach((estudianteObject, i) => {
 				if (i == 0) {
 					this.selectedID = estudianteObject.Codigo;
