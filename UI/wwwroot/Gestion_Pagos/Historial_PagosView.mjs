@@ -174,7 +174,7 @@ class Historial_PagosView extends HTMLElement {
 			<img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
 				: route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
 			<div class="flex-1 ms-2 ps-1">
-				<h5 class="font-size-14 mb-0">${Estudiante.GetNombreCompleto()}</h5>
+				<h5 class="font-size-14 mb-0">${Estudiante.Nombre_completo}</h5>
 				<label class="text-muted text-uppercase font-size-12">${Estudiante.Codigo}</label>
 				</div>
 			</div>
