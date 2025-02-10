@@ -51,9 +51,9 @@ class Historial_PagosView extends HTMLElement {
 		});
 		this.OptionContainer.append(new WPrintExportToolBar({
 			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
-				const body = container.cloneNode(true);
+				const body = this.Informes[this.selectedID].cloneNode(true);
 				body.appendChild(this.CustomStyle.cloneNode(true));
-				tool.ExportPdf(body, PageType.A4)
+				tool.ExportPdf(body, PageType.A4_HORIZONTAL)
 			}
 		}));
 		this.append(
@@ -196,11 +196,11 @@ class Historial_PagosView extends HTMLElement {
 
 		for (const pagosMes in pagosGroup) {
 			div.append(html`<h3>${WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
-				pagosMes - 1])}</h3>`)
+				pagosMes - 1])}</h3>`);
+			div.append(html`<hr/>`);
 			const mesContainer = html`<table class="mes-container">				 
 				<tr class="pago-details-container">
 					<td class="pago-title">Fecha</td>
-					<td class="pago-title">Tipo</td>
 					<td class="pago-title">Documento</td>
 					<td class="pago-title">Concepto</td>
 					<td class="pago-title">MD</td>
@@ -209,46 +209,49 @@ class Historial_PagosView extends HTMLElement {
 				</tr>
 			</table>`;
 			//-------------------->
-			mesContainer.append(html`<h3>Cargo</h3>`);
+
+			div.append(html`<h5>Cargo</h5>`);
 			pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
 				const card = this.PagosCard(pago);
 				mesContainer.append(card);
 			});
 			const subTotalCargos = pagosGroup[pagosMes].reduce((acc, pago) => acc + pago.Monto, 0);
-			div.append(html`<div class="pago-details-container">
-				<div class="pago-title" style="grid-column: span 5"></div>
-				<div class="pago-title value">${subTotalCargos?.toFixed(2) ?? "0.00"}</div>
-				<div class="pago-title"></div>
-			</div>`)
+			div.append(html`<table class="pago-details-container mes-container">
+				<tr>
+					<td class="pago-title value">${subTotalCargos?.toFixed(2) ?? "0.00"}</td>
+				</tr>
+			</table>`)
 			//-------------------->
-			div.append(html`<h3>Abono</h3>`);
+			div.append(html`<h5>Abono</h5>`);
 			facturaGroup[pagosMes]?.forEach((/** @type {Detalle_Pago} */ pago) => {
 				const card = this.PagosRequestCard(pago);
 				mesContainer.append(card);
 			});
 			const subTotalAbonos = facturaGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
-			div.append(html`<div class="pago-details-container">
-				<div class="pago-title" style="grid-column: span 5"> </div>
-				<div class="pago-title value">${subTotalAbonos?.toFixed(2) ?? "0.00"}</div>
-				<div class="pago-title"></div>
-			</div>`);
+			div.append(html`<table class="pago-details-container mes-container">
+				<tr>
+					<td class="pago-title value">${subTotalAbonos?.toFixed(2) ?? "0.00"}</td>
+				</tr>				
+			</table>`);
 			const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
-			div.append(html`<div class="pago-details-container">
-				<div class="pago-title" style="grid-column: span 5">Sub-Total mensual</div>
-				<div class="pago-title value">${total.toFixed(2) ?? "0.00"}</div>
-				<div class="pago-title"></div>
-			</div>`);
+			div.append(html`<table class="pago-details-container mes-container">
+				<tr>
+					<td class="pago-title" style="grid-column: span 5">Sub-Total mensual</td>
+					<td class="pago-title value">${total.toFixed(2) ?? "0.00"}</td>
+				</tr>				
+			</table>`);
 
 			div.append(mesContainer);
 			totalCargos += total;
 
 		}
 
-		div.append(html`<div class="mes-container total-container">
-			<div class="pago-title" style="grid-column: span 5">Total</div>
-			<div class="pago-title total-cargos">${totalCargos.toFixed(2) ?? "0.00"}</div>
-			<div class="pago-title"></div>
-		</div>`);
+		div.append(html`<table class="mes-container total-container">
+			<tr>
+				<td class="pago-title" style="grid-column: span 5">Total</td>
+				<td class="pago-title total-cargos">${totalCargos.toFixed(2) ?? "0.00"}</td>
+			</tr>
+		</table>`);
 		return div;
 	}
 	/**
@@ -259,7 +262,7 @@ class Historial_PagosView extends HTMLElement {
 			tagName: "tr", className: "data-details-container",
 			children: [
 				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).toISO() },
-				{ tagName: "td", class: "pago-value", innerText: pago.Tipo },
+				//{ tagName: "td", class: "pago-value", innerText: pago.Tipo },
 				{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Money },
@@ -300,30 +303,32 @@ class Historial_PagosView extends HTMLElement {
 			color: red
 		}  
 		.mes-container {
-			display: grid;
+			/* display: grid;
 			grid-template-columns: repeat(7, 1fr);
-			gap: 5px;
+			gap: 5px; */
+			width: 100%;
 			& h3 {
 				grid-column: span 7;
 				font-size: 1em;
-				border-bottom: 1px solid #919191;
 			}
 			& .pago-details-container {
 				display: contents;
 				grid-column: span 7;
 			}
 			.pago-title {
-				font-size: 0.8em;
+				/* font-size: 0.8em; */
 				padding: 5px;
 				font-weight: bold;
 				background-color: #f1f1f1;
 			}
 			.pago-value {
-				font-size: 0.8em;
+				
 			}
 		}   
+		td {
+			padding: 10px;
+		}
 		.total-container {
-			border-top: 1px solid #919191;
 		} 
 		.value, .total-cargos {
 			text-align: right;
@@ -377,30 +382,29 @@ class Historial_PagosView extends HTMLElement {
 			border-radius: 0;
 			box-shadow: unset
 		}
-		.estudiante-container {
-			display: flex;
-			flex-direction: column;
-			gap: 0px;
+		.estudiante-container {		
+			width: 100%;	
 			padding: 10px;
-			border: 1px solid #d6d6d6;
 			border-radius: 10px;
-			& .estudiante {
-				margin-bottom: 20px;
-			}
-			& .data-container {
-				display: flex;
-				justify-content: flex-start;
-				border-top: 1px solid #d6d6d6;
-				border-bottom: 1px solid #d6d6d6;
-				& .estudiante-prop {
-					background-color: #f1f1f1;
-					width: 100px;
-				}
-				& label {
-					padding: 10px;
-					margin-bottom: 0;
-				}
-			}
+			
+		}
+		.estudiante {
+			margin-bottom: 20px;
+		}
+		.data-container {				
+			display: flex;
+			justify-content: flex-start;
+			border-top: 1px solid #d6d6d6;
+			border-bottom: 1px solid #d6d6d6;	
+			text-transform: uppercase;			
+		}
+		.estudiante-prop {
+			background-color: #f1f1f1;
+			width: 100px;
+		}
+		.data-container label {
+			padding: 10px;
+			margin-bottom: 0;
 		}
 		
 		@media (max-width: 768px) {

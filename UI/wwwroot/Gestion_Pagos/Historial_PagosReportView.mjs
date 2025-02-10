@@ -175,7 +175,6 @@ class Historial_PagosReportView extends HTMLElement {
 					const card = this.PagosRow(pago, detalle);
 					mesContainer.append(card);
 				});
-
 			});
 			const subTotalAbonos = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 			const subTotalAbonosC = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
