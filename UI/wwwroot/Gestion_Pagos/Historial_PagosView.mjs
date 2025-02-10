@@ -124,6 +124,12 @@ class Historial_PagosView extends HTMLElement {
 	ViewEstudianteInforme(facturas, pagosEstudiante) {
 		// @ts-ignore
 		const facturasEstudiante = Object.groupBy(facturas.flatMap(p => p.Detalle_Pago), p => p.Pago.Estudiante_Id);
+		if (!pagosEstudiante[this.selectedID ?? -1]) {
+			return  html`<div class="pago-container">
+				<h3>No existen historial para este estudiante - ${this.selectedID}</h3>				 
+			</div>`;
+		}
+		
 		//console.log(facturasEstudiante);
 		const div = html`<div class="pago-container">
 		<style>
@@ -173,16 +179,16 @@ class Historial_PagosView extends HTMLElement {
 	 * @param {Estudiantes} Estudiante
 	 * @param {Array<PagosRequest>} facturas
 	 * @param {Object.<number, Array<Tbl_Pago>>} pagosEstudiante
-	 * @param {string} estudianteId
+	 * @param {string} estudianteCodigo
 	 * @returns {HTMLElement}
 	 */
-	BuildEstudiantes(Estudiante, facturas, pagosEstudiante, estudianteId) {
+	BuildEstudiantes(Estudiante, facturas, pagosEstudiante, estudianteCodigo) {
 		return html`<div class="estudiante-card-container" onclick="${() => {
-			this.selectedID = Estudiante.Id;
+			this.selectedID = estudianteCodigo;
 			if (!this.Informes[this.selectedID]) {
 				this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
 			}
-			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteId])
+			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteCodigo])
 		}}">            
 			<div class="estudiante-card">
 			<img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
