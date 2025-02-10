@@ -40,7 +40,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
 				FilterData.ISNull("Fecha_anulacion"),
 				FilterData.Greater("Monto_Pendiente", 0)
 			);
@@ -103,9 +103,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		private static List<Tbl_Pago> BuildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
 		{
 			MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
-			if (x?.Texto_corto != null)
+			if (x?.Moneda != null)
 			{
-				Enum.TryParse(x?.Texto_corto, out MoneyEnum result);
+				Enum.TryParse(x?.Moneda, out MoneyEnum result);
 				moneyEnumValue = result;
 			}
 			List<Tbl_Pago> pagos = new List<Tbl_Pago>
@@ -175,20 +175,18 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 
 		public static InfoPagos GetSaldoPendiente(string? identify)
-		{
-			//
+		{			
 			var user = AuthNetCore.User(identify);
 			var pagos = new PagosOperation().GetPagos(new Tbl_Pago(), identify);
 			double Amount = 0.0;
 			if (pagos.Count > 0)
 			{
-				Amount = pagos.Sum(x => x.Monto_Pagado).GetValueOrDefault();
+				Amount = pagos.Sum(x => x.Monto_Pendiente).GetValueOrDefault();
 			}
 			MoneyEnum? moneyEnumValue = null;
-			if (Amount > 0.0 && pagos.First()?.Texto_corto != null)
-			{
-				Enum.TryParse(pagos.First()?.Texto_corto, out MoneyEnum result);
-				moneyEnumValue = result; // Si la conversión es exitosa, asignamos el valor al moneyEnumValue
+			if (Amount > 0.0 && pagos.First()?.Money != null)
+			{				
+				moneyEnumValue = pagos.First()?.Money; // Si la conversión es exitosa, asignamos el valor al moneyEnumValue
 			}
 			return new InfoPagos
 			{

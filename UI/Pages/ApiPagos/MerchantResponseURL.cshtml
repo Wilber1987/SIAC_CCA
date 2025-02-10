@@ -29,8 +29,8 @@
         {
             pagoTotal += pago.Monto.GetValueOrDefault();
             <div class="detail">
-                <label for="">@pago.Pago?.Estudiante?.Nombre_completo</label>
-                <label for="">@pago.Pago?.Mes</label>
+                <!--<label for="">@pago.Pago?.Estudiante?.Nombre_completo</label>-->
+                <label for="">Mes @pago.Pago?.Mes</label>
                 <label for="" class="pago-monto">@(pago.Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(pago.Monto)</label>
             </div>
         }

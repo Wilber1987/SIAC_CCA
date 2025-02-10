@@ -95,10 +95,10 @@
                             title="Ingrese el nombre DEL titular de la tarjeta">
                     </div>
                     <div class="">
-                        <label for="cardNumberCredit">Número de tarjeta</label>
+                        <label for="cardNumberCredit">Número de tarjeta (sin espacios)</label>
                         <!-- Añade un patrón para aceptar solo números y entre 13-19 dígitos -->
                         <input class="cursor-pointer" id="cardNumberCredit" required name="CardNumber"
-                            placeholder="ex.1234567290" type="text" pattern="[0-9]{13,19}"
+                            placeholder="Ejem: 5555555555554444" type="text" pattern="^\d{13,19}$"
                             title="Ingrese un número de tarjeta válido de 13 a 19 dígitos">
                     </div>
                     <div class="d-flex gap-1">
@@ -132,9 +132,9 @@
         {
             pagoTotal += detalle.Monto.GetValueOrDefault();
             <div class="detail">
-                <label for="">@detalle.Pago?.Estudiante?.Nombre_completo</label>
+                <!--<label for="">@detalle.Pago?.Estudiante?.Nombre_completo</label>-->
                 <label for="">@detalle.Pago?.Concepto</label>
-                <label for="">@detalle.Pago?.Mes</label>
+                <label for="">Mes @detalle.Pago?.Mes</label>
                 <label for="" class="pago-monto">@(detalle.Pago?.Money == MoneyEnum.CORDOBAS ? "C$" : "$") @NumberUtility.ConvertToMoneyString(detalle.Monto)</label>
             </div>
         }

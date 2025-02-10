@@ -97,6 +97,15 @@
 			</ul>
 		</li>
 	}
+	@if (SecurityController.HavePermission(Identify, Permissions.NOTIFICACIONES_READER) && 	!SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
+	{
+		<li class="menuParentOption">			
+			<a class="" href="~/Mensajes/Notificaciones">
+				<i class="bx bx-message-rounded-dots icon nav-icon"></i>
+				<span class="menu-item" data-key="t-mensajes">Notificaciones</span>
+			</a>
+		</li>
+	}
 	@if (!SecurityController.HavePermission(Identify,Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify,Permissions.GESTION_ESTUDIANTES_PROPIOS))
 	{
 

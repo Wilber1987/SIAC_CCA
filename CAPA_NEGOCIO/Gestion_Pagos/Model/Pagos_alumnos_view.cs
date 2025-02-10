@@ -51,5 +51,6 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Texto_corto { get; set; }
         public string? Texto_largo { get; set; }
         public string? Simbolo { get; set; }
+        public string? Moneda { get; set; }
     }
 }
