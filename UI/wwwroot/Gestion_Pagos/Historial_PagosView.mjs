@@ -208,9 +208,21 @@ class Historial_PagosView extends HTMLElement {
 					<td class="pago-title">Estado</td>
 				</tr>
 			</table>`;
+			
+			const abonosContainer = html`<table class="mes-container">				 
+				<tr class="pago-details-container">
+					<td class="pago-title">Fecha</td>
+					<td class="pago-title">Documento</td>
+					<td class="pago-title">Concepto</td>
+					<td class="pago-title">MD</td>
+					<td class="pago-title">Importe</td>
+					<td class="pago-title">Estado</td>
+				</tr>
+			</table>`;
 			//-------------------->
 
 			div.append(html`<h5>Cargo</h5>`);
+			div.append(mesContainer);
 			pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
 				const card = this.PagosCard(pago);
 				mesContainer.append(card);
@@ -223,9 +235,10 @@ class Historial_PagosView extends HTMLElement {
 			</table>`)
 			//-------------------->
 			div.append(html`<h5>Abono</h5>`);
+			div.append(abonosContainer);
 			facturaGroup[pagosMes]?.forEach((/** @type {Detalle_Pago} */ pago) => {
 				const card = this.PagosRequestCard(pago);
-				mesContainer.append(card);
+				abonosContainer.append(card);
 			});
 			const subTotalAbonos = facturaGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
 			div.append(html`<table class="pago-details-container mes-container">
@@ -241,7 +254,7 @@ class Historial_PagosView extends HTMLElement {
 				</tr>				
 			</table>`);
 
-			div.append(mesContainer);
+			
 			totalCargos += total;
 
 		}
@@ -282,7 +295,7 @@ class Historial_PagosView extends HTMLElement {
 			tagName: "tr", className: "data-details-container",
 			children: [
 				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Pago.Fecha).toISO() },
-				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
+				//{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Money },
