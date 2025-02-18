@@ -174,7 +174,7 @@ class ClasesDetails extends HTMLElement {
 	 
 	PrintAction = (toolBar) => {
 		if (!this.EstudianteSeleccionado.Id) {
-			this.append(ModalMessege("Seleccione un estudiante"));
+			this.append(ModalMessage("Seleccione un estudiante"));
 			return;
 		}
 		this.append(new WModalForm({

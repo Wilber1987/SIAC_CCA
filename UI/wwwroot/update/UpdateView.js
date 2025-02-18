@@ -6,7 +6,7 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { UpdateData } from "./Model/UpdateData.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { Adress, Estudiantes } from "./Model/Estudiantes.js";
-import { ModalMessege, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
 import { Adress_ModelComponent, Estudiantes_ModelComponent } from "./Model/Estudiantes_ModelComponent.js";
 import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
@@ -396,25 +396,25 @@ class UpdateView extends HTMLElement {
                 <button class="Btn check-icon" onclick="${async () => {
                         // @ts-ignore
                         if (inputTerminosYCondiciones.checked != true) {
-                            this.append(ModalMessege("Debe aceptar los terminos y condiciones", undefined));
+                            this.append(ModalMessage("Debe aceptar los terminos y condiciones", undefined));
                             return;
                         }
                         for (const pariente of this.UpdateData?.Parientes) {
                             if (!WArrayF.ValidateByModel(pariente, new Parientes_ModelComponent())) {
-                                this.append(ModalMessege(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
+                                this.append(ModalMessage(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
                             if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent())) {
-                                this.append(ModalMessege(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
+                                this.append(ModalMessage(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
                         }
                         /* for (const form of this.Forms) {
                              //await form.DrawComponent();
                              if (!form.Validate()) {
-                                 this.append(ModalMessege(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
+                                 this.append(ModalMessage(`Los datos de ${form.FormObject.Nombre_completo}  incompletos`, undefined));
                                  return;
                              }
                          }*/
@@ -425,7 +425,7 @@ class UpdateView extends HTMLElement {
                                 // @ts-ignore
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
-                            this.append(ModalMessege(response.message, undefined, true));
+                            this.append(ModalMessage(response.message, undefined, true));
                         }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                     }}">Aceptar</button>

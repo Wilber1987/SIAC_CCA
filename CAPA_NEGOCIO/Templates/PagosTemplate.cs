@@ -49,8 +49,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				foreach (var detalle in request.Detalle_Pago)
 				{
-					var totalDetalle = detalle.Total * (request.TasaCambio ?? 1);
-					detallePagoHtml += $"<tr><td>{detalle.Concepto}</td><td>{totalDetalle?.ToString("F2")}</td></tr>";
+					var totalDetalle = detalle.Total;
+					detallePagoHtml += $"<tr><td>{detalle.Concepto}</td><td> { (request.Moneda == MoneyEnum.DOLARES.ToString() ? "$" : "C$")}  {totalDetalle?.ToString("F2")}</td></tr>";
 				}
 			}
 			

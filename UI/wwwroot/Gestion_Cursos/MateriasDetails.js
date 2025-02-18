@@ -4,7 +4,7 @@
 import { Materias } from "../Model/Materias.js";
 import { DocumentsData } from "../Model/DocumentsData.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";

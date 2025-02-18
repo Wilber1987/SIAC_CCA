@@ -14,7 +14,7 @@ import { Responsables } from "../Model/Responsables.js";
 import { Secciones } from "../Model/Secciones.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage, ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import {  WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -169,7 +169,7 @@ class NotificacionesManagerView extends HTMLElement {
                     }
                     document.body.appendChild(ModalVericateAction(async () => {
                         const response = await new NotificationRequest(entity).Save();
-                        document.body.appendChild(ModalMessege(response.message, undefined, true));
+                        document.body.appendChild(ModalMessage(response.message, undefined, true));
                         modal.close();
                     }, `¿Desea enviar la notificación ${mensaje}?`));
                 }

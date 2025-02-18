@@ -4,7 +4,7 @@ import { PagosRequest } from "../Model/PagosRequest.js";
 import { Tbl_Pago } from "../Model/Tbl_Pago.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
@@ -88,7 +88,7 @@ class Pagos_PendientesView extends HTMLElement {
 	}
 	async Pay() {
 		if (this.pagosSeleccionados.length == 0) {
-			document.body.appendChild(ModalMessege("Seleccione las mensualidades a pagar"));
+			document.body.appendChild(ModalMessage("Seleccione las mensualidades a pagar"));
 			return;
 		}
 		const response = await new PagosRequest({ Detalle_Pago: this.pagosSeleccionados }).Save();
@@ -231,7 +231,7 @@ class Pagos_PendientesView extends HTMLElement {
 				}
 			});
 			if (pagosAnterioresNoSeleccionados) {
-				document.body.appendChild(ModalMessege('Debe seleccionar los pagos anteriores antes de agregar este.'));
+				document.body.appendChild(ModalMessage('Debe seleccionar los pagos anteriores antes de agregar este.'));
 				control.checked = false;  // Desmarcar el checkbox
 				return;
 			}

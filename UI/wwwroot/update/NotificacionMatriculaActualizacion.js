@@ -7,7 +7,7 @@ import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
 import { UpdateData } from "./Model/UpdateData.js";
-import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { Estudiantes } from "./Model/Estudiantes.js";
 import { sacramentos } from "./Model/Estudiantes_ModelComponent.js";
@@ -318,11 +318,11 @@ class NotificacionMatriculaActualizacion extends HTMLElement {
      */
     async SendNotificaciones(ParientesTable) {
         if (ParientesTable?.selectedItems.length == 0) {
-            this.append(ModalMessege("No hay parientes seleccionados", undefined, true));
+            this.append(ModalMessage("No hay parientes seleccionados", undefined, true));
             return;
         }
         const response = await new UpdateData({ Parientes: ParientesTable?.selectedItems }).Save();
-        this.append(ModalMessege(response.message, undefined, true));
+        this.append(ModalMessage(response.message, undefined, true));
     }
 
     CustomStyle = css`
