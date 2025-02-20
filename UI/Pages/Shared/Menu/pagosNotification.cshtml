@@ -7,7 +7,8 @@
 	if (Identify != null)
 	{
 		var estudiantes = Parientes.GetOwEstudiantes(Identify, new Estudiantes());
-		if (!AuthNetCore.User(Identify).isAdmin && AuthNetCore.HavePermission(Identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+		if (!AuthNetCore.User(Identify).isAdmin && AuthNetCore.HavePermission(Identify,
+		Permissions.GESTION_ESTUDIANTES_PROPIOS))
 		{
 			if (estudiantes.Count == 0)
 			{
@@ -20,16 +21,27 @@
 				var pagos = PagosOperation.GetSaldoPendiente(Identify);
 				if (pagos.Amount > 0)
 				{
-					<div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
-						<i class="mdi mdi-alert-outline label-icon"></i>Insolvente desde <strong>"@pagos.Mes"</strong>
-						<a href="~/Gestion_Pagos/Pagos_Pendientes">Estado de cuenta/Pagar aquí</a>
-					</div>
+					if (!pagos.IsInsolvente)
+					{
+						<div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
+							<i class="mdi mdi-alert-outline label-icon"></i>Se le han generado nuevos cargos desde <strong>@pagos.Mes</strong>
+							<a href="~/Gestion_Pagos/Pagos_Pendientes">Pagar aquí</a>
+						</div>
+					}
+					else
+					{
+						<div class="alert alert-danger alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
+							<i class="mdi mdi-alert-outline label-icon"></i>Usted está insolvente. Presenta cargos pendientes desde <strong>"@pagos.Mes"</strong>
+							<a href="~/Gestion_Pagos/Pagos_Pendientes">Pagar aquí</a>
+						</div>
+					}
+
 				}
 				else
 				{
 					<div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show pagos-alert" role="alert">
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-						<i class="mdi mdi-alert-outline label-icon"></i>Actualmente no tiene pagos pendientes
+						<i class="mdi mdi-alert-outline label-icon"></i>Actualmente, usted no tiene cargos ni saldos pendientes de pagar
 					</div>
 				}
 			}
