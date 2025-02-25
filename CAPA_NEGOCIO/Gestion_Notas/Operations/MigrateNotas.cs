@@ -117,7 +117,7 @@ namespace CAPA_NEGOCIO.Oparations
 					FilterType = ">=",
 					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
 				};
-				var calificacionMsql = calificacion.Get<ViewCalificacionesActivasSiac>();
+				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filter);
 
 				// Destruir la vista después de obtener los datos
 				calificacion.DestroyView("viewcalificacionesactivassiac");
@@ -184,7 +184,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 						catch (System.Data.SqlClient.SqlException sqlEx)
 						{
-							LoggerServices.AddMessageError("SQL Error: ", sqlEx);
+							LoggerServices.AddMessageError("SQL Error migrateCalificaciones: ", sqlEx);
 						}
 						i++;
 					});

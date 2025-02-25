@@ -53,7 +53,7 @@ namespace UI.Controllers
 			}
 		}
 
-		private byte[] ConvertHtmlToPdf(string htmlContent, string? pageType)
+		public static byte[] ConvertHtmlToPdf(string htmlContent, string? pageType)
 		{
 			using (var memoryStream = new MemoryStream())
 			{
@@ -93,7 +93,7 @@ namespace UI.Controllers
 			await pdfStream.CopyToAsync(memoryStream);
 			return memoryStream.ToArray();
 		}*/
-		private iText.Kernel.Geom.PageSize GetPageSize(string? pageType)
+		private static iText.Kernel.Geom.PageSize GetPageSize(string? pageType)
 		{
 			switch (pageType)
 			{

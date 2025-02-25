@@ -4,7 +4,7 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
-import { ModalMessege } from "../WDevCore/WComponents/WForm.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { Estudiantes } from "../update/Model/Estudiantes.js";
@@ -151,7 +151,7 @@ class ReporteRecorridosView extends HTMLElement {
     async SendNotificaciones(ParientesTable) {
 
         //const response = await new UpdateData({ Parientes: ParientesTable?.selectedItems }).Save();
-        //this.append(ModalMessege(response.message, undefined, true));
+        //this.append(ModalMessage(response.message, undefined, true));
     }
     /**
     * @param {Array<any>} dataSet 

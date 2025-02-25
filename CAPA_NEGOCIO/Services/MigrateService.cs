@@ -17,11 +17,9 @@ namespace CAPA_NEGOCIO.Services
 		public static DateTime GetLastUpdate(string tipo)
 		{
 			var ActualizacionesCron = new ActualizacionesCron();			
-			var resultado = ActualizacionesCron.Where<ActualizacionesCron>(FilterData.Equal("descripcion", tipo)).FirstOrDefault();
-			//var resultado = ActualizacionesCron.Where<ActualizacionesCron>(filter);
+			var resultado = ActualizacionesCron.Where<ActualizacionesCron>(FilterData.Equal("descripcion", tipo)).FirstOrDefault();			
 
 			return (DateTime)(resultado != null ? resultado.Fecha_Actualizacion : DateTime.Now);
-
 		}
 
 		public static void UpdateLastUpdate(string tipo)

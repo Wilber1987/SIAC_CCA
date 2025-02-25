@@ -3,7 +3,6 @@ import { Notificaciones_ModelComponent } from "../Model/ModelComponent/Notificac
 import { Notificaciones } from "../Model/Notificaciones.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
-import { ModalVericateAction } from "../WDevCore/WComponents/WForm.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WAjaxTools } from "../WDevCore/WModules/WAjaxTools.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";

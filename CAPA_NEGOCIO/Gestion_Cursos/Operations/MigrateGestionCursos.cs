@@ -75,7 +75,7 @@ namespace CAPA_NEGOCIO.Oparations
 						niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
 						niv.Updated_at = DateUtil.ValidSqlDateTime(niv.Updated_at.GetValueOrDefault());
 
-						if (existingNivel != null && existingNivel.Updated_at != niv.Updated_at)
+						if (existingNivel != null)
 						{
 							// Actualizar el registro existente en Niveles
 							existingNivel.Nombre = niv.Nombre;
@@ -98,16 +98,16 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);					
 				}
 				finally
 				{
-					// Detener el túnel SSH					
-					siacTunnel.Stop();
-
+					if (siacTunnel.IsStarted)
+					{
+						siacTunnel.Stop();
+					}					
 					siacSshClient.Disconnect();
 				}
 			}
@@ -124,13 +124,11 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				// Conectar el cliente SSH
 				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
+
 				try
 				{
-					// Establecer conexión con la base de datos SiacTest
 					var seccion = new Secciones();
 					seccion.SetConnection(MySqlConnections.SiacTest);
 					var seccionsMsql = seccion.Get<Secciones>();
@@ -164,10 +162,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateSecciones.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
 				}
 				finally
 				{
@@ -233,10 +230,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migratePeriodosLectivos.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -286,7 +283,7 @@ namespace CAPA_NEGOCIO.Oparations
 						asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
 						asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
 
-						if (existingAsignatura != null && existingAsignatura.Updated_at != asig.Updated_at)
+						if (existingAsignatura != null)
 						{
 							// Actualizar el registro existente en Asignaturas
 							existingAsignatura.Nombre = asig.Nombre;
@@ -307,10 +304,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateAsignaturas.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -342,7 +339,6 @@ namespace CAPA_NEGOCIO.Oparations
 				siacTunnel.Start();
 				try
 				{
-
 
 					// Establecer conexión con la base de datos SiacTest
 					var mat = new Materias();
@@ -388,10 +384,10 @@ namespace CAPA_NEGOCIO.Oparations
 					MigrateService.UpdateLastUpdate("MATERIAS");
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -460,10 +456,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateClases.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateClases.", ex);					
 				}
 				finally
 				{
@@ -506,7 +501,6 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						return false;
 					}
-
 					// Establecer conexión con la base de datos SiacTest y obtener estudiantes clases
 					var clase = new Estudiante_clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
@@ -519,7 +513,6 @@ namespace CAPA_NEGOCIO.Oparations
 					}
 
 					siacSshClient.Disconnect();
-					//BeginGlobalTransaction();
 
 					clasesMsql.ForEach(clase =>
 					{
@@ -565,10 +558,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					//CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 			}
 
@@ -610,7 +603,7 @@ namespace CAPA_NEGOCIO.Oparations
 						docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
 						docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
 
-						if (existingClase != null && existingClase.Updated_at != docAsig.Updated_at)
+						if (existingClase != null /*&& existingClase.Updated_at != docAsig.Updated_at*/)
 						{
 							existingClase.Docente_id = docAsig.Docente_id;
 							existingClase.Asignatura_id = docAsig.Asignatura_id;
@@ -627,10 +620,10 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					
 				}
 				finally
 				{
@@ -697,10 +690,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 					CommitGlobalTransaction();
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);
-					// RollBackGlobalTransaction(); // Descomentar si necesitas rollback
+					LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);					
 				}
 				finally
 				{

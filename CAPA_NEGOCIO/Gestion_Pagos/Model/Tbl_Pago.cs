@@ -27,8 +27,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha { get; set; }
 		public string? Estado { get; set; }
 		
-		[ManyToOne(TableName = "Estudiante_Clases_View", KeyColumn  = "Codigo", ForeignKeyColumn = "Estudiante_Id")]
-		public Estudiante_Clases_View? Estudiante { get; set; }
+		[ManyToOne(TableName = "Estudiante_View", KeyColumn  = "Codigo", ForeignKeyColumn = "Estudiante_Id", isView = true)]
+		public Estudiante_View? Estudiante { get; set; }
 
 		//nuevas propiedades luego del alter 23
 		public int? Id_plazo { get; set; }

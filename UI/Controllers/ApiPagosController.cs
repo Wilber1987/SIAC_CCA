@@ -27,7 +27,7 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
-		public List<Tbl_Pago> GetTbl_Pagos(Tbl_Pago Inst)
+		public Object GetTbl_Pagos(Tbl_Pago Inst)
 		{
 			return new PagosOperation().GetPagosAllPagos(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
@@ -70,6 +70,25 @@ namespace UI.Controllers
 			//return RedirectToAction("PagoExitoso");
 			if (pagosResponse.status == 200) return Content((string)pagosResponse.body, "text/html");
 			else return BadRequest(pagosResponse.message);
+		}
+		
+		[HttpGet("{Id_Pago_Request}")]
+		public IActionResult GetFactura(int Id_Pago_Request)
+		{
+			try
+			{
+				// Convertir HTML a PDF utilizando wkhtmltopdf
+				byte[] pdfBytes = ApiDocumentsDataController.ConvertHtmlToPdf(PagosTemplate.GenerarFacturaHtml(new PagosRequest{Id_Pago_Request = Id_Pago_Request}.Find<PagosRequest>(), true), "A4");
+
+				// Devolver el archivo PDF como respuesta
+				return File(pdfBytes, "application/pdf", "generated.pdf");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Error generating PDF: {ex.Message}");
+			}
+			// Aquí puedes usar el parámetro facturaId para realizar alguna operación
+			
 		}
 
 		public class ResponseSPI

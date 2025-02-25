@@ -76,7 +76,7 @@ namespace CAPA_NEGOCIO.Oparations
 					});
 
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);					
 					forwardedPort.Stop();
@@ -84,7 +84,11 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 				finally
 				{
-					forwardedPort.Stop();
+					if (forwardedPort.IsStarted)
+					{
+						forwardedPort.Stop();
+					}
+					
 					client.Disconnect();
 				}
 			}
@@ -150,8 +154,11 @@ namespace CAPA_NEGOCIO.Oparations
 						bellacomTunnel.Stop();
 						bellacomSshClient.Disconnect();
 					}
-
-					siacTunnel.Stop();
+					
+					if (siacTunnel.IsStarted)
+					{
+						siacTunnel.Stop();
+					}
 					siacSshClient.Disconnect();
 				}
 
@@ -236,7 +243,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 			var familias = new Tbl_aca_familia();
-			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("FAMILIA");
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("FAMILIAS");
 
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
@@ -300,14 +307,17 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 
 					});
-					MigrateService.UpdateLastUpdate("FAMILIA");
+					MigrateService.UpdateLastUpdate("FAMILIAS");
 					CommitGlobalTransaction();
 				}
 				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateParientes.MigrateFamilia.", ex);
-					//RollBackGlobalTransaction(); // Descomentar para revertir la transacción en caso de error
-					//throw;
+					if (forwardedPort.IsStarted)
+					{
+						forwardedPort.Stop();
+					}
+					client.Disconnect();
 				}
 				finally
 				{
@@ -406,6 +416,11 @@ namespace CAPA_NEGOCIO.Oparations
 				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateParientesAndUsers.", ex);
+					if (forwardedPort.IsStarted)
+					{
+						forwardedPort.Stop();
+					}
+					client.Disconnect();
 					RollBackGlobalTransaction();
 					throw;
 				}
@@ -468,7 +483,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 				CommitGlobalTransaction();
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("ERROR: migrateEstudiantesReponsablesFamilia.", ex);
 				//RollBackGlobalTransaction();
@@ -495,7 +510,7 @@ namespace CAPA_NEGOCIO.Oparations
 				return (Security_Roles)nuevoRol.Save();
 
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("ADVERTENCIA: validateRolPariente - Error al verificar perfil de responsable.", ex);
 				return null;

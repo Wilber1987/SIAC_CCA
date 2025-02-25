@@ -174,7 +174,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return new ResponseService { status = 200, message = "Solicitudes de actualización enviadas" };
 
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("Error en StartUpdateProcess", ex);
 				RollBackGlobalTransaction();
@@ -399,7 +399,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					return new ResponseService { status = 403, message = "Debe aceptar los terminos y condiciones" };
 				}
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("Error al guardar la informacion", ex);
 				throw;

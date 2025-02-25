@@ -39,7 +39,7 @@
 
 #sidebar-menu ul li.mm-active>a {
     background: var(--bs-btn-active-bg) !important;
-    color: var(--font-primary-color) !important;
+    color: var(--bs-white) !important;
 }
 
 #sidebar-menu ul li.menuParentOption>a:hover {
