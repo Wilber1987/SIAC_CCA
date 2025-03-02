@@ -37,8 +37,7 @@ class EstudiantesDetails extends HTMLElement {
     Draw = async () => {
         const content = html`<section class="Historial"> 
             <h3 class="text-uppercase">Estudiantes</h3> 
-            <div class="alumnos-container aside-container">
-                
+            <div class="alumnos-container aside-container">                
                 ${this.BuildEstudiantes(this.Config.Dataset)}
             </div>
             ${this.TabContainer}
@@ -53,7 +52,7 @@ class EstudiantesDetails extends HTMLElement {
 
     BuildEstudiantes(dataset) {
         return dataset.map((/** @type {Estudiantes} */ Estudiante) =>
-            html`<div class="estudiante-card-container" onclick="${() => this.VerEstudianteDetalles(Estudiante)}">            
+            html`<div class="estudiante-card-container" id="card-estudiante${Estudiante.Id}" onclick="${(ev) => this.VerEstudianteDetalles(Estudiante)}">            
                      <div class="estudiante-card">
                          <img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
                     : route + "/media/image/avatar-estudiante.png"}" class="avatar-est rounded-circle" alt="">
@@ -71,9 +70,16 @@ class EstudiantesDetails extends HTMLElement {
         /**@type {Estudiantes} */
         this.EstudianteSeleccionado = await Estudiante.Find();
         this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id, new EstudianteDetail(this.EstudianteSeleccionado));
+        this.querySelectorAll("estudiante-card-container")?.forEach(n => {
+            n.classList.remove("card-active");
+        });
+        this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");
     }
 
     CustomStyle = css`
+        .card-active {
+            background-color: #f1f1f1;
+        }
         .Historial{
             display: flex;
             flex-direction: column;            

@@ -182,6 +182,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			var user = AuthNetCore.User(identify);
 			var pagos = new PagosOperation().GetPagos(new Tbl_Pago(), identify);
+			if (pagos.Count == 0)
+			{
+				return new InfoPagos
+				{
+				    IsInsolvente= false,
+				    Amount = 0,
+				    StringAmount = "0.00"
+				};
+			}
 			double Amount = 0.0;
 			if (pagos.Count > 0)
 			{
@@ -195,8 +204,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			return new InfoPagos
 			{
 				Mes = Amount > 0.0 ? DateUtil.GetDateName(pagos.First()?.Fecha_contabilizacion) : null,
-				Fecha = pagos.First()?.Fecha_contabilizacion,
-				IsInsolvente =  pagos.First()?.Fecha_contabilizacion < DateTime.Now && pagos.First()?.Fecha_contabilizacion?.Month == DateTime.Now.Month,
+				Fecha = pagos?.First()?.Fecha_contabilizacion,
+				IsInsolvente = pagos?.First()?.Fecha_contabilizacion < DateTime.Now && pagos?.First()?.Fecha_contabilizacion?.Month == DateTime.Now.Month,
 				Amount = Amount,
 				Money = moneyEnumValue,
 				StringAmount = NumberUtility.ConvertToMoneyString(Amount)
@@ -354,6 +363,6 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public MoneyEnum? Money { get; set; }
 		public string? Mes { get; internal set; }
 		public DateTime? Fecha { get; internal set; }
-        public bool IsInsolvente { get; internal set; }
-    }
+		public bool IsInsolvente { get; internal set; }
+	}
 }

@@ -75,16 +75,21 @@ class ClaseGroup extends HTMLElement {
 				})}
 				<!-- <span class="break-page"></span>-->   
 				 ${maxDetailsHeaders != null ? html`<div class="container promedio">
-					<div class="element-description"><span class="value">PROMEDIO</span></div>   
+					<div class="element-description"><span class="value" style="text-align: right">PROMEDIO</span></div>   
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
 						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)}</span></label>`)}
 					</div> 
 					<div style="min-width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
 				 ${ !isEstudiante ? html`<div class="details-options container">
-					<div class="element-description"><span class="value">-</span></div>                                  
+					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`)}
+						${evaluaciones.map(element =>{ 
+						console.log(element)
+						if(element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
+
+						return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
+					})}
 					</div>
 					<div style="width: 80px"></div> 
 				 </div>` : ""}                 
@@ -130,7 +135,7 @@ class ClaseGroup extends HTMLElement {
 				${instance.Details.map((detail, indexDetail) => { return this.buildDetail(detail, indexDetail, maxDetails, index); })}
 			</div>
 			<div class="${index == 0 ? "element-options option" : "option"} " > 
-				${index == 0 ? html`<span class="header">-</span>` : ""}
+				${index == 0 ? html`<span class="header"></span>` : ""}
 				<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowDetails(element)}">Detalle</label>
 			</div>
 		</div>`;
@@ -335,13 +340,15 @@ class ClaseGroup extends HTMLElement {
 			? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
 
 		columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
-
+		let columnValue = detail.Evaluacion == "F" ? "NF": detail.Evaluacion;
+		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
+		
 		return html`<div class="element-detail" style="">
 			<span class="header ${index == 0 ? "" : "hidden"}">
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
-				<span>${detail.Evaluacion}</span>
+				<span>${columnValue}</span>
 			</span>
-			<span class="value">${detail.Resultado}</span>
+			<span class="value" style="${isNotaF ? "font-weight: 700":""}">${detail.Resultado}</span>
 		</div>`;
 	}
 	CustomStyle = css`          
@@ -383,6 +390,7 @@ class ClaseGroup extends HTMLElement {
 		}
 		.promedio {
 			font-weight: 700;
+
 		}
 		
 		.container {
@@ -394,6 +402,9 @@ class ClaseGroup extends HTMLElement {
 				display: grid;
 				grid-template-rows: 50% 50%;
 				position: relative;
+				& .header {
+					text-align: left;
+				}
 			}
 			& .element-details {
 				display: grid;
@@ -407,7 +418,7 @@ class ClaseGroup extends HTMLElement {
 					border-left: solid 1px rgb(239, 240, 242);
 					& .value {
 						position: relative;
-						text-align: right;
+						text-align: center
 					}
 				}
 				& .element-detail:last-child { 
@@ -423,6 +434,7 @@ class ClaseGroup extends HTMLElement {
 			text-transform: uppercase;
 			padding: 10px;
 			position: relative;
+			text-align: center;
 		   /* & span {
 				position: absolute;
 				transform: rotate(-50deg) translateY(-0px) translateX(20px);
@@ -549,7 +561,7 @@ class ClaseGroup extends HTMLElement {
 				flex: 1;
 				& .element-description {
 					width: 100%;
-					border: solid 1px rgb(239, 240, 242);
+					border: solid 1px rgb(239, 240, 242);					
 				}
 				& .element-details {
 					width: 100%; 
