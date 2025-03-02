@@ -21,10 +21,10 @@ namespace BackgroundJob.Cron.Jobs
 
 			try
 			{
-				await new MigrateDocentes().Migrate();
+				/*await new MigrateDocentes().Migrate();
 				await new MigrateEstudiantes().Migrate();
 				await new MigrateGestionCursos().Migrate();
-				await new MigrateNotas().Migrate();
+				await new MigrateNotas().Migrate();*/
 			}
 			catch (Exception ex)
 			{
@@ -173,7 +173,7 @@ namespace BackgroundJob.Cron.Jobs
 			_log.LogInformation(":::::::::::Running...  SendInvitationToUpdateCronJob at {0}", DateTime.UtcNow);
 			try
 			{
-				new UpdateOperation().sendInvitations();
+				//new UpdateOperation().sendInvitations();
 			}
 			catch (Exception ex)
 			{
@@ -204,7 +204,7 @@ namespace BackgroundJob.Cron.Jobs
 			_log.LogInformation(":::::::::::Running...  UpdateDataBellacomCronJob at {0}", DateTime.UtcNow);
 			try
 			{
-				new BellacomUpdateOperation().updateBellacomData();
+				//new BellacomUpdateOperation().updateBellacomData();
 			}
 			catch (Exception ex)
 			{

@@ -49,7 +49,7 @@ namespace DataBaseModel
 		public string? Observaciones { get;  set; }
 		
 		public string? Nombre_completo { get { return $"{Nombre_Estudiantes}"; } }
-
+		public int? Orden_Asignatura { get;  set; }
 
 
 		public string? Descripcion
@@ -76,7 +76,7 @@ namespace DataBaseModel
 		{
 			if (Estudiante_id == null || Clase_id == null)
 			{
-				throw new Exception("El Estudiante_id y Clase_id requerido no puede ser nulo o vacío.");
+				throw new Exception("El estudiante es requerido, favor seleccione uno");
 			}
 			if (filterData == null)
 			{
