@@ -67,6 +67,7 @@ namespace DataBaseModel
         {
             var clase = C.First();
             Secciones? seccion = new Secciones { Id = clase.Seccion_id }.Find<Secciones>();
+            C.OrderBy(c => c.Orden_Asignatura);
             return new Clase_Group
             {
                 Id_Clase = clase.Id,

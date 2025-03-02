@@ -86,13 +86,13 @@
 
 .pagos-alert {
     position: absolute;
-    right: 50%;
+    right: 53%;
     display: flex;
     align-items: center;
     max-width: 100%;
     margin-top: 10px;
     gap: 5px;
-    width: 690px;
+    width: 860px;
     transform: translateX(50%);
     font-weight: bold;
     top: 10px;

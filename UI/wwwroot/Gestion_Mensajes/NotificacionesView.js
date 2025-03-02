@@ -14,6 +14,7 @@ class NotificacionesView extends HTMLElement {
         this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
         this.NotificationsNav = new WAppNavigator({
             NavStyle: "tab",
+            CustomStyle: "none",
             Inicialize: true,
             Elements: this.NavElements()
         })

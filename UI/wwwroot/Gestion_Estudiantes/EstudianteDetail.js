@@ -67,7 +67,10 @@ class EstudianteDetail extends HTMLElement {
     CustomStyle = css`
         .component{
             display: block;
-        }             
+        }        
+         .header {
+                text-align: center!important;
+            }     
         w-view-detail{
             text-transform: uppercase !important;
         }    
