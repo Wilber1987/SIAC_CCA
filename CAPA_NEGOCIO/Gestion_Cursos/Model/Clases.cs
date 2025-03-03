@@ -19,11 +19,11 @@ namespace DataBaseModel
         public DateTime? Updated_at { get; set; }
         public string? Nombre_Grado
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion(Grado ?? 0).ToUpper()}"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion((GetNivelName()?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0 ).ToUpper()}"; }
         }
         public string? Descripcion
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion(Grado ?? 0).ToUpper()} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion((GetNivelName()?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0).ToUpper()} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
         }
         private NivelesEnum? GetNivelName()
         {

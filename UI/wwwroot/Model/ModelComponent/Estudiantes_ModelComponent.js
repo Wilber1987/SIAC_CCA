@@ -57,9 +57,9 @@ class Calificacion_Group_ModelComponent {
     /** @type {ModelProperty}*/
     Periodo = { type: 'text' };
     /** @type {ModelProperty}*/
-    Evaluacion = { type: 'text' };
+    Evaluacion = { type: 'text', hiddenInTable: true };
     /** @type {ModelProperty}*/
-    EvaluacionCompleta = { type: 'text' , label: "Nombre de la evaluación"};
+    EvaluacionCompleta = { type: 'text' , label: "Descriptor"};
     /** @type {ModelProperty}*/
     Tipo = { type: 'text' };
     /** @type {ModelProperty}*/

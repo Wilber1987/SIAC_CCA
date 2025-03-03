@@ -67,6 +67,7 @@ class ClaseGroup extends HTMLElement {
 				const maxDetailsHeaders = this.Config.IsComplete == true ? null : HeaderEvaluaciones;
 
 				const evaluaciones = CalificacionesUtil.UpdateCalificaciones(ObjectF[prop], maxDetails, maxDetailsHeaders);
+				
 				return html`<div class="detail-content">                   
 					${ObjectF[prop].map(element => {
 					return isEstudiante
@@ -84,8 +85,7 @@ class ClaseGroup extends HTMLElement {
 				 ${ !isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element =>{ 
-						console.log(element)
+						${evaluaciones.map(element =>{ 						
 						if(element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
 
 						return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
@@ -145,6 +145,7 @@ class ClaseGroup extends HTMLElement {
 	 * 
 	 */
 	async ShowDetails(instance) {
+		
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
@@ -155,8 +156,7 @@ class ClaseGroup extends HTMLElement {
 		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
 		let lastIndex = 0;
 		HeaderEvaluaciones.forEach(header => {
-			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());
-			console.log(index, header);
+			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());			
 			if (index != -1) {
 				for (let i = lastIndex; i <= index; i++) {
 					response.Asignaturas[0].Calificaciones[i].Periodo = header;
@@ -167,6 +167,13 @@ class ClaseGroup extends HTMLElement {
 
 		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
 		response.Asignaturas.forEach(asignatura => {
+			console.log(asignatura.Calificaciones);
+			
+			
+			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
+					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - Sección: ${response.Seccion} </h4>
+					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
+				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			MateriaDetailEvaluations.append(new WTableComponent({
 				Dataset: asignatura.Calificaciones,
@@ -180,7 +187,7 @@ class ClaseGroup extends HTMLElement {
 				Options: {}
 			}))
 			document.body.append(new WModalForm({
-				title: asignatura.Descripcion,
+				title: `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`,
 				ObjectModal: MateriaDetailEvaluations
 			}));
 		})
@@ -291,25 +298,11 @@ class ClaseGroup extends HTMLElement {
 			})
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			const consolidadoModel = {
-				No: { type: "text" }
+				//No: { type: "text" }
 			}
 			consolidadoModel[asignatura.Asignatura] = { type: "text" };
 			consolidadoModel.Resultado = { type: "text" };
-			/* const table = html`<table class="WTable">
-				<tr><td>No</td><td>INDICADORES DE LOGROS</td><td></td></tr>
-				<tr><td>No</td><td>${asignatura.Asignatura}</td><td></td></tr>
-			</table>`
-			asignatura.Consolidados.forEach(element => {
-				table.append(WRender.Create({
-					tagName: "tr", children: [
-						{ tagName: "td", innerText: element.No },
-						{ tagName: "td", className: parseInt(element.Pocentage) < 40 ? "text-success" : "text-danger",innerText: element.Evaluacion },
-						{ tagName: "td", innerText: element.Resultado }
-					]
-				}))
-
-			});
-			MateriaDetailEvaluations.append(table) */
+			
 			MateriaDetailEvaluations.append(new WTableComponent({
 				Dataset: asignatura.Consolidados,
 				ModelObject: consolidadoModel,
