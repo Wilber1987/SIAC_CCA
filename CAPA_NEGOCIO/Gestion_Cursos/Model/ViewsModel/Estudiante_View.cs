@@ -50,11 +50,14 @@ namespace DataBaseModel
 		
 		public string? Nombre_completo { get { return $"{Nombre_Estudiantes}"; } }
 
-
-
 		public string? Descripcion
 		{
 			get { return $"{NumberUtility.ObtenerEnumeracion((Nombre_nivel?.ToUpper() == "SECUNDARIA" ?  this.Grado + 6: this.Grado )?? 0)} {Nombre_nivel} - {Nombre_corto_periodo}"; }
+		}
+
+		public string? NombreGradoCompleto
+		{
+			get { return $"{NumberUtility.ObtenerEnumeracion((Nombre_nivel?.ToUpper() == "SECUNDARIA" ?  this.Grado + 6: this.Grado )?? 0)}"; }
 		}
 		public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
 		public string? EvaluacionCompleta { get { return $"{Nombre_nota} {Tipo}"; } }
