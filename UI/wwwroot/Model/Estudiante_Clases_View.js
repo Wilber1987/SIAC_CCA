@@ -54,6 +54,9 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {String}*/ Codigo;
    /**@type {String}*/ Descripcion
 
+   /**@type {String}*/ NombreGradoCompleto
+   /**@type {String}*/ nombre_seccion
+
     /**
     * @returns {Promise<Clase_Group>}
     */
