@@ -32,7 +32,7 @@ export { BuildHeaderData };
  */
 const DatosGenerales = (estudiante) => {
     return html`<div class="estudiante-detail">
-        <h4 class="header">Datos Generales</h4>
+        <h4 class="header">DATOS GENERALES</h4>
         <div class="estudiante-detail-container">                
             <div class="estudiante-detail-element">
                 <label class="text-description">CÓDIGO:</label> <label>${estudiante.Codigo}</label>
