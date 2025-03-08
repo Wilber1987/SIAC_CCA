@@ -53,7 +53,7 @@ export class CalificacionesUtil {
                 }
 
                 // Actualizar la evaluación con el número romano
-                const numeroRomano = toRoman(counters[letra]);
+                const numeroRomano = toRoman(counters[letra]) ?? "";
                 if (letra.toUpperCase() != "F") {
                     calificacion.Evaluacion = `${numeroRomano}${letra}`;
                     calificacion.EvaluacionCompleta = `${numeroRomano} ${calificacion.EvaluacionCompleta ?? "Evaluación"}`;

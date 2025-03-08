@@ -10,30 +10,18 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
 class NotificacionesView extends HTMLElement {
     constructor() {
         super();
-        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer', id: "TabContainer" } });
+        this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer notifContainer', id: "TabContainer" } });
         this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
-        this.NotificationsNav = new WAppNavigator({
-            NavStyle: "tab",
-            CustomStyle: "none",
-            Inicialize: true,
-            Elements: this.NavElements()
-        })
+        
         this.append(
             this.Style,
             StylesControlsV2.cloneNode(true),
-            this.NotificationsNav,
+            this.View(),
             this.TabContainer
         );
     }
-    NavElements() {
-        return [
-            {
-                name: "Notificaciones", url: "#",
-                action: async (ev) => {
-                    return new NotificacionesElements({ DOMManager: this.DOMManager });
-                }
-            }
-        ];
+    View() {        
+        return new NotificacionesElements({ DOMManager: this.DOMManager });
     }
 
     connectedCallback() { }
@@ -229,7 +217,13 @@ class NotificacionesElements extends HTMLElement {
             background-color: #fff;
             margin: 10px; 
             color: #444;   
-        }        
+        }    
+        w-notificaciones-view {
+            margin-top: 20px;
+        }
+        .notifContainer {
+            min-height: 700px;
+        }
         
         .titulo{
             font-size: 20px;

@@ -57,15 +57,17 @@ class Calificacion_Group_ModelComponent {
     /** @type {ModelProperty}*/
     Periodo = { type: 'text' };
     /** @type {ModelProperty}*/
-    Evaluacion = { type: 'text' };
+    Tipo = { type: 'text', label: "Tipo de evaluación" };
     /** @type {ModelProperty}*/
-    EvaluacionCompleta = { type: 'text' , label: "Nombre de la evaluación"};
+    Evaluacion = { type: 'text', hiddenInTable: true };
     /** @type {ModelProperty}*/
-    Tipo = { type: 'text' };
+    EvaluacionCompleta = { type: 'text' , label: "Descriptor"};    
     /** @type {ModelProperty}*/
-    Resultado = { type: 'number' };
+    Fecha = { type: 'DateTime' , label: "Fecha y hora"};
     /** @type {ModelProperty}*/
-    Fecha = { type: 'Date' };
+    Porcentaje = { type: 'number', label: "Puntaje" };
+    /** @type {ModelProperty}*/
+    Resultado = { type: 'number', label: "Resultado obtenido" };    
     /** @type {ModelProperty}*/
     Observaciones = { type: 'textarea' };
    

@@ -82,7 +82,8 @@ class ClasesDetails extends HTMLElement {
 			// @ts-ignore
 			content.dataElement = response;
 			content.innerHTML = "";
-			content.append(new WPrintExportToolBar({ ExportPdfAction: (toolBar) => this.ExportPdfAction(toolBar, element) }), classGroup);
+
+			content.append(classGroup, new WPrintExportToolBar({ ExportPdfAction: (toolBar) => this.ExportPdfAction(toolBar, element) }));
 		}
 		control.className = control.className.includes("active-btn")
 			? "accordion-button" : "accordion-button active-btn";
@@ -199,7 +200,7 @@ class ClasesDetails extends HTMLElement {
 	*/
 	ExportPdfAction = async (toolBar, /** @type {Estudiante_clases} */ object) => {
 		const body = await this.GetActa(object);
-		toolBar.ExportPdf(body, PageType.A4, false);
+		toolBar.ExportPdf(body, PageType.A4, false , 'Reporte de calificaciones');
 		return;
 	};
 

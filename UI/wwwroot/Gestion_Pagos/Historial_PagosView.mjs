@@ -11,7 +11,7 @@ import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar
 import { PageType } from "../WDevCore/WComponents/WReportComponent.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
-import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 const route = location.origin
@@ -49,18 +49,19 @@ class Historial_PagosView extends HTMLElement {
 				//container.appendChild(this.DrawInformePagos(filterData, facturas));
 			}
 		});
-		this.OptionContainer.append(new WPrintExportToolBar({
+		//this.OptionContainer.append();
+		const ToolBar = new WPrintExportToolBar({
 			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
 				const body = this.Informes[this.selectedID].cloneNode(true);
 				body.appendChild(this.CustomStyle.cloneNode(true));
 				tool.ExportPdf(body, PageType.A4_HORIZONTAL)
 			}
-		}));
+		})
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
 			StylesControlsV3.cloneNode(true), this.OptionContainer, this.Filter,
-			this.TabContainer
+			this.TabContainer, ToolBar
 		);
 		this.Informes = {};
 		this.Draw();
@@ -125,12 +126,14 @@ class Historial_PagosView extends HTMLElement {
 	ViewEstudianteInforme(facturas, pagosEstudiante) {
 		// @ts-ignore
 		const facturasEstudiante = Object.groupBy(facturas.flatMap(p => p.Detalle_Pago), p => p.Pago.Estudiante_Id);
+		console.log(facturasEstudiante, this.selectedID);
+
 		if (!pagosEstudiante[this.selectedID ?? -1]) {
-			return  html`<div class="pago-container">
+			return html`<div class="pago-container">
 				<h3>No existen historial para este estudiante - ${this.selectedID}</h3>				 
 			</div>`;
 		}
-		
+
 		//console.log(facturasEstudiante);
 		const div = html`<div class="pago-container">
 		<style>
@@ -145,21 +148,36 @@ class Historial_PagosView extends HTMLElement {
 		if (this.selectedID && pagosEstudiante[this.selectedID ?? 0]) {
 			/**@type {Tbl_Pago} */
 			const pago = pagosEstudiante[this.selectedID ?? 0][0];
+			console.log(pago.Estudiante);
+
 			const estudianteContainer = html`<div class="estudiante-container">
 				<div class="estudiante">
 					<div class="data-container">
-						<label class="estudiante-prop">NOMBRE:</label>
-						<label>${pago.Estudiante?.Codigo} </label>
-						<label>${pago.Estudiante?.Nombre_completo}</label>
+						<div>
+							<label class="estudiante-prop">CÓDIGO:</label>
+							<label>${pago.Estudiante?.Codigo} </label>
+						</div>
+						<div>
+							<label class="estudiante-prop">NOMBRE:</label>
+							<label>${pago.Estudiante?.Nombre_completo}</label>
+						</div>	
+					
 					</div>
 					<div class="data-container">
-						<label class="estudiante-prop">NIVEL:</label>
-						<label>${pago.Estudiante?.Nombre_nivel}</label>
-						<label class="estudiante-prop">CLASE:</label>
-						<label>${pago.Estudiante?.Descripcion}</label>
+						<div>
+							<label class="estudiante-prop">NIVEL:</label>
+							<label>${pago.Estudiante?.Nombre_nivel}</label>
+						</div>
+						<div>
+							<label class="estudiante-prop">GRADO:</label>
+							<label>${pago.Estudiante?.NombreGradoCompleto}</label>
+						</div>
+						<div>
+							<label class="estudiante-prop">SECCIÓN:</label>
+							<label>${pago.Estudiante?.nombre_seccion}</label>
+						</div>	
 					</div>
-				</div>
-				
+				</div>				
 			 </div>`;
 
 			//estudianteContainer.append(html`<h3>Cargo</h3>`);
@@ -222,27 +240,26 @@ class Historial_PagosView extends HTMLElement {
 			const mesContainer = html`<table class="mes-container">				 
 				<tr class="pago-details-container">
 					<td class="pago-title">Fecha</td>
-					<td class="pago-title">Documento</td>
 					<td class="pago-title">Concepto</td>
-					<td class="pago-title">MD</td>
-					<td class="pago-title">Importe</td>
+					<td class="pago-title">MONEDA</td>
+					<td class="pago-title">Monto</td>
 					<td class="pago-title">Estado</td>
 				</tr>
 			</table>`;
-			
+
 			const abonosContainer = html`<table class="mes-container">				 
 				<tr class="pago-details-container">
 					<td class="pago-title">Fecha</td>
-					<td class="pago-title">Documento</td>
+					<td class="pago-title">No. REFERENCIA</td>
 					<td class="pago-title">Concepto</td>
-					<td class="pago-title">MD</td>
-					<td class="pago-title">Importe</td>
+					<td class="pago-title">MONEDA</td>
+					<td class="pago-title">Monto</td>
 					<td class="pago-title">Estado</td>
 				</tr>
 			</table>`;
 			//-------------------->
 
-			div.append(html`<h5>Cargo</h5>`);
+			div.append(html`<h5>Cargos</h5>`);
 			div.append(mesContainer);
 			pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
 				const card = this.PagosCard(pago);
@@ -251,39 +268,40 @@ class Historial_PagosView extends HTMLElement {
 			const subTotalCargos = pagosGroup[pagosMes].reduce((acc, pago) => acc + pago.Monto, 0);
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
-					<td class="pago-title value">${subTotalCargos?.toFixed(2) ?? "0.00"}</td>
+					<td class="pago-title value">TOTAL CARGOS: C$ ${ConvertToMoneyString(subTotalCargos ?? 0)}</td>
 				</tr>
 			</table>`)
 			//-------------------->
-			div.append(html`<h5>Abono</h5>`);
+			div.append(html`<h5>Abonos</h5>`);
 			div.append(abonosContainer);
+
 			facturaGroup[pagosMes]?.forEach((/** @type {Detalle_Pago} */ pago) => {
-				const card = this.PagosRequestCard(pago);
+				const card = this.PagosRequestCard(pago, facturasEstudiante);
 				abonosContainer.append(card);
 			});
 			const subTotalAbonos = facturaGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
-			div.append(html`<table class="pago-details-container mes-container">
+			/*div.append(html`<table class="pago-details-container mes-container">
 				<tr>
-					<td class="pago-title value">${subTotalAbonos?.toFixed(2) ?? "0.00"}</td>
+					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
 				</tr>				
-			</table>`);
+			</table>`);*/
 			const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
-					<td class="pago-title" style="grid-column: span 5">Sub-Total mensual</td>
-					<td class="pago-title value">${total.toFixed(2) ?? "0.00"}</td>
+					<td class="pago-title" style="grid-column: span 5"></td>
+					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(total ?? 0)}</td>
 				</tr>				
 			</table>`);
 
-			
+
 			totalCargos += total;
 
 		}
 
 		div.append(html`<table class="mes-container total-container">
 			<tr>
-				<td class="pago-title" style="grid-column: span 5">Total</td>
-				<td class="pago-title total-cargos">${totalCargos.toFixed(2) ?? "0.00"}</td>
+				<td class="pago-title" style="grid-column: span 5"></td>
+				<td class="pago-title total-cargos">SALDO PENDIENTE: C$ ${ConvertToMoneyString(totalCargos ?? 0)}</td>
 			</tr>
 		</table>`);
 		return div;
@@ -297,10 +315,10 @@ class Historial_PagosView extends HTMLElement {
 			children: [
 				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).toISO() },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Tipo },
-				{ tagName: "td", class: "pago-value", innerText: pago.Documento },
+				//{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Money },
-				{ tagName: "td", class: "pago-value", innerText: pago.Monto.toFixed(2) ?? "0.00" },
+				{ tagName: "td", class: "pago-value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
 				{
 					tagName: "td", class: `pago-value ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}`,
 					innerText: (pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE")
@@ -310,20 +328,27 @@ class Historial_PagosView extends HTMLElement {
 	}
 	/**
 	 * @param {Detalle_Pago} pago
+	 * @param {Array<PagosRequest>} facturasEstudiante
 	 */
-	PagosRequestCard(pago) {
+	PagosRequestCard(pago, facturasEstudiante) {
+		const findFactura = facturasEstudiante.find(x => x.Id_Pago_Request == pago.Id_Pago_Request);
+		console.log(findFactura);
+
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
 				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Pago.Fecha).toISO() },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
-				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Documento },
+				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${findFactura?.Id_Pago_Request}" target="_blank">${this.formatNumber(findFactura?.Id_Pago_Request)}</a>`] },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Money },
-				{ tagName: "td", class: "pago-value value", innerText: pago.Monto.toFixed(2) },
+				{ tagName: "td", class: "pago-value value", innerText: ConvertToMoneyString(pago.Monto) },
 				{ tagName: "td", class: "pago-value CANCELADO", innerText: "EFECTUADO" }
 			]
 		});
+	}
+	formatNumber(num) {
+		return num.toString().padStart(8, '0');
 	}
 
 	CustomStyle = css`
@@ -336,6 +361,11 @@ class Historial_PagosView extends HTMLElement {
 		.PENDIENTE {
 			color: red
 		}  
+		.pago-mes-container {
+			& h3, & h5 {
+				text-transform: uppercase;
+			}
+		}
 		.mes-container {
 			/* display: grid;
 			grid-template-columns: repeat(7, 1fr);
@@ -344,6 +374,10 @@ class Historial_PagosView extends HTMLElement {
 			& h3 {
 				grid-column: span 7;
 				font-size: 1em;
+				text-transform: uppercase;
+			}
+			& h5{
+				text-transform: uppercase;
 			}
 			& .pago-details-container {
 				display: contents;
@@ -354,6 +388,7 @@ class Historial_PagosView extends HTMLElement {
 				padding: 5px;
 				font-weight: bold;
 				background-color: #f1f1f1;
+				text-transform: uppercase;
 			}
 			.pago-value {
 				
@@ -424,17 +459,23 @@ class Historial_PagosView extends HTMLElement {
 		}
 		.estudiante {
 			margin-bottom: 20px;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 10px;
+
 		}
 		.data-container {				
-			display: flex;
+			display: block;
 			justify-content: flex-start;
 			border-top: 1px solid #d6d6d6;
 			border-bottom: 1px solid #d6d6d6;	
-			text-transform: uppercase;			
+			text-transform: uppercase;		
+			
 		}
 		.estudiante-prop {
 			background-color: #f1f1f1;
 			width: 100px;
+			text-align: right;
 		}
 		.data-container label {
 			padding: 10px;

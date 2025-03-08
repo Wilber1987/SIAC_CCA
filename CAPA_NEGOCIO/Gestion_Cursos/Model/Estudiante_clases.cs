@@ -40,7 +40,7 @@ namespace DataBaseModel
         //public List<Calificaciones>? Calificaciones { get; set; }       
         public string? Descripcion
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion(this.Clases?.Grado ?? 0)} {GetNivelName()} - {this.Periodo_lectivos?.Nombre_corto}"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion((GetNivelName()?.ToString() == "SECUNDARIA" ?  this.Clases?.Grado + 6: this.Clases?.Grado) ?? 0) } {GetNivelName()}"; }
         }
 
         private NivelesEnum? GetNivelName()

@@ -180,6 +180,8 @@ class Clase_Group {
     Seccion;
     /** @type {String}*/
     Guia;
+    /** @type {String}*/
+    Clase;
 
     /** @type {Asignatura_Group[]}*/
     Asignaturas;
