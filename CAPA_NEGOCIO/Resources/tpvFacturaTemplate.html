@@ -2,136 +2,131 @@
 <html>
 
 <head>
-    <meta charset='utf-8'>
-    <title>RECIBO DE CAJA</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;            
-        }
-        label {
-            color: #1083e2;
-        }
+	<meta charset='utf-8'>
+	<title>RECIBO DE CAJA</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .container {
-            width: 80%;
-            max-width: 500px;
-            
-            margin: 0 auto;
-        }
+		label {
+			color: #1083e2;
+		}
 
-        .details,
-        .items {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+		.header {
+			text-align: center;
+			margin-bottom: 20px;
+		}
 
-        .details td,
-        .items td,
-        .items th {
-            padding: 8px;
-        }
+		.container {
+			width: 80%;
+			max-width: 500px;
 
-        .items th {
-            background-color: #f4f4f4;
-        }
+			margin: 0 auto;
+		}
 
-        .total {
-            text-align: right;
-            font-weight: bold;
-        }
-        p, label, td {
-            font-size: 15px;
-        }
-        p.total{
-            margin-top: 0px;
-            margin-bottom: 0px;
-            text-align: right;
-        }
-    </style>
+		.details,
+		.items {
+			width: 100%;
+			border-collapse: collapse;
+			margin-bottom: 20px;
+		}
+
+		.details td,
+		.items td,
+		.items th {
+			padding: 8px;
+		}
+
+		.items th {
+			background-color: #f4f4f4;
+		}
+
+		.total {
+			text-align: right;
+			font-weight: bold;
+		}
+
+		p,
+		label,
+		td {
+			font-size: 15px;
+		}
+
+		p.total {
+			margin-top: 0px;
+			margin-bottom: 0px;
+			text-align: right;
+		}
+
+		.btn-success {
+			display: inline-block;
+			text-decoration: none;
+			padding: 10px;
+			text-align: center;
+			vertical-align: middle;
+			cursor: pointer;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			border-radius: 8px;
+			margin-left: 5px;
+
+			-webkit-transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+			transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+			transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+			transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+			color: #fff;
+			background-color: #1f58c7;
+			border-color: transparent;
+		}
+	</style>
 </head>
 
 <body>
-    <div class="container">
-        <div class='header'>
-            <h2><label>RECIBO DE CAJA</label></h2>
-            <table class='details'>
-                <tr>
-                    <td style="text-align: left;"><label>COLEGIO CENTROAMERICA</label></td>
-                    <td><label>RUC: {{ Ruc }}</label></td>
-                    <td style="text-align:right;"><label>No. RECIBO:</label> {{ NoRecibo }}</td>
-                </tr>
-                <!--<tr>
-                    <td style="text-align: left;"><label>PAGO EN CONCEPTO:</label> {{ Concepto }}</td>
-                    <td></td>
-                    <td></td>
-                </tr>-->
-                <tr>
-                    <td style="text-align: left;"><label>FECHA:</label> {{ Fecha }}</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td style="text-align: left;" colspan="3"><label>ENTRANTE:</label> {{ Creador }}</td>
-                    
-                </tr>
-            </table>
+	<div class="container">
+		<div class='header'>
+			<h2><label>COMPROBANTE DE PAGO</label></h2>
+			<h2><label>COLEGIO CENTRO AMERICA</label></h2>
+			<h3><label>RUC: {{ Ruc }}</label></h3>
+			<table class='details'>
 
-        </div>
-        <!-- <table class='details'>
-        <tr>
-            <td><strong>Creador:</strong> {{ Creador }}</td>
-            <td><strong>Fecha:</strong> {{ Fecha }}</td>
-        </tr>
-        <tr>
-            <td><strong>Estado:</strong> {{ Estado }}</td>
-            <td><strong>Moneda:</strong> {{ Moneda }}</td>
-        </tr>
-    </table>
-    <p><strong>Descripción:</strong> {{ Descripcion }}</p> -->
-        <table class='items'>
-            <thead>
-                <tr>
-                    <th><label>DESCRIPCIÓN</label></th>
-                    <th><label>MONTO</label></th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ Detalle_Pago }}
-            </tbody>
-        </table>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <th style="width: 130px;"></th>
-                <th><p class='total'>TOTAL:</p></th>
-                <th><p class='total'>{{ Monto_C }}</p></th>
-            </tr>
-            <tr>
-                <th style="width: 130px;"></th>
-                <th><p class='total'>T.C. OFICIAL BCN:</p></th>
-                <th><p class='total'>{{ Monto_TC }}</p></th>
-            </tr>
-            <tr>
-                <th style="width: 130px;"></th>
-                <th><p class='total'>TOTAL EN DÓLARES:</p></th>
-                <th><p class='total'>{{ Monto }}</p></th>
-            </tr>
-        </table>
-        
-        
+				<tr>
+					<td style="text-align: left;"><label>No. REFERENCIA:</label> {{ NoRecibo }}</td>
+					<td></td>
+					<td style="text-align:right;"><label>FECHA:</label> {{ Fecha }}</td>
+				</tr>
+				<tr>
+					<td style="text-align: left;" colspan="3"><label>RESPONSABLE:</label> {{ Creador }}</td>
+				</tr>
+			</table>
 
-        <h5 style="text-align: center;"><label>SUJETO A MANTENIMIENTO DE VALOR, ARTO 16 LEY MONETARIA</label></h5>
-        <h4 style="display: flex; justify-content: space-between">
-            <label style="color: RED;">COLEGIO</label>
-            <label>No. <span style="color: RED;">{{ NoRecibo }}</span></label>
-            
-        </h4>
-    </div>
+		</div>
+		<table class='items'>
+			<thead>
+				<tr>
+					<th><label>DESCRIPCIÓN</label></th>
+					<th><label>MONTO</label></th>
+				</tr>
+			</thead>
+			<tbody>
+				{{ Detalle_Pago }}
+			</tbody>
+		</table>
+		<table style="width: 100%; border-collapse: collapse;">
+			<tr>
+				<th style="width: 130px;"></th>
+				<th>
+					<p class='total'>TOTAL:</p>
+				</th>
+				<th>
+					<p class='total'>C$ {{ Monto_C }}</p>
+				</th>
+			</tr>
+		</table>
+	</div>
 </body>
 
 </html>

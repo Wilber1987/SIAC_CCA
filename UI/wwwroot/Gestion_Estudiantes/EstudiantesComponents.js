@@ -35,22 +35,22 @@ const DatosGenerales = (estudiante) => {
         <h4 class="header">Datos Generales</h4>
         <div class="estudiante-detail-container">                
             <div class="estudiante-detail-element">
-                <label class="text-description">Código:</label> <label>${estudiante.Codigo}</label>
+                <label class="text-description">CÓDIGO:</label> <label>${estudiante.Codigo}</label>
             </div>
             <div class="estudiante-detail-element">
-                <label class="text-description">Nivel:</label> <label>${estudiante.Estudiante_clases[0]?.Clases?.Niveles?.Nombre}</label>
+                <label class="text-description">NIVEL:</label> <label>${estudiante.Estudiante_clases[0]?.Clases?.Niveles?.Nombre}</label>
             </div>
             <div class="estudiante-detail-element">
-                <label class="text-description">Estudiante:</label> <label>${estudiante.Nombre_completo}</label>
+                <label class="text-description">ESTUDIANTE:</label> <label>${estudiante.Nombre_completo}</label>
             </div>
             <div class="estudiante-detail-element">
-                <label class="text-description">Grado:</label> <label>${estudiante.Estudiante_clases[0]?.Clases?.Nombre_Grado}</label>
+                <label class="text-description">GRADO:</label> <label>${estudiante.Estudiante_clases[0]?.Clases?.Nombre_Grado}</label>
             </div>
             <div class="estudiante-detail-element">
-                <label class="text-description">Docente Guía:</label> <label>${estudiante.Estudiante_clases[0]?.Secciones?.Guia?.Nombre_completo}</label>
+                <label class="text-description">DOCENTE GUÍA:</label> <label>${estudiante.Estudiante_clases[0]?.Secciones?.Guia?.Nombre_completo}</label>
             </div>
             <div class="estudiante-detail-element">
-                <label class="text-description">Sección:</label> <label>${estudiante.Estudiante_clases[0]?.Secciones?.Nombre}</label>
+                <label class="text-description">SECCIÓN:</label> <label>${estudiante.Estudiante_clases[0]?.Secciones?.Nombre}</label>
             </div>
         </div>
         <style>
@@ -66,13 +66,15 @@ const DatosGenerales = (estudiante) => {
                     grid-gap: 10px; 
                     border-radius: 5px;
                     border: 1px solid #c9c9c9;
-                    padding: 10px;
-                    & label {
-                        font-size: 12px;
-                        margin: 0;
-                    }
+                    padding: 10px;                    
                 }
             }  
+            .estudiante-detail-element{
+                font-size: var(--bs-body-font-size)!important;
+                font-weight: var(--bs-body-font-weight);
+                line-height: var(--bs-body-line-height);
+                font-family: Montserrat, sans-serif;
+            }           
         </style>
     </div>`
 }

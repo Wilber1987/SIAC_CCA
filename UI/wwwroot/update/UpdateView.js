@@ -6,13 +6,16 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { UpdateData } from "./Model/UpdateData.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { Adress, Estudiantes } from "./Model/Estudiantes.js";
-import { ModalMessage, ModalVericateAction, WForm } from "../WDevCore/WComponents/WForm.js";
+
 import { Adress_ModelComponent, Estudiantes_ModelComponent } from "./Model/Estudiantes_ModelComponent.js";
 import { Parientes_ModelComponent } from "./Model/Parientes_ModelComponent.js";
 import { Parientes } from "./Model/Parientes.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { UpdateDataRequest } from "./Model/UpdateDataRequest.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]

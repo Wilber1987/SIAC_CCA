@@ -14,20 +14,14 @@ class Pagos_PendientesView extends HTMLElement {
 	constructor() {
 		super();
 		this.TabContainer = WRender.Create({
-			class: 'TabContainer', style: {
-				display: "flex",
-				flexDirection: "column",
-				justifyContent: "flex-end",
-				gap: "15px",
-				transition: "all 0.5s"
-			}, id: "TabContainer"
+			class: 'TabContainer', id: "TabContainer"
 		});
 		//this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
-		this.NotificationsNav = new WAppNavigator({
-			NavStyle: "tab",
-			Inicialize: true,
-			Elements: this.NavElements()
-		})
+		// this.NotificationsNav = new WAppNavigator({
+		// 	NavStyle: "tab",
+		// 	Inicialize: true,
+		// 	Elements: this.NavElements()
+		// })
 		this.DetailContainer = html`<div class="pago-detail"></div>`;
 		this.TotalContainer = html`<div class="pago-monto ">
 				<div class="pago-details-container">
@@ -35,11 +29,11 @@ class Pagos_PendientesView extends HTMLElement {
 				<div>0.00</div>                
 			</div>
 		</div>`;
-		
+
 		this.TabContainer.append(
 			html`<h3>Detalle de pagos</h3>`,
-			this.DetailContainer, 
-			this.TotalContainer, 
+			this.DetailContainer,
+			this.TotalContainer,
 			this.PayButton()
 		);
 		/**@type {Array<Detalle_Pago>} */
@@ -53,15 +47,15 @@ class Pagos_PendientesView extends HTMLElement {
 				return true;
 			}
 		});
-		//const ObjectProxy = new Proxy(FormObject, ObjHandler);
-
+		this.PagosContainer = WRender.Create({ className: "PagosContainer" });
 		this.append(
 			this.Style,
 			StylesControlsV2.cloneNode(true),
-			this.NotificationsNav,
+			this.PagosContainer,
 			this.TabContainer
 		);
 		this.Controls = [];
+		this.DrawPagos();
 	}
 	UpdatePagos() {
 		let total = 0;
@@ -71,7 +65,7 @@ class Pagos_PendientesView extends HTMLElement {
 
 		this.pagosSeleccionados.forEach(detalle => {
 			this.DetailContainer.append(html`<div class="pago-details-container">
-				<div>${detalle.Pago?.Concepto}</div>                 
+				<div>${detalle.Pago?.Concepto} Est. ${detalle.Pago.Estudiante?.Codigo}</div>                 
 				<div>${WOrtograficValidation.es(detalle.Pago?.Money)} ${ConvertToMoneyString(detalle.Monto ?? 0)}</div>                
 			</div>`);
 			total += detalle.Total ?? 0;
@@ -91,18 +85,20 @@ class Pagos_PendientesView extends HTMLElement {
 			document.body.appendChild(ModalMessage("Seleccione las mensualidades a pagar"));
 			return;
 		}
+		for (const key in this.pagosSeleccionados) {
+			if (this.pagosSeleccionados[key].Monto == 0) {
+				document.body.appendChild(ModalMessage("El monto de un pago no puede ser 0"));			
+				return;	
+			}			
+		}
 		const response = await new PagosRequest({ Detalle_Pago: this.pagosSeleccionados }).Save();
 		if (response.status == 200) {
 			window.location.href = "/Gestion_Pagos/Tpv";
 			return;
 		}
 	}
-	NavElements() {
-		return [
-			{
-				name: "Pagos pendientes", url: "#",
-				action: async (ev) => {
-					const div = html`<div class="pago-container">
+	async DrawPagos() {
+		const div = html`<div class="pago-container">
 						<style>
 							.pago-container {
 								display: flex;
@@ -113,33 +109,25 @@ class Pagos_PendientesView extends HTMLElement {
 						</style>
 						${this.Style.cloneNode(true)}
 					</div>`;
-					/**@type {Array<Tbl_Pago>} */
-					const pagos = await new Tbl_Pago().Get();
-					// @ts-ignore                    
-					const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
-					for (const estudianteId in pagosEstudiante) {
-						/**@type {Tbl_Pago} */
-						const pago = pagosEstudiante[estudianteId][0];
-						const estudianteContainer = html`<div class="estudiante-container">
+		/**@type {Array<Tbl_Pago>} */
+		const pagos = await new Tbl_Pago().Get();
+		// @ts-ignore                    
+		const pagosEstudiante = Object.groupBy(pagos, p => p.Estudiante_Id);
+		for (const estudianteId in pagosEstudiante) {
+			/**@type {Tbl_Pago} */
+			const pago = pagosEstudiante[estudianteId][0];
+			const estudianteContainer = html`<div class="estudiante-container">
 							<h3>${pago.Estudiante?.Nombre_completo}</h3>
 							<hr/>
 						</div>`;
-						//pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
-							const pagoMes = this.BuildPagosMes(pagosEstudiante[estudianteId]);
-							estudianteContainer.append(pagoMes);
-						//});
-						div.append(estudianteContainer);
-					}
-					//const pagoMes = this.BuildPagosMes(pagos);
-					return div;
-				}
-			}/*, {
-				name: "Pagos realizados", url: "#",
-				action: async (ev) => {
-					window.location.href = "/Gestion_Pagos/Historial_Pagos";
-				}
-			}*/
-		];
+			//pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
+			const pagoMes = this.BuildPagosMes(pagosEstudiante[estudianteId]);
+			estudianteContainer.append(pagoMes);
+			//});
+			div.append(estudianteContainer);
+		}
+		//const pagoMes = this.BuildPagosMes(pagos);
+		this.PagosContainer.append(div);
 	}
 
 
@@ -158,7 +146,7 @@ class Pagos_PendientesView extends HTMLElement {
 			const mesContainer = html`<div class="mes-container">
 				<h3>${pagosMes}</h3>
 			</div>`;
-			
+
 			pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
 				const card = this.PagosCard(pago, this.pagosSeleccionadosProxy, pagos);
 				this.Controls.push(card);
@@ -178,7 +166,20 @@ class Pagos_PendientesView extends HTMLElement {
 	PagosCard(pago, pagosSeleccionados, pagosPendientes) {
 		const newDetalle = Detalle_Pago.CrearPago(pago);
 		const pagoInput = html`<input value="${pago.Monto_Pendiente}" min="0" max="${pago.Monto_Pendiente}" style="display: none" type="number" onchange="${(ev) => {
+			// @ts-ignore
+			if (parseFloat(pagoInput.value) > pago.Monto_Pendiente) {
+				// @ts-ignore
+				pagoInput.value = pago.Monto_Pendiente;				
+			}
 			Detalle_Pago.ActualizarDetalle(newDetalle, parseFloat(ev.target.value))
+			this.UpdatePagos();
+		}}" />`
+		const checkPago = html`<input type="checkbox" class="check-pago Btn pago-control${pago.Id_Pago}" id="pago${pago.Id_Pago}" onchange="${(ev) => {
+			// @ts-ignore
+			pagoInput.value = pago.Monto_Pendiente;
+			
+			this.AgregarPago(ev.target, pago, pagosSeleccionados, pagosPendientes, newDetalle)
+			Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
 			this.UpdatePagos();
 		}}" />`
 		return html`<div class="pago-card" id="pago${pago.Id_Pago}">
@@ -195,38 +196,55 @@ class Pagos_PendientesView extends HTMLElement {
 		<div class="pago-options pago-parcial-check">
 			<label for="pago-parcial${pago.Id_Pago}">Pago parcial</label>
 			<input type="checkbox" class="check-pago" id="pago-parcial${pago.Id_Pago}"  onchange="${(ev) => {
-				pagoInput.style.display = ev.target.checked ? "block" : "none";
-				Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
+				
+				if (ev.target.checked) { 
+					// @ts-ignore
+					checkPago.checked = ev.target.checked;	
+					// @ts-ignore
+					pagoInput.value = 0;
+					// @ts-ignore
+					this.AgregarPago(checkPago, pago, pagosSeleccionados, pagosPendientes, newDetalle, true)
+					Detalle_Pago.ActualizarDetalle(newDetalle, 0)
+				}		
+				else {
+					// @ts-ignore
+					pagoInput.value = pago.Monto_Pendiente;
+					Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
+				}		
+				pagoInput.style.display = ev.target.checked ? "block" : "none";				
 				this.UpdatePagos();
+
 			}}"/>
 		</div>  
 		<div class="pago-options">
 			<label for="pago${pago.Id_Pago}" class="pago-monto">${WOrtograficValidation.es(pago.Money)} ${ConvertToMoneyString(pago.Monto_Pendiente)}</label>
 			 ${pagoInput}       
-			<input type="checkbox" class="check-pago Btn pago-control${pago.Id_Pago}" id="pago${pago.Id_Pago}" onchange="${(ev) => this.AgregarPago(ev, pago, pagosSeleccionados, pagosPendientes, newDetalle)}" />                                
-		</div>       
+			 ${checkPago}
+			</div>       
 	</div>`;
 	}
 
 	/**
 	 * Agrega o elimina un pago de la lista de pagos seleccionados
-	 * @param {Event} ev - Evento del checkbox
+	 * @param {HTMLInputElement} control - Evento del checkbox
 	 * @param {Tbl_Pago} pago - Pago seleccionado o deseleccionado
 	 * @param {Detalle_Pago[]} pagosSeleccionados - Pagos ya seleccionados
 	 * @param {Tbl_Pago[]} pagosPendientes - Pagos pendientes de pago
 	 */
-	AgregarPago(ev, pago, pagosSeleccionados, pagosPendientes, newDetalle) {
+	AgregarPago(control, pago, pagosSeleccionados, pagosPendientes, newDetalle, isParcial = false) {
+		
 		/**@type {HTMLInputElement} */
 		// @ts-ignore
-		const control = ev.target;
+		//const control = ev.target;
 		const fechaPagoSeleccionado = new Date(pago.Fecha);
 
 		// Comprobar si hay pagos anteriores no seleccionados (si se está seleccionando el pago)
 		if (control.checked) {
 			let pagosAnterioresNoSeleccionados = false;
+			// @ts-ignore
 			const pagosAnteriores = pagosPendientes.filter(p => new Date(p.Fecha) < fechaPagoSeleccionado);
 			pagosAnteriores.forEach(pagoSeleccionado => {
-				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago === pagoSeleccionado?.Id_Pago)) {
+				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago == pagoSeleccionado?.Id_Pago)) {
 					pagosAnterioresNoSeleccionados = true;
 				}
 			});
@@ -281,6 +299,26 @@ class Pagos_PendientesView extends HTMLElement {
 			gap: 5px;
 			flex: 1;
 		}
+		.TabContainer {
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				gap: 15px;
+				transition: all 0.5s; 
+				max-height: calc(100vh - 280px);
+			
+		}
+		.PagosContainer {
+			overflow-y: auto;
+			padding: 10px;
+			max-height: calc(100vh - 280px);
+		}
+		.mes-container {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;	
+			margin-bottom: 15px;
+		}
 		
 		.pago-title, .pago-monto {
 			font-size: 20px;
@@ -294,10 +332,13 @@ class Pagos_PendientesView extends HTMLElement {
 			min-width: 20px;
 			margin: 5px;
 		}
-		.pago-details-container {
-			justify-content: space-between;
-			display: flex;
+		.TabContainer .pago-details-container {
+			display: grid;
+			grid-template-columns: calc(100% - 120px) 100px;
 			gap: 20px;
+			& div:nth-child(2) {
+				text-align: right;
+			}
 		}
 		.pago-subtitle {
 			color: #000000;

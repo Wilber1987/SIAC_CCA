@@ -194,7 +194,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 			return new InfoPagos
 			{
-				Mes = Amount > 0.0 ? DateUtil.GetMonthName(pagos.First()?.Fecha_contabilizacion) : null,
+				Mes = Amount > 0.0 ? DateUtil.GetDateName(pagos.First()?.Fecha_contabilizacion) : null,
+				Fecha = pagos.First()?.Fecha_contabilizacion,
+				IsInsolvente =  pagos.First()?.Fecha_contabilizacion < DateTime.Now && pagos.First()?.Fecha_contabilizacion?.Month == DateTime.Now.Month,
 				Amount = Amount,
 				Money = moneyEnumValue,
 				StringAmount = NumberUtility.ConvertToMoneyString(Amount)
@@ -351,5 +353,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public string? StringAmount { get; set; }
 		public MoneyEnum? Money { get; set; }
 		public string? Mes { get; internal set; }
-	}
+		public DateTime? Fecha { get; internal set; }
+        public bool IsInsolvente { get; internal set; }
+    }
 }
