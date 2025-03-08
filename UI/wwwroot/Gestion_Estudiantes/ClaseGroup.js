@@ -186,6 +186,7 @@ class ClaseGroup extends HTMLElement {
 				}`,
 				Options: {}
 			}))
+			MateriaDetailEvaluations.append
 			document.body.append(new WModalForm({
 				title: `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`,
 				ObjectModal: MateriaDetailEvaluations
