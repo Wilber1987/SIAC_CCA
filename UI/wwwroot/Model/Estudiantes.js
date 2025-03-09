@@ -92,14 +92,14 @@ class Calificacion_Group {
         for (const prop in props) {
             this[prop] = props[prop];
         };
-        this.Order = undefined;
+
     }
     /** @type {Number}*/
     Resultado;
 
     /** @type {String}*/
     Evaluacion;
-    
+
     /** @type {String}*/
     Periodo;
 
@@ -108,6 +108,10 @@ class Calificacion_Group {
 
     /** @type {String}*/
     Tipo;
+    /** @type {String}*/
+    Order;
+    /** @type {String}*/
+    Observaciones;
 }
 export { Calificacion_Group };
 

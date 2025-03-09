@@ -1,8 +1,9 @@
 //@ts-check
+import { Calificaciones } from "../Model/Calificaciones.js";
 import { DocumentsData } from "../Model/DocumentsData.js";
 import { Estudiante_clases } from "../Model/Estudiante_clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Asignatura_Group, Clase_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
+import { Asignatura_Group, Calificacion_Group, Clase_Group, Estudiante_Group, Estudiantes } from "../Model/Estudiantes.js";
 import { Calificacion_Group_ModelComponent, Clase_Group_ModelComponent } from "../Model/ModelComponent/Estudiantes_ModelComponent.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
@@ -67,7 +68,7 @@ class ClaseGroup extends HTMLElement {
 				const maxDetailsHeaders = this.Config.IsComplete == true ? null : HeaderEvaluaciones;
 
 				const evaluaciones = CalificacionesUtil.UpdateCalificaciones(ObjectF[prop], maxDetails, maxDetailsHeaders);
-				
+
 				return html`<div class="detail-content">                   
 					${ObjectF[prop].map(element => {
 					return isEstudiante
@@ -82,14 +83,14 @@ class ClaseGroup extends HTMLElement {
 					</div> 
 					<div style="min-width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
-				 ${ !isEstudiante ? html`<div class="details-options container">
+				 ${!isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element =>{ 						
-						if(element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
+						${evaluaciones.map(element => {
+					if (element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
 
-						return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
-					})}
+					return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
+				})}
 					</div>
 					<div style="width: 80px"></div> 
 				 </div>` : ""}                 
@@ -145,7 +146,7 @@ class ClaseGroup extends HTMLElement {
 	 * 
 	 */
 	async ShowDetails(instance) {
-		
+
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
@@ -156,7 +157,7 @@ class ClaseGroup extends HTMLElement {
 		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
 		let lastIndex = 0;
 		HeaderEvaluaciones.forEach(header => {
-			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());			
+			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());
 			if (index != -1) {
 				for (let i = lastIndex; i <= index; i++) {
 					response.Asignaturas[0].Calificaciones[i].Periodo = header;
@@ -168,8 +169,8 @@ class ClaseGroup extends HTMLElement {
 		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
 		response.Asignaturas.forEach(asignatura => {
 			console.log(asignatura.Calificaciones);
-			
-			
+
+
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
 					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - Sección: ${response.Seccion} </h4>
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
@@ -276,9 +277,7 @@ class ClaseGroup extends HTMLElement {
 			if (asignatura.Calificaciones.length == 0) {
 				return;
 			}
-			const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations">
-				<h4>INDICADORES DE LOGROS</h4>
-			</div>`;
+			const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
 			asignatura.Consolidados = [];
 			const total = asignatura.Calificaciones[asignatura.Calificaciones.length - 1];
 			asignatura.Calificaciones.filter(c => c.Resultado != null).forEach((c, index) => {
@@ -296,14 +295,14 @@ class ClaseGroup extends HTMLElement {
 				}
 				asignatura.Consolidados.push(consolidado);
 			})
-			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
+			//MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			const consolidadoModel = {
 				//No: { type: "text" }
 			}
 			consolidadoModel[asignatura.Asignatura] = { type: "text" };
 			consolidadoModel.Resultado = { type: "text" };
-			
-			MateriaDetailEvaluations.append(new WTableComponent({
+
+			/*MateriaDetailEvaluations.append(new WTableComponent({
 				Dataset: asignatura.Consolidados,
 				ModelObject: consolidadoModel,
 				maxElementByPage: 100,
@@ -314,7 +313,30 @@ class ClaseGroup extends HTMLElement {
 				}
 				 .WTable tbody tr:last-child { font-weight: bold !important; }`,
 				Options: {}
-			}))
+			}))*/
+			console.log(asignatura);
+
+			//const notasTotales = asignatura.Calificaciones
+			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">
+				<h4>${asignatura.Asignatura}</h4>
+				<div class="calificcacion-container">
+					${asignatura.Calificaciones.map((calificacion, index) => this.BuildDetailCalificacion(calificacion, index))}
+				</div>
+				<style>
+					.calificcacion-container{	
+						display: table;
+						width: 100%;
+						border-collapse: collapse;
+					}
+					.calificacion-row {
+						display: table-row;
+					}
+					.calificacion-row div {
+						display: table-cell;
+						border: solid 1px #eee;
+					}
+				</style>
+			</div>`)
 			if (indexAssignatura % 2 == 0) {
 				columna1.append(MateriaDetailEvaluations);
 			} else {
@@ -327,21 +349,35 @@ class ClaseGroup extends HTMLElement {
 			ObjectModal: containerCalificaciones
 		}));
 	}
+	/**
+	* @param {Calificacion_Group} calificacion 
+	* @param {any} index
+	* @returns {any}
+	*/
+	BuildDetailCalificacion(calificacion, index) {
+		return html`<div class="calificacion-row">
+			<div>${index + 1}</div>
+			<div>${calificacion.Evaluacion}</div>
+			<div>${calificacion.Tipo}</div>
+			<div>${calificacion.Observaciones}</div>
+			<div>${calificacion.Resultado}</div>
+		</div>`
+	}
 
 	buildDetail(detail, indexDetail, maxDetails, index) {
 		let columStyle = detail.Order == 1
 			? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
 
 		columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
-		let columnValue = detail.Evaluacion == "F" ? "NF": detail.Evaluacion;
+		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
-		
+
 		return html`<div class="element-detail" style="">
 			<span class="header ${index == 0 ? "" : "hidden"}">
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
 				<span>${columnValue}</span>
 			</span>
-			<span class="value" style="${isNotaF ? "font-weight: 700":""}">${detail.Resultado}</span>
+			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado}</span>
 		</div>`;
 	}
 	CustomStyle = css`          
