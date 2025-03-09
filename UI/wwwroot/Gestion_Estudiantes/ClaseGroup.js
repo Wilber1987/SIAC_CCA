@@ -12,6 +12,8 @@ import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { CalificacionesUtil } from "./CalificacionesUtil.js";
 import { BuildHeaderData } from "./EstudiantesComponents.js";
+import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
+import { PageType } from "../WDevCore/WComponents/WReportComponent.js";
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/";
 const HeaderEvaluaciones = ["IB", "IIB", "IS", "IIIB", "IVB", "IIS", "F"];
 class ClaseGroup extends HTMLElement {
@@ -23,9 +25,11 @@ class ClaseGroup extends HTMLElement {
 	 *  Estudiante?: Estudiantes,
 	 *  IsComplete?: Boolean,
 	 *  WithoutDocente?: Boolean; 
-	 * Estudiante_Clase_Seleccionado?: Estudiante_clases
+	 *  Estudiante_Clase_Seleccionado?: Estudiante_clases
+	 * 
 	 * }} Config
 	 */
+
 	constructor(response, Config) {
 		super();
 		this.attachShadow({ mode: 'open' });
@@ -67,7 +71,7 @@ class ClaseGroup extends HTMLElement {
 				const maxDetailsHeaders = this.Config.IsComplete == true ? null : HeaderEvaluaciones;
 
 				const evaluaciones = CalificacionesUtil.UpdateCalificaciones(ObjectF[prop], maxDetails, maxDetailsHeaders);
-				
+
 				return html`<div class="detail-content">                   
 					${ObjectF[prop].map(element => {
 					return isEstudiante
@@ -82,14 +86,14 @@ class ClaseGroup extends HTMLElement {
 					</div> 
 					<div style="min-width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
-				 ${ !isEstudiante ? html`<div class="details-options container">
+				 ${!isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element =>{ 						
-						if(element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
+						${evaluaciones.map(element => {
+					if (element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
 
-						return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
-					})}
+					return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
+				})}
 					</div>
 					<div style="width: 80px"></div> 
 				 </div>` : ""}                 
@@ -145,7 +149,7 @@ class ClaseGroup extends HTMLElement {
 	 * 
 	 */
 	async ShowDetails(instance) {
-		
+
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
@@ -156,7 +160,7 @@ class ClaseGroup extends HTMLElement {
 		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
 		let lastIndex = 0;
 		HeaderEvaluaciones.forEach(header => {
-			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());			
+			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());
 			if (index != -1) {
 				for (let i = lastIndex; i <= index; i++) {
 					response.Asignaturas[0].Calificaciones[i].Periodo = header;
@@ -168,8 +172,8 @@ class ClaseGroup extends HTMLElement {
 		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
 		response.Asignaturas.forEach(asignatura => {
 			console.log(asignatura.Calificaciones);
-			
-			
+
+
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
 					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - Sección: ${response.Seccion} </h4>
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
@@ -303,7 +307,7 @@ class ClaseGroup extends HTMLElement {
 			}
 			consolidadoModel[asignatura.Asignatura] = { type: "text" };
 			consolidadoModel.Resultado = { type: "text" };
-			
+
 			MateriaDetailEvaluations.append(new WTableComponent({
 				Dataset: asignatura.Consolidados,
 				ModelObject: consolidadoModel,
@@ -322,11 +326,22 @@ class ClaseGroup extends HTMLElement {
 				columna2.append(MateriaDetailEvaluations);
 			}
 			//containerCalificaciones.append(MateriaDetailEvaluations);
-		})
+		})		
+		containerCalificaciones.append(
+			new WPrintExportToolBar({
+				ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
+					const body = containerCalificaciones.cloneNode(true);
+					document.body.append(new WModalForm ( {ObjectModal: body}))
+					body.appendChild(this.CustomStyle.cloneNode(true));
+					//tool.ExportPdf(body, PageType.A4)
+				}
+			})
+		);
 		document.body.append(new WModalForm({
 			title: "",
 			ObjectModal: containerCalificaciones
 		}));
+
 	}
 
 	buildDetail(detail, indexDetail, maxDetails, index) {
@@ -334,15 +349,15 @@ class ClaseGroup extends HTMLElement {
 			? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
 
 		columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
-		let columnValue = detail.Evaluacion == "F" ? "NF": detail.Evaluacion;
+		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
-		
+
 		return html`<div class="element-detail" style="">
 			<span class="header ${index == 0 ? "" : "hidden"}">
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
 				<span>${columnValue}</span>
 			</span>
-			<span class="value" style="${isNotaF ? "font-weight: 700":""}">${detail.Resultado}</span>
+			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado}</span>
 		</div>`;
 	}
 	CustomStyle = css`          
