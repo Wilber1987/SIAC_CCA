@@ -262,12 +262,17 @@ class ClaseGroup extends HTMLElement {
 				.consolidado-container-calificaciones {
 					overflow: hidden;  
 					&  .consolidado-columns-container {
-						display: grid;  
-						grid-template-columns: 1fr 1fr;
-						gap: 20px;
+						
 					}                  
 				}
 				.MateriaDetailEvaluations {     
+					box-sizing: border-box;
+				}
+				.columna {
+					width: 48%;
+					display: inline-block;
+					vertical-align: top;
+					margin: 10px;
 					box-sizing: border-box;
 				}
 			</style>
