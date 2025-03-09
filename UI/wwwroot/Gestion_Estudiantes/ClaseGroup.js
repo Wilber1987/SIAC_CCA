@@ -266,12 +266,17 @@ class ClaseGroup extends HTMLElement {
 				.consolidado-container-calificaciones {
 					overflow: hidden;  
 					&  .consolidado-columns-container {
-						display: grid;  
-						grid-template-columns: 1fr 1fr;
-						gap: 20px;
+						
 					}                  
 				}
 				.MateriaDetailEvaluations {     
+					box-sizing: border-box;
+				}
+				.columna {
+					width: 48%;
+					display: inline-block;
+					vertical-align: top;
+					margin: 10px;
 					box-sizing: border-box;
 				}
 			</style>
@@ -336,9 +341,13 @@ class ClaseGroup extends HTMLElement {
 					.calificacion-row {
 						display: table-row;
 					}
+					.calificacion-row:nth-child(odd) {
+						background: #f5f4f4;
+					}
 					.calificacion-row div {
 						display: table-cell;
 						border: solid 1px #eee;
+						padding: 5px;
 					}
 				</style>
 			</div>`)
@@ -374,7 +383,7 @@ class ClaseGroup extends HTMLElement {
 		return html`<div class="calificacion-row">
 			<div>${index + 1}</div>
 			<div>${calificacion.Evaluacion}</div>
-			<div>${calificacion.Tipo}</div>
+			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE") || calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
 			<div>${calificacion.Observaciones}</div>
 			<div>${calificacion.Resultado}</div>
 		</div>`
