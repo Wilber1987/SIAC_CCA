@@ -44,7 +44,9 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha
+                        Fecha = Calificacion.Fecha,
+                        Porcentaje = Calificacion.Porcentaje,
+                        Observaciones = Calificacion.Observaciones ?? "Sin observaciones"
                      };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion.Contains("B") ? 1 :
@@ -100,7 +102,9 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha
+                        Fecha = Calificacion.Fecha,
+                        Porcentaje = Calificacion.Porcentaje,
+                        Observaciones = Calificacion.Observaciones ?? "Sin observaciones"
                      };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
@@ -161,7 +165,9 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
                         Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha
+                        Fecha = Calificacion.Fecha,
+                        Porcentaje = Calificacion?.Porcentaje,
+                        Observaciones = Calificacion?.Observaciones ?? "Sin observaciones"
                      };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
