@@ -383,9 +383,10 @@ class ClaseGroup extends HTMLElement {
 		return html`<div class="calificacion-row">
 			<div>${index + 1}</div>
 			<div>${calificacion.Evaluacion}</div>
-			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE") || calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
+			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE") 
+					|| calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
 			<div>${calificacion.Observaciones}</div>
-			<div>${calificacion.Resultado}</div>
+			<div>${calificacion.Resultado} pts.</div>
 		</div>`
 	}
 
@@ -402,7 +403,7 @@ class ClaseGroup extends HTMLElement {
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
 				<span>${columnValue}</span>
 			</span>
-			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado}</span>
+			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado} pts.</span>
 		</div>`;
 	}
 	CustomStyle = css`          
