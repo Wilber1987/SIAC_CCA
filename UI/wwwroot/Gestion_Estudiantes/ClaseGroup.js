@@ -273,10 +273,10 @@ class ClaseGroup extends HTMLElement {
 					box-sizing: border-box;
 				}
 				.columna {
-					width: 48%;
+					width: 49%;
 					display: inline-block;
 					vertical-align: top;
-					margin: 10px;
+					/*margin: 10px;*/
 					box-sizing: border-box;
 				}
 			</style>
@@ -363,8 +363,8 @@ class ClaseGroup extends HTMLElement {
 				ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
 					const body = containerCalificaciones.cloneNode(true);
 					//document.body.append(new WModalForm ( {ObjectModal: body}))
-					//body.appendChild(this.CustomStyle.cloneNode(true));
-					tool.ExportPdf(body, PageType.A4)
+					body.appendChild(this.CustomStyle.cloneNode(true));
+					tool.ExportPdf(body, PageType.A4, false , "Detalle por Bimestre")
 				}
 			})
 		);
