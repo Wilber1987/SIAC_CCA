@@ -81,8 +81,7 @@ class ClasesDetails extends HTMLElement {
 			const classGroup = new ClaseGroup(response, this.Config);
 			// @ts-ignore
 			content.dataElement = response;
-			content.innerHTML = "";
-
+			content.innerHTML = "";			
 			content.append(classGroup, new WPrintExportToolBar({ ExportPdfAction: (toolBar) => this.ExportPdfAction(toolBar, element) }));
 		}
 		control.className = control.className.includes("active-btn")

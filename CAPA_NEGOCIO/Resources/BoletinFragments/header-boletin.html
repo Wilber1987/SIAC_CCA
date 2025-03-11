@@ -18,15 +18,19 @@
             display: flex;
         } .detalles-estudiantes-header label{
             flex: 1;
+        }       
+            
+        .datos-generales-header-container img {            
+            width: 130px;
+            display: inline-block;
+            vertical-align: top;
         }
-        .datos-generales-header-container {
-            display: grid;
-            grid-template-columns: calc(100% - 150px) 130px;
-            gap: 20px;
-            & img {
-                align-self: center;
-                justify-self: center;
-            }
+        
+        .datos-generales-header {
+            width: calc(100% - 150px);
+            margin-right: 10px;
+            display: inline-block;
+            vertical-align: top;
         }
         .header-div-container h3{
             text-transform: uppercase;

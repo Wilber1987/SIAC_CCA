@@ -202,12 +202,16 @@ class Historial_PagosView extends HTMLElement {
 	 * @returns {HTMLElement}
 	 */
 	BuildEstudiantes(Estudiante, facturas, pagosEstudiante, estudianteCodigo) {
-		return html`<div class="estudiante-card-container" onclick="${() => {
+		return html`<div class="estudiante-card-container ${estudianteCodigo == this.selectedID ? "card-active" : ""}" id="card-estudiante${Estudiante.Id}" onclick="${() => {
 			this.selectedID = estudianteCodigo;
 			if (!this.Informes[this.selectedID]) {
 				this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
 			}
 			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteCodigo])
+			this.querySelectorAll("estudiante-card-container")?.forEach(n => {
+				n.classList.remove("card-active");
+			});			
+			this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");
 		}}">            
 			<div class="estudiante-card">
 			<img src="${Estudiante.Foto ? `${routeEstudiantes}/${Estudiante.Id}/${Estudiante.Foto}`
@@ -355,6 +359,9 @@ class Historial_PagosView extends HTMLElement {
 		.component{
 		   display: block;
 		}    
+		.card-active {
+            background-color: #f1f1f1;
+        }
 		.CANCELADO {
 			color: green;
 		}  
