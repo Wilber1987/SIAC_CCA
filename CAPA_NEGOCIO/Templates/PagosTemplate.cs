@@ -24,24 +24,24 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 			// Reemplazo de los valores simples
 			html = html.Replace("{{ HEADER }}", documentos.Header ?? "");
-			
-			
+
+
 			html = html.Replace("{{ NoRecibo }}", request.Id_Pago_Request?.ToString("D9"));
 			html = html.Replace("{{ Ruc }}", Config.pageConfig().RUC);
-			
+
 			html = html.Replace("{{ Referencia }}", request.Referencia ?? "");
 			html = html.Replace("{{ Creador }}", request.Creador ?? "");
 			html = html.Replace("{{ Fecha }}", request.Fecha?.ToString("dd-MM-yyyy HH:mm") ?? "");
 			html = html.Replace("{{ Estado }}", request.Estado ?? "");
 			html = html.Replace("{{ Moneda }}", request.Moneda ?? "");
 			html = html.Replace("{{ Concepto }}", request.Descripcion ?? "");
-			
-			
-			
-			var totalC =  request.Moneda == MoneyEnum.DOLARES.ToString() ?  request.Monto * (request.TasaCambio ?? 1) : request.Monto;
-			var totalDolares  =  request.Moneda == MoneyEnum.DOLARES.ToString() ?  request.Monto : request.Monto / (request.TasaCambio ?? 1);
-			
-			
+
+
+
+			var totalC = request.Moneda == MoneyEnum.DOLARES.ToString() ? request.Monto * (request.TasaCambio ?? 1) : request.Monto;
+			var totalDolares = request.Moneda == MoneyEnum.DOLARES.ToString() ? request.Monto : request.Monto / (request.TasaCambio ?? 1);
+
+
 			html = html.Replace("{{ Monto_C }}", totalC?.ToString("F2") ?? "0.00");
 			html = html.Replace("{{ Monto }}", totalDolares?.ToString("F2") ?? "0.00");
 			//html = html.Replace("{{ Moneda }}", request.Moneda == MoneyEnum.DOLARES.ToString() ? "DÓLARES" : "CORDOBAS");
@@ -55,22 +55,23 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				{
 					var totalDetalle = detalle.Total;
 					detallePagoHtml += $@"<tr>
-						<td>{detalle.Concepto} - Est. {detalle?.Pago?.Estudiante?.Codigo }</td>
-						<td style=""text-align: right;""> { (request.Moneda == MoneyEnum.DOLARES.ToString() ? "$" : "C$")} 
+						<td>{detalle.Concepto} - Est. {detalle?.Pago?.Estudiante?.Codigo}</td>
+						<td style=""text-align: right;""> {(request.Moneda == MoneyEnum.DOLARES.ToString() ? "$" : "C$")} 
 						 {totalDetalle?.ToString("F2")}</td>
 					</tr>";
 				}
 			}
-			
+
 			html = html.Replace("{{ Detalle_Pago }}", detallePagoHtml);
 			if (!isPrint)
 			{
 				html += @"<div style=""text-align: center; margin-top: 20px;"">
 					<a href=""{{ printURL }}"" class=""btn-success"">Imprimir</a>
+					<a href=""{{ historialURL }}"" class=""btn-success"">Historial</a>
 				</div>";
 			}
 			html = html.Replace("{{ printURL }}", "https://portal.cca.edu.ni/api/ApiPagos/GetFactura/" + request.Id_Pago_Request.ToString() ?? "");
-
+			html = html.Replace("{{ historialURL }}", "https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos");
 			return html;
 		}
 	}
