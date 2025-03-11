@@ -149,8 +149,7 @@ class ClaseGroup extends HTMLElement {
 	 * @param {Asignatura_Group} instance
 	 * 
 	 */
-	async ShowDetails(instance) {
-
+	async ShowDetails(instance) {		
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
@@ -172,7 +171,6 @@ class ClaseGroup extends HTMLElement {
 
 		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
 		response.Asignaturas.forEach(asignatura => {
-			console.log(asignatura.Calificaciones);
 
 
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
@@ -180,22 +178,47 @@ class ClaseGroup extends HTMLElement {
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
 				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
+			const datasetMap = asignatura.Calificaciones.map(c => {
+				const newObject = {};
+				for (const key in c) {
+					newObject[key] = c[key]
+				}
+				newObject.Resultado = newObject.Resultado + " pts."
+				return newObject;
+			})
+			//console.log(datasetMap);
 			MateriaDetailEvaluations.append(new WTableComponent({
-				Dataset: asignatura.Calificaciones,
+				Dataset: datasetMap,
 				ModelObject: new Calificacion_Group_ModelComponent(),
 				maxElementByPage: 100,
 				paginate: false,
 				isActiveSorts: false,
-				CustomStyle: css`.WTable td label {
+				CustomStyle: css`.WTable td:not(.td_Resultado) label {
 					text-transform: uppercase;
 				}`,
 				Options: {}
 			}))
-			MateriaDetailEvaluations.append
+			//console.log(MateriaDetailEvaluations)
+			MateriaDetailEvaluations.append(
+				new WPrintExportToolBar({
+					ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {						
+						const tablahtml = MateriaDetailEvaluations.shadowRoot?.innerHTML
+						//const body = `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`
+						console.log(tablahtml);
+						const body = html`<div>${tablahtml}</div>`
+						document.body.append(new WModalForm({ ObjectModal: tablahtml }))//para previsualizar
+						//body.appendChild(this.CustomStyle.cloneNode(true));
+						//body.appendChild(this.PdfCustomStyle.cloneNode(true));
+						tool.ExportPdf(body, PageType.A4, false, "Detalle por Bimestre")
+					}
+				})
+			);
 			document.body.append(new WModalForm({
 				title: `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`,
 				ObjectModal: MateriaDetailEvaluations
 			}));
+
+			
 		})
 	}
 	AddTeacherDetail(index, instance) {
@@ -324,7 +347,7 @@ class ClaseGroup extends HTMLElement {
 				 .WTable tbody tr:last-child { font-weight: bold !important; }`,
 				Options: {}
 			}))*/
-			console.log(asignatura);
+
 
 			//const notasTotales = asignatura.Calificaciones
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">
@@ -357,14 +380,15 @@ class ClaseGroup extends HTMLElement {
 				columna2.append(MateriaDetailEvaluations);
 			}
 			//containerCalificaciones.append(MateriaDetailEvaluations);
-		})		
+		})
 		containerCalificaciones.append(
 			new WPrintExportToolBar({
 				ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
 					const body = containerCalificaciones.cloneNode(true);
-					//document.body.append(new WModalForm ( {ObjectModal: body}))
+					//document.body.append(new WModalForm({ ObjectModal: body }))//para previsualizar
 					body.appendChild(this.CustomStyle.cloneNode(true));
-					tool.ExportPdf(body, PageType.A4, false , "Detalle por Bimestre")
+					body.appendChild(this.PdfCustomStyle.cloneNode(true));
+					tool.ExportPdf(body, PageType.A4, false, "Detalle por Bimestre")
 				}
 			})
 		);
@@ -383,10 +407,10 @@ class ClaseGroup extends HTMLElement {
 		return html`<div class="calificacion-row">
 			<div>${index + 1}</div>
 			<div>${calificacion.Evaluacion}</div>
-			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE") 
-					|| calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
+			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE")
+				|| calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
 			<div>${calificacion.Observaciones}</div>
-			<div>${calificacion.Resultado} pts.</div>
+			<div style="text-align: right;">${calificacion.Resultado} pts.</div>
 		</div>`
 	}
 
@@ -406,6 +430,50 @@ class ClaseGroup extends HTMLElement {
 			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado} pts.</span>
 		</div>`;
 	}
+	PdfCustomStyle = css`		
+		.avoid-page-break, .MateriaDetailEvaluations {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		h4{
+			display: block;
+			text-align: center;
+			font-size: 13px !important;
+			margin: 10px 0px;
+		}
+		h3{
+			font-size: 18px;
+			text-align: center;
+		}
+		.datos-generales-header-container{
+			display: flex;
+			align-items: center;
+			gap: 20px;
+		}
+		.calificacion-row div {
+			display: table-cell;
+			border: solid 1px #eee;
+			padding: 5px;
+			font-size: 14px;
+		}
+		.consolidado-container-calificaciones{
+			margin: 15px
+		}
+		.calificacion-row div {
+			display: table-cell;
+			border: solid 1px #eee;
+			padding: 5px;
+		}
+		.columna {
+			width: 49%;
+			display: inline-block;
+			vertical-align: top;
+			/* margin: 10px; */
+			box-sizing: border-box;
+		}
+	`;
+
 	CustomStyle = css`          
 		.data-container {
 			display: flex;
