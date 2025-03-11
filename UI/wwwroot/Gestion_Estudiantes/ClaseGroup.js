@@ -149,7 +149,11 @@ class ClaseGroup extends HTMLElement {
 	 * @param {Asignatura_Group} instance
 	 * 
 	 */
-	async ShowDetails(instance) {		
+	async ShowDetails(instance) {
+		/**@type {DocumentsData} */
+		const documentsData = await new DocumentsData().GetBoletinDataFragments();
+		BuildHeaderData(documentsData.Header, this.Config.Estudiante)
+
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
@@ -187,7 +191,7 @@ class ClaseGroup extends HTMLElement {
 				return newObject;
 			})
 			//console.log(datasetMap);
-			MateriaDetailEvaluations.append(new WTableComponent({
+			const table = new WTableComponent({
 				Dataset: datasetMap,
 				ModelObject: new Calificacion_Group_ModelComponent(),
 				maxElementByPage: 100,
@@ -197,16 +201,20 @@ class ClaseGroup extends HTMLElement {
 					text-transform: uppercase;
 				}`,
 				Options: {}
-			}))
+			})
+			MateriaDetailEvaluations.append(table)
 			//console.log(MateriaDetailEvaluations)
 			MateriaDetailEvaluations.append(
 				new WPrintExportToolBar({
-					ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {						
-						const tablahtml = MateriaDetailEvaluations.shadowRoot?.innerHTML
+					ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
+						const tablahtml = table.shadowRoot?.innerHTML
 						//const body = `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`
-						console.log(tablahtml);
-						const body = html`<div>${tablahtml}</div>`
-						document.body.append(new WModalForm({ ObjectModal: tablahtml }))//para previsualizar
+						const body = html`<div style="padding: 20px;">
+							${documentsData.Header.cloneNode(true)}
+							${tablahtml}
+						</div>`
+						body.appendChild(this.PdfCustomStyle.cloneNode(true));
+						//document.body.append(new WModalForm({ ObjectModal: tablahtml }))//para previsualizar
 						//body.appendChild(this.CustomStyle.cloneNode(true));
 						//body.appendChild(this.PdfCustomStyle.cloneNode(true));
 						tool.ExportPdf(body, PageType.A4, false, "Detalle por Bimestre")
@@ -218,7 +226,7 @@ class ClaseGroup extends HTMLElement {
 				ObjectModal: MateriaDetailEvaluations
 			}));
 
-			
+
 		})
 	}
 	AddTeacherDetail(index, instance) {
