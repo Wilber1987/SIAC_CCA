@@ -217,7 +217,7 @@ class ClaseGroup extends HTMLElement {
 						//document.body.append(new WModalForm({ ObjectModal: tablahtml }))//para previsualizar
 						//body.appendChild(this.CustomStyle.cloneNode(true));
 						//body.appendChild(this.PdfCustomStyle.cloneNode(true));
-						tool.ExportPdf(body, PageType.A4, false, "Detalle por Bimestre")
+						tool.ExportPdf(body, PageType.OFICIO, false, "Detalle por Asignatura")
 					}
 				})
 			);
@@ -396,7 +396,7 @@ class ClaseGroup extends HTMLElement {
 					//document.body.append(new WModalForm({ ObjectModal: body }))//para previsualizar
 					body.appendChild(this.CustomStyle.cloneNode(true));
 					body.appendChild(this.PdfCustomStyle.cloneNode(true));
-					tool.ExportPdf(body, PageType.A4, false, "Detalle por Bimestre")
+					tool.ExportPdf(body, PageType.OFICIO, false, "Detalle por Bimestre")
 				}
 			})
 		);
