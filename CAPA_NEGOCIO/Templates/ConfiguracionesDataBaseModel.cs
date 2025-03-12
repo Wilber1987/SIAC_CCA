@@ -55,7 +55,7 @@ namespace DataBaseModel
 			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO.ToString()))?.Valor ?? SUB_TITULO;
 				
-			SUB_TITULO = configuraciones.Find(c => c.Nombre != null &&
+			SUB_TITULO2 = configuraciones.Find(c => c.Nombre != null &&
 				c.Nombre.Equals(ConfiguracionesThemeEnum.SUB_TITULO2.ToString()))?.Valor ?? SUB_TITULO2;
 				
 			NOMBRE_EMPRESA = configuraciones.Find(c => c.Nombre != null &&
