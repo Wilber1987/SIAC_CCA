@@ -19,7 +19,7 @@
 			<span class="menu-item" data-key="t-inicio">Inicio</span>
 		</a>
 	</li>
-	@if (SecurityController.HavePermission(Identify, Permissions.PERFIL_ACCESS))
+	@if (!SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify, Permissions.PERFIL_ACCESS))
 	{
 		<li class="menuParentOption">
 			<a class="" href="~/Gestion_Usuarios/Perfil">
