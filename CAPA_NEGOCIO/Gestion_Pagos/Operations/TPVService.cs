@@ -28,7 +28,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public async Task<PowerTranzTpvResponse> SalesAsync(TPV datosDePago)
 		{
 			try
-			{
+			{				
 				PowerTranzTpvResponse responseData = await ExecuteRequest("Api/spi/Sale", BuildJsonAuthRequest(datosDePago));
 				SPI = responseData.SpiToken;
 				return responseData;
@@ -101,7 +101,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				""Source"": {					
 					""CardPan"": """ + datosDePago.CardNumber?.ToString() + @""", 
 					""CardCvv"": """ + datosDePago.Cvv?.ToString() + @""", 
-					""CardExpiration"": """ + datosDePago.ExpYear + datosDePago.ExpMonth + @""", 
+					""CardExpiration"": """ + datosDePago.ExpYear + datosDePago.ExpMonth.ToString() + @""", 
 					""CardholderName"": """ + datosDePago.CardholderName + @"""
 				},
 				""OrderIdentifier"": """ + O_IDENTIFY + @""",
