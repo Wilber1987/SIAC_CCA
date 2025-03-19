@@ -9,6 +9,7 @@ namespace CAPA_NEGOCIO.Security
     {
         public string? Id { get; set; }
         public string? User_id { get; set; }
+        public int? ParienteId { get; set; }       
         public string? Correo { get; set; }
         public string? Telefono { get; set; }
         public string? Foto { get; set; }

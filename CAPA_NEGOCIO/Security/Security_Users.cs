@@ -141,7 +141,7 @@ namespace CAPA_NEGOCIO
 			? sexo == "M" ? pageConfig.MEDIA_IMG_PATH + "avatar.png" : pageConfig.MEDIA_IMG_PATH + "avatar_fem.png"
 			: (docente != null
 				? $"/Media/Images/maestros/{docente.Id}/{docente.Foto}"
-				: $"/Media/Images/parientes/{pariente?.Id}/{pariente?.Foto}");
+				: $"{pariente?.Foto}");
 		}
 	}
 
