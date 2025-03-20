@@ -430,12 +430,10 @@ class ClaseGroup extends HTMLElement {
 			<div>${calificacion.Observaciones}</div>
 			<div style="text-align: right;">${calificacion.Resultado} pts.</div>
 		</div>`*/
-		const observacion = calificacion.ObservacionesPuntaje || "";
-
 		return html`<div class="calificacion-row">
-			<div>${observacion.length > 1 ? index + 1 : ""}</div>
-			<div>${calificacion.ObservacionesPuntaje ?? "Sin observaciónes"}</div>
-			<div style="text-align: right; width: 55px">${calificacion.Resultado} pts.</div>
+			<div>${index + 1}</div>			
+			<div>${calificacion.EvaluacionCompleta}</div>
+			<div style="text-align: right; width:55px">${calificacion.Resultado} pts.</div>
 		</div>`
 	}
 
