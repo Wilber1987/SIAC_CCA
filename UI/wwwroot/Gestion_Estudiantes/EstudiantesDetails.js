@@ -70,7 +70,7 @@ class EstudiantesDetails extends HTMLElement {
         /**@type {Estudiantes} */
         this.EstudianteSeleccionado = await Estudiante.Find();
         this.Manager.NavigateFunction("EstDetail_" + Estudiante.Id, new EstudianteDetail(this.EstudianteSeleccionado));
-        this.querySelectorAll("estudiante-card-container")?.forEach(n => {
+        this.querySelectorAll(".estudiante-card-container")?.forEach(n => {
             n.classList.remove("card-active");
         });
         this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");
