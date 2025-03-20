@@ -54,7 +54,7 @@ const DatosGenerales = (estudiante) => {
             </div>
         </div>
         <style>
-            .estudiante-detail{
+            .estudiante-detail{                
                 display: block;
                 width: 100%;
                 height: 100%;
@@ -67,6 +67,13 @@ const DatosGenerales = (estudiante) => {
                     border-radius: 5px;
                     border: 1px solid #c9c9c9;
                     padding: 10px;                    
+                }
+                & label {   
+                    margin: 0px;
+                    padding: 0px;
+                }
+                & .estudiante-detail-container {
+                    font-size: 12px;
                 }
             }  
             .estudiante-detail-element{
