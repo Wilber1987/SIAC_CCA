@@ -18,6 +18,7 @@ class Estudiante_clases extends EntityClass {
     /**@type {Date}*/ Transferido;
     /**@type {Date}*/ Retirado;
     /**@type {String}*/ Observaciones;
+    /**@type {String}*/ ObservacionesPuntaje;
     /**@type {String}*/ Descripcion;
     /**@type {Date}*/ Created_at;
     /**@type {Date}*/ Updated_at;
