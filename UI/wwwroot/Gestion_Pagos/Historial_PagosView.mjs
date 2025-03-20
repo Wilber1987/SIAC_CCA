@@ -210,7 +210,7 @@ class Historial_PagosView extends HTMLElement {
 				this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
 			}
 			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteCodigo])
-			this.querySelectorAll("estudiante-card-container")?.forEach(n => {
+			this.querySelectorAll(".estudiante-card-container")?.forEach(n => {
 				n.classList.remove("card-active");
 			});			
 			this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");
