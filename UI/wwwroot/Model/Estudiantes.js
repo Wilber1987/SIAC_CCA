@@ -112,6 +112,8 @@ class Calificacion_Group {
     Order;
     /** @type {String}*/
     Observaciones;
+    /** @type {String}*/
+    ObservacionesPuntaje;
 }
 export { Calificacion_Group };
 

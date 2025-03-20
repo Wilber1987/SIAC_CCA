@@ -83,9 +83,9 @@ class ClaseGroup extends HTMLElement {
 				 ${maxDetailsHeaders != null ? html`<div class="container promedio">
 					<div class="element-description"><span class="value" style="text-align: right">PROMEDIO</span></div>   
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)}</span></label>`)}
+						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)} pts.</span></label>`)}
 					</div> 
-					<div style="min-width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
+					<div class="option" style="min-width: 85px; max-width: 85px; width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
 				 ${!isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
@@ -178,7 +178,7 @@ class ClaseGroup extends HTMLElement {
 
 
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
-					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - Sección: ${response.Seccion} </h4>
+					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - SECCIÓN: ${response.Seccion} </h4>
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
 				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
@@ -188,6 +188,10 @@ class ClaseGroup extends HTMLElement {
 					newObject[key] = c[key]
 				}
 				newObject.Resultado = newObject.Resultado + " pts."
+				if (newObject.Porcentaje != null) {
+					newObject.Porcentaje = newObject.Porcentaje + " pts."
+				}
+
 				return newObject;
 			})
 			//console.log(datasetMap);
@@ -197,9 +201,14 @@ class ClaseGroup extends HTMLElement {
 				maxElementByPage: 100,
 				paginate: false,
 				isActiveSorts: false,
-				CustomStyle: css`.WTable td:not(.td_Resultado) label {
+				CustomStyle: css`.WTable td:not(.td_Resultado, .td_Porcentaje) label {
 					text-transform: uppercase;
-				}`,
+				}.WTable td.td_Porcentaje{width: 62px;}
+				.WTable tbody tr{
+					break-inside: avoid;
+					page-break-inside: avoid;
+				}
+				`,
 				Options: {}
 			})
 			MateriaDetailEvaluations.append(table)
@@ -222,7 +231,7 @@ class ClaseGroup extends HTMLElement {
 				})
 			);
 			document.body.append(new WModalForm({
-				title: `${localStorage.getItem('TITULO') ?? ''}, Año: ${localStorage.getItem('SUB_TITULO') ?? ''}`,
+				title: `${localStorage.getItem('TITULO') ?? ''}, ${localStorage.getItem('SUB_TITULO') ?? ''}`,
 				ObjectModal: MateriaDetailEvaluations
 			}));
 
@@ -412,13 +421,21 @@ class ClaseGroup extends HTMLElement {
 	* @returns {any}
 	*/
 	BuildDetailCalificacion(calificacion, index) {
-		return html`<div class="calificacion-row">
+		//original 
+		/*return html`<div class="calificacion-row">
 			<div>${index + 1}</div>
 			<div>${calificacion.Evaluacion}</div>
 			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE")
 				|| calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
 			<div>${calificacion.Observaciones}</div>
 			<div style="text-align: right;">${calificacion.Resultado} pts.</div>
+		</div>`*/
+		const observacion = calificacion.ObservacionesPuntaje || "";
+
+		return html`<div class="calificacion-row">
+			<div>${observacion.length > 1 ? index + 1 : ""}</div>
+			<div>${calificacion.ObservacionesPuntaje ?? "Sin observaciónes"}</div>
+			<div style="text-align: right; width: 55px">${calificacion.Resultado} pts.</div>
 		</div>`
 	}
 
@@ -439,6 +456,14 @@ class ClaseGroup extends HTMLElement {
 		</div>`;
 	}
 	PdfCustomStyle = css`		
+		.WTable td:not(.td_Resultado, .td_Porcentaje) label {
+					text-transform: uppercase;
+				}
+				.WTable td.td_Porcentaje{width: 92px!important;}
+				.WTable tbody tr{
+					break-inside: avoid;
+					page-break-inside: avoid;
+				}
 		.avoid-page-break, .MateriaDetailEvaluations {
 			break-inside: avoid;
 			page-break-inside: avoid;

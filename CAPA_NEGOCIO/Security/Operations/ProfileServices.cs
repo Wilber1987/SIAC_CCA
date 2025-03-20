@@ -16,24 +16,24 @@ namespace CAPA_NEGOCIO.Security.Operations
                 Inst.Id = Guid.NewGuid().ToString();
                 if (profile.ProfileType.Equals(ProfileType.PARIENTE))
                 {
-                    Parientes? pariente = new Parientes { Id = profile.Pariente_id }.SimpleFind<Parientes>();
+                    Parientes? pariente = new Parientes { Id = Inst.ParienteId != null ? Inst.ParienteId : profile.Pariente_id }.SimpleFind<Parientes>();
                     if (pariente?.ProfileRequest == null)
                     {
                         pariente!.ProfileRequest = [];
                     }
+                    string foto = ((ModelFiles?)FileService.upload($"/Images/parientes/{pariente.Id}",
+                     new ModelFiles
+                     {
+                         Value = Inst.Foto,
+                         Type = "png"
+                     }).body)?.Value?.Replace("wwwroot", "")?.Replace("\\", "/") ?? "/media/img/avatar.png";
                     Inst.Estado = ProfileRequestsStatus.PENDIENTE.ToString();
                     Inst.Fecha_solicitud = DateTime.Now;
                     Inst.Telefono_Anterior = pariente!.Telefono;
                     Inst.Celular_Anterior = pariente!.Celular;
                     Inst.Correo_Anterior = pariente!.Email;
+                    Inst.Foto = foto;
                     pariente!.Fecha_Modificacion = DateTime.Now;
-
-                    pariente!.Foto = ((ModelFiles?)FileService.upload($"/Images/parientes/{pariente.Id}",
-                     new ModelFiles
-                     {
-                        Value = Inst.Foto,
-                        Type = "png"
-                     }).body)?.Name;
 
                     pariente?.ProfileRequest?.Add(Inst);
                     LoggerServices.AddMessageInfo($"Se realizo una solicitud de modificacion del perfil del pariente id={pariente?.Id}, nombre={profile.GetNombreCompleto()}");
@@ -52,7 +52,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                     {
                         Value = Inst.Foto,
                         Type = "png"
-                    }).body)?.Name;
+                    }).body)?.Value?.Replace("wwwroot", "")?.Replace("\\", "/") ?? docente!.Foto;
 
                     docente.Updated_at = DateTime.Now;
                     docente?.Update();
@@ -66,7 +66,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                     {
                         Value = Inst.Foto,
                         Type = "png"
-                    }).body)?.Value?.Replace("wwwroot", "");;
+                    }).body)?.Value?.Replace("wwwroot", "")?.Replace("\\", "/");
 
                     var ProfileInst = new Tbl_Profile
                     {
@@ -81,7 +81,9 @@ namespace CAPA_NEGOCIO.Security.Operations
                     if (profile.Id_Perfil == null)
                     {
                         ProfileInst.Save();
-                    } else {
+                    }
+                    else
+                    {
                         ProfileInst.Update();
                     }
                     LoggerServices.AddMessageInfo($"Se actualizo el perfil del usuario id={profile.IdUser}, nombre={profile.GetNombreCompleto()}");
@@ -114,7 +116,7 @@ namespace CAPA_NEGOCIO.Security.Operations
             }
             if (!AuthNetCore.HavePermission(identity, CAPA_DATOS.Security.Permissions.ADMINISTRAR_USUARIOS))
             {
-               return new ResponseService { status = 403, message = "No tiene permisos para realizar esta accion" };// throw new Exception("No tiene permisos para realizar esta accion");
+                return new ResponseService { status = 403, message = "No tiene permisos para realizar esta accion" };// throw new Exception("No tiene permisos para realizar esta accion");
             }
             UserModel user = AuthNetCore.User(identity);
             var pariente = new Parientes().Find<Parientes>(
@@ -131,6 +133,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                     pariente.Telefono = inst.Telefono;
                     pariente.Celular = inst.Celular;
                     pariente.Fecha_Modificacion = DateTime.Now;
+                    pariente.Foto = inst.Foto;
                 }
                 solicitud!.Estado = inst.Estado;
                 pariente.Update();

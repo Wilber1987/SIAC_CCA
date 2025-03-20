@@ -12,20 +12,20 @@ class ProfileRequest_ModelComponent extends EntityClass {
     }
     /**@type {ModelProperty}*/ User_id = { type: 'number', hidden: true };
     //datos perfil
-    /**@type {ModelProperty}*/ Foto = { type: 'img' };
+    /**@type {ModelProperty}*/ Foto = { type: 'img' , require: false};
     /**@type {ModelProperty}*/ Nombre = { type: 'text' };
 
     /**@type {ModelProperty}*/ Correo_Anterior = { type: 'text' };
     /**@type {ModelProperty}*/ Telefono_Anterior = { type: 'text' };
     /**@type {ModelProperty}*/ Celular_Anterior = { type: 'text' };
 
-    /**@type {ModelProperty}*/ Id = { type: 'text', primary: true, hiddenFilter: true };    
+    /**@type {ModelProperty}*/ Id = { type: 'text', primary: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Estado = { type: 'Select', Dataset: ["PENDIENTE", "APROBADO", "RECHAZADO"] }
     /**@type {ModelProperty}*/ Correo = { type: 'text' };
     /**@type {ModelProperty}*/ Telefono = { type: 'text' };
     /**@type {ModelProperty}*/ Celular = { type: 'text' };
-    /**@type {ModelProperty}*/ Direccion = { type: 'text' };    
-    /**@type {ModelProperty}*/ Observacion = { type: 'textarea' }; 
+    /**@type {ModelProperty}*/ Direccion = { type: 'text' };
+    /**@type {ModelProperty}*/ Observacion = { type: 'textarea' };
 }
 
 export { ProfileRequest_ModelComponent }
@@ -37,9 +37,11 @@ class ProfileRequest extends EntityClass {
         super(props, 'ProfileManager');
         for (const prop in props) {
             this[prop] = props[prop];
-        }
+        };
+        this.Email = undefined;
     }
     /** @type {Number}*/ User_id
+    /** @type {Number}*/ ParienteId
     /** @type {String}*/ Id
     /** @type {String}*/ Correo
     /** @type {String}*/ Telefono

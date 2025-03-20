@@ -232,6 +232,10 @@ class ClasesDetails extends HTMLElement {
 
 	PrintStyle = css`@import url(/css/variables.css);
 		*{ font-family:  Montserrat, sans-serif; color: #000 !important; }
+		label {	
+			margin: 0px;
+			padding: 0px;
+		}
 		.page {   
 			margin: 40px;
 			display: flex;
@@ -258,11 +262,16 @@ class ClasesDetails extends HTMLElement {
 		}        
 		.header {
 			width: 100%;           
-			font-size: 12px;
+			font-size: 11px;
+			padding: 6px 5px !important;
 		}
 		.value {            
-			font-size: 12px;
+			font-size: 10px;
+			padding: 6px 5px !important;
 		}   
+		.estudiante-detail-container label{
+            font-size: 9px;
+        }
 		
 		.detail-content { 
 			display: flex;

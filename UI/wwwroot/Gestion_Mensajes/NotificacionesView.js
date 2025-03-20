@@ -208,6 +208,15 @@ class NotificacionesElements extends HTMLElement {
 
     }
     StyleNotifications = css`
+        .NotificationContainer p{
+            height: 45px!important;
+        }
+        .NotificationContainer .titulo{
+            margin-bottom: 0;
+        }
+        .NotificationContainer .fecha{
+            padding: 0;
+        }
         .NotificationContainer{
             padding: 20px;
             border-radius: 0.3cm;

@@ -96,7 +96,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public string? CardholderName { get; set; }
 		public string? CardNumber { get; set; }
 		public string? Cvv { get; set; }
-		public int? ExpMonth { get; set; }
+		public String? ExpMonth { get; set; }
 		public int? ExpYear { get; set; }
 		public PagosRequest? pagosRequest { get; set; }
 	}

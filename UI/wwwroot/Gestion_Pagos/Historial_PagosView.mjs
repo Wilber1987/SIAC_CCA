@@ -13,6 +13,7 @@ import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 
 const route = location.origin
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
@@ -54,7 +55,8 @@ class Historial_PagosView extends HTMLElement {
 			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
 				const body = this.Informes[this.selectedID].cloneNode(true);
 				body.appendChild(this.CustomStyle.cloneNode(true));
-				tool.ExportPdf(body, PageType.A4_HORIZONTAL)
+				//document.body.append(new WModalForm({ ObjectModal: body }))//para previsualizar
+				tool.ExportPdf(body, PageType.A4_HORIZONTAL,false,"Historial de pagos")
 			}
 		})
 		this.append(
@@ -208,7 +210,7 @@ class Historial_PagosView extends HTMLElement {
 				this.Informes[this.selectedID] = this.ViewEstudianteInforme(facturas, pagosEstudiante);
 			}
 			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteCodigo])
-			this.querySelectorAll("estudiante-card-container")?.forEach(n => {
+			this.querySelectorAll(".estudiante-card-container")?.forEach(n => {
 				n.classList.remove("card-active");
 			});			
 			this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");

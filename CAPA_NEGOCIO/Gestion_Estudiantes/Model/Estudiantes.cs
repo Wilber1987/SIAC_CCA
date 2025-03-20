@@ -117,6 +117,7 @@ namespace DataBaseModel
 		public int? Order { get; set; }
 		public string? EvaluacionCompleta { get; set; }
 		public string? Observaciones { get; internal set; }
+		public string? ObservacionesPuntaje { get; internal set; }
 		public double? Porcentaje { get; set; }
 	}
 

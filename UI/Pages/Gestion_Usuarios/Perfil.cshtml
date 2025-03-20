@@ -100,7 +100,7 @@
                             <a href="#" class="btn btn-primary waves-effect waves-light" id="editBtn"> Actualizar de perfil
                                 <i class="bx bx-cog ms-1 align-middle"></i></a>
                         </div>
-                        <script src="/Gestion_Perfil/EditPerfil.js"  type="module"></script>
+                        <script src="/Gestion_Perfil/EditPerfil.js" type="module"></script>
                     }
                 </div>
             </div>
@@ -110,18 +110,16 @@
     <div class="col-xxl-7">
         <div class="row">
             @foreach (Parientes? pariente in perfil.FamiliaTutores ?? [])
-            {                
+            {
                 var avatarPariente = pariente?.Foto != null
-                    ? pariente.Foto : (pariente!.Sexo?.ToUpper() == "M"
-                    ? pageConfig.MEDIA_IMG_PATH + "avatar.png" : pageConfig.MEDIA_IMG_PATH + "avatar_fem.png");
-            
-                <div class="col-xl-6 col-sm-6">
+                ? pariente.Foto : (pariente!.Sexo?.ToUpper() == "M"
+                ? pageConfig.MEDIA_IMG_PATH + "avatar.png" : pageConfig.MEDIA_IMG_PATH + "avatar_fem.png");
+                <div class="col-xl-6 col-sm-6">                   
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <img src='@avatarPariente' alt=""
-                                        class="avatar-md rounded-circle img-thumbnail">
+                                    <img src='@avatarPariente' alt="" class="avatar-md rounded-circle img-thumbnail">
                                 </div>
                                 <div class="flex-1 ms-3">
                                     <h5 class="font-size-16 mb-1"><a href="#" class="text-body">@pariente.Primer_nombre
@@ -147,11 +145,8 @@
                             </div>
 
                             <div class="d-flex gap-2 pt-4">
-                                @if (!SecurityController.HavePermission(identify, Permissions.PERFIL_MANAGER))
-                                {
-                                    <button type="button" class="btn btn-primary btn-sm w-50"><i
-                                            class="bx bx-message-square-dots me-1"></i> Editar</button>
-                                }
+                                <button type="button" class="btn btn-primary btn-sm w-50 btn-pariente" name="@System.Text.Json.JsonSerializer.Serialize(pariente)"><i
+                                        class="bx bx-message-square-dots me-1"></i>Editar</button>
                             </div>
                         </div>
                     </div>

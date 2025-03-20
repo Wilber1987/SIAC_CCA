@@ -108,13 +108,15 @@
 					<div class="d-flex gap-1">
 						<div class="col-6">
 							<label for="ExpMonth">Mes de expiración</label>
-							<input class="" id="ExpMonth" name="ExpMonth" required type="number" min="1" max="12"
-								placeholder="MM" title="Mes de expiración (01-12)">
+							<input class="" id="ExpMonth" name="ExpMonth" required type="text" min="1" max="12"  pattern="^\d{2}$"
+								placeholder="MM" title="Mes de expiración (01-12)" maxlength="2" oninput="this.value = this.value.replace(/\D/g, '').slice(0,2)">
 						</div>
 						<div class="col-6">
 							<label for="ExpYear">Año de expiración</label>
-							<input class="" id="ExpYear" name="ExpYear" required type="number" min="25"
-								placeholder="YY" title="Año de expiración (últimos 2 dígitos)">
+							<input class="" id="ExpYear" name="ExpYear" required type="text" pattern="^\d{2}$"
+								maxlength="2" placeholder="YY"
+								title="Ingrese los últimos 2 dígitos del año (Ej: 25 para 2025)"
+								oninput="this.value = this.value.replace(/\D/g, '').slice(0,2)">
 						</div>
 					</div>
 					<div class="">
@@ -131,6 +133,14 @@
 			</div>
 		</form>
 	</div>
+	<script>
+		document.getElementById('ExpMonth').addEventListener('input', function (e) {
+			let value = e.target.value;
+			if (value.length === 1) {
+				e.target.value = '0' + value; // Agrega un 0 si es un solo dígito
+			}
+		});
+	</script>
 	<div class="TabContainer detail-pago-container">
 		<h3>DETALLES DEL PAGO</h3>
 		@foreach (var detalle in pagosRequest?.Detalle_Pago ?? [])
