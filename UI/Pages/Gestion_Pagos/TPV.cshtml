@@ -96,7 +96,21 @@
 						<!-- Añade un patrón para aceptar solo números y entre 13-19 dígitos -->
 						<input class="cursor-pointer" id="CardholderName" required name="CardholderName"
 							placeholder="John Doe" type="text"
-							title="Ingrese el nombre DEL titular de la tarjeta">
+							title="Ingrese el nombre del titular de la tarjeta">
+					</div>
+					<div class="">
+						<label for="CardholderMail">Correo electrónico</label>
+						<!-- Añade un patrón para aceptar solo números y entre 13-19 dígitos -->
+						<input class="cursor-pointer" id="CardholderMail" required name="CardholderMail"
+							placeholder="ejemplo: correo@host.net" type="email"
+							title="Ingrese el correo electrónico del titular de la tarjeta">
+					</div>
+					<div class="">
+						<label for="CardholderPhone">Número de teléfono</label>
+						<!-- Añade un patrón para aceptar solo números y entre 13-19 dígitos -->
+						<input class="cursor-pointer" id="CardholderPhone" required name="CardholderPhone"
+							placeholder="ejemplo: 88078386" type="tel"
+							title="Ingrese el número de teléfono del titular de la tarjeta">
 					</div>
 					<div class="">
 						<label for="cardNumberCredit">Número de tarjeta (sin espacios)</label>
@@ -108,7 +122,7 @@
 					<div class="d-flex gap-1">
 						<div class="col-6">
 							<label for="ExpMonth">Mes de expiración</label>
-							<input class="" id="ExpMonth" name="ExpMonth" required type="text" min="1" max="12"  pattern="^\d{2}$"
+							<input class="" id="ExpMonth" name="ExpMonth" required type="text" max="12"  pattern="^\d{2}$"
 								placeholder="MM" title="Mes de expiración (01-12)" maxlength="2" oninput="this.value = this.value.replace(/\D/g, '').slice(0,2)">
 						</div>
 						<div class="col-6">
