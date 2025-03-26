@@ -69,8 +69,7 @@ class Calificacion_Group_ModelComponent {
     /** @type {ModelProperty}*/
     Resultado = { type: 'number', label: "Resultado obtenido" };    
     /** @type {ModelProperty}*/
-    Observaciones = { type: 'textarea' };
-    ObservacionesPuntaje = { type: 'textarea' };
+    Observaciones = { type: 'textarea' };   
    
 }
 export { Calificacion_Group_ModelComponent };

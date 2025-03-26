@@ -78,7 +78,7 @@ class EstudiantesDetails extends HTMLElement {
 
     CustomStyle = css`
         .card-active {
-            background-color: #f1f1f1;
+            background-color: #d6d6d6;
         }
         .Historial{
             display: flex;
@@ -93,7 +93,7 @@ class EstudiantesDetails extends HTMLElement {
         }
         .estudiante-card-container {
             display: flex;
-            border: 1px solid #d6d6d6;;
+            border: 1px solid #c7c7c7;;
             border-radius: 10px;
             cursor: pointer;
             padding: 10px;

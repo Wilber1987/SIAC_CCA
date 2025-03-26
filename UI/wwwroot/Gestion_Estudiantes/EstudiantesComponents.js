@@ -62,7 +62,7 @@ const DatosGenerales = (estudiante) => {
                 margin-bottom: 10px;
                 & .estudiante-detail-container{
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
+                    grid-template-columns: 2fr 1fr;
                     grid-gap: 10px; 
                     border-radius: 5px;
                     border: 1px solid #c9c9c9;

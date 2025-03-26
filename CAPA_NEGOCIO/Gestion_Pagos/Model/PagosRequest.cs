@@ -94,6 +94,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 	public class TPV
 	{
 		public string? CardholderName { get; set; }
+		public string? CardholderMail { get; set; }
+		public string? CardholderPhone { get; set; }
 		public string? CardNumber { get; set; }
 		public string? Cvv { get; set; }
 		public String? ExpMonth { get; set; }

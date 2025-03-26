@@ -160,7 +160,7 @@ class Historial_PagosView extends HTMLElement {
 							<label>${pago.Estudiante?.Codigo} </label>
 						</div>
 						<div>
-							<label class="estudiante-prop">NOMBRE:</label>
+							<label class="estudiante-prop">ESTUDIANTE:</label>
 							<label>${pago.Estudiante?.Nombre_completo}</label>
 						</div>	
 					
@@ -295,7 +295,7 @@ class Historial_PagosView extends HTMLElement {
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
 					<td class="pago-title" style="grid-column: span 5"></td>
-					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(total ?? 0)}</td>
+					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
 				</tr>				
 			</table>`);
 

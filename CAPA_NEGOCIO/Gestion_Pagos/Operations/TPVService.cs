@@ -112,7 +112,11 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						""ChallengeIndicator"": ""01""
 					},
 					""MerchantResponseUrl"":  ""https://portal.cca.edu.ni/api/ApiPagos/MerchantResponseURL""
-				}
+				},
+				 ""BillingAddress"": { 					
+					""EmailAddress"": """ + datosDePago.CardholderMail+ @""", 
+					""PhoneNumber"": """ + datosDePago.CardholderPhone + @""", 
+				},
 			}";
 		}
 		private string BuildJsonSalesRequest(TPV datosDePago)
@@ -132,8 +136,24 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					""CardCvv"": """ + datosDePago.Cvv?.ToString() + @""", 
 					""CardExpiration"": """ + datosDePago.Cvv?.ToString() + @""", 
 					""CardholderName"": """ + datosDePago.CardholderName + @"""
-				}
+				},
+				 ""BillingAddress"": { 					
+					""EmailAddress"": """ + datosDePago.CardholderMail+ @""", 
+					""PhoneNumber"": """ + datosDePago.CardholderPhone + @""", 
+				}, 
+				
 			}";
+			/*""BillingAddress"": { 
+					""FirstName"": ""John"", 
+					""LastName"": ""Smith"", 
+					""Line1"": ""1200 Whitewall Blvd."", 
+					""Line2"": "Unit 15", 
+					""City"": "Boston", 
+					""State"": "NY", 
+					""PostalCode"": "200341", 
+					""CountryCode"": "840", 
+					"EmailAddress": "john.smith@gmail.com", 
+					"PhoneNumber": "211-345-6790" */
 		}
 		private async Task<PowerTranzTpvResponse> Execute(string url, string jsonContent)
 		{

@@ -203,7 +203,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 			return new InfoPagos
 			{
-				Mes = Amount > 0.0 ? DateUtil.GetDateName(pagos.First()?.Fecha_contabilizacion) : null,
+				Mes = Amount > 0.0 ? DateUtil.GetDateName(pagos.First()?.Fecha_contabilizacion, false) : null,
 				Fecha = pagos?.First()?.Fecha_contabilizacion,
 				IsInsolvente = pagos?.First()?.Fecha_contabilizacion < DateTime.Now && pagos?.First()?.Fecha_contabilizacion?.Month == DateTime.Now.Month,
 				Amount = Amount,
