@@ -56,7 +56,7 @@ export class CalificacionesUtil {
                 const numeroRomano = toRoman(counters[letra]) ?? "";
                 if (letra.toUpperCase() != "F") {
                     calificacion.Evaluacion = `${numeroRomano}${letra}`;
-                    calificacion.EvaluacionCompleta = `${numeroRomano} ${calificacion.EvaluacionCompleta ?? "Evaluación"}`;
+                    calificacion.EvaluacionCompleta = `${calificacion.EvaluacionCompleta ?? ""}`;
                     //calificacion.Periodo = 
                 }
                 if (!evaluaciones.find(ev => ev.ev == `${letra}${counters[letra]}`) && calificacion.Tipo != "Relleno") {

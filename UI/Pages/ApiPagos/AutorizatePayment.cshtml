@@ -20,7 +20,8 @@
 }
 <div>
 	 @* <button onclick="printIframe()" class="btn-success">Print</button> *@
-	<iframe id="paymentFrame" style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse.RedirectData" frameborder="0"></iframe>
+	<a style="float: left; margin: 10px" href="https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos" class="btn-success">Historial</a>
+	<iframe id="paymentFrame" style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse?.RedirectData" frameborder="0"></iframe>
    
 
 	<script type="text/javascript">

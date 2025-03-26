@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.Utility;
@@ -42,10 +43,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			var totalDolares = request.Moneda == MoneyEnum.DOLARES.ToString() ? request.Monto : request.Monto / (request.TasaCambio ?? 1);
 
 
-			html = html.Replace("{{ Monto_C }}", totalC?.ToString("F2") ?? "0.00");
-			html = html.Replace("{{ Monto }}", totalDolares?.ToString("F2") ?? "0.00");
+			html = html.Replace("{{ Monto_C }}", NumberUtility.ConvertToMoneyString(totalC) ?? "0.00");
+			html = html.Replace("{{ Monto }}", NumberUtility.ConvertToMoneyString(totalDolares) ?? "0.00");
 			//html = html.Replace("{{ Moneda }}", request.Moneda == MoneyEnum.DOLARES.ToString() ? "DÓLARES" : "CORDOBAS");
-			html = html.Replace("{{ Monto_TC }}", request.TasaCambio?.ToString("F2") ?? "0.00");
+			html = html.Replace("{{ Monto_TC }}", NumberUtility.ConvertToMoneyString(request.TasaCambio) ?? "0.00");
 
 			// Construcción de los detalles del pago
 			string detallePagoHtml = "";
@@ -56,8 +57,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					var totalDetalle = detalle.Total;
 					detallePagoHtml += $@"<tr>
 						<td>{detalle.Concepto} - Est. {detalle?.Pago?.Estudiante?.Codigo}</td>
-						<td style=""text-align: right;""> {(request.Moneda == MoneyEnum.DOLARES.ToString() ? "$" : "C$")} 
-						 {totalDetalle?.ToString("F2")}</td>
+						<td style=""text-align: right; min-width: 180px""> {(request.Moneda == MoneyEnum.DOLARES.ToString() ? "$" : "C$")} 
+						 {NumberUtility.ConvertToMoneyString(totalDetalle)}</td>
 					</tr>";
 				}
 			}
@@ -66,12 +67,11 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			if (!isPrint)
 			{
 				html += @"<div style=""text-align: center; margin-top: 20px;"">
-					<a href=""{{ printURL }}"" class=""btn-success"">Imprimir</a>
-					<a href=""{{ historialURL }}"" class=""btn-success"">Historial</a>
+					<a href=""{{ printURL }}"" class=""btn-success"">Imprimir</a>										
 				</div>";
 			}
 			html = html.Replace("{{ printURL }}", "https://portal.cca.edu.ni/api/ApiPagos/GetFactura/" + request.Id_Pago_Request.ToString() ?? "");
-			html = html.Replace("{{ historialURL }}", "https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos");
+			//html = html.Replace("{{ historialURL }}", "https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos");
 			return html;
 		}
 	}

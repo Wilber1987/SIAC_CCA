@@ -173,7 +173,9 @@ class ClaseGroup extends HTMLElement {
 			}
 		});
 
-		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations"></div>`;
+		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations">
+			${documentsData.Header}
+		</div>`;
 		response.Asignaturas.forEach(asignatura => {
 
 
@@ -230,8 +232,7 @@ class ClaseGroup extends HTMLElement {
 					}
 				})
 			);
-			document.body.append(new WModalForm({
-				title: `${localStorage.getItem('TITULO') ?? ''}, ${localStorage.getItem('SUB_TITULO') ?? ''}`,
+			document.body.append(new WModalForm({				
 				ObjectModal: MateriaDetailEvaluations
 			}));
 
@@ -420,22 +421,22 @@ class ClaseGroup extends HTMLElement {
 	* @param {any} index
 	* @returns {any}
 	*/
-	BuildDetailCalificacion(calificacion, index) {
-		//original 
-		/*return html`<div class="calificacion-row">
-			<div>${index + 1}</div>
-			<div>${calificacion.Evaluacion}</div>
-			<div>${calificacion.EvaluacionCompleta.includes("BIMESTRE")
-				|| calificacion.EvaluacionCompleta.includes("SEMESTRE") ? "Total" : calificacion.Tipo}</div>
-			<div>${calificacion.Observaciones}</div>
-			<div style="text-align: right;">${calificacion.Resultado} pts.</div>
-		</div>`*/
+	BuildDetailCalificacion(calificacion, index) {		
+		console.log(calificacion)
+		const tipo = calificacion.Tipo ? 
+			calificacion.Tipo.charAt(0).toUpperCase() + calificacion.Tipo.slice(1) : '';	
 		return html`<div class="calificacion-row">
-			<div>${index + 1}</div>			
-			<div>${calificacion.EvaluacionCompleta}</div>
-			<div style="text-align: right; width:55px">${calificacion.Resultado} pts.</div>
+			<div>${calificacion.Porcentaje ? `
+				${index + 1}` : ''}</div>			
+			<div style="${!calificacion.Porcentaje ? 'text-align: right; font-weight: bold;' : ''}">
+                ${calificacion.Porcentaje ? 
+                    `${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje} Pts.)` 
+                    : 'Total'}
+            </div>
+			<div style="text-align: right; width:65px">${calificacion.Resultado} pts.</div>
 		</div>`
 	}
+
 
 	buildDetail(detail, indexDetail, maxDetails, index) {
 		let columStyle = detail.Order == 1
