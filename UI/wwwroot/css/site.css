@@ -30,6 +30,11 @@
 
 #page-topbar > .navbar-header {
     color:var(--font-primary-color) !important;
+    height: 60px !important;
+}
+
+.page-content {
+    padding: 110px calc(24px / 2) 60px calc(24px / 2);
 }
 
 .vertical-menu-btn:hover{
