@@ -54,8 +54,8 @@ namespace DataBaseModel
 
 
 		public string? Descripcion
-		{
-			get { return $"{NumberUtility.ObtenerEnumeracion(this.Grado ?? 0)}"; }
+		{			
+			get { return $"{NumberUtility.ObtenerEnumeracion((this.Nombre_nivel?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0 ).ToUpper()}"; }
 		}
 		public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
 		public string? EvaluacionCompleta { get { return $"{Nombre_nota} {Tipo}"; } }

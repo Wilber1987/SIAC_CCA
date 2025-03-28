@@ -100,12 +100,12 @@ namespace DataBaseModel
                         Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
                         Resultado = Calificacion.Resultado,
                         Evaluacion = Calificacion.Evaluacion ?? "",
-                        EvaluacionCompleta = Calificacion.EvaluacionCompleta ?? "",
+                        EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha,
                         Porcentaje = Calificacion.Porcentaje,
                         Observaciones =  Calificacion.Observaciones ?? "Sin observaciones",
-                        ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
+                        //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
                      };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
