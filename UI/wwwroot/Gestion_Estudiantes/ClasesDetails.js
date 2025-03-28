@@ -256,7 +256,11 @@ class ClasesDetails extends HTMLElement {
 			}
 			& .element-details {
 				& .element-detail {
-					font-size: 12px;
+					font-size: 10px;
+					text-align: center;
+					justify-content: center;
+					margin: 0px;
+					padding: 0px;
 				}
 			}   
 		}        

@@ -90,11 +90,7 @@ class ClaseGroup extends HTMLElement {
 				 ${!isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => {
-					if (element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
-
-					return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`
-				})}
+						${this.GetEvaluations(evaluaciones)}
 					</div>
 					<div style="width: 80px"></div> 
 				 </div>` : ""}                 
@@ -106,6 +102,13 @@ class ClaseGroup extends HTMLElement {
 		}
 
 	}
+	GetEvaluations(evaluaciones) {
+		return evaluaciones.map(element => {
+			if (element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
+			return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`;
+		});
+	}
+
 	BuildConsolidado(Dataset) {
 		const consolidado = WArrayF.GroupBy(Dataset.flatMap(c => c.Calificaciones), "EvaluacionCompleta", "Resultado")
 		const consolidadoContainer = html`<div class="consolidado-container"></div>`;
@@ -203,7 +206,9 @@ class ClaseGroup extends HTMLElement {
 				maxElementByPage: 100,
 				paginate: false,
 				isActiveSorts: false,
-				CustomStyle: css`.WTable td:not(.td_Resultado, .td_Porcentaje) label {
+				CustomStyle: css`.WTable td:not(.td_Resultado,
+ 					.td_Porcentaje, .td_Observaciones, 
+					.td_EvaluacionCompleta) label {
 					text-transform: uppercase;
 				}.WTable td.td_Porcentaje{width: 62px;}
 				.WTable tbody tr{
