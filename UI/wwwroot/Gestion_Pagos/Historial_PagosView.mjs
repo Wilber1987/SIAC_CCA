@@ -132,7 +132,7 @@ class Historial_PagosView extends HTMLElement {
 
 		if (!pagosEstudiante[this.selectedID ?? -1]) {
 			return html`<div class="pago-container">
-				<h3>No existen historial para este estudiante - ${this.selectedID}</h3>				 
+				<h3>No existe historial para este estudiante - ${this.selectedID}</h3>				 
 			</div>`;
 		}
 
@@ -343,7 +343,7 @@ class Historial_PagosView extends HTMLElement {
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
-				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Pago.Fecha).toISO() },
+				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).toISO() },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
 				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${findFactura?.Id_Pago_Request}" target="_blank">${this.formatNumber(findFactura?.Id_Pago_Request)}</a>`] },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Concepto },
