@@ -9,7 +9,6 @@
     border-radius: 0.3cm;
     min-height: 500px;
     /*   box-shadow: 0 0 5px 0 #b3b3b3; */
-    margin: 20px 0px;
     padding: 20px;
     display: block;
     
@@ -86,17 +85,14 @@
 }
 
 .pagos-alert {
-    position: absolute;
-    right: 53%;
     display: flex;
     align-items: center;
     max-width: 100%;
     margin-top: 10px;
     gap: 5px;
-    width: 860px;
-    transform: translateX(50%);
+    max-width: 860px;
     font-weight: bold;
-    top: 10px;
+    margin: 5px auto;
 }
 
 @media (max-width: 600px) {
