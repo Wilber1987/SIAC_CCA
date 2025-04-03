@@ -8,3 +8,6 @@ VALUES(
         N'J0810000169317',
         N'THEME'
     );
+
+
+    ALTER TABLE Facturacion.Detalle_Pago ADD Fecha DateTime ;

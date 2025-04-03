@@ -155,14 +155,13 @@ class ClaseGroup extends HTMLElement {
 	async ShowDetails(instance) {
 		/**@type {DocumentsData} */
 		const documentsData = await new DocumentsData().GetBoletinDataFragments();
-		BuildHeaderData(documentsData.Header, this.Config.Estudiante)
-
+		BuildHeaderData(documentsData.Header, this.Config.Estudiante)		
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
 			Nombre_asignatura: instance.Descripcion
 		}).GetClaseEstudianteCompleta();
-
+		
 		//const instanced = new modelClass.constructor(response[0]);        
 		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
 		let lastIndex = 0;
@@ -188,17 +187,24 @@ class ClaseGroup extends HTMLElement {
 				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			const datasetMap = asignatura.Calificaciones.map(c => {
+				
 				const newObject = {};
 				for (const key in c) {
 					newObject[key] = c[key]
 				}
 				newObject.Resultado = newObject.Resultado + " pts."
 				if (newObject.Porcentaje != null) {
-					newObject.Porcentaje = newObject.Porcentaje + " pts."
+					newObject.Porcentaje = newObject.Porcentaje + " pts."					
 				}
-
+				if (newObject.Evaluacion.includes("B") || newObject.Evaluacion.includes("S") || newObject.Evaluacion.includes("F")) {
+					newObject.Porcentaje = "100 pts.";					
+					newObject.Observaciones = "-";
+					newObject.EvaluacionCompleta = "";					
+					newObject.Fecha = undefined;
+				}				
 				return newObject;
 			})
+			console.log(datasetMap);
 			//console.log(datasetMap);
 			const table = new WTableComponent({
 				Dataset: datasetMap,
@@ -208,7 +214,7 @@ class ClaseGroup extends HTMLElement {
 				isActiveSorts: false,
 				CustomStyle: css`.WTable td:not(.td_Resultado,
  					.td_Porcentaje, .td_Observaciones, 
-					.td_EvaluacionCompleta) label {
+					.td_EvaluacionCompleta, .td_Tipo) label {
 					text-transform: uppercase;
 				}.WTable td.td_Porcentaje{width: 62px;}
 				.WTable tbody tr{
@@ -273,8 +279,7 @@ class ClaseGroup extends HTMLElement {
 	 */
 	async ShowEvaluationDetails(evalElement) {
 		/**@type {DocumentsData} */
-		const documentsData = await new DocumentsData().GetBoletinDataFragments();
-
+		const documentsData = await new DocumentsData().GetBoletinDataFragments();		
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id

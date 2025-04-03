@@ -105,6 +105,9 @@ class Calificacion_Group {
 
     /** @type {String}*/
     EvaluacionCompleta;
+    
+    /** @type {String}*/
+    Parciales;
 
     /** @type {String}*/
     Tipo;
@@ -134,6 +137,7 @@ class Asignatura_Group {
 
     /** @type {String}*/
     Docente;
+    
 
     /** @type {Calificacion_Group[]}*/
     Calificaciones;

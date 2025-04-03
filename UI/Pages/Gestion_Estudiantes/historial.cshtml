@@ -3,6 +3,7 @@
 @using CAPA_DATOS.Security; 
 @using CAPA_DATOS;
 @using DataBaseModel;
+@using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @{
     string? identify = HttpContext?.Session.GetString("seassonKey");
      if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
@@ -10,9 +11,11 @@
         Response.Redirect("/Security/Login");
         return;
     }
+    var pagos = PagosOperation.GetSaldoPendiente(identify);
 
 }
 <script src="~/js/html2pdf.js"></script>
+@if(pagos.IsInsolvente){
 <script type="module" >
     import {HistorialView} from "/Gestion_Estudiantes/HistorialView.mjs";
     window.onload = ()=> {
@@ -20,3 +23,7 @@
     }
 </script>
 <div id="Main" class="app-container"></div>
+}else{
+    <div id="Main" class="app-container"><h3>Usted estudiantes insolvente</h3></div>
+}
+

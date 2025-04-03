@@ -40,6 +40,7 @@ export class CalificacionesUtil {
             const counters = {};
             // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
             const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
+                calificacion.Parciales = calificacion.evaluacion;
                 const letra = (calificacion.Evaluacion == null
                     || calificacion.Evaluacion == ""
                     || calificacion.Evaluacion == undefined)
@@ -62,11 +63,13 @@ export class CalificacionesUtil {
                 if (!evaluaciones.find(ev => ev.ev == `${letra}${counters[letra]}`) && calificacion.Tipo != "Relleno") {
                     evaluaciones.push({
                         Evaluacion: letra,
+                        Parciales: calificacion.Evaluacion,
                         Cantidad: counters[letra],
                         ev: `${letra}${counters[letra]}`,
                         EvaluacionCompleta: calificacion.EvaluacionCompleta
                     });
                 }
+                
                 return calificacion;
             });
             instance.Calificaciones = updatedCalificaciones;

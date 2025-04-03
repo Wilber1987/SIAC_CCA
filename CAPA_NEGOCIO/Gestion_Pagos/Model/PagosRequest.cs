@@ -81,6 +81,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public double? Impuesto { get; set; }
 		public string? Concepto { get; set; }
 		public int? Id_Pago_Request { get; set; }
+		public DateTime? Fecha { get; set; }
 		[JsonProp]
 		public Tbl_Pago? Estado_Anterior_Pago { get; set; }
 
