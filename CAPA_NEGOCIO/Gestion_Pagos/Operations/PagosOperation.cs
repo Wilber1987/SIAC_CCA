@@ -100,6 +100,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				Estudiantes = estudiantes,
 				Pagos = pago.Where<Tbl_Pago>(
 					FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Equal("Estado", PagosState.PENDIENTE),
 					FilterData.ISNull("Fecha_anulacion")
 				)
 			};
