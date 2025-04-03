@@ -50,7 +50,7 @@ class Historial_PagosReportView extends HTMLElement {
 			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
 				const body = this.Container.cloneNode(true);
 				body.appendChild(this.CustomStyle.cloneNode(true));
-				tool.ExportPdf(body, PageType.OFICIO_HORIZONTAL)
+				tool.ExportPdf(body, PageType.OFICIO_HORIZONTAL, false, "Historial de pagos")
 			}
 		});
 		this.OptionContainer.append(
@@ -267,8 +267,7 @@ class Historial_PagosReportView extends HTMLElement {
 			/* display: grid;
 			grid-template-columns: repeat(14, 1fr); */
 			gap: 5px;
-			
-			
+			width: 100%;			
 		}   
 		hr {
 			margin: 10px 0px;
@@ -374,6 +373,7 @@ class Historial_PagosReportView extends HTMLElement {
 				margin-bottom: 20px;
 			}
 			& .data-container {
+				width: 100%;
 				display: flex;
 				justify-content: flex-start;
 				/* border-bottom: 1px solid #d6d6d6; */
