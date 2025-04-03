@@ -57,10 +57,11 @@ class Historial_PagosView extends HTMLElement {
 				tool.ExportPdf(body, PageType.A4_HORIZONTAL, false, "Historial de pagos")
 			}
 		})
+		container.append(this.Filter, html`<button class="BtnPrimary" onclick="${()=> this.GetHistorialData()}">Filtrar</button>`)
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
-			StylesControlsV3.cloneNode(true), this.OptionContainer, this.Filter,
+			StylesControlsV3.cloneNode(true), this.OptionContainer, container,
 			this.TabContainer, ToolBar
 		);
 		this.Informes = {};
@@ -76,7 +77,7 @@ class Historial_PagosView extends HTMLElement {
 		// @ts-ignore
 		const filterData = await new Tbl_Pagos_ModelComponent().Get();
 		const facturas = await new PagosRequest().Where(
-			this.Filters
+			...this.Filters
 		);
 		this.DrawInformePagos(filterData, facturas);
 	}
@@ -274,13 +275,13 @@ class Historial_PagosView extends HTMLElement {
 		const div = html`<div class="pago-mes-container"></div>`;
 
 		// @ts-ignore
-		const facturaGroup = Object.groupBy(facturasEstudiante ?? [], p => p.Pago.Mes);
-
+		const facturaGroup = Object.groupBy(facturasEstudiante ?? [], p => p.Mes);
 		let totalCargos = 0;
 
 		for (const pagosMes in facturaGroup) {
-			div.append(html`<h3>${WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
-				pagosMes - 1])}</h3>`);
+			const mes = WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
+				pagosMes - 1])
+			div.append(html`<h3>${mes}</h3>`);
 			div.append(html`<hr/>`);
 
 
@@ -315,7 +316,7 @@ class Historial_PagosView extends HTMLElement {
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
 					<td class="pago-title" style="grid-column: span 5"></td>
-					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
+					<td class="pago-title value">TOTAL ABONOS DE ${mes} : C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
 				</tr>				
 			</table>`);
 
@@ -344,7 +345,7 @@ class Historial_PagosView extends HTMLElement {
 				//{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Money },
-				{ tagName: "td", class: "pago-value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
+				{ tagName: "td", class: "pago-value value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
 				{
 					tagName: "td", class: `pago-value ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}`,
 					innerText: (pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE")
@@ -419,8 +420,8 @@ class Historial_PagosView extends HTMLElement {
 				background-color: #f1f1f1;
 				text-transform: uppercase;
 			}
-			.pago-value {
-				
+			.pago-value.amount {
+				text-align: right;
 			}
 		}   
 		td {
@@ -509,6 +510,17 @@ class Historial_PagosView extends HTMLElement {
 		.data-container label {
 			padding: 10px;
 			margin-bottom: 0;
+		}
+
+		.component {
+			display: grid;
+			grid-template-columns:  calc(100% - 120px) 100px;
+			gap: 20px;
+			& .BtnPrimary {
+				height: 50px;
+				align-self: center;
+			}
+
 		}
 		
 		@media (max-width: 768px) {

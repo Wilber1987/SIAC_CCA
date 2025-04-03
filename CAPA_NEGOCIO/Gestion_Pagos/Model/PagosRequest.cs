@@ -27,6 +27,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		{
 			get { return Fecha.GetValueOrDefault().Year.ToString(); }
 		}
+		
+		public int? Mes { get { return Fecha.GetValueOrDefault().Month; } }
 
 		public string Month
 		{
@@ -82,6 +84,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public string? Concepto { get; set; }
 		public int? Id_Pago_Request { get; set; }
 		public DateTime? Fecha { get; set; }
+		public int? Mes { get { return Fecha.GetValueOrDefault().Month; } }
 		[JsonProp]
 		public Tbl_Pago? Estado_Anterior_Pago { get; set; }
 
