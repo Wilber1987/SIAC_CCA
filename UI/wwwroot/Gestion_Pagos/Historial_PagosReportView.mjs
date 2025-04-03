@@ -7,7 +7,7 @@ import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { PageType } from "../WDevCore/WComponents/WReportComponent.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
-import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 const route = location.origin
@@ -186,12 +186,12 @@ class Historial_PagosReportView extends HTMLElement {
 			</div>`);*/
 			div.append(html`<div class="data-details-container total-container">
 				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
-				<div class="pago-title value">C$ ${subTotalAbonosC.toFixed(2)  ?? "0.00"}</div>
+				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosC)  ?? "0.00"}</div>
 			</div>`);
-			div.append(html`<div class="data-details-container total-container">
-				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
-				<div class="pago-title value">$ ${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
-			</div>`);
+			// div.append(html`<div class="data-details-container total-container">
+			// 	<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
+			// 	<div class="pago-title value">$ ${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
+			// </div>`);
 			//-------------------->
 			//mesContainer.append(html`<h3>Resumen</h3>`);
 			totalCargos += subTotalAbonos;
@@ -200,12 +200,12 @@ class Historial_PagosReportView extends HTMLElement {
 		}
 		div.append(html`<div class="data-details-container total-container">
 			<div class="pago-title" style="margin-right: 40px">Total</div>
-			<div class="pago-title value total-cargos">C$ ${totalCargosC.toFixed(2)}</div>
+			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargosC)}</div>
 		</div>`);
-		div.append(html`<div class="data-details-container total-container">
-			<div class="pago-title" style="margin-right: 40px">Total</div>
-			<div class="pago-title value total-cargos">$ ${totalCargos.toFixed(2)}</div>
-		</div>`);
+		// div.append(html`<div class="data-details-container total-container">
+		// 	<div class="pago-title" style="margin-right: 40px">Total</div>
+		// 	<div class="pago-title value total-cargos">$ ${totalCargos.toFixed(2)}</div>
+		// </div>`);
 		return div;
 	}
 	/**
@@ -223,7 +223,7 @@ class Historial_PagosReportView extends HTMLElement {
 				{ tagName: "td", class: "data-value", innerText: pagosRequest.TpvInfo?.TransactionIdentifier ?? "-"},
 				{ tagName: "td", class: "data-value", innerText: new DateTime(pagosRequest.Fecha).toISO()},
 				{ tagName: "td", class: "data-value", innerText: pagosRequest.Moneda},
-				{ tagName: "td", class: "data-value", innerText: detallePago.Total.toFixed(2)},
+				{ tagName: "td", class: "data-value", innerText:   ConvertToMoneyString(detallePago.Total)},
 			]
 		});
 	}
