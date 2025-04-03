@@ -231,7 +231,7 @@ class Historial_PagosView extends HTMLElement {
 		const subTotalCargos = pagos.reduce((acc, pago) => acc + pago.Monto, 0);
 		div.append(html`<table class="pago-details-container mes-container">
 			<tr>
-				<td class="pago-title value">TOTAL CARGOS PENDIENTES: C$ ${ConvertToMoneyString(subTotalCargos ?? 0)}</td>
+				<td class="pago-title value">TOTAL CARGOS PENDIENTES: ${ConvertToMoneyString(subTotalCargos ?? 0)}</td>
 			</tr>
 		</table>`);
 		return div;

@@ -144,8 +144,8 @@ class Historial_PagosReportView extends HTMLElement {
 		// @ts-ignore
 		const PagosGroup = Object.groupBy(Pagos, p => p.Month);
 
-		console.log(PagosGroup);
 		let totalCargos = 0;
+		let totalCargosD = 0;
 		for (const pagosMes in PagosGroup) {
 			div.append(html`<h3>${pagosMes.toUpperCase()}</h3>`)
 			div.append(html`<hr>`);
@@ -172,17 +172,19 @@ class Historial_PagosReportView extends HTMLElement {
 						mesContainer.append(card);
 					});
 				});
-				const subTotalAbonosDay = PagosGroupDays[pagosDay]?.reduce((acc, pago) => acc + pago.Monto, 0);
+				const subTotalAbonosDay = PagosGroupDays[pagosDay]?.filter(p => p.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
+				const subTotalAbonosDayD = PagosGroupDays[pagosDay]?.filter(p => p.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 				div.append(html`<div class="data-details-container total-container">
-					<div class="pago-title" style="margin-right: 40px">Sub-total diario</div>
-					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>
+					<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-total diario</div>
+					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>					
+					<div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosDayD) ?? "0.00"}</div>
 				</div>`);
 			}
 			//-------------------->
 			//mesContainer.append(html`<h3>pagoes</h3>`);
 
-			const subTotalAbonos = PagosGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
-
+			const subTotalAbonos = PagosGroup[pagosMes]?.filter(p => p.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
+			const subTotalAbonosD = PagosGroup[pagosMes]?.filter(p => p.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 
 
 			/*div.append(html`<div class="data-details-container total-container">
@@ -190,24 +192,27 @@ class Historial_PagosReportView extends HTMLElement {
 				<div class="data-title value">${PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago).length}</div>			
 			</div>`);*/
 			div.append(html`<div class="data-details-container total-container">
-				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
+				<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
 				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
+				<div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div>
 			</div>`);
 			// div.append(html`<div class="data-details-container total-container">
-			// 	<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
+			// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
 			// 	<div class="pago-title value">$ ${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
 			// </div>`);
 			//-------------------->
 			//mesContainer.append(html`<h3>Resumen</h3>`);
 			totalCargos += subTotalAbonos;
+			totalCargosD += subTotalAbonosD;
 
 		}
 		div.append(html`<div class="data-details-container total-container">
-			<div class="pago-title" style="margin-right: 40px">Total</div>
-			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>
+			<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
+			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>			
+			<div class="pago-title value total-cargos">$ ${ConvertToMoneyString(totalCargosD)}</div>
 		</div>`);
 		// div.append(html`<div class="data-details-container total-container">
-		// 	<div class="pago-title" style="margin-right: 40px">Total</div>
+		// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
 		// 	<div class="pago-title value total-cargos">$ ${totalCargos.toFixed(2)}</div>
 		// </div>`);
 		return div;
@@ -226,7 +231,7 @@ class Historial_PagosReportView extends HTMLElement {
 				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Estudiante?.Id_familia },
 				{ tagName: "td", class: "data-value", innerText: detallePago?.Pago?.Estudiante?.Nombre_completo + " - " + detallePago?.Pago?.Estudiante?.Codigo },
 				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Concepto },
-				{ tagName: "td", class: "data-value value", innerText: "C$ " + ConvertToMoneyString(detallePago.Total) },
+				{ tagName: "td", class: "data-value value", innerText: ConvertToMoneyString(detallePago.Total, detallePago.Pago.Money) },
 			]
 		});
 	}
