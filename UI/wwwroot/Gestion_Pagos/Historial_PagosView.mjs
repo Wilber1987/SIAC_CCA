@@ -37,16 +37,14 @@ class Historial_PagosView extends HTMLElement {
 			AutoSetDate: true,
 			AutoFilter: true,
 			ModelObject: new Tbl_Pagos_ModelComponent(),
-			UseEntityMethods: true,
+			UseEntityMethods: false,
 			Display: true,
 			Dataset: [],
-			FilterFunction: async (filterData) => {
+			FilterFunction: async (Filters) => {
+				this.Filters = Filters;
 				//container.innerHTML = "";
 				//console.log(this.Filter.ModelObject);
-				const facturas = await new PagosRequest().Where(
-					this.Filter.ModelObject.FilterData[0]
-				)
-				this.DrawInformePagos(filterData, facturas);
+				//await this.GetHistorialData();
 				//container.appendChild(this.DrawInformePagos(filterData, facturas));
 			}
 		});
@@ -56,13 +54,14 @@ class Historial_PagosView extends HTMLElement {
 				const body = this.Informes[this.selectedID].cloneNode(true);
 				body.appendChild(this.CustomStyle.cloneNode(true));
 				//document.body.append(new WModalForm({ ObjectModal: body }))//para previsualizar
-				tool.ExportPdf(body, PageType.A4_HORIZONTAL,false,"Historial de pagos")
+				tool.ExportPdf(body, PageType.A4_HORIZONTAL, false, "Historial de pagos")
 			}
 		})
+		container.append(this.Filter, html`<button class="BtnPrimary" onclick="${()=> this.GetHistorialData()}">Filtrar</button>`)
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
-			StylesControlsV3.cloneNode(true), this.OptionContainer, this.Filter,
+			StylesControlsV3.cloneNode(true), this.OptionContainer, container,
 			this.TabContainer, ToolBar
 		);
 		this.Informes = {};
@@ -70,6 +69,17 @@ class Historial_PagosView extends HTMLElement {
 	}
 	Draw = async () => {
 		this.MainComponent();
+		this.GetHistorialData();
+	}
+
+	async GetHistorialData() {
+		/**@type {{ Pagos:Array<Tbl_Pago>, Estudiantes: Array<Estudiantes> }} */
+		// @ts-ignore
+		const filterData = await new Tbl_Pagos_ModelComponent().Get();
+		const facturas = await new PagosRequest().Where(
+			...this.Filters
+		);
+		this.DrawInformePagos(filterData, facturas);
 	}
 
 	async SetOption() {
@@ -128,11 +138,11 @@ class Historial_PagosView extends HTMLElement {
 	ViewEstudianteInforme(facturas, pagosEstudiante) {
 		// @ts-ignore
 		const facturasEstudiante = Object.groupBy(facturas.flatMap(p => p.Detalle_Pago), p => p.Pago.Estudiante_Id);
-		console.log(facturasEstudiante, this.selectedID);
+		//console.log(facturasEstudiante, this.selectedID);
 
 		if (!pagosEstudiante[this.selectedID ?? -1]) {
 			return html`<div class="pago-container">
-				<h3>No existen historial para este estudiante - ${this.selectedID}</h3>				 
+				<h3>No existe historial para este estudiante - ${this.selectedID}</h3>				 
 			</div>`;
 		}
 
@@ -150,7 +160,7 @@ class Historial_PagosView extends HTMLElement {
 		if (this.selectedID && pagosEstudiante[this.selectedID ?? 0]) {
 			/**@type {Tbl_Pago} */
 			const pago = pagosEstudiante[this.selectedID ?? 0][0];
-			console.log(pago.Estudiante);
+			//console.log(pago.Estudiante);
 
 			const estudianteContainer = html`<div class="estudiante-container">
 				<div class="estudiante">
@@ -184,8 +194,9 @@ class Historial_PagosView extends HTMLElement {
 
 			//estudianteContainer.append(html`<h3>Cargo</h3>`);
 			//pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
-			const pagoMes = this.BuildPagosMes(pagosEstudiante[this.selectedID ?? 0], facturasEstudiante[this.selectedID ?? 0]);
-			estudianteContainer.append(pagoMes);
+			const pagosPendientes = this.BuildPagosPendientesEstudiantes(pagosEstudiante[this.selectedID ?? 0]);
+			const pagoMes = this.BuildPagosMes(facturasEstudiante[this.selectedID ?? 0]);
+			estudianteContainer.append(pagosPendientes, pagoMes);
 			//});
 			div.append(estudianteContainer);
 		}
@@ -194,6 +205,37 @@ class Historial_PagosView extends HTMLElement {
 		//}
 		//const pagoMes = this.BuildPagosMes(pagos);
 		return div;
+	}
+	/**
+		 * Construye los pagos del mes y los agrega al contenedor
+		 * @param {Tbl_Pago[]} pagos - Lista de pagos
+		 */
+	BuildPagosPendientesEstudiantes(pagos) {
+		const div = html`<div class="pago-mes-container"></div>`;
+		const mesContainer = html`<table class="mes-container">				 
+			<tr class="pago-details-container">
+				<td class="pago-title">Fecha</td>
+				<td class="pago-title">Concepto</td>
+				<td class="pago-title">MONEDA</td>
+				<td class="pago-title">Monto</td>
+				<td class="pago-title">Estado</td>
+			</tr>
+		</table>`;
+		div.append(mesContainer);
+		div.append(html`<h5>Cargos</h5>`);
+		//-------------------->
+		pagos.forEach((/** @type {Tbl_Pago} */ pago) => {
+			const card = this.PagosCard(pago);
+			mesContainer.append(card);
+		});
+		const subTotalCargos = pagos.reduce((acc, pago) => acc + pago.Monto, 0);
+		div.append(html`<table class="pago-details-container mes-container">
+			<tr>
+				<td class="pago-title value">TOTAL CARGOS PENDIENTES: C$ ${ConvertToMoneyString(subTotalCargos ?? 0)}</td>
+			</tr>
+		</table>`);
+		return div;
+
 	}
 
 	/**
@@ -212,7 +254,7 @@ class Historial_PagosView extends HTMLElement {
 			this.Manager.NavigateFunction("informe" + this.selectedID, this.Informes[estudianteCodigo])
 			this.querySelectorAll(".estudiante-card-container")?.forEach(n => {
 				n.classList.remove("card-active");
-			});			
+			});
 			this.querySelector(`#card-estudiante${Estudiante.Id}`)?.classList.add("card-active");
 		}}">            
 			<div class="estudiante-card">
@@ -227,31 +269,21 @@ class Historial_PagosView extends HTMLElement {
 	}
 	/**
 	 * Construye los pagos del mes y los agrega al contenedor
-	 * @param {Tbl_Pago[]} pagos - Lista de pagos
 	 * @param {PagosRequest[]} facturasEstudiante - Lista de pagos
 	 */
-	BuildPagosMes(pagos, facturasEstudiante) {
+	BuildPagosMes(facturasEstudiante) {
 		const div = html`<div class="pago-mes-container"></div>`;
-		// @ts-ignore
-		const pagosGroup = Object.groupBy(pagos, p => p.Mes);
-		// @ts-ignore
-		const facturaGroup = Object.groupBy(facturasEstudiante ?? [], p => p.Pago.Mes);
 
+		// @ts-ignore
+		const facturaGroup = Object.groupBy(facturasEstudiante ?? [], p => p.Mes);
 		let totalCargos = 0;
 
-		for (const pagosMes in pagosGroup) {
-			div.append(html`<h3>${WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
-				pagosMes - 1])}</h3>`);
+		for (const pagosMes in facturaGroup) {
+			const mes = WArrayF.Capitalize(DateTime.Meses[// @ts-ignore
+				pagosMes - 1])
+			div.append(html`<h3>${mes}</h3>`);
 			div.append(html`<hr/>`);
-			const mesContainer = html`<table class="mes-container">				 
-				<tr class="pago-details-container">
-					<td class="pago-title">Fecha</td>
-					<td class="pago-title">Concepto</td>
-					<td class="pago-title">MONEDA</td>
-					<td class="pago-title">Monto</td>
-					<td class="pago-title">Estado</td>
-				</tr>
-			</table>`;
+
 
 			const abonosContainer = html`<table class="mes-container">				 
 				<tr class="pago-details-container">
@@ -263,20 +295,8 @@ class Historial_PagosView extends HTMLElement {
 					<td class="pago-title">Estado</td>
 				</tr>
 			</table>`;
-			//-------------------->
 
-			div.append(html`<h5>Cargos</h5>`);
-			div.append(mesContainer);
-			pagosGroup[pagosMes].forEach((/** @type {Tbl_Pago} */ pago) => {
-				const card = this.PagosCard(pago);
-				mesContainer.append(card);
-			});
-			const subTotalCargos = pagosGroup[pagosMes].reduce((acc, pago) => acc + pago.Monto, 0);
-			div.append(html`<table class="pago-details-container mes-container">
-				<tr>
-					<td class="pago-title value">TOTAL CARGOS: C$ ${ConvertToMoneyString(subTotalCargos ?? 0)}</td>
-				</tr>
-			</table>`)
+			
 			//-------------------->
 			div.append(html`<h5>Abonos</h5>`);
 			div.append(abonosContainer);
@@ -291,11 +311,12 @@ class Historial_PagosView extends HTMLElement {
 					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
 				</tr>				
 			</table>`);*/
-			const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
+			//const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
+			const total = subTotalAbonos ?? 0
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
 					<td class="pago-title" style="grid-column: span 5"></td>
-					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
+					<td class="pago-title value">TOTAL ABONOS DE ${mes} : C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
 				</tr>				
 			</table>`);
 
@@ -307,7 +328,7 @@ class Historial_PagosView extends HTMLElement {
 		div.append(html`<table class="mes-container total-container">
 			<tr>
 				<td class="pago-title" style="grid-column: span 5"></td>
-				<td class="pago-title total-cargos">SALDO PENDIENTE: C$ ${ConvertToMoneyString(totalCargos ?? 0)}</td>
+				<td class="pago-title total-cargos">TOTAL ABONOS: C$ ${ConvertToMoneyString(totalCargos ?? 0)}</td>
 			</tr>
 		</table>`);
 		return div;
@@ -324,7 +345,7 @@ class Historial_PagosView extends HTMLElement {
 				//{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Money },
-				{ tagName: "td", class: "pago-value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
+				{ tagName: "td", class: "pago-value value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
 				{
 					tagName: "td", class: `pago-value ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}`,
 					innerText: (pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE")
@@ -399,8 +420,8 @@ class Historial_PagosView extends HTMLElement {
 				background-color: #f1f1f1;
 				text-transform: uppercase;
 			}
-			.pago-value {
-				
+			.pago-value.amount {
+				text-align: right;
 			}
 		}   
 		td {
@@ -489,6 +510,17 @@ class Historial_PagosView extends HTMLElement {
 		.data-container label {
 			padding: 10px;
 			margin-bottom: 0;
+		}
+
+		.component {
+			display: grid;
+			grid-template-columns:  calc(100% - 120px) 100px;
+			gap: 20px;
+			& .BtnPrimary {
+				height: 50px;
+				align-self: center;
+			}
+
 		}
 		
 		@media (max-width: 768px) {

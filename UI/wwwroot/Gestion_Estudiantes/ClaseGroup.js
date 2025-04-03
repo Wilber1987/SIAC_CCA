@@ -434,7 +434,7 @@ class ClaseGroup extends HTMLElement {
 	BuildDetailCalificacion(calificacion, index) {		
 		console.log(calificacion)
 		const tipo = calificacion.Tipo ? 
-			calificacion.Tipo.charAt(0).toUpperCase() + calificacion.Tipo.slice(1) : '';	
+			calificacion.Tipo.charAt(0) + calificacion.Tipo.slice(1) : '';	
 		return html`<div class="calificacion-row">
 			<div>${calificacion.Porcentaje ? `
 				${index + 1}` : ''}</div>			
@@ -452,7 +452,7 @@ class ClaseGroup extends HTMLElement {
 		let columStyle = detail.Order == 1
 			? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
 
-		columStyle = detail.Evaluacion.toUpperCase().includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
+		columStyle = detail.Evaluacion.includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
 		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
 

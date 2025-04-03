@@ -15,7 +15,7 @@
 
 }
 <script src="~/js/html2pdf.js"></script>
-@if(pagos.IsInsolvente){
+@if(!pagos.IsInsolvente){
 <script type="module" >
     import {HistorialView} from "/Gestion_Estudiantes/HistorialView.mjs";
     window.onload = ()=> {
@@ -24,6 +24,6 @@
 </script>
 <div id="Main" class="app-container"></div>
 }else{
-    <div id="Main" class="app-container"><h3>Usted estudiantes insolvente</h3></div>
+    <div id="Main" class="app-container"><h3 style="text-align: center;">Para poder visualizar las notas, usted debe estar solvente</h3></div>
 }
 
