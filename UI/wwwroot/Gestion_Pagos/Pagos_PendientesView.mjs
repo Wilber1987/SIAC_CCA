@@ -186,11 +186,11 @@ class Pagos_PendientesView extends HTMLElement {
 		<div class="pago-detail">
 			<div class="pago-title">${pago.Concepto}</div>
 			<!-- <div class="pago-subtitle">${pago.Concepto}</div> -->
-			<div class="pago-details-container">
+			<!--<div class="pago-details-container">
 				<div class="pago-subtitle">Documento: ${pago.Documento}</div>
 				<div class="pago-subtitle">Fecha de pago: ${new DateTime(pago.Fecha).toDateFormatEs()}</div>
 				<div class="pago-subtitle">Fecha de limite: ${new DateTime(pago.Fecha_Limite).toDateFormatEs()}</div>
-			</div>
+			</div>-->
 		   
 		</div>  
 		<div class="pago-options pago-parcial-check">
@@ -298,6 +298,7 @@ class Pagos_PendientesView extends HTMLElement {
 			flex-direction: column;
 			gap: 5px;
 			flex: 1;
+			justify-content:center!important;
 		}
 		.TabContainer {
 				display: flex;

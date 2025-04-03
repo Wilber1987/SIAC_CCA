@@ -206,7 +206,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				Mes = Amount > 0.0 ? DateUtil.GetDateName(pagos.First()?.Fecha_contabilizacion, false) : null,
 				Fecha = pagos?.First()?.Fecha_contabilizacion,
-				IsInsolvente = pagos?.First()?.Fecha_contabilizacion < DateTime.Now && pagos?.First()?.Fecha_contabilizacion?.Month == DateTime.Now.Month,
+				IsInsolvente = pagos?.First()?.Fecha_contabilizacion < DateTime.Now && pagos?.First()?.Fecha_contabilizacion?.Month != DateTime.Now.Month,
 				Amount = Amount,
 				Money = moneyEnumValue,
 				StringAmount = NumberUtility.ConvertToMoneyString(Amount)
@@ -329,6 +329,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					{
 						pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
 					}
+					detalle.Fecha = DateTime.Now;
 					detalle.Pago!.Monto_Pagado = detalle.Pago.Monto_Pagado + detalle.Monto;
 					var updateResponse = detalle.Pago.Update();
 					if (updateResponse.status != 200)

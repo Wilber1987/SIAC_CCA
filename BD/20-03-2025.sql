@@ -7,7 +7,7 @@ SELECT  ec.transferido, ec.estudiante_id, ec.id, ec.retirado, ec.promedio, ec.re
                          m.MateriasConfig, s.nombre AS nombre_seccion, ec.seccion_id,  CONCAT(e2.primer_nombre, ' ', e2.segundo_nombre, ' ', e2.primer_apellido, ' ', e2.segundo_apellido)  AS Nombre_Estudiantes, e2.codigo, e2.sexo, 
                          t.orden AS orden_Asignatura,
 						-- case when e.observaciones is not null then concat(e.tipo,' - ', e.observaciones ,' (',porcentaje,' pts.)') else null end as observaciones_Puntaje
-						ifnull(e.observaciones,' ') as observaciones_Puntaje
+						ISNULL(e.observaciones,' ') as observaciones_Puntaje
 FROM            dbo.estudiante_clases AS ec INNER JOIN
                          dbo.estudiantes AS e2 ON ec.estudiante_id = e2.id INNER JOIN
                          dbo.clases AS c ON ec.clase_id = c.id INNER JOIN

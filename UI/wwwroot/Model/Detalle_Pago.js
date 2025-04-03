@@ -1,6 +1,7 @@
 //@ts-check
 
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { PagosRequest } from "./PagosRequest.js";
 import { Tbl_Pago } from "./Tbl_Pago.js";
 
@@ -84,6 +85,11 @@ class Detalle_Pago extends EntityClass {
      */
     Pago;
 
+    /**
+     * @type {Date}
+     * @description Fecha relacionado con el pago
+     */
+    Fecha;
     /**
      * Actualiza el monto del detalle del pago, 
      * teniendo en cuenta la cantidad y el valor del pago

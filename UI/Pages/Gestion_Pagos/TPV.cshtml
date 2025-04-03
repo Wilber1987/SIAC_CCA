@@ -122,8 +122,8 @@
 					<div class="d-flex gap-1">
 						<div class="col-6">
 							<label for="ExpMonth">Mes de expiración</label>
-							<input class="" id="ExpMonth" name="ExpMonth" required type="text" max="12"  pattern="^\d{2}$"
-								placeholder="MM" title="Mes de expiración (01-12)" maxlength="2" oninput="this.value = this.value.replace(/\D/g, '').slice(0,2)">
+							<input class="" id="ExpMonth" name="ExpMonth" required type="number" max="12" 
+								placeholder="MM" title="Mes de expiración (01-12)" maxlength="2">
 						</div>
 						<div class="col-6">
 							<label for="ExpYear">Año de expiración</label>
