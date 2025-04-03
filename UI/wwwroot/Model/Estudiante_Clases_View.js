@@ -44,6 +44,7 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {Number}*/ Clase_id;
    /**@type {Number}*/ Seccion_id
    /**@type {Number}*/ Materia_id;
+    /**@type {Number}*/ Id_familia;
    /**DATOS DEL DOCENTE */
    /**@type {String}*/ Primer_nombre;
    /**@type {String}*/ Segundo_nombre;
@@ -56,6 +57,7 @@ class Estudiante_Clases_View extends EntityClass {
 
    /**@type {String}*/ NombreGradoCompleto
    /**@type {String}*/ nombre_seccion
+    /**@type {String}*/ FamiliaId
 
     /**
     * @returns {Promise<Clase_Group>}

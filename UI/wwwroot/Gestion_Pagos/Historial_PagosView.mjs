@@ -345,7 +345,7 @@ class Historial_PagosView extends HTMLElement {
 				//{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
 				{ tagName: "td", class: "pago-value", innerText: pago.Money },
-				{ tagName: "td", class: "pago-value value", innerText: ConvertToMoneyString(pago.Monto ?? 0) },
+				{ tagName: "td", class: "pago-value value", innerText: ConvertToMoneyString(pago.Monto_Pendiente ?? 0) },
 				{
 					tagName: "td", class: `pago-value ${pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE"}`,
 					innerText: (pago.Monto_Pendiente == 0 ? "CANCELADO" : "PENDIENTE")

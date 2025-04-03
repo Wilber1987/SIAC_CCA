@@ -65,7 +65,7 @@ LEFT OUTER JOIN dbo.tipo_notas t ON c2.tipo_nota_id = t.id;
 
 -------------
 
-CREATE VIEW [dbo].[Estudiante_View] AS
+alter VIEW [dbo].[Estudiante_View] AS
 SELECT ec.transferido,
     ec.estudiante_id,
     ec.id,
@@ -81,6 +81,7 @@ SELECT ec.transferido,
     pl.oculto,   
     c.grado,
     ec.clase_id,
+    ec.id_familia,
 	c.nivel_id,
     s.nombre as nombre_seccion,
     ec.seccion_id,

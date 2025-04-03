@@ -10,9 +10,6 @@ import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
-const route = location.origin
-const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
-
 /**
  * @typedef {Object} Historial_PagosReportViewConfig
  * * @property {Object} [propierty]
@@ -27,55 +24,61 @@ class Historial_PagosReportView extends HTMLElement {
 		this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
 		this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
 		this.append(this.CustomStyle);
-		const container = WRender.Create({ className: "component" });
+		this.Container = WRender.Create({ className: "component" });
 
-		const EntityModel = new PagosRequest({
+		/**@type {PagosRequest} */
+		// @ts-ignore
+		this.EntityModel = new PagosRequest({
 			// @ts-ignore
 			Get: async () => {
-				return await EntityModel.GetData("ApiPagosManage/GetPagosRealizados")
+				return await this.EntityModel.GetData("ApiPagosManage/GetPagosRealizados")
 			}
 		})
 		this.Filter = new WFilterOptions({
 			AutoSetDate: true,
 			AutoFilter: true,
-			EntityModel: EntityModel,
+			EntityModel: this.EntityModel,
 			ModelObject: new PagosRequest_ModelComponent(),
-			UseEntityMethods: true,
+			UseEntityMethods: false,
 			Display: true,
 			Dataset: [],
-			FilterFunction: async (filterData) => {
-				container.innerHTML = "";
-				//console.log(this.Filter.ModelObject);
-				/*const facturas = await new pagosRequest().Where(
-					this.Filter.ModelObject.FilterData[0]
-				)*/
-				//this.DrawInformepagos(filterData);
-				container.append(this.DrawInformepagos(filterData));
-				this.Manager.NavigateFunction("informe", container)
+			FilterFunction: async (Filters) => {
+				this.Filters = Filters;
+			}
+		});
+		this.PrintTool = new WPrintExportToolBar({
+			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
+				const body = this.Container.cloneNode(true);
+				body.appendChild(this.CustomStyle.cloneNode(true));
+				tool.ExportPdf(body, PageType.OFICIO_HORIZONTAL)
 			}
 		});
 		this.OptionContainer.append(
 			this.Filter,
-			new WPrintExportToolBar({
-			ExportPdfAction: (/**@type {WPrintExportToolBar} */ tool) => {
-				const body = container.cloneNode(true);
-				body.appendChild(this.CustomStyle.cloneNode(true));
-				tool.ExportPdf(body, PageType.OFICIO_HORIZONTAL)
-			}
-		}));
+			html`<button class="BtnPrimary" onclick="${() => this.GetHistorialData()}">Filtrar</button>`
+		);
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
 			StylesControlsV3.cloneNode(true),
 			this.OptionContainer,
-			
-			this.TabContainer
+			this.TabContainer,
+			this.PrintTool
 		);
 		this.Informes = {};
 		this.Draw();
 	}
 	Draw = async () => {
-		this.MainComponent(); 
+		this.MainComponent();
+		this.GetHistorialData();
+	}
+
+	async GetHistorialData() {
+		this.Container.innerHTML = "";
+		this.EntityModel.FilterData = this.Filters;
+		const facturas = await this.EntityModel.Get();
+		this.Container.append(this.DrawInformepagos(facturas));
+		this.Manager.NavigateFunction("informe", this.Container)
 	}
 
 	async SetOption() {
@@ -93,7 +96,6 @@ class Historial_PagosReportView extends HTMLElement {
 		// @ts-ignore                    
 		//const pagospago = Object.groupBy(pagos, p => p.Year);
 		const pagosRealizados = Object.groupBy(pagos, p => p.Year);
-		console.log(pagosRealizados)
 		const containerInforme = this.ViewPagosReport(pagosRealizados);
 		//this.Manager.NavigateFunction("informe",);
 		return containerInforme;
@@ -122,18 +124,9 @@ class Historial_PagosReportView extends HTMLElement {
 			const pago = pagos[pagoYear][0];
 			const pagoContainer = html`<div class="">
 				<h1 style="color: #09559c">${localStorage.getItem("TITULO")}</h1>
-				<h3 style="color: #0c3964;">Informe de pagos enviadas ${pago.Year}</h3>
-				
-				<hr/><!-- <div class="pago">
-					<div class="data-container">
-						<label class="pago-prop">AÑO:</label>
-						<label>{pago.Year} - </label>
-					</div>
-				</div>				 -->
+				<h3 style="color: #0c3964;">Informe de pagos enviadas ${pago.Year}</h3>				
+				<hr/>
 			 </div>`;
-
-			//pagoContainer.append(html`<h3>Cargo</h3>`);
-			//pagospago[pagoYear].forEach((/** @type {Tbl_pago} */ pago) => {
 			const pagosMes = this.BuildPagosXMes(pagos[pagoYear]);
 			pagoContainer.append(pagosMes);
 			//});
@@ -153,40 +146,52 @@ class Historial_PagosReportView extends HTMLElement {
 
 		console.log(PagosGroup);
 		let totalCargos = 0;
-		let totalCargosC = 0;
 		for (const pagosMes in PagosGroup) {
 			div.append(html`<h3>${pagosMes.toUpperCase()}</h3>`)
-			const mesContainer = html`<table class="mes-container">				
-				<tr class="data-details-container">
-					<td class="data-title">Responsable</td>
-					<td class="data-title">Estudiante</td>
-					<td class="data-title">Concepto</td>
-					<td class="data-title">Documento</td>
-					<td class="data-title">Referencia</td>
-					<td class="data-title">Fecha</td>
-					<td class="data-title">Moneda</td>
-					<td class="data-title">Monto</td>
-				</tr>
-			</table>`;
+			div.append(html`<hr>`);
+
+			// @ts-ignore
+			const PagosGroupDays = Object.groupBy(PagosGroup[pagosMes], p => new DateTime(p.Fecha).toDDMMYYYY());
+			for (const pagosDay in PagosGroupDays) {
+				const mesContainer = html`<table class="mes-container">				
+					<tr class="data-details-container">
+						<td class="data-title">Fecha</td>
+						<td class="data-title">No. Comprobante</td>
+						<td class="data-title">Documento</td>
+						<td class="data-title">CodFamilia</td>
+						<td class="data-title">Estudiante</td>
+						<td class="data-title">Concepto</td>
+						<td class="data-title">Monto</td>
+					</tr>
+				</table>`;
+				div.append(html`<h4>${pagosDay}</h4>`);		
+				div.append(mesContainer);
+				PagosGroupDays[pagosDay].forEach((/** @type {PagosRequest} */ pago) => {
+					pago.Detalle_Pago.forEach(detalle => {
+						const card = this.PagosRow(pago, detalle);
+						mesContainer.append(card);
+					});
+				});
+				const subTotalAbonosDay = PagosGroupDays[pagosDay]?.reduce((acc, pago) => acc + pago.Monto, 0);
+				div.append(html`<div class="data-details-container total-container">
+					<div class="pago-title" style="margin-right: 40px">Sub-total diario</div>
+					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>
+				</div>`);
+			}
 			//-------------------->
 			//mesContainer.append(html`<h3>pagoes</h3>`);
-			PagosGroup[pagosMes].forEach((/** @type {PagosRequest} */ pago) => {
-				pago.Detalle_Pago.forEach(detalle => {
-					const card = this.PagosRow(pago, detalle);
-					mesContainer.append(card);
-				});
-			});
-			const subTotalAbonos = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
-			const subTotalAbonosC = PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago)?.filter(d => d.Pago.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
-			
-			div.append(mesContainer);
+
+			const subTotalAbonos = PagosGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
+
+
+
 			/*div.append(html`<div class="data-details-container total-container">
 				<div class="data-title" style="grid-column: span 12">Cantidad</div>
 				<div class="data-title value">${PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago).length}</div>			
 			</div>`);*/
 			div.append(html`<div class="data-details-container total-container">
 				<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
-				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosC)  ?? "0.00"}</div>
+				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
 			</div>`);
 			// div.append(html`<div class="data-details-container total-container">
 			// 	<div class="pago-title" style="margin-right: 40px">Sub-Total mensual</div>
@@ -195,12 +200,11 @@ class Historial_PagosReportView extends HTMLElement {
 			//-------------------->
 			//mesContainer.append(html`<h3>Resumen</h3>`);
 			totalCargos += subTotalAbonos;
-			totalCargosC += subTotalAbonosC;
 
 		}
 		div.append(html`<div class="data-details-container total-container">
 			<div class="pago-title" style="margin-right: 40px">Total</div>
-			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargosC)}</div>
+			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>
 		</div>`);
 		// div.append(html`<div class="data-details-container total-container">
 		// 	<div class="pago-title" style="margin-right: 40px">Total</div>
@@ -212,23 +216,29 @@ class Historial_PagosReportView extends HTMLElement {
 	 * @param {PagosRequest} pagosRequest
 	 * @param {Detalle_Pago} detallePago
 	 */
-	PagosRow(pagosRequest, detallePago) {		
+	PagosRow(pagosRequest, detallePago) {
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
-				{ tagName: "td", class: "data-value", innerText: pagosRequest.Creador },
-				{ tagName: "td", class: "data-value", innerText: detallePago?.Pago?.Estudiante?.Nombre_completo  + " - " +   detallePago?.Pago?.Estudiante?.Codigo},
-				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Concepto},
-				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Documento},
-				{ tagName: "td", class: "data-value", innerText: pagosRequest.TpvInfo?.TransactionIdentifier ?? "-"},
-				{ tagName: "td", class: "data-value", innerText: new DateTime(pagosRequest.Fecha).toISO()},
-				{ tagName: "td", class: "data-value", innerText: pagosRequest.Moneda},
-				{ tagName: "td", class: "data-value", innerText:   ConvertToMoneyString(detallePago.Total)},
+				{ tagName: "td", class: "data-value", innerText: new DateTime(pagosRequest.Fecha).toDDMMYYYY() },
+				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${pagosRequest?.Id_Pago_Request}" target="_blank">${this.formatNumber(pagosRequest?.Id_Pago_Request)}</a>`] },
+				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Documento },
+				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Estudiante?.Id_familia },
+				{ tagName: "td", class: "data-value", innerText: detallePago?.Pago?.Estudiante?.Nombre_completo + " - " + detallePago?.Pago?.Estudiante?.Codigo },
+				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Concepto },
+				{ tagName: "td", class: "data-value value", innerText: "C$ " + ConvertToMoneyString(detallePago.Total) },
 			]
 		});
 	}
+	formatNumber(num) {
+		return num.toString().padStart(8, '0');
+	}
 
 	CustomStyle = css`
+		.BtnPrimary {
+			height: 50px;
+			align-self: center;
+		}
 		.OptionContainer {			
 			display: flex;
 			justify-content: space-between;
@@ -257,13 +267,23 @@ class Historial_PagosReportView extends HTMLElement {
 			/* display: grid;
 			grid-template-columns: repeat(14, 1fr); */
 			gap: 5px;
-			& h3 {
-				grid-column: span 14;
-				font-size: 1em;
-				border-bottom: 1px solid #919191;
-			}
+			
 			
 		}   
+		hr {
+			margin: 10px 0px;
+		}
+		h3 {
+			grid-column: span 14;
+			font-size: 1.1em;
+		}
+		h4 { 
+			grid-column: span 14;
+			font-size: 1em;
+			margin-bottom: 10px;
+			margin-top: 10px;
+			
+		}
 		table.mes-container {
 			gap: 5px;
 			border-collapse: collapse;
