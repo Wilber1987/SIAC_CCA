@@ -13,7 +13,7 @@ class Evaluaciones extends EntityClass {
        }
    }
    /**@type {Number}*/ Id;
-   /**@type {Date}*/ Fecha;
+   /**@type {String}*/ Fecha;
    /**@type {TimeRanges}*/ Hora;
    /**@type {String}*/ Tipo;
    /**@type {Number}*/ Porcentaje;

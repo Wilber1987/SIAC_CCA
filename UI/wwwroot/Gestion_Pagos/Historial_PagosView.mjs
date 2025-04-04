@@ -340,7 +340,7 @@ class Historial_PagosView extends HTMLElement {
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
-				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).toISO() },
+				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).formatDateToDDMMYY(pago.Fecha) },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Tipo },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Documento },
 				{ tagName: "td", class: "pago-value", innerText: pago.Concepto },
@@ -364,7 +364,7 @@ class Historial_PagosView extends HTMLElement {
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
-				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).toISO() },
+				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).formatDateToDDMMYY(pago.Fecha)},
 				//{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
 				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${findFactura?.Id_Pago_Request}" target="_blank">${this.formatNumber(findFactura?.Id_Pago_Request)}</a>`] },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Concepto },

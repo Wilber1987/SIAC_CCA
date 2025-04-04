@@ -108,7 +108,8 @@ class Calificacion_Group {
     
     /** @type {String}*/
     Parciales;
-
+    /** @type {String}*/
+    Fecha;
     /** @type {String}*/
     Tipo;
     /** @type {String}*/
