@@ -15,6 +15,7 @@ import { CalificacionesUtil } from "./CalificacionesUtil.js";
 import { BuildHeaderData } from "./EstudiantesComponents.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { PageType } from "../WDevCore/WComponents/WReportComponent.js";
+import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/";
 const HeaderEvaluaciones = ["IB", "IIB", "IS", "IIIB", "IVB", "IIS", "F"];
 class ClaseGroup extends HTMLElement {
@@ -155,13 +156,13 @@ class ClaseGroup extends HTMLElement {
 	async ShowDetails(instance) {
 		/**@type {DocumentsData} */
 		const documentsData = await new DocumentsData().GetBoletinDataFragments();
-		BuildHeaderData(documentsData.Header, this.Config.Estudiante)		
+		BuildHeaderData(documentsData.Header, this.Config.Estudiante)
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id,
 			Nombre_asignatura: instance.Descripcion
 		}).GetClaseEstudianteCompleta();
-		
+
 		//const instanced = new modelClass.constructor(response[0]);        
 		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
 		let lastIndex = 0;
@@ -187,21 +188,27 @@ class ClaseGroup extends HTMLElement {
 				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			const datasetMap = asignatura.Calificaciones.map(c => {
-				
+
 				const newObject = {};
 				for (const key in c) {
 					newObject[key] = c[key]
 				}
 				newObject.Resultado = newObject.Resultado + " pts."
 				if (newObject.Porcentaje != null) {
-					newObject.Porcentaje = newObject.Porcentaje + " pts."					
+					newObject.Porcentaje = newObject.Porcentaje + " pts."
 				}
 				if (newObject.Evaluacion.includes("B") || newObject.Evaluacion.includes("S") || newObject.Evaluacion.includes("F")) {
-					newObject.Porcentaje = "100 pts.";					
+					newObject.Porcentaje = "100 pts.";
 					newObject.Observaciones = "-";
-					newObject.EvaluacionCompleta = "";					
+					newObject.EvaluacionCompleta = "";
 					newObject.Fecha = undefined;
-				}				
+				} else {
+					//newObject.Fecha = new DateTime(newObject.Fecha).toDDMMYYYY()
+					console.log(newObject.Fecha)
+					console.log(new DateTime(newObject.Fecha).toDDMMYYYY());
+					
+				}
+				newObject.Tipo = newObject.Tipo ? newObject.Tipo.charAt(0).toUpperCase() + newObject.Tipo.slice(1) : '';
 				return newObject;
 			})
 			console.log(datasetMap);
@@ -212,15 +219,13 @@ class ClaseGroup extends HTMLElement {
 				maxElementByPage: 100,
 				paginate: false,
 				isActiveSorts: false,
-				CustomStyle: css`.WTable td:not(.td_Resultado,
- 					.td_Porcentaje, .td_Observaciones, 
-					.td_EvaluacionCompleta, .td_Tipo) label {
-					text-transform: uppercase;
-				}.WTable td.td_Porcentaje{width: 62px;}
-				.WTable tbody tr{
-					break-inside: avoid;
-					page-break-inside: avoid;
-				}
+				CustomStyle: css`.WTable td:not(.td_Resultado,.td_Porcentaje, .td_Observaciones, .td_EvaluacionCompleta, .td_Tipo) label {
+						text-transform: uppercase;
+					}.WTable td.td_Porcentaje{width: 62px;}
+					.WTable tbody tr{
+						break-inside: avoid;
+						page-break-inside: avoid;
+					}
 				`,
 				Options: {}
 			})
@@ -243,7 +248,7 @@ class ClaseGroup extends HTMLElement {
 					}
 				})
 			);
-			document.body.append(new WModalForm({				
+			document.body.append(new WModalForm({
 				ObjectModal: MateriaDetailEvaluations
 			}));
 
@@ -279,7 +284,7 @@ class ClaseGroup extends HTMLElement {
 	 */
 	async ShowEvaluationDetails(evalElement) {
 		/**@type {DocumentsData} */
-		const documentsData = await new DocumentsData().GetBoletinDataFragments();		
+		const documentsData = await new DocumentsData().GetBoletinDataFragments();
 		const response = await new Estudiante_Clases_View({
 			Estudiante_id: this.Config.Estudiante_Clase_Seleccionado?.Estudiante_id,
 			Clase_id: this.Config.Estudiante_Clase_Seleccionado?.Clase_id
@@ -431,17 +436,16 @@ class ClaseGroup extends HTMLElement {
 	* @param {any} index
 	* @returns {any}
 	*/
-	BuildDetailCalificacion(calificacion, index) {		
-		console.log(calificacion)
-		const tipo = calificacion.Tipo ? 
-			calificacion.Tipo.charAt(0) + calificacion.Tipo.slice(1) : '';	
+	BuildDetailCalificacion(calificacion, index) {
+		const tipo = calificacion.Tipo ?
+			calificacion.Tipo.charAt(0).toUpperCase() + calificacion.Tipo.slice(1) : '';
 		return html`<div class="calificacion-row">
 			<div>${calificacion.Porcentaje ? `
 				${index + 1}` : ''}</div>			
 			<div style="${!calificacion.Porcentaje ? 'text-align: right; font-weight: bold;' : ''}">
-                ${calificacion.Porcentaje ? 
-                    `${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje} Pts.)` 
-                    : 'Total'}
+                ${calificacion.Porcentaje ?
+				`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje} Pts.)`
+				: 'Total'}
             </div>
 			<div style="text-align: right; width:65px">${calificacion.Resultado} pts.</div>
 		</div>`
@@ -465,8 +469,14 @@ class ClaseGroup extends HTMLElement {
 		</div>`;
 	}
 	PdfCustomStyle = css`		
-		.WTable td:not(.td_Resultado, .td_Porcentaje) label {
+	.WTable td:not(.td_Resultado,
+ 					.td_Porcentaje, .td_Observaciones, 
+					.td_EvaluacionCompleta, .td_Tipo) label {
 					text-transform: uppercase;
+				}.WTable td.td_Porcentaje{width: 62px;}
+				.WTable tbody tr{
+					break-inside: avoid;
+					page-break-inside: avoid;
 				}
 				.WTable td.td_Porcentaje{width: 92px!important;}
 				.WTable tbody tr{
