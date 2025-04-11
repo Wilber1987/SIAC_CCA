@@ -13,7 +13,6 @@ import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
-import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 
 const route = location.origin
 const routeEstudiantes = location.origin + "/Media/Images/estudiantes/"
@@ -110,14 +109,6 @@ class Historial_PagosView extends HTMLElement {
 				const estudiante = estudianteObject;
 				studiantesCard.push(this.BuildEstudiantes(new Estudiantes(estudiante), facturas, pagosEstudiante, estudianteObject.Codigo));
 			})
-			/*for (const estudianteId in pagos.Estudiantes) {
-				if (i == 0) {
-					this.selectedID = estudianteId;
-				}
-				const estudiante = pagosEstudiante[estudianteId][0].Estudiante;
-				studiantesCard.push(this.BuildEstudiantes(new Estudiantes(estudiante), facturas, pagosEstudiante, estudianteId));
-				i++;
-			}*/
 			this.containerEstudiantes = html`<section class="Historial">             
 				<div class="alumnos-container aside-container">                
 					${studiantesCard}
@@ -191,19 +182,12 @@ class Historial_PagosView extends HTMLElement {
 					</div>
 				</div>				
 			 </div>`;
-
-			//estudianteContainer.append(html`<h3>Cargo</h3>`);
-			//pagosEstudiante[estudianteId].forEach((/** @type {Tbl_Pago} */ pago) => {
 			const pagosPendientes = this.BuildPagosPendientesEstudiantes(pagosEstudiante[this.selectedID ?? 0]);
 			const pagoMes = this.BuildPagosMes(facturasEstudiante[this.selectedID ?? 0]);
 			estudianteContainer.append(pagosPendientes, pagoMes);
 			//});
 			div.append(estudianteContainer);
 		}
-		//for (const estudianteId in pagosEstudiante) {
-
-		//}
-		//const pagoMes = this.BuildPagosMes(pagos);
 		return div;
 	}
 	/**
@@ -306,12 +290,6 @@ class Historial_PagosView extends HTMLElement {
 				abonosContainer.append(card);
 			});
 			const subTotalAbonos = facturaGroup[pagosMes]?.reduce((acc, pago) => acc + pago.Monto, 0);
-			/*div.append(html`<table class="pago-details-container mes-container">
-				<tr>
-					<td class="pago-title value">TOTAL ABONOS: C$ ${ConvertToMoneyString(subTotalAbonos ?? 0)}</td>
-				</tr>				
-			</table>`);*/
-			//const total = (subTotalCargos ?? 0) - (subTotalAbonos ?? 0);
 			const total = subTotalAbonos ?? 0
 			div.append(html`<table class="pago-details-container mes-container">
 				<tr>
@@ -427,8 +405,6 @@ class Historial_PagosView extends HTMLElement {
 		td {
 			padding: 10px;
 		}
-		.total-container {
-		} 
 		.value, .total-cargos {
 			text-align: right;
 		}  
