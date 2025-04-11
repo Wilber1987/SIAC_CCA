@@ -19,7 +19,7 @@ namespace UI.Controllers
         [AuthController(Permissions.PERFIL_MANAGER)]
         public ResponseService SaveProfileRequest(ProfileRequest Inst)
         {
-            return  ProfileServices.SaveProfileRequest(Inst, HttpContext.Session.GetString("seassonKey"));
+            return  new ProfileServices().SaveProfileRequest(Inst, HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         [AuthController(Permissions.ADMINISTRAR_USUARIOS)]
@@ -32,7 +32,7 @@ namespace UI.Controllers
         [AuthController(Permissions.ADMINISTRAR_USUARIOS, Permissions.PERFIL_MANAGER)]
         public ResponseService UpdateProfileRequest(ProfileRequest Inst)
         {
-            return  ProfileServices.UpdateProfileRequestParientes(Inst, HttpContext.Session.GetString("seassonKey"));
+            return  new ProfileServices().UpdateProfileRequestParientes(Inst, HttpContext.Session.GetString("seassonKey"));
         }
     }   
 }
