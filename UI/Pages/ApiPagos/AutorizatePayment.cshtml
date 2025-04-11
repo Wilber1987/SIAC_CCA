@@ -19,10 +19,15 @@
 	PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
 }
 <div>
-	 @* <button onclick="printIframe()" class="btn-success">Print</button> *@
-	
-	<iframe id="paymentFrame" style="width: 100%; height: 600px;" src="data:text/html;charset=utf-8,@pagosResponse?.RedirectData" frameborder="0"></iframe>
-    <a style="float: left; margin: 10px" href="https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos" class="btn-success">Historial</a>
+	@* <button onclick="printIframe()" class="btn-success">Print</button> *@
+	<style>
+		.page-content {
+			overflow-y: scroll;
+		}
+	</style>
+	<iframe id="paymentFrame" style="width: 100%; height: 600px;"
+		src="data:text/html;charset=utf-8,@pagosResponse?.RedirectData" frameborder="0"></iframe>
+	<a style="float: left; margin: 10px" href="https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos"	class="btn-success">Ver Historial</a>
 
 	<script type="text/javascript">
 		function printIframe() {
@@ -31,8 +36,8 @@
 			iframe.contentWindow.print();
 		}
 	</script>
-	
-   @*  @Html.Raw(pagosResponse.RedirectData);*@
+
+	@*  @Html.Raw(pagosResponse.RedirectData);*@
 </div>
 @* <form method="get" asp-controller="ApiPagos" asp-action="AutorizarPago">
 

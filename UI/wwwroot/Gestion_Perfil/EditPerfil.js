@@ -16,7 +16,7 @@ const model = new ProfileRequest_ModelComponent({
 
 window.onload = () => {
     // @ts-ignore
-    editBtn.onclick = () => {
+    /*editBtn.onclick = () => {
         document.body.appendChild(new WModalForm({
             ModelObject: model,
             AutoSave: true,
@@ -28,11 +28,12 @@ window.onload = () => {
                 Foto: WSecurity.UserData.Foto
             }), ObjectOptions: {
                 SaveFunction: async () => {
+
                     location.reload();
                 }
             }
         }));
-    }
+    }*/
     document.querySelectorAll(".btn-pariente").forEach(btn => {
         //**@type {ProfileRequest} */
         // @ts-ignore
@@ -44,7 +45,7 @@ window.onload = () => {
                 ModelObject: model,
                 AutoSave: true,
                 EditObject: new ProfileRequest({
-                    Correo: pariente.Email,
+                    Correo: pariente.Email ?? pariente.Correo_institucional,
                     Telefono: pariente.Telefono,
                     Celular: pariente.Celular,
                     Direccion: pariente.Direccion,

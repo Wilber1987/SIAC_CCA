@@ -1,13 +1,29 @@
 using API.Controllers;
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
+using CAPA_NEGOCIO.Util;
 using DataBaseModel;
+using Microsoft.Extensions.Configuration;
 
 namespace CAPA_NEGOCIO.Security.Operations
 {
     public class ProfileServices : TransactionalClass
     {
-        public static ResponseService SaveProfileRequest(ProfileRequest Inst, string? identity)
+        private readonly SshTunnelService _sshTunnelService;
+
+        public ProfileServices()
+        {
+            _sshTunnelService = new SshTunnelService(LoadConfiguration());
+        }
+        private IConfigurationRoot LoadConfiguration()
+        {
+            return new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+        }
+
+        public ResponseService SaveProfileRequest(ProfileRequest Inst, string? identity)
         {
             try
             {
@@ -38,6 +54,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                     pariente?.ProfileRequest?.Add(Inst);
                     LoggerServices.AddMessageInfo($"Se realizo una solicitud de modificacion del perfil del pariente id={pariente?.Id}, nombre={profile.GetNombreCompleto()}");
                     pariente?.Update();
+
                 }
                 else if (profile.ProfileType.Equals(ProfileType.DOCENTE))
                 {
@@ -108,39 +125,95 @@ namespace CAPA_NEGOCIO.Security.Operations
             .Where(x => x.Estado == ProfileRequestsStatus.PENDIENTE.ToString()).ToList();
         }
 
-        public static ResponseService UpdateProfileRequestParientes(ProfileRequest inst, string? identity)
+        public ResponseService UpdateProfileRequestParientes(ProfileRequest inst, string? identity)
         {
-            if (inst.Id == null)
+            try
             {
-                return SaveProfileRequest(inst, identity);
-            }
-            if (!AuthNetCore.HavePermission(identity, CAPA_DATOS.Security.Permissions.ADMINISTRAR_USUARIOS))
-            {
-                return new ResponseService { status = 403, message = "No tiene permisos para realizar esta accion" };// throw new Exception("No tiene permisos para realizar esta accion");
-            }
-            UserModel user = AuthNetCore.User(identity);
-            var pariente = new Parientes().Find<Parientes>(
-                FilterData.Like("ProfileRequest", $"{inst.Id}")
-            );
-
-            if (pariente != null)
-            {
-                ProfileRequest? solicitud = pariente.ProfileRequest?.Find(x => x.Id == inst.Id);
-                if (inst.Estado == ProfileRequestsStatus.APROBADO.ToString())
+                if (inst.Id == null)
                 {
+                    SaveProfileRequest(inst, identity);
+
+                }
+                UserModel user = AuthNetCore.User(identity);
+                var pariente = new Parientes().Find<Parientes>(
+                    FilterData.Like("ProfileRequest", $"{inst.Id}")
+                );
+
+                if (pariente != null)
+                {
+                    ProfileRequest? solicitud = pariente.ProfileRequest?.Find(x => x.Id == inst.Id);
+
                     pariente.Email = inst.Correo;
                     pariente.Direccion = inst.Direccion;
                     pariente.Telefono = inst.Telefono;
                     pariente.Celular = inst.Celular;
                     pariente.Fecha_Modificacion = DateTime.Now;
                     pariente.Foto = inst.Foto;
+
+                    solicitud!.Estado = inst.Estado;
+                    pariente.Update();
+                    LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
+
+                    if (!SendToBellacom(inst, pariente))
+                    {
+                        return new ResponseService { status = 400, message = "Error, intentelo nuevamente" };
+                    }
+
+                    return new ResponseService { status = 200, message = "Datos actualizados" };
                 }
-                solicitud!.Estado = inst.Estado;
-                pariente.Update();
-                LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
-                return new ResponseService { status = 200, message = "solicitud actualizada" };
+                return new ResponseService { status = 400, message = "Datos no existen, intentelo nuevamente" };
             }
-            return new ResponseService { status = 400, message = "solicitud no existe" }; //throw new Exception("Solicitud no existe");
+            catch (Exception e)
+            {
+                LoggerServices.AddMessageError("ERROR: UpdateProfileRequestParientes", e);
+                return new ResponseService { status = 400, message = "Error, intentelo nuevamente" };
+            }
+        }
+
+        private bool SendToBellacom(ProfileRequest inst, Parientes pariente)
+        {
+            Console.Write("--> datos de actualizacion SendToBellacom");
+            // Establecer conexión SSH y puerto de MySQL
+            using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+            {
+                siacSshClient.Connect(); // Conectar al cliente SSH
+                var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
+                siacTunnel.Start(); // Iniciar el túnel
+
+                var tutor = new Tbl_aca_tutor();
+                tutor.SetConnection(MySqlConnections.BellacomTest);
+                var dataMsql = tutor.Where<Tbl_aca_tutor>(FilterData.Equal("idtutor", pariente.Id)).FirstOrDefault();
+                dataMsql?.SetConnection(MySqlConnections.BellacomTest);
+                try
+                {
+                    if (dataMsql != null)
+                    {
+                        BeginGlobalTransaction(); // Inicia la transacción global
+                        dataMsql.Direccion = inst.Direccion;
+                        dataMsql.Telefono = inst.Telefono;
+                        dataMsql.Celular = inst.Celular;
+                        dataMsql.Email = inst.Correo;
+                        var success = dataMsql.Update(); // Si Update retorna un booleano
+                        Console.WriteLine($"Actualización {(success.status == 200 ? "exitosa" : "fallida")}");
+
+
+                        CommitGlobalTransaction(); // Confirmar la transacción global
+                    }
+                }
+                catch (Exception ex)
+                {
+                    RollBackGlobalTransaction();
+                    LoggerServices.AddMessageError("ERROR: SendToBellacom.", ex);
+                    return false;
+                }
+                finally
+                {
+                    siacTunnel.Stop(); // Detener el túnel SSH
+                    siacSshClient.Disconnect(); // Desconectar el cliente SSH
+                }
+            }
+
+            return true;
         }
     }
 }
