@@ -1,6 +1,7 @@
 
 //@ts-check
 import { WSecurity } from "../WDevCore/Security/WSecurity.js";
+import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { ProfileRequest, ProfileRequest_ModelComponent } from "./ProfilesRequest.js";
 
@@ -52,7 +53,8 @@ window.onload = () => {
                     ParienteId: pariente.Id
                 }), ObjectOptions: {
                     SaveFunction: async () => {
-                        location.reload();
+                        document.body.appendChild(ModalMessage("Datos actualizados correctamente", undefined, true));
+                        //location.reload();
                     }
                 }
             }));

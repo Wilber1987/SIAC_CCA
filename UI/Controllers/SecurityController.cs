@@ -16,7 +16,7 @@ namespace API.Controllers
         [HttpPost]
         public object LogOut()
         {
-            return AuthNetCore.ClearSeason();
+            return AuthNetCore.ClearSeason(HttpContext.Session.GetString("seassonKey"));
         }
         [HttpPost]
         public bool Verification()
