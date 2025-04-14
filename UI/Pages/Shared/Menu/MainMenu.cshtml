@@ -30,12 +30,12 @@
 	}
 	@if (SecurityController.HavePermission(Identify, Permissions.ADMINISTRAR_USUARIOS))
 	{
-		<li class="menuParentOption">
+		@*<li class="menuParentOption">
 			<a href="~/Gestion_Usuarios/ProfilesManager" data-key="t-ecommerce">
 				<i class="bx bx-loader icon nav-icon"></i>
 				<span>Solicitudes de actualización</span>
 			</a>
-		</li>
+		</li>*@
 	}
 	@if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES,
 	Permissions.GESTION_CLASES_ASIGNADAS))

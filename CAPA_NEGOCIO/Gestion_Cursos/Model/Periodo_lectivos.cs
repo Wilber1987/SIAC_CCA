@@ -20,9 +20,9 @@ namespace DataBaseModel {
        public bool? Oculto { get; set; } 
        public static Periodo_lectivos? PeriodoActivo(){
             return new Periodo_lectivos{ 
-                Nombre_corto = "2024"// DateTime.Now.Year.ToString() // todo
+                Nombre_corto = DateTime.Now.Year.ToString() //  "2024"// DateTime.Now.Year.ToString() // todo
             }.Find<Periodo_lectivos>() ?? new Periodo_lectivos{ 
-                Nombre_corto = "2024"//(DateTime.Now.Year - 1).ToString() //todo
+                Nombre_corto = (DateTime.Now.Year - 1).ToString() //"2024"//(DateTime.Now.Year - 1).ToString() //todo
             }.Find<Periodo_lectivos>();
        }   
    }
