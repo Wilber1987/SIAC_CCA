@@ -12,7 +12,7 @@ class NotificacionesView extends HTMLElement {
         super();
         this.TabContainer = WRender.createElement({ type: 'div', props: { class: 'TabContainer notifContainer', id: "TabContainer" } });
         this.DOMManager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: true });
-        
+
         this.append(
             this.Style,
             StylesControlsV2.cloneNode(true),
@@ -20,7 +20,7 @@ class NotificacionesView extends HTMLElement {
             this.TabContainer
         );
     }
-    View() {        
+    View() {
         return new NotificacionesElements({ DOMManager: this.DOMManager });
     }
 
@@ -161,7 +161,7 @@ class NotificacionesElements extends HTMLElement {
         try {
             const attachs = WRender.Create({ className: "attachs", style: "text-align: center" });
             Notificacion.Media?.forEach(attach => {
-                if (attach.Type.toUpperCase().includes("JPG") || attach.Type.toUpperCase().includes("JPEG") || attach.Type.toUpperCase().includes("PNG")) {
+                if (this.IsImage(attach)) {
                     attachs.append(WRender.Create({
                         tagName: "img", src: attach.Value.replace("wwwroot", ""), style: {
                             width: "auto",
@@ -172,7 +172,7 @@ class NotificacionesElements extends HTMLElement {
                             borderRadius: "20px"
                         }
                     }));
-                } else if (attach.Type.toUpperCase().includes("PDF")) {
+                } else if (attach?.Type?.toUpperCase().includes("PDF")) {
                     attachs.append(WRender.Create({
                         tagName: "iframe", src: attach.Value.replace("wwwroot", ""), style: {
                             height: "-webkit-fill-available",
@@ -195,11 +195,12 @@ class NotificacionesElements extends HTMLElement {
                 ${attachs}
             </div>`;
             if (this.Config?.DOMManager) {
-                this.Config.DOMManager.NavigateFunction("notif"+Notificacion.Id, notificacionContainer);
+                this.Config.DOMManager.NavigateFunction("notif" + Notificacion.Id, notificacionContainer);
                 return;
             }
             document.body.appendChild(new WModalForm({
-                ObjectModal: notificacionContainer}))
+                ObjectModal: notificacionContainer
+            }))
         } catch (error) {
             console.log(error);
         } finally {
@@ -331,6 +332,18 @@ class NotificacionesElements extends HTMLElement {
     Style = css`
         
     `
+    IsImage(attach) {
+        return attach?.Type?.toUpperCase().includes("JPG")
+            || attach?.Type?.toUpperCase().includes("JPEG")
+            || attach?.Type?.toUpperCase().includes("PNG")
+            || attach?.Value?.toUpperCase().includes("JPEG")
+            || attach?.Value?.toUpperCase().includes("PNG")
+            || attach?.Value?.toUpperCase().includes("JPG")
+            || attach?.Name?.toUpperCase().includes("JPEG")
+            || attach?.Name?.toUpperCase().includes("PNG")
+            || attach?.Name?.toUpperCase().includes("JPG");
+    }
+
     GetDescription(E) {
         return `${E.Tbl_Evento?.Tbl_InvestigatorProfile?.Nombres} ${E.Tbl_Evento?.Tbl_InvestigatorProfile?.Apellidos} Indico que participarias en el evento ${E.Tbl_Evento?.Nombre} que se realizara de forma ${E.Tbl_Evento?.Modalidad}, con el rol de ${E.Cat_Tipo_Participacion_Eventos?.Descripcion} de ${E.Titulo} el ${E.Fecha_Participacion?.toDateFormatEs()}.
         

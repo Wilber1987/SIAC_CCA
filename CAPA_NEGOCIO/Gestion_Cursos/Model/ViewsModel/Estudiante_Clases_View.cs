@@ -146,7 +146,7 @@ namespace DataBaseModel
 			}
 			filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			var ClasesF = Get<Estudiante_Clases_View>();
-			 if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
+			if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
 			var clase_Group = InformeClasesBuilder.BuildClaseList(ClasesF);
 			return clase_Group;
 		}
