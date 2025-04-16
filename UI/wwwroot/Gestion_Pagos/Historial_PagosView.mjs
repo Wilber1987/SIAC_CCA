@@ -37,6 +37,7 @@ class Historial_PagosView extends HTMLElement {
 			AutoFilter: true,
 			ModelObject: new Tbl_Pagos_ModelComponent(),
 			UseEntityMethods: false,
+			UseManualControlForFiltering : true,
 			Display: true,
 			Dataset: [],
 			FilterFunction: async (Filters) => {

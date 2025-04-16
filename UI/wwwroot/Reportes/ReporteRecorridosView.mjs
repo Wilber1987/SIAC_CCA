@@ -106,6 +106,7 @@ class ReporteRecorridosView extends HTMLElement {
                 ${new WFilterOptions({
                 ModelObject: ModelFilter,
                 Dataset: dataSet,
+                UseManualControlForFiltering : true,
                 UseEntityMethods: false,
                 Display: true,
                 FilterFunction: async (Dfilter) => {
@@ -180,18 +181,21 @@ class ReporteRecorridosView extends HTMLElement {
         const encodedText = "Colegio Centro Am&#xE9;rica";
         const parser = new DOMParser();
         const decodedText = parser.parseFromString(encodedText, "text/html").documentElement.textContent;
-
+        const reportHeader = html`<div class="report-header">
+            <img src="${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}">
+            <div>
+                <h1>${decodedText}</h1>
+                <h2>Listado de alumnos que requieren Recorrido ${new Date().getFullYear()}</h2>
+            </div>      
+        </div>`;
         return html`<div class="w-table-container">                    
-        <div class="OptionsContainer">
-            
+        <div class="OptionsContainer">            
         </div>
         <div class="">
              ${new WReportComponent({
                 ModelObject: new ModelReport(),
                 Dataset: dataSet,
-                Logo: `${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}`,
-                Header: decodedText ?? "",
-                SubHeader: "Listado de alumnos que requieren Recorrido 2025",
+                Header: reportHeader,
                 PageType: PageType.OFICIO_HORIZONTAL,
                 exportXls: true,
                 exportPdfApi: true

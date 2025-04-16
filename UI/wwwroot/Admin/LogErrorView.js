@@ -39,7 +39,7 @@ class LogView extends HTMLElement {
         this.TabContainer = WRender.Create({ class: 'TabContainer' });
         this.MainComponent = new WTableComponent({
             ModelObject: this.ModelComponent,
-            // EntityModel: this.EntityModel,
+            EntityModel: this.EntityModel,
             AutoSave: true,
             //Dataset: this.Dataset,
             Options: {

@@ -12,7 +12,7 @@ namespace API.Controllers
         [AuthController]
         public object getLog(Log Inst)
         {           
-            return Inst.Get<Log>();
+            return Inst.Where<Log>(FilterData.Limit(100));
         }
 
     }

@@ -41,6 +41,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         this.FilterOptions = new WFilterOptions({
             Dataset: dataset,
             ModelObject: model,
+            UseManualControlForFiltering : true,
             FilterFunction: (DFilt) => {
                 this.MainComponent?.DrawTable(DFilt);
             }

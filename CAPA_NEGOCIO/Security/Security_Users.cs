@@ -28,7 +28,10 @@ namespace CAPA_NEGOCIO
 				profile = Tbl_Profile.Get_Profile(user);
 				try
 				{
-					new PagosOperation().UpdatePagosFromBellacon(idetify);
+					if(profile.IsPariente) 
+					{
+					    new PagosOperation().UpdatePagosFromBellacon(idetify);
+					}					
 				}
 				catch (System.Exception ex)
 				{
@@ -78,8 +81,9 @@ namespace CAPA_NEGOCIO
 		public List<Estudiantes?>? FamiliaEstudiantes { get; set; }
 		public int? Pariente_id { get; private set; }
 		public int? Docente_id { get; private set; }
+        public bool IsPariente { get; internal set; }
 
-		public static Tbl_Profile Get_Profile(UserModel User)
+        public static Tbl_Profile Get_Profile(UserModel User)
 		{
 			return Get_Profile(User.UserId.GetValueOrDefault(), User.UserData);
 		}
@@ -89,6 +93,7 @@ namespace CAPA_NEGOCIO
 			Docentes? docente = new Docentes { Id_User = UserId }.SimpleFind<Docentes>();
 			Parientes? pariente = new Parientes { User_id = UserId }.Find<Parientes>();
 			Tbl_Profile? tbl_Profile = new Tbl_Profile { IdUser = UserId }.SimpleFind<Tbl_Profile>();
+			bool isPariente = false;
 			if (tbl_Profile != null)
 			{
 				tbl_Profile.ProfileType = CAPA_NEGOCIO.ProfileType.USER;
@@ -104,6 +109,7 @@ namespace CAPA_NEGOCIO
 					.Where<Estudiantes_responsables_familia>(
 						FilterData.Distinc("pariente_id", pariente.Id)))
 				);
+				isPariente = true;				
 			}
 			List<Parientes?> parientes = familia.Select(f => f.Parientes)
 							.DistinctBy(p => p!.Id)
@@ -128,6 +134,7 @@ namespace CAPA_NEGOCIO
 				FamiliaEstudiantes = estudiantes,
 				Pariente_id = pariente?.Id,
 				Docente_id = docente?.Id,
+				IsPariente = true,
 				Id_Perfil = tbl_Profile?.Id_Perfil
 			};
 		}

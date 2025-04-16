@@ -40,6 +40,7 @@ class Historial_PagosReportView extends HTMLElement {
 			EntityModel: this.EntityModel,
 			ModelObject: new PagosRequest_ModelComponent(),
 			UseEntityMethods: false,
+			UseManualControlForFiltering : true,
 			Display: true,
 			Dataset: [],
 			FilterFunction: async (Filters) => {

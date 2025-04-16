@@ -41,6 +41,7 @@ class MateriasView extends HTMLElement {
             DateRange: FilterDateRange.YEAR,
             AutoFilter: true,
             UseEntityMethods: false,
+            UseManualControlForFiltering : true,
             Display: true,
             ModelObject: new Materias_ModelComponent(),
             FilterFunction: async (DFilt) => {
