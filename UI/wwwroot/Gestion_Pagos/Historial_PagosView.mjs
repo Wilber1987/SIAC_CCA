@@ -134,7 +134,7 @@ class Historial_PagosView extends HTMLElement {
 
 		if (!pagosEstudiante[this.selectedID ?? -1]) {
 			return html`<div class="pago-container">
-				<h3>No existe historial para este estudiante - ${this.selectedID}</h3>				 
+				<h3>Actualmente no tiene pagos pendientes para este estudiante - ${this.selectedID}</h3>				 
 			</div>`;
 		}
 

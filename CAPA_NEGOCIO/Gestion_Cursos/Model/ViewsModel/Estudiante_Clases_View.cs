@@ -83,7 +83,7 @@ namespace DataBaseModel
 			{
 				filterData = [];
 			}
-			filterData?.Add(FilterData.NotNull("Nombre_nota"));
+			//filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			return GetConsolidado();
 		}
 		public Clase_Group? GetClaseEstudianteCompleta()
@@ -97,7 +97,7 @@ namespace DataBaseModel
 		private Clase_Group? GetConsolidado()
 		{
 			var ClasesF = Get<Estudiante_Clases_View>();
-			if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
+			if (ClasesF.Count == 0) return new Clase_Group(); //throw  new Exception("Sin calificaciones para mostrar.");
 			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
 			return clase_Group?.First();
 		}
@@ -113,7 +113,7 @@ namespace DataBaseModel
 			{
 				filterData = [];
 			}
-			filterData?.Add(FilterData.NotNull("Nombre_nota"));
+			//filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			return GetConsolidadoMaterias();
 		}
 
@@ -146,7 +146,7 @@ namespace DataBaseModel
 			}
 			filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			var ClasesF = Get<Estudiante_Clases_View>();
-			if (ClasesF.Count == 0) throw  new Exception("Sin calificaciones para mostrar.");
+			 if (ClasesF.Count == 0) return new List<Clase_Group>();//  new Exception("Sin calificaciones para mostrar.");
 			var clase_Group = InformeClasesBuilder.BuildClaseList(ClasesF);
 			return clase_Group;
 		}
