@@ -25,14 +25,14 @@ class Clases_ModelComponent extends EntityClass {
        }
    }
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true , hiddenFilter: true};
-   /**@type {ModelProperty}*/ Grado = { type: 'number', hiddenInTable: true , hiddenFilter: true};
-   /**@type {ModelProperty}*/ Grado_label = {label: "Grado", type: 'WSELECT', Dataset: Grados, ModelObject: new Grado_ModelComponent() , ForeignKeyColumn: "Grado"};
-   /**@type {ModelProperty}*/ Nivel_id = { type: 'number' , hiddenInTable: true , hiddenFilter: true};
    /**@type {ModelProperty}*/ Periodo_lectivo_id = { type: 'number', hiddenInTable: true, hiddenFilter: true };   
    /**@type {ModelProperty}*/ Periodo_lectivos = {label: "Periodo Lectivo", type: 'WSELECT', ModelObject: () => new Periodo_lectivos_ModelComponent(), ForeignKeyColumn: 'Periodo_lectivo_id' };
+   /**@type {ModelProperty}*/ Nivel_id = { type: 'number' , hiddenInTable: true , hiddenFilter: true};   
    /**@type {ModelProperty}*/ Niveles = {label: "Nivel", type: 'WSELECT', ModelObject: () => new Niveles_ModelComponent(), ForeignKeyColumn: 'Nivel_id' };
+   /**@type {ModelProperty}*/ Grado = { type: 'number', hiddenInTable: true , hiddenFilter: true};
+   /**@type {ModelProperty}*/ Grado_label = {label: "Grado", type: 'WSELECT', Dataset: Grados, ModelObject: new Grado_ModelComponent() , ForeignKeyColumn: "Grado"};   
    /**@type {ModelProperty}*/ Observaciones = { type: 'text', hiddenFilter: true, hiddenInTable:true };
-   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true};
+   /**@type {ModelProperty}*/ Created_at = { type: 'date' , label: "Fecha", hiddenInTable: true, hiddenFilter: true};
 
    //**@type {ModelProperty}*/ Updated_at = { type: 'date', hiddenFilter: true };
    
