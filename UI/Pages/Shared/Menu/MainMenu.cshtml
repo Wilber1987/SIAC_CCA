@@ -10,10 +10,10 @@
 
 
 <button id="backButton" style="display: none;">
-	<i class="bx bx-arrow-back"></i> Inicio
+	<i class="bx bx-home-alt"></i> Inicio
 </button>
 <ul class="metismenu list-unstyled" id="side-menu">
-	<li class="menuParentOption">
+	<li id="menuInicio" class="menuParentOption">
 		<a href="~/">
 			<i class="bx bx-home-alt icon nav-icon"></i>
 			<span class="menu-item" data-key="t-inicio">Inicio</span>
@@ -37,7 +37,7 @@
 			</a>
 		</li>*@
 	}
-	@if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES,
+	@*@if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES,
 	Permissions.GESTION_CLASES_ASIGNADAS))
 	{
 		<li class="menuParentOption">
@@ -60,7 +60,7 @@
 				}
 			</ul>
 		</li>
-	}
+	}*@
 	@if (!SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) && SecurityController.HavePermission(Identify,
 	Permissions.GESTION_ESTUDIANTES_PROPIOS))
 	{
@@ -130,6 +130,10 @@
 				@* <span class="badge rounded-pill bg-primary">2</span> *@
 			</a>
 			<ul class="sub-menu" aria-expanded="false">
+				@if (SecurityController.HavePermission(Identify, Permissions.GESTION_CLASES))
+				{
+					<li><a href="~/Gestion_Cursos/Gestion_Grados" data-key="t-ecommerce">Generar Baremos</a></li>
+				}
 				<li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li>
 				<li><a href="~/Reports/PagosReport" data-key="t-report">Informes de pagos</a></li>
 			</ul>

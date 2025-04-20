@@ -2,20 +2,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const menuParentOptions = document.querySelectorAll(".menuParentOption");
     const subMenus = document.querySelectorAll(".sub-menu");
     const backButton = document.getElementById("backButton");
-    const adminMenu = document.querySelector(".admin-menu"); // Obtén el div con la clase "admin-menu"
+    const adminMenu = document.querySelector(".admin-menu");
+    const pageContent = document.querySelector(".page-content");
+    const homeMenuOption = document.getElementById("menuInicio"); // Usamos el ID directo
 
-    // Función para ocultar el menú admin según la URL
+    
     function toggleAdminMenu() {
-        const currentPath = window.location.pathname; // Obtiene la ruta actual
-        if (currentPath === "/home") { // Cambia "/home" a la ruta que necesites
-            adminMenu.style.display = "block"; // Muestra el menú admin
+        const currentPath = window.location.pathname.toLowerCase();
+        const isHome = currentPath === "/home" || currentPath === "/";
+         
+        if (isHome) {
+            adminMenu.style.display = "block";
+            backButton.style.display = "none";
+            pageContent.style.paddingTop = "";
+
+            // Mostrar todas las opciones
+            menuParentOptions.forEach(opt => opt.style.display = "block");
+
+            subMenus.forEach(sub => sub.style.display = "");
+            //if (homeMenuOption) homeMenuOption.style.display = "block";
         } else {
-            adminMenu.style.display = "none"; // Oculta el menú admin
+            adminMenu.style.display = "block";
+            backButton.style.display = "block";
+            pageContent.style.paddingTop = "10px";
+
+            menuParentOptions.forEach(opt => opt.style.display = "none");
+            subMenus.forEach(sub => sub.style.display = "none");
+
+            // Ocultar específicamente la opción de Inicio
+            //if (homeMenuOption){} homeMenuOption.style.display = "none";
         }
     }
-
-    // Llama a la función para comprobar la URL al cargar el contenido
-    toggleAdminMenu();
 
     function hideAllOptions(except) {
         menuParentOptions.forEach(opt => {
@@ -42,47 +59,33 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Manejar clics en las opciones del menú padre
     menuParentOptions.forEach(option => {
-        option.addEventListener("click", function (event) {            
+        option.addEventListener("click", function () {
             hideAllOptions(option);
-
             const link = option.querySelector("a");
-            if (link) {
-                link.style.display = "none"; // Oculta el enlace padre
-            }
+            if (link) link.style.display = "none";
 
             const relatedSubMenu = option.querySelector(".sub-menu");
-            if (relatedSubMenu) {                
-                showSubMenu(relatedSubMenu);
-            }
+            if (relatedSubMenu) showSubMenu(relatedSubMenu);
+
             option.style.width = "100%";
             backButton.style.display = "block";
         });
     });
 
-    // Manejar clics en los enlaces hijos
     subMenus.forEach(subMenu => {
         const links = subMenu.querySelectorAll("a");
         links.forEach(link => {
-            link.addEventListener("click", function (event) {                
+            link.addEventListener("click", function () {
+                // lógica adicional si se requiere
             });
         });
     });
 
     backButton.addEventListener("click", function () {
-        resetSubMenus();
-        
-        menuParentOptions.forEach(opt => {
-            opt.style.display = "block";
-            opt.classList.remove("selected");
-            opt.style.width = "";
-            const link = opt.querySelector("a");
-            if (link) {
-                link.style.display = "block"; // Muestra el enlace padre
-            }
-        });
-
-        backButton.style.display = "none"; // Oculta el botón de regreso
+        window.location.href = "/home";
     });
+
+    toggleAdminMenu();
+    homeMenuOption.style.display = "none";
 });
