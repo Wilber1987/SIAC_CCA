@@ -40,10 +40,11 @@ class LogView extends HTMLElement {
         this.MainComponent = new WTableComponent({
             ModelObject: this.ModelComponent,
             EntityModel: this.EntityModel,
-            AutoSave: true,
+            AutoSave: true,           
             //Dataset: this.Dataset,
             Options: {
                 Show: true,
+                UseManualControlForFiltering: true,
                 Filter: true,
                 FilterDisplay: true
             }

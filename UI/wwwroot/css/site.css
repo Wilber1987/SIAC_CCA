@@ -36,7 +36,9 @@
 .page-content {
     padding: 110px calc(24px / 2) 60px calc(24px / 2);
 }
-
+.page-content.admin {
+    padding: 10px calc(24px / 2) 60px calc(24px / 2);
+}
 .vertical-menu-btn:hover{
   background: var(--bs-btn-active-bg) !important;
     color: var(--font-primary-color) !important;

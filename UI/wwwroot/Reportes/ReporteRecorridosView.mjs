@@ -73,9 +73,7 @@ class ReporteRecorridosView extends HTMLElement {
         super();
         this.props = props ?? {};
         this.append(this.CustomStyle);
-
         this.Draw();
-
     }
     Draw = async () => {
         if (this.props?.initialize == true) {
@@ -102,11 +100,11 @@ class ReporteRecorridosView extends HTMLElement {
             this.ReportWrapper.appendChild(this.Report)
 
             this.Header = html`<div class="">
-                <h2>Informe de Recorridos 2025</h2>
+                <h2>Informe de Recorridos ${new Date().getFullYear()}</h2>
                 ${new WFilterOptions({
                 ModelObject: ModelFilter,
                 Dataset: dataSet,
-                UseManualControlForFiltering : true,
+                UseManualControlForFiltering: true,
                 UseEntityMethods: false,
                 Display: true,
                 FilterFunction: async (Dfilter) => {
@@ -182,7 +180,38 @@ class ReporteRecorridosView extends HTMLElement {
         const parser = new DOMParser();
         const decodedText = parser.parseFromString(encodedText, "text/html").documentElement.textContent;
         const reportHeader = html`<div class="report-header">
-            <img src="${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}">
+            <style>
+                .report-header {
+                    display: block;
+                    align-items: center;
+                    width: 100%;
+                    vertical-align: top;
+                   
+                }
+                .report-header div {
+                    min-width: calc(100% - 250px);
+                    width: 1100px;
+                    display: inline-block;
+                    vertical-align: top;
+                }
+                .repot-header-logo {
+                    height: 100px; 
+                    width: auto;
+                    display: inline-block;
+                    vertical-align: top;
+                }
+                .report-header h1, .report-header h2 {
+                    font-size: 20px;
+                    width: 100%;
+                    margin: 0;
+                    padding: 0px 0px 10px 0px;
+                    text-align: center;                    
+                }
+                .report-header h2 {
+                    font-size: 18px;
+                }
+            </style>
+            <img class="repot-header-logo" src="${location.origin}${localStorage.getItem("MEDIA_IMG_PATH")}${localStorage.getItem("LOGO_PRINCIPAL")}">
             <div>
                 <h1>${decodedText}</h1>
                 <h2>Listado de alumnos que requieren Recorrido ${new Date().getFullYear()}</h2>
@@ -198,49 +227,51 @@ class ReporteRecorridosView extends HTMLElement {
                 Header: reportHeader,
                 PageType: PageType.OFICIO_HORIZONTAL,
                 exportXls: true,
-                exportPdfApi: true
-                /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
-                    const htmlString = htmlNode.outerHTML;
-                    // Codificar la cadena en Base64
-                    const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
-                        return rgbToHex(match); // Convierte rgb a hexadecimal
-                    }))));
-                    // Crear el objeto para enviar al endpoint
-                    console.log(htmlBase64);
-        
-                    const payload = {
-                        DocumentHtml: htmlBase64
-                    };
-                    //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
-                    const response = await fetch('../api/ApiReportes/ExportToExcel', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-        
-                    // Verificar si la respuesta es correcta
-                    if (!response.ok) {
-                        throw new Error(`Error en la exportación: ${response.statusText}`);
-                    }
-        
-                    // Convertir la respuesta en un blob (archivo)
-                    const blob = await response.blob();
-        
-                    // Crear un enlace para descargar el archivo
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-        
-                    // Liberar la URL del objeto
-                    window.URL.revokeObjectURL(url);
-                }*/
-                //ModelObject: model
+                exportPdf: true,
+                exportPdfApi: true,
+                DocumentViewFirst: true,
+            /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
+                const htmlString = htmlNode.outerHTML;
+                // Codificar la cadena en Base64
+                const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
+                    return rgbToHex(match); // Convierte rgb a hexadecimal
+                }))));
+                // Crear el objeto para enviar al endpoint
+                console.log(htmlBase64);
+    
+                const payload = {
+                    DocumentHtml: htmlBase64
+                };
+                //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
+                const response = await fetch('../api/ApiReportes/ExportToExcel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+    
+                // Verificar si la respuesta es correcta
+                if (!response.ok) {
+                    throw new Error(`Error en la exportación: ${response.statusText}`);
+                }
+    
+                // Convertir la respuesta en un blob (archivo)
+                const blob = await response.blob();
+    
+                // Crear un enlace para descargar el archivo
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+    
+                // Liberar la URL del objeto
+                window.URL.revokeObjectURL(url);
+            }*/
+            //ModelObject: model
         })}
         </div>
        

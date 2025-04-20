@@ -43,9 +43,10 @@ class GradosManagerView extends HTMLElement {
         const MainTable = new WTableComponent({
             ModelObject: new Clases_ModelComponent(),
             EntityModel: new Clases(),
-            isActiveSorts: false,
+            isActiveSorts: false,            
             Options: {
                 Filter: true,
+                UseManualControlForFiltering: true,
                 AutoSetDate: false,
                 FilterDisplay: true,
                 UserActions: [
@@ -59,6 +60,7 @@ class GradosManagerView extends HTMLElement {
                                 Nombre_corto_periodo: Clases.Periodo_lectivos.Nombre_corto,
                                 Nombre_corto_nivel: Clases.Niveles.Nombre_corto
                             }).GetClasesCompleta();                                                    
+                            // @ts-ignore
                             this.Manager.NavigateFunction(`Clase${Clases.Id}`, new BaremoComponent({ Clase: Clases ,  Dataset: this.claseResponse }));
                         }
                     }

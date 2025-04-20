@@ -36,7 +36,7 @@ class Historial_PagosView extends HTMLElement {
 			AutoSetDate: true,
 			AutoFilter: true,
 			ModelObject: new Tbl_Pagos_ModelComponent(),
-			UseEntityMethods: false,
+			//UseEntityMethods: false,
 			UseManualControlForFiltering : true,
 			Display: true,
 			Dataset: [],
@@ -57,7 +57,7 @@ class Historial_PagosView extends HTMLElement {
 				tool.ExportPdf(body, PageType.A4_HORIZONTAL, false, "Historial de pagos")
 			}
 		})
-		container.append(this.Filter, html`<button class="BtnPrimary" onclick="${()=> this.GetHistorialData()}">Filtrar</button>`)
+		container.append(this.Filter, html`<button class="btn-go" onclick="${()=> this.GetHistorialData()}">Filtrar</button>`)
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
@@ -493,8 +493,8 @@ class Historial_PagosView extends HTMLElement {
 			display: grid;
 			grid-template-columns:  calc(100% - 120px) 100px;
 			gap: 20px;
-			& .BtnPrimary {
-				height: 50px;
+			& .btn-go {
+				height: 30px;
 				align-self: center;
 			}
 

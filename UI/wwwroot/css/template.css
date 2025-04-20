@@ -19,9 +19,7 @@
 .aside-container,
 .OptionContainer {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: rgb(212 212 212) 0 0 3px 0;
+    padding: 10px;
 }
 
 .form-container {
@@ -435,8 +433,8 @@
     flex: 8;
     display: grid;
     flex-direction: column;
-    border: 1px #cdcbcb solid;
     grid-auto-rows: min-content;
+    max-width: initial;
 }
 
 .container label {

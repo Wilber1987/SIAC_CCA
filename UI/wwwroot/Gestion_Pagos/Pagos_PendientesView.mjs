@@ -59,7 +59,7 @@ class Pagos_PendientesView extends HTMLElement {
 	}
 	UpdatePagos() {
 		let total = 0;
-		console.log(this.pagosSeleccionados);
+		//console.log(this.pagosSeleccionados);
 		this.DetailContainer.innerHTML = "";
 		this.TotalContainer.innerHTML = "";
 

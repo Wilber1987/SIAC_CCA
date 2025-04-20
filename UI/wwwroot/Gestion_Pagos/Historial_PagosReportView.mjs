@@ -40,7 +40,7 @@ class Historial_PagosReportView extends HTMLElement {
 			EntityModel: this.EntityModel,
 			ModelObject: new PagosRequest_ModelComponent(),
 			UseEntityMethods: false,
-			UseManualControlForFiltering : true,
+			//UseManualControlForFiltering : true,
 			Display: true,
 			Dataset: [],
 			FilterFunction: async (Filters) => {
@@ -56,7 +56,7 @@ class Historial_PagosReportView extends HTMLElement {
 		});
 		this.OptionContainer.append(
 			this.Filter,
-			html`<button class="BtnPrimary" onclick="${() => this.GetHistorialData()}">Filtrar</button>`
+			html`<button class="btn-go" onclick="${() => this.GetHistorialData()}">Filtrar</button>`
 		);
 		this.append(
 			StylesControlsV2.cloneNode(true),
@@ -119,13 +119,15 @@ class Historial_PagosReportView extends HTMLElement {
 			}
 			</style>            
 		</div>`;
+		const fechsFilter = this.Filter.FilterControls[0].querySelectorAll("input");
+			
 
 		for (const pagoYear in pagos) {
 			/**@type {PagosRequest} */
 			const pago = pagos[pagoYear][0];
 			const pagoContainer = html`<div class="">
-				<h1 style="color: #09559c">${localStorage.getItem("TITULO")}</h1>
-				<h3 style="color: #0c3964;">Informe de pagos enviadas ${pago.Year}</h3>				
+				<h2 style="color: #09559c">${localStorage.getItem("TITULO")}</h2>
+				<h3 style="color: #0c3964;">Reporte de pasarela de pago del ${new DateTime(fechsFilter[0].value).toDDMMYYYY()} al ${new DateTime(fechsFilter[1].value).toDDMMYYYY()}</h3>				
 				<hr/>
 			 </div>`;
 			const pagosMes = this.BuildPagosXMes(pagos[pagoYear]);
@@ -241,7 +243,7 @@ class Historial_PagosReportView extends HTMLElement {
 	}
 
 	CustomStyle = css`
-		.BtnPrimary {
+		.btn-go {
 			height: 50px;
 			align-self: center;
 		}

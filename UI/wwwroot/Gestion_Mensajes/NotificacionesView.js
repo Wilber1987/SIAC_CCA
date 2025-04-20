@@ -298,17 +298,7 @@ class NotificacionesElements extends HTMLElement {
         .NoLeido {
             position: relative;
         }
-        .NoLeido::after {
-            display: block;
-            content: " ";
-            width: 30px;
-            height: 10px;
-            position: absolute;
-            background-color: rgb(40, 183, 101);
-            border-radius: 5px;
-            top: 20px;
-            right: 20px;
-        }
+        
         .BtnMini {
             background-color: #1c4786;
             border: none;

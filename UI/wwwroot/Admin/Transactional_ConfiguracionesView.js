@@ -17,7 +17,8 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         this.MainComponent = new WTableComponent({
             ModelObject: model, Dataset: dataset, Options: {
                 UrlUpdate: "../api/ApiEntityADMINISTRATIVE_ACCESS/updateTransactional_Configuraciones",
-                Search: true, UserActions: [
+                UseManualControlForFiltering: true,
+                UserActions: [
                     {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({

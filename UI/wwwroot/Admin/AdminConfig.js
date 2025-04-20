@@ -14,7 +14,6 @@ window.addEventListener("load", async () => {
         }
         w-app-navigator {
             margin:0px;
-            background-color: var(--secundary-color);
             color: var(--font-fourth-color);
             border-radius: 0.3cm;
             padding: 20px;

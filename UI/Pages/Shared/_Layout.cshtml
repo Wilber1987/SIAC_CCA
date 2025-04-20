@@ -95,7 +95,7 @@
                 </div>
             }
 
-            <div class="page-content">
+            <div class="page-content @(SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS) ? "admin" : "")">
                 <div class="container-fluid">
                     @RenderBody()
                 </div>
