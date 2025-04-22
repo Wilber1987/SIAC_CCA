@@ -1,5 +1,7 @@
 
 
+using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
+
 namespace DataBaseModel
 {
     internal class InformeClasesBuilder
@@ -57,12 +59,70 @@ namespace DataBaseModel
         }
 
         //AGRUOADO POR DESCRIPCION (GRADO, NIVEL Y PERIODO)
-        public static List<Clase_Group>? BuildClaseGroupList(List<Estudiante_Clases_View>? Clases)
+        public static List<Clase_Group>? BuildClaseGroupList(List<Estudiante_Clases_View>? clasesView, List<MateriasByClassQuery> clases)
         {
-            return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()
+            return [BuildClaseGroup(clases, clasesView)];
+            /*return Clases?.OrderByDescending(C => C.Nombre_corto_periodo).ToList()
                     //.Where(C => C.Nombre_nota != null)
                     .GroupBy(C => C.Descripcion)
-                    .Select(C => BuildClaseGroup(C)).ToList();
+                    .Select(C => BuildClaseGroup(C)).ToList();*/
+        }
+
+        public static Clase_Group BuildClaseGroup(List<MateriasByClassQuery> clases, List<Estudiante_Clases_View> clasesView)
+        {
+            Clases? claseE = new Clases { Id = clases.First().Clase_id }.Find<Clases>();
+            //Estudiante_clases estudiante_Clases = new Estudiante_clases { Id = clases.est}
+            MateriasByClassQuery clase = clases.First();
+            Secciones? seccion = new Secciones { Id = clases.First().Seccion_id }.Find<Secciones>();
+
+            return new Clase_Group
+            {
+                Id_Clase = clase?.Clase_id,
+                Clase = claseE?.Descripcion?.ToUpper(),
+                Repite = clase?.Repitente == true ? "SI" : "NO",
+                Nivel = claseE?.Niveles?.Nombre,
+                Seccion = seccion?.Nombre,
+                Guia = seccion?.Guia?.Nombre_completo,
+                Asignaturas = clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
+                /*Asignaturas = C.GroupBy(A => A.Nombre_asignatura)
+                    .Select(A => BuildAsignaturaGroup(A)).ToList()*/
+            };
+        }
+
+        private static Asignatura_Group BuildAsignaturaGroup(MateriasByClassQuery materiasByClass,
+            List<Estudiante_Clases_View> clasesView)
+        {
+            IGrouping<string?, Estudiante_Clases_View> A = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
+                    .ToList().GroupBy(c => c.Nombre_asignatura).First();
+            var clase = A.First();
+            Docente_materias? docente_materia = new Docente_materias { Materia_id = clase.Materia_id, Seccion_id = clase.Seccion_id }.Find<Docente_materias>();
+            return new Asignatura_Group
+            {
+                Descripcion = materiasByClass.Nombre,
+                Descripcion_Corta = materiasByClass.Nombre,
+                Docente = docente_materia?.Docentes?.Nombre_completo,
+                Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
+                Calificaciones = [.. A.Select(Calificacion =>
+                {
+                    return new Calificacion_Group
+                    {
+                        Id = Calificacion.Id,
+                        Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
+                        Resultado = Calificacion.Resultado,
+                        Evaluacion = Calificacion.Evaluacion ?? "",
+                        EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
+                        Tipo = Calificacion.Tipo,
+                        Fecha = Calificacion.Fecha,
+                        Porcentaje = Calificacion.Porcentaje,
+                        Observaciones =  Calificacion.Observaciones ?? "Sin observaciones",
+                        //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
+                     };
+                }).OrderBy(c => c.Fecha)
+                .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
+                    c.Evaluacion.Contains("S") ? 2 :
+                    c.Evaluacion.Contains("F") ? 3 : 4) // Ordenar por Evaluacion
+                ]
+            };
         }
 
         public static Clase_Group BuildClaseGroup(IGrouping<string?, Estudiante_Clases_View> C)

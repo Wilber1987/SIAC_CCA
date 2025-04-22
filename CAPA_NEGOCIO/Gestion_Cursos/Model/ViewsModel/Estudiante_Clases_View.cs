@@ -1,5 +1,6 @@
 using CAPA_DATOS;
 using CAPA_DATOS.Services;
+using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
 using CAPA_NEGOCIO.Utility;
 namespace DataBaseModel
 {
@@ -44,18 +45,18 @@ namespace DataBaseModel
 		public string? Codigo { get; set; }
 		public string? Nombre_Estudiantes { get; set; }
 		public string? Sexo { get; set; }
-		public string? Estado { get; set; } 
-		public string? Id_familia { get; set; } 
-		public string? Observaciones { get;  set; }
-		
+		public string? Estado { get; set; }
+		public string? Id_familia { get; set; }
+		public string? Observaciones { get; set; }
+
 		public string? Nombre_completo { get { return $"{Nombre_Estudiantes}"; } }
-		public int? Orden_Asignatura { get;  set; }
-		public string? Observaciones_Puntaje { get;  set; }
+		public int? Orden_Asignatura { get; set; }
+		public string? Observaciones_Puntaje { get; set; }
 
 
 		public string? Descripcion
-		{			
-			get { return $"{NumberUtility.ObtenerEnumeracion((this.Nombre_nivel?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0 ).ToUpper()}"; }
+		{
+			get { return $"{NumberUtility.ObtenerEnumeracion((this.Nombre_nivel?.ToString() == "SECUNDARIA" ? this.Grado + 6 : this.Grado) ?? 0).ToUpper()}"; }
 		}
 		public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
 		public string? EvaluacionCompleta { get { return $"{Nombre_nota} {Tipo}"; } }
@@ -96,9 +97,14 @@ namespace DataBaseModel
 		}
 		private Clase_Group? GetConsolidado()
 		{
+			var clases = new MateriasByClassQuery
+			{
+				Clase_id = Clase_id,
+				Estudiante_id = Estudiante_id
+			}.Get<MateriasByClassQuery>();
 			var ClasesF = Get<Estudiante_Clases_View>();
-			if (ClasesF.Count == 0) return new Clase_Group(); //throw  new Exception("Sin calificaciones para mostrar.");
-			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF);
+			if (clases.Count == 0) return new Clase_Group(); //throw  new Exception("Sin calificaciones para mostrar.");
+			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF, clases);
 			return clase_Group?.First();
 		}
 
@@ -146,7 +152,7 @@ namespace DataBaseModel
 			}
 			filterData?.Add(FilterData.NotNull("Nombre_nota"));
 			var ClasesF = Get<Estudiante_Clases_View>();
-			 if (ClasesF.Count == 0) return new List<Clase_Group>();//  new Exception("Sin calificaciones para mostrar.");
+			if (ClasesF.Count == 0) return new List<Clase_Group>();//  new Exception("Sin calificaciones para mostrar.");
 			var clase_Group = InformeClasesBuilder.BuildClaseList(ClasesF);
 			return clase_Group;
 		}

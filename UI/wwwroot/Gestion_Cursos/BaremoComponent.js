@@ -29,13 +29,13 @@ class BaremoComponent extends HTMLElement {
 
         const data = []
         //HEADER
-        this.OptionContainer.append(html`<div class="header-container">
+        this.OptionContainer.append(html`<div class="header-baremo-container">
             <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>          
             <div class="header-detail"><label class="detail">Nivel:</label><label  class="value">${this.Config.Clase.Niveles.Nombre}</label></div>
             <div class="header-detail"><label class="detail">Grado:</label><label  class="value">${this.Config.Clase.Nombre_Grado}</label></div>
             ${new WPrintExportToolBar({ ExportXlsAction: (tool) => this.ExportXlsAction(tool, data) })}
         </div>`);
-        this.header = html`<div class="header-container">
+        this.header = html`<div class="header-baremo-container">
             <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>           
             <div class="header-detail"><label class="detail">Nivel:</label><label  class="value">${this.Config.Clase.Niveles.Nombre}</label></div>
             <div class="header-detail"><label class="detail">Grado:</label><label  class="value">${this.Config.Clase.Nombre_Grado}</label></div>
@@ -80,13 +80,11 @@ class BaremoComponent extends HTMLElement {
                     containerEstudiante.append(html`<div class="estudiante-name">
                         <label class="header-name">SECCIÓN</label>
                         <label class="header-name">ESTUDIANTE</label>
-                        <label class="header-name">SEXO</label>
-                        <label class="header-name">ESTADO</label>
                     </div>`)
                     headers.push({ value: "SECCIÓN" });
                     headers.push({ value: "ESTUDIANTE" });
-                    headers.push({ value: "SEXO" });
-                    headers.push({ value: "ESTADO" });
+                    //headers.push({ value: "SEXO" });
+                    //headers.push({ value: "ESTADO" });
 
                 }
                 const row = []
@@ -97,14 +95,12 @@ class BaremoComponent extends HTMLElement {
 
                 containerEstudiante.append(html`<div class="estudiante-name ${styleLabel}">
                     <label>${clase_Group.Seccion}</label> 
-                    <label>${estudiante.Descripcion}</label> 
-                    <label>${estudiante.Sexo?.toUpperCase()}</label> 
-                    <label>${estudiante.Estado}</label> 
+                    <label>${estudiante.Descripcion}</label>
                 </div>`);
                 row.push({ value: clase_Group.Seccion })
                 row.push({ value: estudiante.Descripcion })
-                row.push({ value: estudiante.Sexo?.toUpperCase() })
-                row.push({ value: estudiante.Estado })
+                //row.push({ value: estudiante.Sexo?.toUpperCase() })
+                //row.push({ value: estudiante.Estado })
 
                 CalificacionesUtil.UpdateCalificaciones(estudiante.Asignaturas);
                 //console.log(estudiante.Asignaturas, groupAsignatura);
@@ -141,10 +137,10 @@ class BaremoComponent extends HTMLElement {
                         asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}" style="${style2}">
                             ${calificacion[1].Resultado}</label>`)
                         asignaturaColumnB3.append(html`<label class="asig-value br ${styleLabel} ${asignatura.Descripcion_Corta}" style="${styleR}">
-                            ${result}</label>`)
+                            ${result < 0 ? "-" : result }</label>`)
                         rowB1.push({ value: calificacion[0].Resultado, style: style1 })
                         rowB2.push({ value: calificacion[1].Resultado, style: style2 })
-                        rowBR.push({ value: result, style: styleR })
+                        rowBR.push({ value: result < 0 ? "-" : result, style: styleR })
                     } else if (calificacion.length == 1) {
                         asignaturaColumnB1.append(html`<label class="asig-value ${styleLabel} ${asignatura.Descripcion_Corta}">${calificacion[0].Resultado}</label>`)
                         asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}">-</label>`)
@@ -171,7 +167,7 @@ class BaremoComponent extends HTMLElement {
                     ...headersBR])
                 }
                 const resultConsolidadoMayor60 = rowBR.filter(x => x.value != "-" && x.value >= 60).length;
-                containerBaremoConsolidado.append(html`<label class="asig-value">${resultConsolidadoMayor60 == 0 ? "-": resultConsolidadoMayor60}</label>`)
+                containerBaremoConsolidado.append(html`<label class="asig-value">${resultConsolidadoMayor60 == 0 ? "-" : resultConsolidadoMayor60}</label>`)
                 data.push([...row,
                 ...rowB1,
                 ...rowB2,
@@ -185,9 +181,9 @@ class BaremoComponent extends HTMLElement {
      * @returns {Array<Calificacion_Group>}
      */
     GetBaremoCal(asignatura) {
-        
+
         const NotaSemestral = asignatura.Calificaciones?.find(c => c.Evaluacion.toUpperCase().includes("IS") && c.Resultado != null);
-        const NotaBimestral = asignatura.Calificaciones?.find(c => c.Evaluacion.toUpperCase().includes("IIIB") && c.Resultado != null);       
+        const NotaBimestral = asignatura.Calificaciones?.find(c => c.Evaluacion.toUpperCase().includes("IIIB") && c.Resultado != null);
         if (NotaSemestral != undefined && NotaBimestral != undefined) {
             return [NotaSemestral, NotaBimestral];
         } else if (NotaSemestral != undefined) {
@@ -195,7 +191,7 @@ class BaremoComponent extends HTMLElement {
         } else {
             return [];
         }
-        
+
     }
     /**
      * @param {WPrintExportToolBar} tool
@@ -227,8 +223,15 @@ class BaremoComponent extends HTMLElement {
                 background-color: #f5caca;
             }  
             
-        }  
-        
+        } 
+        .header-baremo-container {
+            grid-template-columns: 200px calc(100% - 200px);
+            display: grid;
+        }
+        .header-baremo-container h3 {
+            grid-column: span 2;
+        } 
+                
         .baremo-container {
             display: grid;
             grid-template-columns: repeat(5,auto);
@@ -243,7 +246,7 @@ class BaremoComponent extends HTMLElement {
         } 
         .estudiante-name {
             display: grid;
-            grid-template-columns: 50px calc(100% - 150px) 50px 50px;
+            grid-template-columns: 150px calc(100% - 150px);
             box-sizing: border-box;
             width: auto;
             min-width: 100%;

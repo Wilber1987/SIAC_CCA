@@ -38,6 +38,6 @@ namespace DataBaseModel
         public List<Estudiante_clases>? Estudiante_clases { get; set; }
         //[OneToMany(TableName = "Materias", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
         public List<Materias>? Materias { get; set; }
-
+       
     }
 }
