@@ -84,7 +84,7 @@ class ClaseGroup extends HTMLElement {
 				 ${maxDetailsHeaders != null ? html`<div class="container promedio">
 					<div class="element-description"><span class="value" style="text-align: right">PROMEDIO</span></div>   
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)} ${} pts.</span></label>`)}
+						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)} pts.</span></label>`)}
 					</div> 
 					<div class="option" style="min-width: 85px; max-width: 85px; width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
@@ -193,10 +193,14 @@ class ClaseGroup extends HTMLElement {
 				for (const key in c) {
 					newObject[key] = c[key]
 				}
-				newObject.Resultado = newObject.Resultado + " pts."
-				if (newObject.Porcentaje != null) {
-					newObject.Porcentaje = newObject.Porcentaje + " pts."
+				if (newObject.Resultado !== "-") {
+					newObject.Resultado = newObject.Resultado + " pts.";
 				}
+
+				if (newObject.Porcentaje != null && newObject.Porcentaje !== "-") {
+					newObject.Porcentaje = newObject.Porcentaje + " pts.";
+				}
+
 				if (newObject.Evaluacion.includes("B") || newObject.Evaluacion.includes("S") || newObject.Evaluacion.includes("F")) {
 					newObject.Porcentaje = "100 pts.";
 					newObject.Observaciones = "-";
@@ -206,7 +210,7 @@ class ClaseGroup extends HTMLElement {
 					//newObject.Fecha = new DateTime(newObject.Fecha).toDDMMYYYY()
 					console.log(newObject.Fecha)
 					console.log(new DateTime(newObject.Fecha).toDDMMYYYY());
-					
+
 				}
 				newObject.Tipo = newObject.Tipo ? newObject.Tipo.charAt(0).toUpperCase() + newObject.Tipo.slice(1) : '';
 				return newObject;
@@ -443,11 +447,15 @@ class ClaseGroup extends HTMLElement {
 			<div>${calificacion.Porcentaje ? `
 				${index + 1}` : ''}</div>			
 			<div style="${!calificacion.Porcentaje ? 'text-align: right; font-weight: bold;' : ''}">
-                ${calificacion.Porcentaje ?
-				`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje} Pts.)`
-				: 'Total'}
-            </div>
-			<div style="text-align: right; width:65px">${calificacion.Resultado} pts.</div>
+				${calificacion.Porcentaje ?
+							`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje !== '-' ? calificacion.Porcentaje + ' Pts.' : calificacion.Porcentaje})`
+							: 'Total'}
+			</div>
+
+			<div style="text-align: right; width:65px">
+				${calificacion.Resultado}${calificacion.Resultado !== '-' ? ' pts.' : ''}
+				</div>
+
 		</div>`
 	}
 
@@ -465,7 +473,10 @@ class ClaseGroup extends HTMLElement {
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
 				<span>${columnValue}</span>
 			</span>
-			<span class="value" style="${isNotaF ? "font-weight: 700" : ""}">${detail.Resultado} pts.</span>
+			<span class="value" style="${isNotaF ? 'font-weight: 700' : ''}">
+				${detail.Resultado}${detail.Resultado !== '-' ? ' pts.' : ''}
+			</span>
+
 		</div>`;
 	}
 	PdfCustomStyle = css`		
