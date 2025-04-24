@@ -115,8 +115,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				},
 				 ""BillingAddress"": { 					
 					""EmailAddress"": """ + datosDePago.CardholderMail+ @""", 
-					""PhoneNumber"": """ + datosDePago.CardholderPhone + @""", 
-				},
+					""PhoneNumber"": """ + datosDePago.CardholderPhone + @"""
+				}
 			}";
 		}
 		private string BuildJsonSalesRequest(TPV datosDePago)
@@ -140,8 +140,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				 ""BillingAddress"": { 					
 					""EmailAddress"": """ + datosDePago.CardholderMail+ @""", 
 					""PhoneNumber"": """ + datosDePago.CardholderPhone + @""", 
-				}, 
-				
+				}				
 			}";
 			/*""BillingAddress"": { 
 					""FirstName"": ""John"", 

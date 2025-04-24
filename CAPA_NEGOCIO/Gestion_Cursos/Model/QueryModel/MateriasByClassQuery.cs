@@ -15,6 +15,7 @@ namespace CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel
         public string? Nombre { get; set; }
         public int? Orden { get; set; }
         public int? Seccion_id { get; set; }
+        public int? Materia_id { get; set; }
         public bool Repitente { get;  set; }
 
         public override List<MateriasByClassQuery> Get<MateriasByClassQuery>()
@@ -42,7 +43,8 @@ namespace CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel
 			    ec.estudiante_id,
 			    ec.repitente,
 			    ec.seccion_id,
-			    a.orden 
+			    a.orden,
+                m.id as materia_id
 			    from materias m 
                 inner join asignaturas a on a.id = m.asignatura_id 
                 inner join estudiante_clases ec on m.clase_id = ec.clase_id 

@@ -92,17 +92,25 @@ namespace DataBaseModel
         private static Asignatura_Group BuildAsignaturaGroup(MateriasByClassQuery materiasByClass,
             List<Estudiante_Clases_View> clasesView)
         {
-            IGrouping<string?, Estudiante_Clases_View> A = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
-                    .ToList().GroupBy(c => c.Nombre_asignatura).First();
-            var clase = A.First();
-            Docente_materias? docente_materia = new Docente_materias { Materia_id = clase.Materia_id, Seccion_id = clase.Seccion_id }.Find<Docente_materias>();
-            return new Asignatura_Group
+            Estudiante_Clases_View clase = null;
+            IGrouping<string?, Estudiante_Clases_View>? A = null;
+            var datosClasesView = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
+                    .ToList();
+            if (datosClasesView.Count > 0)
             {
-                Descripcion = materiasByClass.Nombre,
-                Descripcion_Corta = materiasByClass.Nombre,
-                Docente = docente_materia?.Docentes?.Nombre_completo,
-                Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
-                Calificaciones = [.. A.Select(Calificacion =>
+                A = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
+                        .ToList().GroupBy(c => c.Nombre_asignatura).First();
+            }
+
+
+            if (A != null)
+            {
+                clase = A.First();
+            }
+
+            Docente_materias? docente_materia = new Docente_materias { Materia_id = materiasByClass.Materia_id, Seccion_id = materiasByClass.Seccion_id }.Find<Docente_materias>();
+
+            var calificacion = A?.Select(Calificacion =>
                 {
                     return new Calificacion_Group
                     {
@@ -120,8 +128,16 @@ namespace DataBaseModel
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
                     c.Evaluacion.Contains("S") ? 2 :
-                    c.Evaluacion.Contains("F") ? 3 : 4) // Ordenar por Evaluacion
-                ]
+                    c.Evaluacion.Contains("F") ? 3 : 4).ToList()?? []; // Ordenar por Evaluacion
+                    
+
+            return new Asignatura_Group
+            {
+                Descripcion = materiasByClass.Nombre,
+                Descripcion_Corta = materiasByClass.Nombre,
+                Docente = docente_materia?.Docentes?.Nombre_completo,
+                Evaluaciones = A?.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList() ?? [],
+                Calificaciones = calificacion
             };
         }
 

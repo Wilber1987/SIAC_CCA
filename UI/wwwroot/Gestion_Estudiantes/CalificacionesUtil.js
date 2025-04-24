@@ -13,7 +13,7 @@ export class CalificacionesUtil {
 
         Dataset.forEach(instance => {
             if (maxDetails && instance.Calificaciones.length < maxDetails) {
-                let isFirstOrder = instance.Calificaciones[0].Order == 1
+                let isFirstOrder = instance.Calificaciones[0]?.Order == 1
                 if (maxDetailsHeaders == null) {
                     for (let index = 0; index <= (maxDetails - (instance.Calificaciones.length + 1)); index++) {
                         if (isFirstOrder) {
@@ -88,9 +88,13 @@ export class CalificacionesUtil {
         });
         if (maxDetailsHeaders != null) {
             return maxDetailsHeaders.map((header, index) => {
+                console.log(Dataset.flatMap(instance => instance.Calificaciones));
+                
                 const suma = Dataset.flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado) ).reduce((a, b) => a + b, 0);
+                    .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado) ).reduce((a, b) => a + b, 0);                    
+                    
                 const Promedio = isNaN(suma / Dataset.length) ? 0 : suma / Dataset.length;
+                //console.log(suma, header, Promedio, Dataset.length);
                 return {
                     ev: header,
                     Suma: suma,

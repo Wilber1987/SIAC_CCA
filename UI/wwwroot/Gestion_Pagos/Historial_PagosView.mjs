@@ -26,7 +26,9 @@ class Historial_PagosView extends HTMLElement {
 	 * @param {Historial_PagosViewConfig} props 
 	 */
 	constructor(props) {
+
 		super();
+		this.Filters = [];
 		this.OptionContainer = WRender.Create({ className: "OptionContainer" });
 		this.TabContainer = WRender.Create({ className: "TabContainer", id: 'TabContainer' });
 		this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
