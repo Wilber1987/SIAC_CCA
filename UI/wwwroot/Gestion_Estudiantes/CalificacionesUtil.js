@@ -17,9 +17,9 @@ export class CalificacionesUtil {
                 if (maxDetailsHeaders == null) {
                     for (let index = 0; index <= (maxDetails - (instance.Calificaciones.length + 1)); index++) {
                         if (isFirstOrder) {
-                            instance.Calificaciones.push(new Calificacion_Group({ Evaluacion: "", Resultado: "-", Tipo: "Relleno" }));
+                            instance.Calificaciones.push(new Calificacion_Group({ Evaluacion: "", Resultado: "-", TipoColumna: "Relleno" }));
                         } else {
-                            instance.Calificaciones.unshift(new Calificacion_Group({ Evaluacion: "", Resultado: "-", Tipo: "Relleno" }));
+                            instance.Calificaciones.unshift(new Calificacion_Group({ Evaluacion: "", Resultado: "-", TipoColumna: "Relleno" }));
                         }
                     }
                 }
@@ -44,7 +44,7 @@ export class CalificacionesUtil {
                 const letra = (calificacion.Evaluacion == null
                     || calificacion.Evaluacion == ""
                     || calificacion.Evaluacion == undefined)
-                    && calificacion.Tipo != "Relleno" ? "E" : calificacion.Evaluacion;
+                    && calificacion.TipoColumna != "Relleno" ? "E" : calificacion.Evaluacion;
 
                 // Incrementar el contador para la letra correspondiente
                 if (!counters[letra]) {
@@ -60,7 +60,7 @@ export class CalificacionesUtil {
                     calificacion.EvaluacionCompleta = `${calificacion.EvaluacionCompleta ?? ""}`;
                     //calificacion.Periodo = 
                 }
-                if (!evaluaciones.find(ev => ev.ev == `${letra}${counters[letra]}`) && calificacion.Tipo != "Relleno") {
+                if (!evaluaciones.find(ev => ev.ev == `${letra}${counters[letra]}`) && calificacion.TipoColumna != "Relleno") {
                     evaluaciones.push({
                         Evaluacion: letra,
                         Parciales: calificacion.Evaluacion,
@@ -80,7 +80,7 @@ export class CalificacionesUtil {
                     if (evaluacion) {
                         updateCalidicacionesWithHeaders.push(evaluacion);
                     } else {
-                        updateCalidicacionesWithHeaders.push(new Calificacion_Group({ Evaluacion: header, Resultado: "-", Tipo: "Relleno" }));
+                        updateCalidicacionesWithHeaders.push(new Calificacion_Group({ Evaluacion: header, Resultado: "-", TipoColumna: "Relleno" }));
                     }
                 })
                 instance.Calificaciones = updateCalidicacionesWithHeaders;
