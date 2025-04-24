@@ -164,7 +164,7 @@ class ClaseGroup extends HTMLElement {
 		}).GetClaseEstudianteCompleta();
 
 		//const instanced = new modelClass.constructor(response[0]);        
-		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas, instance.Calificaciones.length);
+		CalificacionesUtil.UpdateCalificaciones(response.Asignaturas.filter(a => a.Descripcion == instance.Descripcion), instance.Calificaciones.length);
 		let lastIndex = 0;
 		HeaderEvaluaciones.forEach(header => {
 			const index = response.Asignaturas[0].Calificaciones.findIndex(c => c.Evaluacion.toUpperCase() == header.toUpperCase());
@@ -179,9 +179,7 @@ class ClaseGroup extends HTMLElement {
 		const MateriaDetailEvaluations = html`<div class="MateriaDetailEvaluations">
 			${documentsData.Header}
 		</div>`;
-		response.Asignaturas.forEach(asignatura => {
-
-
+		response.Asignaturas.filter(a => a.Descripcion == instance.Descripcion).forEach(asignatura => {
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">					
 					<h4 style='text-align: center;'>${asignatura.Descripcion} - ${asignatura.Docente} -  ${response.Clase} - SECCIÓN: ${response.Seccion} </h4>
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
