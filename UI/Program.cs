@@ -75,7 +75,12 @@ builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 	options.CronExpression = "0 20 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-
+builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+{
+	// Corre cada minuto
+	options.CronExpression = "* * * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	
 	options.CronExpression = "0 12 * * *";
