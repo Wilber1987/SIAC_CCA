@@ -22,12 +22,14 @@ namespace CAPA_NEGOCIO.Services
 			APIKEY = ""
 		};
 
-		public static async void SendMailInvitation(List<string> toMails, string from, string subject, string templatePage, WDataMapper conection)
+		public static async void SendMail(List<string> toMails,
+		string from, string subject, 
+		string templatePage,
+		 List<ModelFiles>? attachs = null)
 		{
 			try
 			{
 				var emailService = new EmailAccountService();
-                emailService.SetConnection(conection);
 				var account = emailService.GetAvailableEmailAccount();
 
 				await SMTPMailServices.SendMail(
@@ -35,7 +37,7 @@ namespace CAPA_NEGOCIO.Services
 					 toMails,
 					 subject,
 					 templatePage,
-					 null,
+					 attachs,
 					 null,
 					 new MailConfig
 					 {

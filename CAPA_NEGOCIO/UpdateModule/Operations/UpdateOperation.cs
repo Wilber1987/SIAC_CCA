@@ -409,12 +409,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public void sendInvitations()
 		{
-
-			//var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");
-			var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
-
 			var tutor = new Parientes_Data_Update();
-			tutor.SetConnection(conection);
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
 				FilterData.Equal("correo_enviado", false),
@@ -432,7 +427,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					BeginGlobalTransaction();
 
-					Security_Users? usuario = new Security_Users().withConection(conection).Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+					Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
 					usuario!.Password = StringUtil.GenerateRandomPassword();
 					usuario!.Password_Expiration_Date = DateTime.Now.AddDays(60);
 					var save = usuario?.Save_User(null);
@@ -444,7 +439,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					string currentDate = DateTime.Now.ToString("dd/MM/yyyy");
 					string subject = $"Actualización de datos {currentDate.Replace("/", "-")}";
 
-					MailServices.SendMailInvitation(new List<String>() { t.Email }, null, subject, template, conection);
+					MailServices.SendMail(new List<String>() { t.Email }, null, subject, template);
 
 					t.Correo_enviado = true;
 					t.Update();
