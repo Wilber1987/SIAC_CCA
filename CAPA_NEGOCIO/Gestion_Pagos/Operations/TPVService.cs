@@ -6,7 +6,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {
 	public class TPVService
 	{
-		const string GLOBAL_URL = "https://staging.ptranz.com/";
+		//const string GLOBAL_URL = "https://staging.ptranz.com/";
+		const string GLOBAL_URL = "https://gateway.ptranz.com/";
 		const string POWERTRANZ_ID = "33103870";
 		const string POWERTRANZ_PASSWORD = "hBMTL1byyeLtoeWWIfDbX9TU1dKkwdjpC2faL7ya1JpuK6nlmmAaG2";
 		public string T_IDENTIFY = "";
