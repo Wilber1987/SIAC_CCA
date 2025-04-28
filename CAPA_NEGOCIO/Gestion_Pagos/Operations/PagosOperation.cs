@@ -296,7 +296,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
 
 				var result =  System.Text.Json.JsonSerializer.Serialize(pagosResponseAutorizarPago);
-				LoggerServices.AddMessageInfo("pagosResponseAutorizarPago caraajo: " + result);
+				LoggerServices.AddMessageInfo("pagosResponseAutorizarPago result: " + result);
 
 				if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
 				{
