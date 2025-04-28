@@ -57,28 +57,48 @@ namespace UI.Controllers
 		[Consumes("application/x-www-form-urlencoded")]
 		public async Task<IActionResult> MerchantResponseURL([FromForm] IFormCollection formCollection)
 		{
-			//string stringR = Response.ToString();
-			string? response = formCollection["response"];
-			string? transactionIdentifier = formCollection["TransactionIdentifier"];
-			string? spitoken = formCollection["spitoken"];
-			// O usando TryGetValue para manejar posibles claves inexistentes
-			if (formCollection.TryGetValue("response", out var responseValue))
+			try
 			{
-				response = responseValue;
+				string responseStr = formCollection["response"].ToString();
+				string transactionIdentifier = formCollection["TransactionIdentifier"].ToString();
+				string spitoken = formCollection["spitoken"].ToString();
+
+				LoggerServices.AddMessageInfo("spitoken: " + spitoken);
+				LoggerServices.AddMessageInfo("transactionIdentifier: " + transactionIdentifier);
+				LoggerServices.AddMessageInfo("response: " + responseStr);
+
+				LoggerServices.AddMessageInfo("Antes de llamar a AutorizarPago");
+
+				var sessionKey = HttpContext.Session.GetString("seassonKey");
+				var pt3dsResponse = JsonConvert.DeserializeObject<PT3DSResponse>(responseStr);
+
+				var pagosResponse = await PagosOperation.AutorizarPago(sessionKey, pt3dsResponse);
+
+				LoggerServices.AddMessageInfo("Después de llamar a AutorizarPago");
+
+				LoggerServices.AddMessageInfo("pagosResponse status: " + pagosResponse.status);
+				LoggerServices.AddMessageInfo("pagosResponse body: " + pagosResponse.body?.ToString());
+
+				if (pagosResponse.status == 200)
+					return Content((string)pagosResponse.body, "text/html");
+				else
+					return BadRequest(pagosResponse.message);
 			}
-			var pagosResponse = await PagosOperation.AutorizarPago(HttpContext.Session.GetString("seassonKey"), JsonConvert.DeserializeObject<PT3DSResponse>(response));
-			//return RedirectToAction("PagoExitoso");
-			if (pagosResponse.status == 200) return Content((string)pagosResponse.body, "text/html");
-			else return BadRequest(pagosResponse.message);
+			catch (Exception ex)
+			{
+				//LoggerServices.AddMessageError("Error en MerchantResponseURL: ", ex);
+				return StatusCode(500, "Error procesando respuesta de pago.");
+			}
 		}
-		
+
+
 		[HttpGet("{Id_Pago_Request}")]
 		public IActionResult GetFactura(int Id_Pago_Request)
 		{
 			try
 			{
 				// Convertir HTML a PDF utilizando wkhtmltopdf
-				byte[] pdfBytes = ApiDocumentsDataController.ConvertHtmlToPdf(PagosTemplate.GenerarFacturaHtml(new PagosRequest{Id_Pago_Request = Id_Pago_Request}.Find<PagosRequest>(), true), "A4");
+				byte[] pdfBytes = ApiDocumentsDataController.ConvertHtmlToPdf(PagosTemplate.GenerarFacturaHtml(new PagosRequest { Id_Pago_Request = Id_Pago_Request }.Find<PagosRequest>(), true), "A4");
 
 				// Devolver el archivo PDF como respuesta
 				return File(pdfBytes, "application/pdf", "generated.pdf");
@@ -88,7 +108,7 @@ namespace UI.Controllers
 				return StatusCode(500, $"Error generating PDF: {ex.Message}");
 			}
 			// Aquí puedes usar el parámetro facturaId para realizar alguna operación
-			
+
 		}
 
 		public class ResponseSPI

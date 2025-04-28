@@ -187,9 +187,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			{
 				return new InfoPagos
 				{
-				    IsInsolvente= false,
-				    Amount = 0,
-				    StringAmount = "0.00"
+					IsInsolvente = false,
+					Amount = 0,
+					StringAmount = "0.00"
 				};
 			}
 			double Amount = 0.0;
@@ -287,66 +287,82 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 		public static async Task<ResponseService> AutorizarPago(string? identify, PT3DSResponse PT3DSResponse)
 		{
-			TPVService? tPVService = SeasonServices.Get<TPVService>("PAGO_PROCESO_SERVICE", PT3DSResponse.SpiToken);
-			PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);
-			UserModel? user = SeasonServices.Get<UserModel>("PAGO_PROCESO_USER", PT3DSResponse.SpiToken);
-
-			//PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE",  PT3DSResponse.SpiToken);
-			PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
-			if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
+			try
 			{
-				return new ResponseService
+				TPVService? tPVService = SeasonServices.Get<TPVService>("PAGO_PROCESO_SERVICE", PT3DSResponse.SpiToken);
+				PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);
+				UserModel? user = SeasonServices.Get<UserModel>("PAGO_PROCESO_USER", PT3DSResponse.SpiToken);
+
+				PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
+
+				var result =  System.Text.Json.JsonSerializer.Serialize(pagosResponseAutorizarPago);
+				LoggerServices.AddMessageInfo("pagosResponseAutorizarPago caraajo: " + result);
+
+				if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
 				{
-					status = 403,
-					message = string.Join(" - ", pagosResponseAutorizarPago.Errors.Select(e => e.Message).ToList())
-				};
+					return new ResponseService
+					{
+						status = 403,
+						message = string.Join(" - ", pagosResponseAutorizarPago.Errors.Select(e => e.Message).ToList())
+					};
+				}
+				else
+				{
+					var responsable = Tbl_Profile.Get_Profile(user);
+
+					pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
+					pagosRequest!.Fecha = DateTime.Now;
+					pagosRequest!.Estado = PagosState.PAGADO.ToString();
+					pagosRequest!.Responsable_Id = responsable.Pariente_id;
+					pagosRequest!.Id_User = user.UserId;
+					pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
+					pagosRequest!.Creador = user.UserData?.Descripcion;
+					pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
+					pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
+					pagosRequest!.TpvInfo = pagosResponseAutorizarPago;
+
+					pagosRequest?.Detalle_Pago!.ForEach(detalle =>
+					{
+						detalle.Pago!.Monto_Pendiente -= detalle.Monto;
+						if (detalle.Pago!.Monto_Pendiente <= 0)
+						{
+							detalle.Pago!.Monto_Pendiente = 0;
+							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
+							pagosRequest!.Descripcion += ", pago de :" + detalle.Pago.Concepto;
+						}
+						else
+						{
+							pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
+						}
+						detalle.Fecha = DateTime.Now;
+						detalle.Pago!.Monto_Pagado += detalle.Monto;
+						var updateResponse = detalle.Pago.Update();
+						if (updateResponse.status != 200)
+						{
+							throw new Exception("Error al actualizar el pago");
+						}
+					});
+
+					pagosRequest?.Save();
+
+					return new ResponseService
+					{
+						status = 200,
+						message = "Pago realizado",
+						body = PagosTemplate.GenerarFacturaHtml(pagosRequest)
+					};
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				//var user = AuthNetCore.User(identify);
-				var responsable = Tbl_Profile.Get_Profile(user);
-
-				pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
-				pagosRequest!.Fecha = DateTime.Now;
-				pagosRequest!.Estado = PagosState.PAGADO.ToString();
-				pagosRequest!.Responsable_Id = responsable.Pariente_id;
-				pagosRequest!.Id_User = user.UserId;
-				pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
-				pagosRequest!.Creador = user.UserData?.Descripcion;
-				pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
-				pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
-				pagosRequest!.TpvInfo = pagosResponseAutorizarPago;
-				pagosRequest?.Detalle_Pago!.ForEach(detalle =>
-				{
-					detalle.Pago!.Monto_Pendiente = detalle.Pago.Monto_Pendiente - detalle.Monto;
-					if (detalle.Pago!.Monto_Pendiente <= 0)
-					{
-						detalle.Pago!.Monto_Pendiente = 0;
-						detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
-						pagosRequest!.Descripcion += ", pago de :" + detalle.Pago.Concepto;
-					}
-					else
-					{
-						pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
-					}
-					detalle.Fecha = DateTime.Now;
-					detalle.Pago!.Monto_Pagado = detalle.Pago.Monto_Pagado + detalle.Monto;
-					var updateResponse = detalle.Pago.Update();
-					if (updateResponse.status != 200)
-					{
-						throw new Exception("Error al actualizar el pago");
-					}
-				});
-				//pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Pagos!.Select(x => x.Estudiante?.Nombre_completo))}";
-				pagosRequest?.Save();
 				return new ResponseService
 				{
-					status = 200,
-					message = "Pago realizado",
-					body = PagosTemplate.GenerarFacturaHtml(pagosRequest)
+					status = 500,
+					message = "Error durante la venta: " + ex.Message
 				};
 			}
 		}
+
 
 		public List<PagosRequest> GetManagePagos(PagosRequest inst, string? identify)
 		{
