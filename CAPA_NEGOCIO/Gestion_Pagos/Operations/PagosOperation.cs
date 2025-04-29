@@ -114,16 +114,16 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				// 1. Pagos normales
 				var pagosAlumnosView = new Pagos_alumnos_view();
 				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
-					List<FilterData> filters = [
-						//FilterData.ISNull("fecha_anulacion"),
+				List<FilterData> filters = [
+					//FilterData.ISNull("fecha_anulacion"),
 					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
 					FilterData.Greater("importe_saldo_md", 0)
 				];
 
-				if (pagosP.Count > 0)
+				/*if (pagosP.Count > 0)
 				{
 					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
-				}
+				}*/
 
 				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
 
@@ -132,15 +132,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				viewExtra.SetConnection(MySqlConnections.BellacomTest);
 
 				extraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
-				foreach (var estudiante in estudiantes)
-				{
-					viewExtra.CreateViewPagosAlumnosExtraordinarios(estudiante.Codigo);
 
-					var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(new FilterData[] { }).ToList();
-					extraordinarios.AddRange(pagosExtraordinarios);
-
-					viewExtra.DestroyView("ViewPagosAlumnosExtraordinarios");
-				}
+				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filters.ToArray()).ToList();
+				extraordinarios.AddRange(pagosExtraordinarios);
 
 				siacTunnel.Stop();
 				siacSshClient.Disconnect();
@@ -151,7 +145,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			allPagos.AddRange(recientraidos);
 			allPagos.AddRange(extraordinarios);
 
-			// 4. Ya usas todo el conjunto unificado
+			// se usa todo el conjunto unificado
 			var recienTraidosPagos = allPagos.SelectMany(x =>
 			{
 				return BuildCuentasPorCobrar(x, responsable);
@@ -160,25 +154,84 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			return estudiantes;
 		}
 
-
-
-		public Object GetPagosAllPagos(Tbl_Pago pago, string identify)
-		{
-			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), false);
-			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			pago.orderData = [OrdeData.Asc("Fecha")];
-			return new
-			{
-				Estudiantes = estudiantes,
-				Pagos = pago.Where<Tbl_Pago>(
-					FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
-					FilterData.Equal("Estado", PagosState.PENDIENTE),
-					FilterData.ISNull("Fecha_anulacion")
-				)
-			};
-		}
 		private static List<Tbl_Pago> BuildCuentasPorCobrar(Pagos_alumnos_view x, Tbl_Profile responsable)
+		{
+			List<Tbl_Pago> pagos = new List<Tbl_Pago>();
+
+			var pagoExistente = new Tbl_Pago().Where<Tbl_Pago>(
+				FilterData.Equal("Id_documento_cc", x.Id_documento_cc)
+			).FirstOrDefault();
+
+			//string nuevoEstado = x.Fecha_anulacion != null
+			string nuevoEstado = x.Usuario_anulacion != null
+				? PagosState.ANULADO.ToString()
+				: PagosState.PENDIENTE.ToString();
+
+			if (pagoExistente != null)
+			{
+				// Solo actualizar el estado si ha cambiado
+				if (pagoExistente.Estado != nuevoEstado)
+				{
+					pagoExistente.Estado = nuevoEstado;
+					pagoExistente.Update(); 
+				}
+				pagos.Add(pagoExistente);
+			}
+			else
+			{
+				MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
+				if (x?.Moneda != null)
+				{
+					Enum.TryParse(x?.Moneda, out MoneyEnum result);
+					moneyEnumValue = result;
+				}
+
+				var nuevoPago = new Tbl_Pago
+				{
+					Estudiante_Id = x.Codigo_estudiante,
+					Responsable_Id = responsable.Pariente_id,
+					Monto = x.Importe_saldo_md,
+					Monto_Pagado = 0,
+					Monto_Pendiente = x.Importe_saldo_md,
+					Documento = x.No_documento.HasValue ? x.No_documento.Value.ToString() : "00001",
+					Concepto = x.Texto_posicion,
+					Periodo_lectivo = x.Anio?.ToString() ?? "",
+					Mes = x.Mes?.ToString() ?? "Enero",
+					Money = moneyEnumValue,
+					Fecha = x.Fecha_documento ?? DateTime.Now,
+					Fecha_Limite = x.Fecha_documento?.AddDays(30) ?? DateTime.Now.AddDays(30),
+					Estado = nuevoEstado,
+
+					Id_plazo = x.Id_plazo,
+					Anio = x.Anio,
+					Id_documento_cc = x.Id_documento_cc,
+					Id_documento = x.Id_documento,
+					Id_clase_documento = x.Id_clase_documento,
+					Fecha_documento = x.Fecha_documento,
+					Fecha_contabilizacion = x.Fecha_contabilizacion,
+					Ejercicio = x.Ejercicio,
+					Periodo = x.Periodo,
+					No_documento = x.No_documento,
+					Id_deudor = x.Id_deudor,
+					Asignacion = x.Asignacion,
+					Texto_posicion = x.Texto_posicion,
+					Id_cuenta = x.Id_cuenta,
+					Id_indicador_impuesto = x.Id_indicador_impuesto,
+					Id_documento_detalle = x.Id_documento_detalle,
+					Fecha_anulacion = x.Fecha_anulacion,
+					Usuario_anulacion = x.Usuario_anulacion,
+					Texto_corto = x.Texto_corto,
+					Simbolo = x.Simbolo
+				};
+
+				nuevoPago.Save();
+				pagos.Add(nuevoPago);
+			}
+
+			return pagos;
+		}
+
+		private static List<Tbl_Pago> BuildCuentasPorCobrarRespaldo(Pagos_alumnos_view x, Tbl_Profile responsable)
 		{
 			MoneyEnum? moneyEnumValue = MoneyEnum.DOLARES;
 			if (x?.Moneda != null)
@@ -232,6 +285,25 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 
 			return pagos;
+		}
+
+
+
+		public Object GetPagosAllPagos(Tbl_Pago pago, string identify)
+		{
+			//return new List<Tbl_Pago>();
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), false);
+			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
+			pago.orderData = [OrdeData.Asc("Fecha")];
+			return new
+			{
+				Estudiantes = estudiantes,
+				Pagos = pago.Where<Tbl_Pago>(
+					FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Equal("Estado", PagosState.PENDIENTE),
+					FilterData.ISNull("Fecha_anulacion")
+				)
+			};
 		}
 
 
