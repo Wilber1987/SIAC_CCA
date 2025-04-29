@@ -39,8 +39,10 @@ namespace API.Controllers
         public Object updateSecurity_Permissions(Security_Permissions inv) { return inv.Update("Id_Permission"); }
         [HttpPost]
         [AuthController(Permissions.CAN_CHANGE_OW_PASSWORD)]
-        public Object changePassword(CAPA_NEGOCIO.Security_Users inv) 
-        { return inv.changePassword(HttpContext.Session.GetString("seassonKey")); }
+        public Object? changePassword(CAPA_NEGOCIO.Security_Users inv)
+        {
+            return inv.changePassword(HttpContext.Session.GetString("seassonKey"));
+        }
 
         #endregion
     }

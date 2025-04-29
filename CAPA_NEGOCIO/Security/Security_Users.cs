@@ -132,6 +132,7 @@ namespace CAPA_NEGOCIO
 				FamiliaTutores = parientes,
 				Sexo = docente != null ? docente.Sexo : pariente?.Sexo ?? "M",
 				FamiliaEstudiantes = estudiantes,
+				IdUser = UserId,
 				Pariente_id = pariente?.Id,
 				Docente_id = docente?.Id,
 				IsPariente = true,

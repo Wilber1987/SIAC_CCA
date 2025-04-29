@@ -14,13 +14,13 @@ class Responsables_ModelComponent extends EntityClass {
    }
     /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
     /**@type {ModelProperty}*/ Primer_nombre = { type: 'text' };
-    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text' };
+    /**@type {ModelProperty}*/ Segundo_nombre = { type: 'text', hiddenFilter: true };
     /**@type {ModelProperty}*/ Primer_apellido = { type: 'text' };
     /**@type {ModelProperty}*/ Segundo_apellido = { type: 'text' };
-    /**@type {ModelProperty}*/ Telefono = { type: 'text' };
-    /**@type {ModelProperty}*/ Celular = { type: 'text' };
-    /**@type {ModelProperty}*/ Telefono_trabajo = { type: 'text' };
+    /**@type {ModelProperty}*/ Telefono = { type: 'text', hiddenFilter: true  };
+    /**@type {ModelProperty}*/ Celular = { type: 'text', hiddenFilter: true  };
+    /**@type {ModelProperty}*/ Telefono_trabajo = { type: 'text', hiddenFilter: true  };
     /**@type {ModelProperty}*/ Email = { type: 'text' };
-    /**@type {ModelProperty}*/ User_id = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ User_id = { type: 'number', primary: true , hiddenFilter: true };
 }
 export { Responsables_ModelComponent }
