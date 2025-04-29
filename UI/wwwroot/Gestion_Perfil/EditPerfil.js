@@ -1,5 +1,6 @@
 
 //@ts-check
+import { ChangePasswordModel } from "../WDevCore/Security/SecurityModel.js";
 import { WSecurity } from "../WDevCore/Security/WSecurity.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
@@ -34,13 +35,28 @@ window.onload = () => {
             }
         }));
     }*/
+    // @ts-ignore
+    let parientePass = JSON.parse(editPassword.name);
+    console.log(parientePass);
+
+    // @ts-ignore
+    editPassword.onclick = () => {
+        document.body.appendChild(new WModalForm({
+            title: "CAMBIO DE CONTRASEÑA",
+            ModelObject: new ChangePasswordModel(),
+            AutoSave: true,
+            EditObject: new ProfileRequest({
+                User_id: parientePass.IdUser
+            }), ObjectOptions: { Url: "../api/ApiEntitySECURITY/changePassword" }
+
+        }));
+    }
     document.querySelectorAll(".btn-pariente").forEach(btn => {
         //**@type {ProfileRequest} */
         // @ts-ignore
         var pariente = JSON.parse(btn.name);
         // @ts-ignore
         btn.onclick = () => {
-
             document.body.appendChild(new WModalForm({
                 ModelObject: model,
                 AutoSave: true,

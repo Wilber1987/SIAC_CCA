@@ -37,35 +37,39 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 else if (request.NotificationType == NotificationTypeEnum.SECCION && request.Secciones?.Count > 0)
                 {
                     var estudiante_Clases = new Estudiante_clases()
-                        .Where<Estudiante_clases>(FilterData.In("Seccion_id", 
-                            request.Secciones?.ToArray()));
+                        .Where<Estudiante_clases>(
+                            FilterData.In("Seccion_id", request.Secciones?.ToArray()),
+                            FilterData.In("Clase_id", request.Clases?.ToArray())
+                        );
                     var responsables = new Estudiantes_responsables_familia()
-                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", 
+                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id",
                             estudiante_Clases.Select(ec => ec.Estudiante_id).ToArray()));
                     parientesFiltrados = responsables?
                         .Where(responsable => responsable.Parientes != null && responsable.Parientes.User_id != null)
-                        .Select(responsable => responsable?.Parientes ?? new Parientes())                        
+                        .Select(responsable => responsable?.Parientes ?? new Parientes())
                         .ToList() ?? [];
-                    
+
                     SendNotificacion(request, parientesFiltrados);
-                } 
+                }
                 else if (request.NotificationType == NotificationTypeEnum.CLASE && request.Clases?.Count > 0)
                 {
                     var estudiante_Clases = new Estudiante_clases()
-                        .Where<Estudiante_clases>(FilterData.In("Clase_id", 
+                        .Where<Estudiante_clases>(FilterData.In("Clase_id",
                             request.Clases?.ToArray()));
                     var responsables = new Estudiantes_responsables_familia()
-                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", 
+                        .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id",
                             estudiante_Clases.Select(ec => ec.Estudiante_id).ToArray()));
                     parientesFiltrados = responsables?
                         .Where(responsable => responsable.Parientes != null && responsable.Parientes.User_id != null)
-                        .Select(responsable => responsable?.Parientes ?? new Parientes())                        
+                        .Select(responsable => responsable?.Parientes ?? new Parientes())
                         .ToList() ?? [];
-                    
+
                     SendNotificacion(request, parientesFiltrados);
-                } else {
-                    parientesFiltrados = new  Parientes().Where<Parientes>(FilterData.NotNull("User_Id"));
-                     SendNotificacion(request, parientesFiltrados);
+                }
+                else
+                {
+                    parientesFiltrados = new Parientes().Where<Parientes>(FilterData.NotNull("User_Id"));
+                    SendNotificacion(request, parientesFiltrados);
                 }
 
                 //logica

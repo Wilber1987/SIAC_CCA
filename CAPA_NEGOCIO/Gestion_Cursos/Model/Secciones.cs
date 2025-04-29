@@ -18,5 +18,8 @@ namespace DataBaseModel
         public DateTime? Updated_at { get; set; }
         [ManyToOne(TableName = "Docentes", KeyColumn = "Id", ForeignKeyColumn = "Docente_id")]
         public Docentes? Guia { get; set; }
+        
+        [ManyToOne(TableName = "Clases", KeyColumn = "Id", ForeignKeyColumn = "Clase_id")]
+        public Clases? Clases { get; set; }
     }
 }

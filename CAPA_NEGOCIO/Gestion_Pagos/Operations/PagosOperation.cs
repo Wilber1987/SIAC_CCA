@@ -92,7 +92,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		public Object GetPagosAllPagos(Tbl_Pago pago, string identify)
 		{
 			//return new List<Tbl_Pago>();
-			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), false);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 			pago.orderData = [OrdeData.Asc("Fecha")];
 			return new

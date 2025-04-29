@@ -4,6 +4,15 @@ import { ModelProperty } from '../../WDevCore/WModules/CommonModel.js';
 import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
 import { Niveles_ModelComponent } from './Niveles_ModelComponent.js';
 import { Periodo_lectivos_ModelComponent } from './Periodo_lectivos_ModelComponent.js';
+const periodosLectivos = [
+    {
+      "Id": new Date().getFullYear() - 2001 ,
+      "Nombre": "Año Lectivo "+ new Date().getFullYear(),
+      "Nombre_corto": new Date().getFullYear(),
+    }
+]
+console.log(periodosLectivos);
+
 const Grados = [
     //preescolar
     { id: 1, Grado: 1, Nivel: 3, Descripcion: "Primero" },
@@ -27,6 +36,11 @@ class Grado_ModelComponent {
     /**@type {ModelProperty}*/ id = { type: 'number', primary: true };
     /**@type {ModelProperty}*/ Descripcion = { type: 'text' };
 }
+
+class Periodo_lectivos_Model {
+    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true };
+    /**@type {ModelProperty}*/ Nombre = { type: 'text' };
+}
 class Clases_ModelComponent extends EntityClass {
     /** @param {Partial<Clases_ModelComponent>} [props] */
     constructor(props) {
@@ -38,7 +52,7 @@ class Clases_ModelComponent extends EntityClass {
    /**@type {ModelProperty}*/ Id = { type: 'number', primary: true, hiddenFilter: true };
    /**@type {ModelProperty}*/ Periodo_lectivos = {
         label: "Periodo Lectivo", type: 'WSELECT',
-        ModelObject: () => new Periodo_lectivos_ModelComponent(), ForeignKeyColumn: 'Periodo_lectivo_id'
+        ModelObject: () => new Periodo_lectivos_Model(), Dataset:periodosLectivos,  ForeignKeyColumn: 'Periodo_lectivo_id'
     };
    /**@type {ModelProperty}*/ Niveles = {
         label: "Nivel", type: 'WSELECT',

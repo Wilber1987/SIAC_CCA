@@ -18,7 +18,7 @@ import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction
 import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
-import {  WRender } from "../WDevCore/WModules/WComponentsTools.js";
+import { WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 
 
@@ -31,7 +31,7 @@ class NotificacionesManagerView extends HTMLElement {
      * @param {NotificacionesManagerViewConfig} props 
      */
     constructor(props) {
-        super();       
+        super();
         this.OptionContainer = WRender.Create({ className: "OptionContainer" });
         //this.Manager = new ComponentsManager({ MainContainer: this.TabContainer, SPAManage: false });
         this.append(this.CustomStyle);
@@ -80,7 +80,7 @@ class NotificacionesManagerView extends HTMLElement {
     }
     async ClasesComponent() {
         const model = new Clases_ModelComponent();
-        model.Periodo_lectivos.Dataset = await new Periodo_lectivos().Get();
+        //model.Periodo_lectivos.Dataset = await new Periodo_lectivos().Get();
         model.Niveles.Dataset = await new Niveles().Get();
         this.NotificationType = NotificationTypeEnum.CLASE;
         if (!this.ClaseComponent) {
@@ -140,32 +140,34 @@ class NotificacionesManagerView extends HTMLElement {
     `
     ProcessRequest = () => {
         const modal = new WModalForm({
-            ModelObject: new NotificationRequest_ModelComponent(), 
+            ModelObject: new NotificationRequest_ModelComponent(),
             title: "NUEVA NOTIFICACIÓN",
             StyleForm: "columnX1",
             ObjectOptions: {
                 SaveFunction: async (/**@type {NotificationRequest} */ entity) => {
                     let mensaje = ""
                     console.log(this.NotificationType);
-                    
+
                     if (this.NotificationType == NotificationTypeEnum.SECCION) {
                         entity.NotificationType = NotificationTypeEnum.SECCION;
                         // @ts-ignore
-                        entity.Secciones = this.SeccionComponent?.selectedItems.map(s => s.Id );
-                        mensaje =  entity.Secciones.length == 0 ? "a todas las secciones" : "a las secciones selecionadas";
+                        entity.Secciones = this.SeccionComponent?.selectedItems.map(s => s.Id);
+                        // @ts-ignore
+                        entity.Clases = this.SeccionComponent?.selectedItems.map(s => s.Clases?.Id);
+                        mensaje = entity.Secciones.length == 0 ? "a todas las secciones" : "a las secciones selecionadas";
 
 
-                    } else if  (this.NotificationType == NotificationTypeEnum.CLASE) {
+                    } else if (this.NotificationType == NotificationTypeEnum.CLASE) {
                         entity.NotificationType = NotificationTypeEnum.CLASE;
                         // @ts-ignore
-                        entity.Clases = this.ClaseComponent?.selectedItems.map(s => s.Id );
-                        mensaje =  entity.Clases.length == 0 ? "a todas las clases" : "a las clases selecionadas";
+                        entity.Clases = this.ClaseComponent?.selectedItems.map(s => s.Id);
+                        mensaje = entity.Clases.length == 0 ? "a todas las clases" : "a las clases selecionadas";
 
-                    } else if  (this.NotificationType == NotificationTypeEnum.RESPONSABLE) {
+                    } else if (this.NotificationType == NotificationTypeEnum.RESPONSABLE) {
                         entity.NotificationType = NotificationTypeEnum.RESPONSABLE;
                         // @ts-ignore
-                        entity.Responsables = this.ResponsableComponent?.selectedItems.map(s => s.User_id );
-                        mensaje =  entity.Responsables.length == 0 ? "a todos los responsables" : "a los responsables selecionados";
+                        entity.Responsables = this.ResponsableComponent?.selectedItems.map(s => s.User_id);
+                        mensaje = entity.Responsables.length == 0 ? "a todos los responsables" : "a los responsables selecionados";
 
                     }
                     document.body.appendChild(ModalVericateAction(async () => {
