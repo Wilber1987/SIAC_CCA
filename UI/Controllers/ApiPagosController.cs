@@ -63,21 +63,21 @@ namespace UI.Controllers
 				string transactionIdentifier = formCollection["TransactionIdentifier"].ToString();
 				string spitoken = formCollection["spitoken"].ToString();
 
-				LoggerServices.AddMessageInfo("spitoken: " + spitoken);
+				/*LoggerServices.AddMessageInfo("spitoken: " + spitoken);
 				LoggerServices.AddMessageInfo("transactionIdentifier: " + transactionIdentifier);
 				LoggerServices.AddMessageInfo("response: " + responseStr);
 
-				LoggerServices.AddMessageInfo("Antes de llamar a AutorizarPago");
+				LoggerServices.AddMessageInfo("Antes de llamar a AutorizarPago");*/
 
 				var sessionKey = HttpContext.Session.GetString("seassonKey");
 				var pt3dsResponse = JsonConvert.DeserializeObject<PT3DSResponse>(responseStr);
 
 				var pagosResponse = await PagosOperation.AutorizarPago(sessionKey, pt3dsResponse);
 
-				LoggerServices.AddMessageInfo("Después de llamar a AutorizarPago");
+				/*LoggerServices.AddMessageInfo("Después de llamar a AutorizarPago");
 
 				LoggerServices.AddMessageInfo("pagosResponse status: " + pagosResponse.status);
-				LoggerServices.AddMessageInfo("pagosResponse body: " + pagosResponse.body?.ToString());
+				LoggerServices.AddMessageInfo("pagosResponse body: " + pagosResponse.body?.ToString());*/
 
 				if (pagosResponse.status == 200)
 					return Content((string)pagosResponse.body, "text/html");

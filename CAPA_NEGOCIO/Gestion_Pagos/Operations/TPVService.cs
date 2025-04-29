@@ -9,7 +9,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 	{
 		//const string GLOBAL_URL = "https://staging.ptranz.com/";
 		const string GLOBAL_URL = "https://gateway.ptranz.com/";
-		const string HOST = "gateway.ptranz.com";
+		const string HOST = "gateway.ptranz.com";// debe ser el dominio de la propiedad GLOBAL_URL
 		const string POWERTRANZ_ID = "33103870";
 		const string POWERTRANZ_PASSWORD = "hBMTL1byyeLtoeWWIfDbX9TU1dKkwdjpC2faL7ya1JpuK6nlmmAaG2";
 		public string T_IDENTIFY = "";
@@ -133,7 +133,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						""ChallengeWindowSize"": 4,
 						""ChallengeIndicator"": ""01""
 					},
-					""MerchantResponseUrl"":  ""https://cb2f-200-12-42-32.ngrok-free.app/api/ApiPagos/MerchantResponseURL""
+					""MerchantResponseUrl"":  ""https://portal.cca.edu.ni/api/ApiPagos/MerchantResponseURL""
 				},
 				 ""BillingAddress"": { 					
 					""EmailAddress"": """ + datosDePago.CardholderMail + @""", 

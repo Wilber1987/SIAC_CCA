@@ -22,7 +22,7 @@ class ProfileRequest_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Id = { type: 'text', primary: true, hiddenFilter: true };
     /**@type {ModelProperty}*/ Estado = { type: 'Select', Dataset: ["PENDIENTE", "APROBADO", "RECHAZADO"] }
     /**@type {ModelProperty}*/ Correo = { type: 'text' };
-    /**@type {ModelProperty}*/ Telefono = { type: 'text' };
+    /**@type {ModelProperty}*/ Telefono = { type: 'text', require: false };
     /**@type {ModelProperty}*/ Celular = { type: 'text' };
     /**@type {ModelProperty}*/ Direccion = { type: 'text' };
     /**@type {ModelProperty}*/ Observacion = { type: 'textarea' };

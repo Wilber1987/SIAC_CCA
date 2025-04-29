@@ -47,7 +47,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		}
 
-		public List<Estudiantes> UpdatePagosFromBellacon(string identify)
+		public List<Estudiantes> UpdatePagosFromBellaconrespaldo(string identify)
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
@@ -72,6 +72,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
 					FilterData.Greater("importe_saldo_md", 0)
 				];
+
+
 				if (pagosP.Count > 0)
 				{
 					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
@@ -88,6 +90,77 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}).ToList();
 			return estudiantes;
 		}
+
+		public List<Estudiantes> UpdatePagosFromBellacon(string identify)
+		{
+			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
+			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
+			var pagosP = new Tbl_Pago()
+			{
+				orderData = [OrdeData.Asc("Fecha")]
+			}.Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
+			);
+
+			List<Pagos_alumnos_view> recientraidos;
+			List<ViewPagosAlumnosExtraordinarios> extraordinarios;
+
+			using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+			{
+				siacSshClient.Connect();
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
+				siacTunnel.Start();
+
+				// 1. Pagos normales
+				var pagosAlumnosView = new Pagos_alumnos_view();
+				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
+					List<FilterData> filters = [
+						//FilterData.ISNull("fecha_anulacion"),
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Greater("importe_saldo_md", 0)
+				];
+
+				if (pagosP.Count > 0)
+				{
+					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
+				}
+
+				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
+
+				// 2. Pagos extraordinarios
+				var viewExtra = new ViewPagosAlumnosExtraordinarios();
+				viewExtra.SetConnection(MySqlConnections.BellacomTest);
+
+				extraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
+				foreach (var estudiante in estudiantes)
+				{
+					viewExtra.CreateViewPagosAlumnosExtraordinarios(estudiante.Codigo);
+
+					var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(new FilterData[] { }).ToList();
+					extraordinarios.AddRange(pagosExtraordinarios);
+
+					viewExtra.DestroyView("ViewPagosAlumnosExtraordinarios");
+				}
+
+				siacTunnel.Stop();
+				siacSshClient.Disconnect();
+			}
+
+			// 3. Unimos las dos listas
+			var allPagos = new List<Pagos_alumnos_view>();
+			allPagos.AddRange(recientraidos);
+			allPagos.AddRange(extraordinarios);
+
+			// 4. Ya usas todo el conjunto unificado
+			var recienTraidosPagos = allPagos.SelectMany(x =>
+			{
+				return BuildCuentasPorCobrar(x, responsable);
+			}).ToList();
+
+			return estudiantes;
+		}
+
+
 
 		public Object GetPagosAllPagos(Tbl_Pago pago, string identify)
 		{
@@ -295,8 +368,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 				PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
 
-				var result =  System.Text.Json.JsonSerializer.Serialize(pagosResponseAutorizarPago);
-				LoggerServices.AddMessageInfo("pagosResponseAutorizarPago result: " + result);
+				var result = System.Text.Json.JsonSerializer.Serialize(pagosResponseAutorizarPago);
+				//LoggerServices.AddMessageInfo("pagosResponseAutorizarPago result: " + result);
 
 				if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
 				{

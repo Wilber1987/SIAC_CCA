@@ -58,7 +58,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		PENDIENTE,
 		PAGADO,
 		PAGO_PARCIAL,
-		CANCELADO
+		CANCELADO,
+		ANULADO
 	}
 	public enum MoneyEnum
 	{

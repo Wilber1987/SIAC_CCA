@@ -52,5 +52,96 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Texto_largo { get; set; }
         public string? Simbolo { get; set; }
         public string? Moneda { get; set; }
+
+
+
+
+    }
+
+    public class ViewPagosAlumnosExtraordinarios : Pagos_alumnos_view
+    {
+
+        public object? CreateViewPagosAlumnosExtraordinarios(string codigoEstudiante)
+        {
+            string query = $@"
+                DROP VIEW IF EXISTS ViewPagosAlumnosExtraordinarios;
+                CREATE VIEW ViewPagosAlumnosExtraordinarios AS
+                SELECT 
+                    cargo.iddocumento AS idestudiantecargo,
+                    cargo.clave AS tipo,
+                    cargo.idclasedocumento AS idservicio,
+                    cargo.ejercicio AS ejercicio,
+                    cargo.importemd AS importemd,
+                    0 AS importedescuentomd,
+                    cargo.importemd AS importenetomd,
+                    'PENDIENTE DESARROLLO' AS estatus,
+                    MONTH(doc.fechadocumento) AS mes,
+                    YEAR(doc.fechadocumento) AS anio,
+                    doc.iddocumentocc AS id_documento_cc,
+                    doc.iddocumento AS id_documento,
+                    doc.idsociedad AS id_sociedad,
+                    doc.idclasedocumento AS id_clase_documento,
+                    doc.fechadocumento AS fecha_documento,
+                    doc.fechacontabilizacion AS fecha_contabilizacion,
+                    doc.periodo AS periodo,
+                    doc.nodocumento AS no_documento,
+                    doc.posicion AS posicion,
+                    doc.iddeudor AS id_deudor,
+                    doc.asignacion AS asignacion,
+                    doc.textoposicion AS texto_posicion,
+                    doc.idmd AS id_moneda,
+                    doc.importemd AS importe_md,
+                    doc.idcuenta AS id_cuenta,
+                    doc.idceco AS id_ceco,
+                    doc.idcebe AS id_cebe,
+                    doc.clave AS clave,
+                    doc.idindicadorimpuesto AS id_indicador_impuesto,
+                    doc.calculaimpuesto AS calcula_impuesto,
+                    doc.importeimpuestomd AS importe_impuesto_md,
+                    IFNULL(doc.importesaldomd, 0) AS importe_saldo_md,
+                    doc.iddocumentodetalle AS id_documento_detalle,
+                    doc.fechagrabacion AS fecha_grabacion,
+                    doc.usuariograbacion AS usuario_grabacion,
+                    doc.nodocumentoa AS no_documento_a,
+                    doc.fechaanulacion AS fecha_anulacion,
+                    doc.usuarioanulacion AS usuario_anulacion,
+                    doc.idservicioreferencia AS id_servicio_referencia,
+                    doc.importedffcambiario AS importe_dif_cambiario,
+                    tcc.textocorto AS textocorto,
+                    est.idtestudiante AS codigo_estudiante,
+                    est.idestudiante AS id_estudiante,
+                    est.nombres AS nombres,
+                    est.apellidos AS apellidos,
+                    fam.texto AS familia,
+                    tcd.idclasedeudor AS id_clase_deudor,
+                    tcd.idplazo AS id_plazo,
+                    tcd.nombre AS nombre,
+                    '1 AÑO' AS plazo_text,
+                    360 AS dias_plazo,
+                    tgm.textocorto AS moneda
+                FROM tbl_cnt_documentodetalle cargo
+                INNER JOIN tbl_cnt_documento tcd2 ON tcd2.iddocumento = cargo.iddocumento 
+                INNER JOIN tbl_cnt_clasedocumento tcc ON tcc.idclasedocumento = cargo.idclasedocumento 
+                LEFT JOIN tbl_cxc_documento doc ON tcd2.iddocumento = doc.iddocumento 
+                    AND doc.fechaanulacion IS NULL 
+                    AND doc.iddocumentodetalle = cargo.iddocumentodetalle 
+                INNER JOIN tbl_aca_estudiante est ON est.idcliente = cargo.iddeudor 
+                LEFT JOIN tbl_aca_familia fam ON fam.idfamilia = est.idfamilia
+                INNER JOIN tbl_cxc_deudor tcd ON tcd.iddeudor = cargo.iddeudor 
+                INNER JOIN tbl_gen_moneda tgm ON tgm.idmoneda = tcd2.idmonedadocumento 
+                WHERE cargo.iddeudor IS NOT NULL 
+                    AND doc.idservicioreferencia IS NOT NULL 
+                    AND doc.importesaldomd > 0
+                    AND est.idtestudiante = '{codigoEstudiante}';
+            ";
+
+            return ExecuteSqlQuery(query);
+        }
+
+        public object? DestroyView(string view)
+        {
+            string query = $"DROP VIEW IF EXISTS {view};";
+            return ExecuteSqlQuery(query);
+        }
     }
 }

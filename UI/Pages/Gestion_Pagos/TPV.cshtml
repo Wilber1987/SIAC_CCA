@@ -121,9 +121,10 @@
 					</div>
 					<div class="d-flex gap-1">
 						<div class="col-6">
-							<label for="ExpMonth">Mes de expiración</label>
-							<input class="" id="ExpMonth" name="ExpMonth" required type="number" max="12" 
-								placeholder="MM" title="Mes de expiración (01-12)" maxlength="2">
+							<label for="ExpMonth">Mes de expiración</label>							
+								<input 
+									class="" id="ExpMonth" name="ExpMonth" required maxlength="2"
+									type="number" placeholder="MM" title="Mes de expiración (01-12)" >
 						</div>
 						<div class="col-6">
 							<label for="ExpYear">Año de expiración</label>
@@ -136,7 +137,7 @@
 					<div class="">
 						<label for="ccvCredit">CCV</label>
 						<!-- Añade un patrón para aceptar solo 3 o 4 dígitos para el CCV -->
-						<input class="" id="ccvCredit" name="Cvv" required placeholder="****" type="text"
+						<input class="" id="ccvCredit" name="Cvv" required placeholder="****" type="password"
 							pattern="[0-9]{3,4}" title="CCV debe tener 3 o 4 dígitos">
 					</div>
 					<div class="">
@@ -146,15 +147,7 @@
 				</div>
 			</div>
 		</form>
-	</div>
-	<script>
-		document.getElementById('ExpMonth').addEventListener('input', function (e) {
-			let value = e.target.value;
-			if (value.length === 1) {
-				e.target.value = '0' + value; // Agrega un 0 si es un solo dígito
-			}
-		});
-	</script>
+	</div>	
 	<div class="TabContainer detail-pago-container">
 		<h3>DETALLES DEL PAGO</h3>
 		@foreach (var detalle in pagosRequest?.Detalle_Pago ?? [])
