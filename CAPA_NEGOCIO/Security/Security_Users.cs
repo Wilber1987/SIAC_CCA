@@ -12,10 +12,7 @@ namespace CAPA_NEGOCIO
 {
 	public class Security_Users : CAPA_DATOS.Security.Security_Users
 	{
-
-
 		public new Tbl_Profile? Tbl_Profile { get; set; }
-
 		public static object Login(UserModel Inst, string? idetify)
 		{
 			var usere = AuthNetCore.loginIN(Inst.mail, Inst.password, idetify);

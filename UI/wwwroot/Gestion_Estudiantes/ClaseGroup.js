@@ -465,13 +465,14 @@ class ClaseGroup extends HTMLElement {
 		columStyle = detail.Evaluacion.includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
 		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
+		let styleRed = detail.Resultado < 60 ? "color: red;" : "";
 
 		return html`<div class="element-detail" style="">
 			<span class="header ${index == 0 ? "" : "hidden"}">
 				<span class="tooltip">${detail.EvaluacionCompleta}</span>
 				<span>${columnValue}</span>
 			</span>
-			<span class="value" style="${isNotaF ? 'font-weight: 700' : ''}">
+			<span class="value" style="${styleRed}${isNotaF ? 'font-weight: 700' : ''}">
 				${detail.Resultado}${detail.Resultado !== '-' ? ' pts.' : ''}
 			</span>
 
