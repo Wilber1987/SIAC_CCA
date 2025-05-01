@@ -22,6 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container. 
 builder.Services.AddRazorPages();
 
+
+//new MigrateNotas().Migrate("2752");
+
+
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 		JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
 
@@ -72,7 +76,8 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 });
 builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
-	options.CronExpression = "0 20 * * *";
+	//options.CronExpression = "0 21 * * *";
+	options.CronExpression = "0 1 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>

@@ -41,7 +41,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				orderData = [OrdeData.Asc("Fecha")]
 			}.Where<Tbl_Pago>(
 				FilterData.In("Estudiante_Id", estudiantes.Select(x => Int32.Parse(x.Codigo)).ToArray()),
-				FilterData.ISNull("Fecha_anulacion"),
+				//FilterData.ISNull("Fecha_anulacion"),
+				FilterData.Equal("Estado", PagosState.PENDIENTE),
 				FilterData.Greater("Monto_Pendiente", 0)
 			);
 

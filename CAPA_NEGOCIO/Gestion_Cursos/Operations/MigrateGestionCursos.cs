@@ -7,6 +7,7 @@ using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
+using Renci.SshNet;
 
 namespace CAPA_NEGOCIO.Oparations
 {
@@ -43,26 +44,30 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task<bool> migrateNiveles()
 		{
-			Console.Write("-->migrateNiveles");
+			LoggerServices.AddMessageInfo("migrateNiveles--> Iniciando migrateNiveles");
 
-			// Iniciar el túnel SSH para SiacTest
+			ForwardedPortLocal? siacTunnel = null;
+
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
-
 				try
 				{
-					// Establecer conexión con la base de datos SiacTest
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateNiveles--> Cliente SSH conectado correctamente.");
+
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateNiveles--> Túnel SSH iniciado correctamente.");
+
 					var nivel = new Niveles();
 					nivel.SetConnection(MySqlConnections.SiacTest);
 					var nivelsMsql = nivel.Get<Niveles>();
 
+					LoggerServices.AddMessageInfo($"migrateNiveles--> Niveles encontrados en MySQL: {nivelsMsql.Count}");
+
 					BeginGlobalTransaction();
+					int actualizados = 0;
+					int insertados = 0;
 
 					nivelsMsql.ForEach(niv =>
 					{
@@ -77,7 +82,6 @@ namespace CAPA_NEGOCIO.Oparations
 
 						if (existingNivel != null)
 						{
-							// Actualizar el registro existente en Niveles
 							existingNivel.Nombre = niv.Nombre;
 							existingNivel.Nombre_corto = niv.Nombre_corto;
 							existingNivel.Nombre_grado = niv.Nombre_grado;
@@ -88,52 +92,76 @@ namespace CAPA_NEGOCIO.Oparations
 							existingNivel.Inicio_grado = niv.Inicio_grado;
 							existingNivel.Updated_at = niv.Updated_at;
 							existingNivel.Update();
+
+							actualizados++;
+							LoggerServices.AddMessageInfo($"migrateNiveles--> Nivel actualizado: ID = {existingNivel.Id}");
 						}
-						else if (existingNivel == null)
+						else
 						{
-							// Guardar el nuevo registro en Niveles
 							niv.Save();
+							insertados++;
+							LoggerServices.AddMessageInfo($"migrateNiveles--> Nuevo nivel insertado: ID = {niv.Id}");
 						}
 					});
 
 					CommitGlobalTransaction();
+					LoggerServices.AddMessageInfo($"migrateNiveles--> Transacción completada. Niveles actualizados: {actualizados}, insertados: {insertados}");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateNiveles.", ex);					
+					LoggerServices.AddMessageError("migrateNiveles--> ERROR en migrateNiveles", ex);
+					RollBackGlobalTransaction();
 				}
 				finally
 				{
-					if (siacTunnel.IsStarted)
+					try
 					{
-						siacTunnel.Stop();
-					}					
-					siacSshClient.Disconnect();
+						if (siacSshClient.IsConnected)
+						{
+							siacSshClient.Disconnect();
+							LoggerServices.AddMessageInfo("migrateNiveles--> Cliente SSH desconectado.");
+						}
+
+						LoggerServices.AddMessageInfo("migrateNiveles--> Deteniendo el túnel SSH.");
+						siacTunnel?.Stop();
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("migrateNiveles--> ERROR al cerrar conexión SSH o túnel.", ex);
+					}
 				}
 			}
 
 			return true;
 		}
 
+
 		public async Task<bool> migrateSecciones()
 		{
-			Console.Write("-->migrateSecciones");
+			LoggerServices.AddMessageInfo("migrateSecciones--> Iniciando migrateSecciones");
 
-			// Iniciar el túnel SSH para SiacTest
+			ForwardedPortLocal? siacTunnel = null;
+
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
-
 				try
 				{
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateSecciones--> Cliente SSH conectado correctamente.");
+
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateSecciones--> Túnel SSH iniciado correctamente.");
+
 					var seccion = new Secciones();
 					seccion.SetConnection(MySqlConnections.SiacTest);
 					var seccionsMsql = seccion.Get<Secciones>();
 
+					LoggerServices.AddMessageInfo($"migrateSecciones--> Secciones encontradas en MySQL: {seccionsMsql.Count}");
+
 					BeginGlobalTransaction();
+					int actualizados = 0;
+					int insertados = 0;
 
 					seccionsMsql.ForEach(secc =>
 					{
@@ -144,106 +172,136 @@ namespace CAPA_NEGOCIO.Oparations
 
 						if (existingSeccion != null)
 						{
-							// Actualizar el registro existente en Secciones
 							existingSeccion.Nombre = secc.Nombre;
 							existingSeccion.Clase_id = secc.Clase_id;
 							existingSeccion.Docente_id = secc.Docente_id;
 							existingSeccion.Observaciones = secc.Observaciones;
 							existingSeccion.Updated_at = secc.Updated_at;
 							existingSeccion.Update();
+
+							actualizados++;
+							LoggerServices.AddMessageInfo($"migrateSecciones--> Sección actualizada: ID = {existingSeccion.Id}");
 						}
 						else
 						{
-							// Guardar un nuevo registro en Secciones
 							secc.Save();
+							insertados++;
+							LoggerServices.AddMessageInfo($"migrateSecciones--> Nueva sección insertada: ID = {secc.Id}");
 						}
-
 					});
 
 					CommitGlobalTransaction();
+					LoggerServices.AddMessageInfo($"migrateSecciones--> Transacción completada. Secciones actualizadas: {actualizados}, insertadas: {insertados}");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateSecciones.", ex);
+					LoggerServices.AddMessageError("migrateSecciones--> ERROR en migrateSecciones", ex);
+					RollBackGlobalTransaction();
 				}
 				finally
 				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
+					try
 					{
-						siacTunnel.Stop();
-					}
+						if (siacSshClient.IsConnected)
+						{
+							siacSshClient.Disconnect();
+							LoggerServices.AddMessageInfo("migrateSecciones--> Cliente SSH desconectado.");
+						}
 
-					siacSshClient.Disconnect();
+						LoggerServices.AddMessageInfo("migrateSecciones--> Deteniendo el túnel SSH.");
+						siacTunnel?.Stop();
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("migrateSecciones--> ERROR al cerrar conexión SSH o túnel.", ex);
+					}
 				}
 			}
 
 			return true;
 		}
 
+
 		public async Task<bool> migratePeriodosLectivos()
 		{
-			Console.Write("-->migratePeriodosLectivos");
+			LoggerServices.AddMessageInfo("migratePeriodosLectivos--> Iniciando migratePeriodosLectivos");
 
-			// Iniciar el túnel SSH para SiacTest
+			ForwardedPortLocal? siacTunnel = null;
+
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
-					// Establecer conexión con la base de datos SiacTest
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migratePeriodosLectivos--> Cliente SSH conectado correctamente.");
+
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migratePeriodosLectivos--> Túnel SSH iniciado correctamente.");
+
 					var periodo = new Periodo_lectivos();
 					periodo.SetConnection(MySqlConnections.SiacTest);
 					var periodosMsql = periodo.Get<Periodo_lectivos>();
 
-					BeginGlobalTransaction();
+					LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Periodos encontrados en MySQL: {periodosMsql.Count}");
 
-					periodosMsql.ForEach(periodo =>
+					BeginGlobalTransaction();
+					int actualizados = 0;
+					int insertados = 0;
+
+					periodosMsql.ForEach(p =>
 					{
 						var existingPeriodo = new Periodo_lectivos()
 						{
-							Id = periodo.Id
+							Id = p.Id
 						}.Find<Periodo_lectivos>();
 
-						if (existingPeriodo != null && existingPeriodo.Updated_at != periodo.Updated_at)
+						if (existingPeriodo != null && existingPeriodo.Updated_at != p.Updated_at)
 						{
-							// Actualizar el registro existente en Periodo_lectivos
-							existingPeriodo.Nombre = periodo.Nombre;
-							existingPeriodo.Nombre_corto = periodo.Nombre_corto;
-							existingPeriodo.Observaciones = periodo.Observaciones;
-							existingPeriodo.Config = periodo.Config;
-							existingPeriodo.Abierto = periodo.Abierto;
-							existingPeriodo.Oculto = periodo.Oculto;
+							existingPeriodo.Nombre = p.Nombre;
+							existingPeriodo.Nombre_corto = p.Nombre_corto;
+							existingPeriodo.Observaciones = p.Observaciones;
+							existingPeriodo.Config = p.Config;
+							existingPeriodo.Abierto = p.Abierto;
+							existingPeriodo.Oculto = p.Oculto;
 							existingPeriodo.Update();
+
+							actualizados++;
+							LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Periodo actualizado: ID = {existingPeriodo.Id}");
 						}
 						else if (existingPeriodo == null)
 						{
-							// Guardar un nuevo registro en Periodo_lectivos
-							periodo.Save();
+							p.Save();
+							insertados++;
+							LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Nuevo periodo insertado: ID = {p.Id}");
 						}
 					});
 
 					CommitGlobalTransaction();
+					LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Transacción completada. Periodos actualizados: {actualizados}, insertados: {insertados}");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migratePeriodosLectivos.", ex);
-					
+					LoggerServices.AddMessageError("migratePeriodosLectivos--> ERROR durante la migración", ex);
+					RollBackGlobalTransaction();
 				}
 				finally
 				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
+					try
 					{
-						siacTunnel.Stop();
-					}
+						if (siacSshClient.IsConnected)
+						{
+							siacSshClient.Disconnect();
+							LoggerServices.AddMessageInfo("migratePeriodosLectivos--> Cliente SSH desconectado.");
+						}
 
-					siacSshClient.Disconnect();
+						LoggerServices.AddMessageInfo("migratePeriodosLectivos--> Deteniendo el túnel SSH.");
+						siacTunnel?.Stop();
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("migratePeriodosLectivos--> ERROR al cerrar conexión SSH o túnel.", ex);
+					}
 				}
 			}
 
@@ -252,178 +310,219 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task<bool> migrateAsignaturas()
 		{
-			Console.Write("-->migrateAsignaturas");
+			LoggerServices.AddMessageInfo("migrateAsignaturas--> Iniciando migración de asignaturas.");
 
-			// Iniciar el túnel SSH para SiacTest
+			ForwardedPortLocal? siacTunnel = null;
+
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateAsignaturas--> Cliente SSH conectado.");
 
-					// Establecer conexión con la base de datos SiacTest
-					var asig = new Asignaturas();
-					asig.SetConnection(MySqlConnections.SiacTest);
-					var asigsMsql = asig.Get<Asignaturas>();
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateAsignaturas--> Túnel SSH iniciado.");
+
+					var asignatura = new Asignaturas();
+					asignatura.SetConnection(MySqlConnections.SiacTest);
+					var asignaturasMsql = asignatura.Get<Asignaturas>();
+					LoggerServices.AddMessageInfo($"migrateAsignaturas--> Asignaturas encontradas: {asignaturasMsql.Count}");
 
 					BeginGlobalTransaction();
+					int insertados = 0;
+					int actualizados = 0;
 
-					asigsMsql.ForEach(asig =>
+					asignaturasMsql.ForEach(a =>
 					{
-						var existingAsignatura = new Asignaturas()
-						{
-							Id = asig.Id
-						}.Find<Asignaturas>();
+						var existente = new Asignaturas { Id = a.Id }.Find<Asignaturas>();
 
-						asig.Created_at = DateUtil.ValidSqlDateTime(asig.Created_at.GetValueOrDefault());
-						asig.Updated_at = DateUtil.ValidSqlDateTime(asig.Updated_at.GetValueOrDefault());
+						a.Created_at = DateUtil.ValidSqlDateTime(a.Created_at.GetValueOrDefault());
+						a.Updated_at = DateUtil.ValidSqlDateTime(a.Updated_at.GetValueOrDefault());
 
-						if (existingAsignatura != null)
+						if (existente != null)
 						{
-							// Actualizar el registro existente en Asignaturas
-							existingAsignatura.Nombre = asig.Nombre;
-							existingAsignatura.Nombre_corto = asig.Nombre_corto;
-							existingAsignatura.Observaciones = asig.Observaciones;
-							existingAsignatura.Nivel_id = asig.Nivel_id;
-							existingAsignatura.Habilitado = asig.Habilitado;
-							existingAsignatura.Updated_at = asig.Updated_at;
-							existingAsignatura.Orden = asig.Orden;
-							existingAsignatura.Update();
+							existente.Nombre = a.Nombre;
+							existente.Nombre_corto = a.Nombre_corto;
+							existente.Observaciones = a.Observaciones;
+							existente.Nivel_id = a.Nivel_id;
+							existente.Habilitado = a.Habilitado;
+							existente.Updated_at = a.Updated_at;
+							existente.Orden = a.Orden;
+							existente.Update();
+
+							actualizados++;
+							LoggerServices.AddMessageInfo($"migrateAsignaturas--> Actualizado ID: {a.Id}");
 						}
-						else if (existingAsignatura == null)
+						else
 						{
-							// Guardar un nuevo registro en Asignaturas
-							asig.Save();
+							a.Save();
+							insertados++;
+							LoggerServices.AddMessageInfo($"migrateAsignaturas--> Insertado ID: {a.Id}");
 						}
 					});
 
 					CommitGlobalTransaction();
+					LoggerServices.AddMessageInfo($"migrateAsignaturas--> Migración completada. Insertados: {insertados}, Actualizados: {actualizados}");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateAsignaturas.", ex);
-					
+					LoggerServices.AddMessageError("migrateAsignaturas--> ERROR durante la migración.", ex);
+					RollBackGlobalTransaction();
 				}
 				finally
 				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
+					try
 					{
-						siacTunnel.Stop();
-					}
+						if (siacTunnel?.IsStarted == true)
+						{
+							siacTunnel.Stop();
+							LoggerServices.AddMessageInfo("migrateAsignaturas--> Túnel SSH detenido.");
+						}
 
-					siacSshClient.Disconnect();
+						if (siacSshClient.IsConnected)
+						{
+							siacSshClient.Disconnect();
+							LoggerServices.AddMessageInfo("migrateAsignaturas--> Cliente SSH desconectado.");
+						}
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("migrateAsignaturas--> ERROR al cerrar conexiones.", ex);
+					}
 				}
 			}
 
 			return true;
 		}
 
+
 		public async Task<bool> migrateMateria()
 		{
-			Console.Write("-->migrateMateria");
+			LoggerServices.AddMessageInfo("migrateMateria --> Iniciando migración de materias.");
+
 			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("MATERIAS");
-			// Iniciar el túnel SSH para SiacTest
+			LoggerServices.AddMessageInfo($"migrateMateria --> Última actualización registrada: {fechaUltimaActualizacion}");
+
+			ForwardedPortLocal? siacTunnel = null;
+
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					siacSshClient.Connect();
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateMateria --> Túnel SSH establecido.");
 
-					// Establecer conexión con la base de datos SiacTest
-					var mat = new Materias();
-					mat.SetConnection(MySqlConnections.SiacTest);
+					var materia = new Materias();
+					materia.SetConnection(MySqlConnections.SiacTest);
+
 					var filter = new FilterData
 					{
 						PropName = "updated_at",
 						FilterType = ">=",
-						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+						Values = new List<string?> { fechaUltimaActualizacion.ToString("yyyy-MM-dd HH:mm:ss") }
 					};
-					var matsMsql = mat.Where<Materias>(filter);
+
+					var materiasMsql = materia.Where<Materias>(filter);
+					LoggerServices.AddMessageInfo($"migrateMateria --> Materias encontradas: {materiasMsql.Count}");
 
 					BeginGlobalTransaction();
 
-					matsMsql.ForEach(mat =>
+					int insertados = 0;
+					int actualizados = 0;
+
+					materiasMsql.ForEach(m =>
 					{
-						var existingMateria = new Materias()
-						{
-							Id = mat.Id
-						}.Find<Materias>();
+						var existente = new Materias { Id = m.Id }.Find<Materias>();
 
-						mat.Created_at = DateUtil.ValidSqlDateTime(mat.Created_at.GetValueOrDefault());
-						mat.Updated_at = DateUtil.ValidSqlDateTime(mat.Updated_at.GetValueOrDefault());
+						m.Created_at = DateUtil.ValidSqlDateTime(m.Created_at.GetValueOrDefault());
+						m.Updated_at = DateUtil.ValidSqlDateTime(m.Updated_at.GetValueOrDefault());
 
-						if (existingMateria != null && existingMateria.Updated_at != mat.Updated_at)
+						if (existente != null && existente.Updated_at != m.Updated_at)
 						{
-							// Actualizar el registro existente en Materias
-							existingMateria.Clase_id = mat.Clase_id;
-							existingMateria.Asignatura_id = mat.Asignatura_id;
-							existingMateria.Observaciones = mat.Observaciones;
-							existingMateria.Config = mat.Config;
-							existingMateria.Lock_version = mat.Lock_version;
-							existingMateria.Updated_at = mat.Updated_at;
-							existingMateria.Update();
+							existente.Clase_id = m.Clase_id;
+							existente.Asignatura_id = m.Asignatura_id;
+							existente.Observaciones = m.Observaciones;
+							existente.Config = m.Config;
+							existente.Lock_version = m.Lock_version;
+							existente.Updated_at = m.Updated_at;
+							existente.Update();
+
+							actualizados++;
 						}
-						else if (existingMateria == null)
+						else if (existente == null)
 						{
-							// Guardar un nuevo registro en Materias
-							mat.Save();
+							m.Save();
+							insertados++;
 						}
 					});
 
 					MigrateService.UpdateLastUpdate("MATERIAS");
 					CommitGlobalTransaction();
+
+					LoggerServices.AddMessageInfo($"migrateMateria --> Migración finalizada. Insertados: {insertados}, Actualizados: {actualizados}");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateMateria.", ex);
-					
+					LoggerServices.AddMessageError("migrateMateria --> ERROR durante la migración.", ex);
+					RollBackGlobalTransaction();
 				}
 				finally
 				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
+					try
 					{
-						siacTunnel.Stop();
-					}
+						if (siacTunnel?.IsStarted == true)
+						{
+							siacTunnel.Stop();
+							LoggerServices.AddMessageInfo("migrateMateria --> Túnel SSH detenido.");
+						}
 
-					siacSshClient.Disconnect();
+						if (siacSshClient.IsConnected)
+						{
+							siacSshClient.Disconnect();
+							LoggerServices.AddMessageInfo("migrateMateria --> Cliente SSH desconectado.");
+						}
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("migrateMateria --> ERROR al cerrar conexiones.", ex);
+					}
 				}
 			}
 
 			return true;
 		}
 
+
 		public async Task<bool> migrateClases()
 		{
-			Console.Write("-->migrateClases");
+			LoggerServices.AddMessageInfo("migrateClases --> Iniciando migración de clases.");
 
+			Console.Write("-->migrateClases");
+			ForwardedPortLocal? siacTunnel = null;
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					// Conectar el cliente SSH
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateClases --> Cliente SSH conectado.");
+
+					// Crear el puerto redirigido
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateClases --> Túnel SSH establecido.");
 
 					// Establecer conexión con la base de datos SiacTest
 					var clase = new Clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
+
 					var clasesMsql = clase.Get<Clases>();
+					LoggerServices.AddMessageInfo($"migrateClases --> Clases encontradas: {clasesMsql.Count}");
 
 					BeginGlobalTransaction();
 
@@ -446,19 +545,22 @@ namespace CAPA_NEGOCIO.Oparations
 							existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
 							existingClase.Updated_at = clase.Updated_at;
 							existingClase.Update();
+							LoggerServices.AddMessageInfo($"migrateClases --> Clase actualizada: {clase.Id}");
 						}
 						else if (existingClase == null)
 						{
 							// Guardar un nuevo registro en Clases
 							clase.Save();
+							LoggerServices.AddMessageInfo($"migrateClases --> Clase insertada: {clase.Id}");
 						}
 					});
 
 					CommitGlobalTransaction();
+					LoggerServices.AddMessageInfo("migrateClases --> Migración de clases finalizada.");
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateClases.", ex);					
+					LoggerServices.AddMessageError("ERROR migrateClases.", ex);
 				}
 				finally
 				{
@@ -466,27 +568,40 @@ namespace CAPA_NEGOCIO.Oparations
 					if (siacTunnel.IsStarted)
 					{
 						siacTunnel.Stop();
+						LoggerServices.AddMessageInfo("migrateClases --> Túnel SSH detenido.");
 					}
 
 					siacSshClient.Disconnect();
+					LoggerServices.AddMessageInfo("migrateClases --> Cliente SSH desconectado.");
 				}
 			}
 
 			return true;
 		}
 
+
 		public async Task<bool> migrateEstudiantesClases()
 		{
+			LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Iniciando migración de estudiantes y clases.");
+
 			Console.Write("-->migrateEstudiantesClases");
+
+			// Declaración de la variable para el túnel SSH
+			ForwardedPortLocal? siacTunnel = null;
 
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					// Conectar el cliente SSH
+					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Cliente SSH conectado.");
+
+					// Crear el puerto redirigido
+					siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Túnel SSH establecido.");
 
 					// Obtener el periodo lectivo actual
 					var periodo_lectivo = new Periodo_lectivos();
@@ -499,20 +614,15 @@ namespace CAPA_NEGOCIO.Oparations
 
 					if (periodo == null)
 					{
+						LoggerServices.AddMessageInfo("migrateEstudiantesClases --> No se encontró el periodo lectivo actual.");
 						return false;
 					}
+
 					// Establecer conexión con la base de datos SiacTest y obtener estudiantes clases
 					var clase = new Estudiante_clases();
 					clase.SetConnection(MySqlConnections.SiacTest);
-					//var clasesMsql = clase.Where<Estudiante_clases>(FilterData.Equal("periodo_lectivo_id", periodo.Id));					
-					
 					var clasesMsql = clase.Get<Estudiante_clases>();
-					if (siacTunnel.IsStarted)
-					{
-						siacTunnel.Stop();
-					}
-
-					siacSshClient.Disconnect();
+					LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Estudiantes y clases encontradas: {clasesMsql.Count}");
 
 					clasesMsql.ForEach(clase =>
 					{
@@ -524,9 +634,10 @@ namespace CAPA_NEGOCIO.Oparations
 						// Si el estudiante no existe, omitir el registro
 						if (estudiante == null)
 						{
-							Console.WriteLine($"Estudiante con ID {clase.Estudiante_id} no existe. Registro omitido.");
+							LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Estudiante con ID {clase.Estudiante_id} no existe. Registro omitido.");
 							return; // Omitir este registro
 						}
+
 						var existingClase = new Estudiante_clases()
 						{
 							Id = clase.Id
@@ -538,6 +649,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 						if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
 						{
+							// Actualizar el registro existente
 							existingClase.Estudiante_id = clase.Estudiante_id;
 							existingClase.Periodo_lectivo_id = clase.Periodo_lectivo_id;
 							existingClase.Clase_id = clase.Clase_id;
@@ -549,165 +661,188 @@ namespace CAPA_NEGOCIO.Oparations
 							existingClase.Repitente = clase.Repitente;
 							existingClase.Reprobadas = clase.Reprobadas;
 							existingClase.Update();
+							LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase actualizada: {clase.Id}");
 						}
 						else if (existingClase == null)
 						{
+							// Guardar un nuevo registro en Estudiante_clases
 							clase.Save();
+							LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase insertada: {clase.Id}");
 						}
 					});
 
-					//CommitGlobalTransaction();
+					// CommitGlobalTransaction();  // Si estás usando transacciones, descoméntalo aquí
+					LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Migración de estudiantes y clases finalizada.");
 				}
 				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR migrateEstudiantesClases.", ex);
-					
+				}
+				finally
+				{
+					// Detener el túnel SSH
+					if (siacTunnel?.IsStarted == true)
+					{
+						siacTunnel.Stop();
+						LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Túnel SSH detenido.");
+					}
+
+					siacSshClient.Disconnect();
+					LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Cliente SSH desconectado.");
 				}
 			}
 
 			return true;
 		}
+
 
 		public async Task<bool> migrateDocentesAsignaturas()
 		{
 			Console.Write("-->migrateDocentesAsignaturas");
 
-			// Iniciar el túnel SSH para SiacTest
+			// Iniciar túnel SSH para conexión remota con SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					siacSshClient.Connect();
+					var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
 
-
-					// Establecer conexión con la base de datos SiacTest y obtener las asignaturas de docentes
-					var docAsig = new Docente_asignaturas();
-					docAsig.SetConnection(MySqlConnections.SiacTest);
-					var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
-
-					BeginGlobalTransaction();
-
-					docAsigsMsql.ForEach(docAsig =>
+					try
 					{
-						var existingClase = new Docente_asignaturas()
-						{
-							Id = docAsig.Id
-						}.Find<Docente_asignaturas>();
+						// Conectar con la base de datos SiacTest y obtener datos
+						var docAsig = new Docente_asignaturas();
+						docAsig.SetConnection(MySqlConnections.SiacTest);
+						var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
 
-						// Validar fechas y actualizar registro si ya existe
-						docAsig.Created_at = DateUtil.ValidSqlDateTime(docAsig.Created_at.GetValueOrDefault());
-						docAsig.Updated_at = DateUtil.ValidSqlDateTime(docAsig.Updated_at.GetValueOrDefault());
+						// Iniciar transacción para entorno local
+						BeginGlobalTransaction();
 
-						if (existingClase != null /*&& existingClase.Updated_at != docAsig.Updated_at*/)
+						foreach (var item in docAsigsMsql)
 						{
-							existingClase.Docente_id = docAsig.Docente_id;
-							existingClase.Asignatura_id = docAsig.Asignatura_id;
-							existingClase.Jefe = docAsig.Jefe;
-							existingClase.Observaciones = docAsig.Observaciones;
-							existingClase.Updated_at = docAsig.Updated_at;
-							existingClase.Update();
+							// Validar y ajustar fechas inválidas para SQL Server
+							item.Created_at = DateUtil.ValidSqlDateTime(item.Created_at.GetValueOrDefault());
+							item.Updated_at = DateUtil.ValidSqlDateTime(item.Updated_at.GetValueOrDefault());
+
+							var existing = new Docente_asignaturas { Id = item.Id }.Find<Docente_asignaturas>();
+
+							if (existing != null)
+							{
+								// Actualizar solo si es necesario
+								existing.Docente_id = item.Docente_id;
+								existing.Asignatura_id = item.Asignatura_id;
+								existing.Jefe = item.Jefe;
+								existing.Observaciones = item.Observaciones;
+								existing.Updated_at = item.Updated_at;
+								existing.Update();
+							}
+							else
+							{
+								item.Save();
+							}
 						}
-						else if (existingClase == null)
-						{
-							docAsig.Save();
-						}
-					});
 
-					CommitGlobalTransaction();
+						// Confirmar transacción
+						CommitGlobalTransaction();
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
+						// Puedes agregar RollbackGlobalTransaction() si fuera necesario aquí
+					}
+					finally
+					{
+						// Detener túnel y desconectar SSH
+						if (siacTunnel.IsStarted)
+							siacTunnel.Stop();
+
+						siacSshClient.Disconnect();
+					}
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateDocentesAsignaturas.", ex);
-					
-				}
-				finally
-				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
-					{
-						siacTunnel.Stop();
-					}
-
-					siacSshClient.Disconnect();
+					LoggerServices.AddMessageError("ERROR SSH connection migrateDocentesAsignaturas.", ex);
+					return false;
 				}
 			}
 
 			return true;
 		}
+
 
 		public async Task<bool> migrateDocentesMaterias()
 		{
-			Console.Write("-->migrateDocentesMaterias");
+			Console.WriteLine("--> migrateDocentesMaterias");
 
-			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
-				// Conectar el cliente SSH
-				siacSshClient.Connect();
-
-				// Crear el puerto redirigido
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
 				try
 				{
+					// Conexión SSH
+					siacSshClient.Connect();
+					var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+					siacTunnel.Start();
 
-					// Establecer conexión con la base de datos SiacTest y obtener las materias de docentes
-					var docMat = new Docente_materias();
-					docMat.SetConnection(MySqlConnections.SiacTest);
-					var docMatsMsql = docMat.Get<Docente_materias>();
-
-					BeginGlobalTransaction();
-
-					docMatsMsql.ForEach(docMat =>
+					try
 					{
-						var existingClase = new Docente_materias()
-						{
-							Id = docMat.Id
-						}.Find<Docente_materias>();
+						// Obtener datos desde SiacTest
+						var docMat = new Docente_materias();
+						docMat.SetConnection(MySqlConnections.SiacTest);
+						var docMatsMsql = docMat.Get<Docente_materias>();
 
-						// Validar fechas y actualizar registro si ya existe
-						docMat.Created_at = DateUtil.ValidSqlDateTime(docMat.Created_at.GetValueOrDefault());
-						docMat.Updated_at = DateUtil.ValidSqlDateTime(docMat.Updated_at.GetValueOrDefault());
+						// Transacción local
+						BeginGlobalTransaction();
 
-						if (existingClase != null && existingClase.Updated_at != docMat.Updated_at)
+						foreach (var item in docMatsMsql)
 						{
-							existingClase.Materia_id = docMat.Materia_id;
-							existingClase.Seccion_id = docMat.Seccion_id;
-							existingClase.Docente_id = docMat.Docente_id;
-							existingClase.Updated_at = docMat.Updated_at;
-							existingClase.Update();
+							item.Created_at = DateUtil.ValidSqlDateTime(item.Created_at.GetValueOrDefault());
+							item.Updated_at = DateUtil.ValidSqlDateTime(item.Updated_at.GetValueOrDefault());
+
+							var existing = new Docente_materias { Id = item.Id }.Find<Docente_materias>();
+
+							if (existing != null)
+							{
+								// Actualizar solo si hay cambios en Updated_at
+								if (existing.Updated_at != item.Updated_at)
+								{
+									existing.Materia_id = item.Materia_id;
+									existing.Seccion_id = item.Seccion_id;
+									existing.Docente_id = item.Docente_id;
+									existing.Updated_at = item.Updated_at;
+									existing.Update();
+								}
+							}
+							else
+							{
+								item.Save();
+							}
 						}
-						else if (existingClase == null)
-						{
-							docMat.Save();
-						}
-					});
 
-					CommitGlobalTransaction();
+						CommitGlobalTransaction();
+					}
+					catch (Exception ex)
+					{
+						LoggerServices.AddMessageError("ERROR en migrateDocentesMaterias durante la transacción.", ex);
+						// Podrías hacer RollbackGlobalTransaction(); aquí si tu sistema lo soporta
+					}
+					finally
+					{
+						if (siacTunnel.IsStarted)
+							siacTunnel.Stop();
+
+						siacSshClient.Disconnect();
+					}
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR migrateDocentesMaterias.", ex);					
-				}
-				finally
-				{
-					// Detener el túnel SSH
-					if (siacTunnel.IsStarted)
-					{
-						siacTunnel.Stop();
-					}
-
-					siacSshClient.Disconnect();
+					LoggerServices.AddMessageError("ERROR en conexión SSH migrateDocentesMaterias.", ex);
+					return false;
 				}
 			}
 
 			return true;
 		}
-				
+
 	}
 }

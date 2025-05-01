@@ -20,7 +20,7 @@ namespace CAPA_NEGOCIO.Oparations
 			_sshTunnelService = new SshTunnelService(LoadConfiguration());
 		}
 
-		public async Task Migrate()
+		public async Task Migrate(String? codigo = null)
 		{
 			await migrateTipoNotas();
 			await migrateEvaluaciones();
@@ -42,7 +42,7 @@ namespace CAPA_NEGOCIO.Oparations
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
 				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);				
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 
 				// Establecer conexión con la base de datos SiacTest
@@ -102,8 +102,155 @@ namespace CAPA_NEGOCIO.Oparations
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
+				int i = 0;
 				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
+				siacTunnel.Start();
+
+				var calificacion = new ViewCalificacionesActivasSiac();
+				calificacion.SetConnection(MySqlConnections.SiacTest);
+				calificacion.CreateViewEstudiantesActivos();
+
+				// Obtener los registros desde la vista
+				/*var filter = new FilterData
+				{
+					PropName = "updated_at",
+					FilterType = ">=",
+					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
+				};
+				var filtros = new List<FilterData>(){
+					filter
+				};*/
+
+				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(/*filtros.ToArray()*/);
+				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
+				Console.Write("No de registros encontrados: " + calificacionMsql.Count);
+
+				try
+				{
+					MigrateService.UpdateLastUpdate("CALIFICACIONES");
+					foreach (var item in clases)
+					{
+						var existingCalificacionInSqlServer = new Calificaciones().Where<Calificaciones>(
+							FilterData.Equal("Estudiante_clase_id", item.FirstOrDefault()?.Estudiante_clase_id)
+						);
+
+						// Obtener los Ids de calificaciones actuales desde MySQL
+						var idsDesdeMysql = item.Select(x => x.Id).ToList();
+						// Obtener los Ids existentes en SQL Server
+						var idsEnSqlServer = existingCalificacionInSqlServer.Select(x => x.Id).ToList();
+						// Identificar los Ids que están en SQL Server pero ya no en MySQL
+						var idsAEliminar = idsEnSqlServer.Except(idsDesdeMysql).ToList();
+
+						foreach (var id in idsAEliminar)
+						{
+							try
+							{
+								var calificacionAEliminar = new Calificaciones() { Id = id }.Find<Calificaciones>();
+								if (calificacionAEliminar != null)
+								{
+									//calificacionAEliminar.Delete();
+									Console.WriteLine($"Calificación eliminada: ID {id}");
+								}
+							}
+							catch (Exception ex)
+							{
+								LoggerServices.AddMessageError($"Error al eliminar calificación ID {id}", ex);
+							}
+						}
+
+						var calificacionesEliminadas = "obtener calificaciones a borrar";
+						foreach (var tn in item)
+						{
+							Console.Write("Registro no: " + i.ToString());
+							try
+							{
+								// Buscar si el registro ya existe en la tabla Calificaciones
+								var existingCalificacion = new Calificaciones()
+								{
+									Id = tn.Id // Usar el ID de la vista para buscar en la tabla Calificaciones
+								}.Find<Calificaciones>();
+
+								// Validar y ajustar las fechas
+								tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
+								tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
+
+								// Si la calificación ya existe, actualizarla
+								if (existingCalificacion != null)
+								{
+									// Actualizar el registro existente en Calificaciones
+									existingCalificacion.Resultado = tn.Resultado;
+									existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
+									existingCalificacion.Evaluacion_id = tn.Evaluacion_id;
+									existingCalificacion.Observaciones = tn.Observaciones;
+									existingCalificacion.Updated_at = tn.Updated_at;
+									existingCalificacion.Consolidado_id = tn.Consolidado_id;
+									existingCalificacion.Estudiante_clase_id = tn.Estudiante_clase_id;
+									existingCalificacion.Materia_id = tn.Materia_id;
+									existingCalificacion.Periodo = tn.Periodo;
+
+									// Guardar los cambios en la tabla Calificaciones
+									existingCalificacion.Update();
+								}
+								else
+								{
+									// Si no existe, mapear la entidad Calificaciones y guardar
+									var nuevaCalificacion = new Calificaciones()
+									{
+										Id = tn.Id,
+										Resultado = tn.Resultado,
+										Tipo_nota_id = tn.Tipo_nota_id,
+										Evaluacion_id = tn.Evaluacion_id,
+										Observaciones = tn.Observaciones,
+										Created_at = tn.Created_at,
+										Updated_at = tn.Updated_at,
+										Consolidado_id = tn.Consolidado_id,
+										Estudiante_clase_id = tn.Estudiante_clase_id,
+										Materia_id = tn.Materia_id,
+										Periodo = tn.Periodo
+									};
+
+									// Guardar el nuevo registro en la tabla Calificaciones
+									nuevaCalificacion.Save();
+								}
+							}
+							catch (System.Data.SqlClient.SqlException sqlEx)
+							{
+								LoggerServices.AddMessageError("SQL Error migrateCalificaciones: ", sqlEx);
+							}
+							i++;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					LoggerServices.AddMessageError("ERROR: migrateCalificaciones.Migrate.", ex);
+				}
+				finally
+				{
+					// Detener el túnel SSH
+					siacTunnel.Stop();
+					siacSshClient.Disconnect();
+				}
+
+				// Destruir la vista después de obtener los datos
+				calificacion.DestroyView("viewcalificacionesactivassiac");
+
+			}
+			return true;
+		}
+
+
+		public async Task<bool> migrateCalificaciones_respaldo()
+		{
+			Console.Write("--> migrateCalificaciones");
+			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("CALIFICACIONES");
+
+			// Iniciar el túnel SSH para SiacTest
+			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
+			{
+				siacSshClient.Connect();
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 
 				var calificacion = new ViewCalificacionesActivasSiac();
@@ -115,9 +262,29 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					PropName = "updated_at",
 					FilterType = ">=",
-					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
 				};
-				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filter);
+
+
+				var filtros = new List<FilterData>(){
+					filter
+				};
+
+				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filtros.ToArray());
+
+
+				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
+				/*foreach (var item in clases)
+				{
+					var existingCalificacion = new Calificaciones().Where<Calificaciones>(
+						FilterData.Equal("Estudiante_clase_id", item.FirstOrDefault().Estudiante_clase_id)
+					);
+					var calificacionesEliminadas ) 
+					foreach (var tn in item)
+					{
+
+					}
+				}*/
 
 				// Destruir la vista después de obtener los datos
 				calificacion.DestroyView("viewcalificacionesactivassiac");
@@ -214,20 +381,20 @@ namespace CAPA_NEGOCIO.Oparations
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
 				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient,3307);
+				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
 
 				// Establecer conexión con la base de datos SiacTest
 				var Evaluacion = new Evaluaciones();
 				Evaluacion.SetConnection(MySqlConnections.SiacTest);
-				
+
 				var filter = new FilterData
 				{
-					PropName = "updated_at", 
+					PropName = "updated_at",
 					FilterType = ">=",
-					Values = new List<string?> {fechaUltimaActualizacion.ToString()}
+					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
 				};
-				
+
 				var EvaluacionMsql = Evaluacion.Where<Evaluaciones>(filter);
 
 				try
@@ -257,7 +424,7 @@ namespace CAPA_NEGOCIO.Oparations
 							existingEvaluacion.Update();
 						}
 						else
-						{							
+						{
 							evaluacion.Save();
 						}
 					});
@@ -268,59 +435,10 @@ namespace CAPA_NEGOCIO.Oparations
 					LoggerServices.AddMessageError("ERROR: migrateEvaluaciones.Migrate.", ex);
 				}
 				finally
-				{				
+				{
 					siacTunnel.Stop();
 					siacSshClient.Disconnect();
 				}
-			}
-
-			return true;
-		}
-
-
-		public async Task<bool> migrateTipoNotasOld()
-		{
-			Console.Write("-->migrateTipoNotas");
-			var tipoNotas = new Tipo_notas();
-			tipoNotas.SetConnection(MySqlConnections.SiacTest);
-			var tipoNotasMsql = tipoNotas.Get<Tipo_notas>();
-			try
-			{
-				//BeginGlobalTransaction();
-				tipoNotasMsql.ForEach(tn =>
-				{
-					var existingNota = new Tipo_notas()
-					{
-						Id = tn.Id
-					}.Find<Tipo_notas>();
-
-					tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
-					tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-					if (existingNota != null/* && existingNota.Updated_at != tn.Updated_at*/)
-					{
-						existingNota.Nombre = tn.Nombre;
-						existingNota.Nombre_corto = tn.Nombre_corto;
-						existingNota.Periodo_lectivo_id = tn.Periodo_lectivo_id;
-						existingNota.Consolidado_id = tn.Consolidado_id;
-						existingNota.Numero_consolidados = tn.Numero_consolidados;
-						existingNota.Observaciones = tn.Observaciones;
-						existingNota.Orden = tn.Orden;
-						existingNota.Update();
-
-					}
-					else if (existingNota == null)
-					{
-						tn.Save();
-					}
-
-				});
-				//CommitGlobalTransaction();
-			}
-			catch (System.Exception ex)
-			{
-				LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
-				//RollBackGlobalTransaction();
-				//throw;
 			}
 
 			return true;
