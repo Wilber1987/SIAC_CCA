@@ -88,12 +88,18 @@ export class CalificacionesUtil {
         });
         if (maxDetailsHeaders != null) {
             return maxDetailsHeaders.map((header, index) => {
-                console.log(Dataset.flatMap(instance => instance.Calificaciones));
+                //console.log(Dataset.flatMap(instance => instance.Calificaciones));
                 
-                const suma = Dataset.flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado) ).reduce((a, b) => a + b, 0);                    
+                const validResults = Dataset.flatMap(instance => instance.Calificaciones)
+                    .filter(ev => ev.Evaluacion == header &&  ev.Resultado && ev.Resultado != "-" );
+                
+                const evFilts = Dataset.flatMap(instance => instance.Calificaciones)
+                    .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado) );
+                const suma = evFilts.reduce((a, b) => a + b, 0);                    
+                
                     
-                const Promedio = isNaN(suma / Dataset.length) ? 0 : suma / Dataset.length;
+                const Promedio = isNaN(suma / validResults.length) ? 0 : suma / validResults.length;
+
                 //console.log(suma, header, Promedio, Dataset.length);
                 return {
                     ev: header,
