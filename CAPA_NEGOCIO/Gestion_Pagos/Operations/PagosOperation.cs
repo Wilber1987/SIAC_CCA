@@ -121,6 +121,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					FilterData.Greater("importe_saldo_md", 0)
 				];
 
+				List<FilterData> filtersExtraordinarios = [					
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray())					
+				];
+
 				/*if (pagosP.Count > 0)
 				{
 					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
@@ -134,7 +138,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 				extraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
 
-				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filters.ToArray()).ToList();
+				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filtersExtraordinarios.ToArray()).ToList();
 				extraordinarios.AddRange(pagosExtraordinarios);
 
 				siacTunnel.Stop();
