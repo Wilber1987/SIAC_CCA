@@ -111,74 +111,37 @@ namespace CAPA_NEGOCIO.Oparations
 				calificacion.SetConnection(MySqlConnections.SiacTest);
 				calificacion.CreateViewEstudiantesActivos();
 
-				// Obtener los registros desde la vista
-				/*var filter = new FilterData
-				{
-					PropName = "updated_at",
-					FilterType = ">=",
-					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
-				};
-				var filtros = new List<FilterData>(){
-					filter
-				};*/
-
-				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(/*filtros.ToArray()*/);
-				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
-				Console.Write("No de registros encontrados: " + calificacionMsql.Count);
+				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>();
+				var clasesAgrupadas = calificacionMsql.GroupBy(cal => cal.Estudiante_clase_id);
+				Console.WriteLine("No de registros encontrados: " + calificacionMsql.Count);
 
 				try
 				{
 					MigrateService.UpdateLastUpdate("CALIFICACIONES");
-					foreach (var item in clases)
+
+					foreach (var grupo in clasesAgrupadas)
 					{
+						var estudianteClaseId = grupo.Key;
 						var existingCalificacionInSqlServer = new Calificaciones().Where<Calificaciones>(
-							FilterData.Equal("Estudiante_clase_id", item.FirstOrDefault()?.Estudiante_clase_id)
+							FilterData.Equal("Estudiante_clase_id", estudianteClaseId)
 						);
 
-						// Obtener los Ids de calificaciones actuales desde MySQL
-						var idsDesdeMysql = item.Select(x => x.Id).ToList();
-						// Obtener los Ids existentes en SQL Server
-						var idsEnSqlServer = existingCalificacionInSqlServer.Select(x => x.Id).ToList();
-						// Identificar los Ids que están en SQL Server pero ya no en MySQL
-						var idsAEliminar = idsEnSqlServer.Except(idsDesdeMysql).ToList();
-
-						foreach (var id in idsAEliminar)
+						// Paso 1: Insertar o actualizar
+						foreach (var tn in grupo)
 						{
+							Console.WriteLine("Registro no: " + i.ToString());
 							try
 							{
-								var calificacionAEliminar = new Calificaciones() { Id = id }.Find<Calificaciones>();
-								if (calificacionAEliminar != null)
-								{
-									//calificacionAEliminar.Delete();
-									Console.WriteLine($"Calificación eliminada: ID {id}");
-								}
-							}
-							catch (Exception ex)
-							{
-								LoggerServices.AddMessageError($"Error al eliminar calificación ID {id}", ex);
-							}
-						}
-
-						var calificacionesEliminadas = "obtener calificaciones a borrar";
-						foreach (var tn in item)
-						{
-							Console.Write("Registro no: " + i.ToString());
-							try
-							{
-								// Buscar si el registro ya existe en la tabla Calificaciones
 								var existingCalificacion = new Calificaciones()
 								{
-									Id = tn.Id // Usar el ID de la vista para buscar en la tabla Calificaciones
+									Id = tn.Id
 								}.Find<Calificaciones>();
 
-								// Validar y ajustar las fechas
 								tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
 								tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
 
-								// Si la calificación ya existe, actualizarla
 								if (existingCalificacion != null)
 								{
-									// Actualizar el registro existente en Calificaciones
 									existingCalificacion.Resultado = tn.Resultado;
 									existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
 									existingCalificacion.Evaluacion_id = tn.Evaluacion_id;
@@ -189,12 +152,10 @@ namespace CAPA_NEGOCIO.Oparations
 									existingCalificacion.Materia_id = tn.Materia_id;
 									existingCalificacion.Periodo = tn.Periodo;
 
-									// Guardar los cambios en la tabla Calificaciones
 									existingCalificacion.Update();
 								}
 								else
 								{
-									// Si no existe, mapear la entidad Calificaciones y guardar
 									var nuevaCalificacion = new Calificaciones()
 									{
 										Id = tn.Id,
@@ -209,8 +170,6 @@ namespace CAPA_NEGOCIO.Oparations
 										Materia_id = tn.Materia_id,
 										Periodo = tn.Periodo
 									};
-
-									// Guardar el nuevo registro en la tabla Calificaciones
 									nuevaCalificacion.Save();
 								}
 							}
@@ -220,6 +179,35 @@ namespace CAPA_NEGOCIO.Oparations
 							}
 							i++;
 						}
+
+						// Paso 2: Eliminar registros obsoletos
+						try
+						{
+							var idsDesdeMysql = grupo.Select(x => x.Id).ToList();
+							var idsEnSqlServer = existingCalificacionInSqlServer.Select(x => x.Id).ToList();
+							var idsAEliminar = idsEnSqlServer.Except(idsDesdeMysql).ToList();
+
+							foreach (var id in idsAEliminar)
+							{
+								try
+								{
+									var calificacionAEliminar = existingCalificacionInSqlServer.FirstOrDefault(x => x.Id == id);
+									if (calificacionAEliminar != null)
+									{
+										calificacionAEliminar.Delete();
+										Console.WriteLine($"Calificación eliminada: ID {id}");
+									}
+								}
+								catch (Exception ex)
+								{
+									LoggerServices.AddMessageError($"Error al eliminar calificación ID {id}", ex);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							LoggerServices.AddMessageError("Error durante la eliminación de calificaciones obsoletas.", ex);
+						}
 					}
 				}
 				catch (Exception ex)
@@ -228,15 +216,12 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 				finally
 				{
-					// Detener el túnel SSH
 					siacTunnel.Stop();
 					siacSshClient.Disconnect();
+					calificacion.DestroyView("viewcalificacionesactivassiac");
 				}
-
-				// Destruir la vista después de obtener los datos
-				calificacion.DestroyView("viewcalificacionesactivassiac");
-
 			}
+
 			return true;
 		}
 

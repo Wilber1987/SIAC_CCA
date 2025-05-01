@@ -41,7 +41,7 @@ namespace DataBaseModel {
 			string query = $"DROP VIEW IF EXISTS viewcalificacionesactivassiac; " +
 						   $"CREATE VIEW viewcalificacionesactivassiac AS " +
 						   $"select calif.*, ec.periodo_lectivo_id from calificaciones calif " +
-						   $"inner join estudiante_clases ec on ec.id = calif.estudiante_clase_id"	+					   
+						   $"inner join estudiante_clases ec on ec.id = calif.estudiante_clase_id "	+					   
 						   $"WHERE ec.periodo_lectivo_id = (select id from periodo_lectivos pl where pl.nombre_corto = '{currentYear}');";
 						   
 

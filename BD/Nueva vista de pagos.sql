@@ -140,3 +140,23 @@ inner join tbl_cxc_deudor tcd on tcd.iddeudor  = cargo.iddeudor
 inner join tbl_gen_moneda tgm on tgm.idmoneda  = tcd2.idmonedadocumento 
 where cargo.iddeudor  is not null and doc.idservicioreferencia is not null 
 and tcd2.fechaanulacion  is null
+
+
+/**borrar evalauciones repetidas***/
+SELECT c.*
+FROM calificaciones c
+INNER JOIN (
+    SELECT resultado, tipo_nota_id, estudiante_clase_id, materia_id, periodo
+    FROM calificaciones
+    WHERE tipo_nota_id IS NOT NULL AND resultado IS NOT NULL and consolidado_id is null
+	and year(created_at) = 2024 
+    GROUP BY resultado, tipo_nota_id, estudiante_clase_id, materia_id, periodo
+    HAVING COUNT(id) > 1
+) duplicados ON c.resultado = duplicados.resultado
+            AND c.tipo_nota_id = duplicados.tipo_nota_id
+            AND c.estudiante_clase_id = duplicados.estudiante_clase_id
+            AND c.materia_id = duplicados.materia_id
+            AND c.periodo = duplicados.periodo
+WHERE c.tipo_nota_id IS NOT NULL
+  AND c.resultado IS NOT NULL
+  order by resultado, estudiante_clase_id, materia_id
