@@ -256,20 +256,7 @@ namespace CAPA_NEGOCIO.Oparations
 				};
 
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filtros.ToArray());
-
-
-				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
-				/*foreach (var item in clases)
-				{
-					var existingCalificacion = new Calificaciones().Where<Calificaciones>(
-						FilterData.Equal("Estudiante_clase_id", item.FirstOrDefault().Estudiante_clase_id)
-					);
-					var calificacionesEliminadas ) 
-					foreach (var tn in item)
-					{
-
-					}
-				}*/
+				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);			
 
 				// Destruir la vista después de obtener los datos
 				calificacion.DestroyView("viewcalificacionesactivassiac");

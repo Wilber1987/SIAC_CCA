@@ -96,15 +96,18 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
-			var pagosP = new Tbl_Pago()
-			{
-				orderData = [OrdeData.Asc("Fecha")]
-			}.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray())
+
+			var pagosInactivosSqlServer = new Tbl_Pago()
+			.Where<Tbl_Pago>(
+				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.Equal("Estado", PagosState.PENDIENTE.ToString()),
+				FilterData.Greater("importe_saldo_md", 0)
 			);
 
 			List<Pagos_alumnos_view> recientraidos;
 			List<ViewPagosAlumnosExtraordinarios> extraordinarios;
+			List<Pagos_alumnos_view> anuladosEnMysql;
+			List<ViewPagosAlumnosExtraordinarios> anuladosEnMysqlExtraordinarios;
 
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
 			{
@@ -115,27 +118,39 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				// 1. Pagos normales
 				var pagosAlumnosView = new Pagos_alumnos_view();
 				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
-				List<FilterData> filters = [
-					//FilterData.ISNull("fecha_anulacion"),
-					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
-					FilterData.Greater("importe_saldo_md", 0)
-				];
-
-				/*if (pagosP.Count > 0)
-				{
-					filters.Add(FilterData.NotIn("Id_documento_cc", pagosP.Select(x => x.Id_documento_cc).ToArray()));
-				}*/
-
-				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
-
 				// 2. Pagos extraordinarios
 				var viewExtra = new ViewPagosAlumnosExtraordinarios();
 				viewExtra.SetConnection(MySqlConnections.BellacomTest);
-
 				extraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
+				anuladosEnMysql = new List<Pagos_alumnos_view>();
+				anuladosEnMysqlExtraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
 
-				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filters.ToArray()).ToList();
+				//filtro solo pagos activos de SIGE
+				List<FilterData> filters = [
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Greater("importe_saldo_md", 0),
+					FilterData.ISNull("fecha_anulacion")
+				];
+				List<FilterData> filtersExtraordinarios = [
+					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.ISNull("fecha_anulacion"),
+					FilterData.Greater("importe_saldo_md", 0)
+					//,FilterData.Equal("no_documento", 32011419)
+				];
+				//filtro los pagos activos de SQlServer y los busco si estan inactivos en mysql (SIGE)
+				List<FilterData> filtrosSqlserver = [
+					FilterData.In("id_documento_cc", pagosInactivosSqlServer.Select(x => x.Id_documento_cc).ToArray()),
+					FilterData.NotNull("fecha_anulacion")
+				];
+
+				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
+				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filtersExtraordinarios.ToArray()).ToList();
+
+				var pagosAnulaosMysql = pagosAlumnosView.Where<Pagos_alumnos_view>(filtrosSqlserver.ToArray()).ToList();
+				var pagosAnulaosMysqlExtraordinarios = pagosAlumnosView.Where<ViewPagosAlumnosExtraordinarios>(filtrosSqlserver.ToArray()).ToList();
+				
 				extraordinarios.AddRange(pagosExtraordinarios);
+				anuladosEnMysqlExtraordinarios.AddRange(pagosAnulaosMysqlExtraordinarios);
 
 				siacTunnel.Stop();
 				siacSshClient.Disconnect();
@@ -164,7 +179,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			).FirstOrDefault();
 
 			//string nuevoEstado = x.Fecha_anulacion != null
-			string nuevoEstado = x.Usuario_anulacion != null
+			string nuevoEstado = (x.Usuario_anulacion != null && x.Fecha_anulacion != null)
 				? PagosState.ANULADO.ToString()
 				: PagosState.PENDIENTE.ToString();
 
@@ -174,7 +189,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				if (pagoExistente.Estado != nuevoEstado)
 				{
 					pagoExistente.Estado = nuevoEstado;
-					pagoExistente.Update(); 
+					pagoExistente.Update();
 				}
 				pagos.Add(pagoExistente);
 			}
@@ -386,6 +401,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = "Datos de la tarjeta no validos"
 					};
 				}
+
+
 				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES				
 				datosDePago.pagosRequest = pagosRequest;
 				TPVService tPVService = new TPVService();
@@ -398,6 +415,19 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = string.Join(" - ", pagosAuthResponse.Errors.Select(e => e.Message).ToList())
 					};
 				}*/
+
+				if (!int.TryParse(datosDePago.ExpMonth, out int mesInt) || mesInt < 1 || mesInt > 12)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = "El mes de expiración es inválido. Debe ser entre 1 y 12.",
+					};
+				}
+
+				// Asignar el mes ya formateado con 2 dígitos
+				datosDePago.ExpMonth = mesInt.ToString("D2");
+
 				PowerTranzTpvResponse pagosResponse = await tPVService.SalesAsync(datosDePago);
 				if (pagosResponse.Errors?.Count > 0)
 				{
@@ -421,12 +451,12 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					};
 				}
 			}
-			catch (System.Exception e)
+			catch (Exception e)
 			{
 				return new ResponseService
 				{
 					status = 500,
-					message = e.Message
+					message = "Error inesperado, verifique si el cargo no ha sido cargado en su tarjeta antes de intentarlo nuevamente."
 				};
 			}
 
