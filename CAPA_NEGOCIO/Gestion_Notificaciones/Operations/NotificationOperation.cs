@@ -87,10 +87,15 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                     message = "Notificacion enviada"
                 };
             }
-            catch (System.Exception)
+            catch (System.Exception EX)
             {
+                LoggerServices.AddMessageError($"El usuario con id = {user.UserId} envio una notificación Y FALLO", EX);
                 //RollBackGlobalTransaction();
-                throw;
+                return new ResponseService
+                {
+                    status = 500,
+                    message = EX.Message
+                };
             }
         }
 
