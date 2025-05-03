@@ -76,7 +76,7 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 });
 builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
-	options.CronExpression = "30 15 * * *";
+	options.CronExpression = "30 21 * * *";
 	//options.CronExpression = "30 21 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });

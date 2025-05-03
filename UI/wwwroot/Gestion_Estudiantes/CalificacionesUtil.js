@@ -89,9 +89,10 @@ export class CalificacionesUtil {
         if (maxDetailsHeaders != null) {
             return maxDetailsHeaders.map((header, index) => {
                 //console.log(Dataset.flatMap(instance => instance.Calificaciones));
-                
+                console.log(header)
+                console.log(Dataset[0].Calificaciones)
                 const validResults = Dataset.flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header &&  ev.Resultado && ev.Resultado != "-" );
+                    .filter(ev => ev.Evaluacion == header  &&  ev.Resultado && ev.Resultado != "-" );
                 
                 const evFilts = Dataset.flatMap(instance => instance.Calificaciones)
                     .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado) );
