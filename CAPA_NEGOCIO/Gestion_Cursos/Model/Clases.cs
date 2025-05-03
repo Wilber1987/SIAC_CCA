@@ -19,7 +19,7 @@ namespace DataBaseModel
         public DateTime? Updated_at { get; set; }
         public string? Nombre_Grado
         {
-            get { return $"{NumberUtility.ObtenerEnumeracion((GetNivelName()?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0 ).ToUpper()}"; }
+            get { return $"{NumberUtility.ObtenerEnumeracion((GetNivelName()?.ToString() == "SECUNDARIA" ?  this.Grado + 6: this.Grado) ?? 0 ).ToUpper()} {GetGradeName()}"; }
         }
         public string? Descripcion
         {
@@ -28,6 +28,14 @@ namespace DataBaseModel
         private NivelesEnum? GetNivelName()
         {
             return Enum.IsDefined(typeof(NivelesEnum), (Nivel_id - 1) ?? 0) ? (NivelesEnum?)Nivel_id - 1 : null;
+        }
+        private string? GetGradeName()
+        {
+            if (GetNivelName() == NivelesEnum.PREESCOLAR)
+            {
+                return "NIVEL";
+            }
+            return "GRADO";
         }
         [ManyToOne(TableName = "Niveles", KeyColumn = "Id", ForeignKeyColumn = "Nivel_id")]
         public Niveles? Niveles { get; set; }

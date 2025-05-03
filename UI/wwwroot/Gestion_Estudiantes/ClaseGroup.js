@@ -28,7 +28,6 @@ class ClaseGroup extends HTMLElement {
 	 *  IsComplete?: Boolean,
 	 *  WithoutDocente?: Boolean; 
 	 *  Estudiante_Clase_Seleccionado?: Estudiante_clases
-	 * 
 	 * }} Config
 	 */
 
@@ -449,11 +448,9 @@ class ClaseGroup extends HTMLElement {
 							`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje !== '-' ? calificacion.Porcentaje + ' Pts.' : calificacion.Porcentaje})`
 							: 'Total'}
 			</div>
-
 			<div style="text-align: right; width:65px">
 				${calificacion.Resultado}${calificacion.Resultado !== '-' ? ' pts.' : ''}
-				</div>
-
+			</div>
 		</div>`
 	}
 
