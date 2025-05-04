@@ -28,7 +28,6 @@ class ClaseGroup extends HTMLElement {
 	 *  IsComplete?: Boolean,
 	 *  WithoutDocente?: Boolean; 
 	 *  Estudiante_Clase_Seleccionado?: Estudiante_clases
-	 * 
 	 * }} Config
 	 */
 
@@ -191,7 +190,7 @@ class ClaseGroup extends HTMLElement {
 				for (const key in c) {
 					newObject[key] = c[key]
 				}
-				if (newObject.Resultado !== "-") {
+				if (newObject.Resultado !== "-" && newObject.Resultado != null) {
 					newObject.Resultado = newObject.Resultado + " pts.";
 				}
 
@@ -213,7 +212,7 @@ class ClaseGroup extends HTMLElement {
 				newObject.Tipo = newObject.Tipo ? newObject.Tipo.charAt(0).toUpperCase() + newObject.Tipo.slice(1) : '';
 				return newObject;
 			})
-			console.log(datasetMap);
+			//console.log(datasetMap);
 			//console.log(datasetMap);
 			const table = new WTableComponent({
 				Dataset: datasetMap,
@@ -449,11 +448,9 @@ class ClaseGroup extends HTMLElement {
 							`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje !== '-' ? calificacion.Porcentaje + ' Pts.' : calificacion.Porcentaje})`
 							: 'Total'}
 			</div>
-
 			<div style="text-align: right; width:65px">
 				${calificacion.Resultado}${calificacion.Resultado !== '-' ? ' pts.' : ''}
-				</div>
-
+			</div>
 		</div>`
 	}
 
@@ -465,7 +462,8 @@ class ClaseGroup extends HTMLElement {
 		columStyle = detail.Evaluacion.includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
 		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
-		let styleRed = detail.Resultado < 60 ? "color: red;" : "";
+		let styleRed = detail.Resultado != null && detail.Resultado < 60 ? "color: red;" : "";
+
 
 		return html`<div class="element-detail" style="">
 			<span class="header ${index == 0 ? "" : "hidden"}">
@@ -473,7 +471,7 @@ class ClaseGroup extends HTMLElement {
 				<span>${columnValue}</span>
 			</span>
 			<span class="value" style="${styleRed}${isNotaF ? 'font-weight: 700' : ''}">
-				${detail.Resultado}${detail.Resultado !== '-' ? ' pts.' : ''}
+				${detail.Resultado == null ? "-" : detail.Resultado} ${detail.Resultado !== null && detail.Resultado !== '-' ? ' pts.' : ''}
 			</span>
 
 		</div>`;
