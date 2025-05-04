@@ -190,7 +190,7 @@ class ClaseGroup extends HTMLElement {
 				for (const key in c) {
 					newObject[key] = c[key]
 				}
-				if (newObject.Resultado !== "-") {
+				if (newObject.Resultado !== "-" && newObject.Resultado != null) {
 					newObject.Resultado = newObject.Resultado + " pts.";
 				}
 
@@ -212,7 +212,7 @@ class ClaseGroup extends HTMLElement {
 				newObject.Tipo = newObject.Tipo ? newObject.Tipo.charAt(0).toUpperCase() + newObject.Tipo.slice(1) : '';
 				return newObject;
 			})
-			console.log(datasetMap);
+			//console.log(datasetMap);
 			//console.log(datasetMap);
 			const table = new WTableComponent({
 				Dataset: datasetMap,
