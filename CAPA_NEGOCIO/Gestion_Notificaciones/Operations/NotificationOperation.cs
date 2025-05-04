@@ -119,7 +119,7 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
         {
             UserModel user = AuthNetCore.User(identity);
             Inst.Id_User = user.UserId;
-            return []; //Inst.Get<Notificaciones>();
+            return Inst.Get<Notificaciones>();
         }
 
     }

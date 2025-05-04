@@ -1,9 +1,38 @@
 using BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operations;
 using CAPA_DATOS.Cron.Jobs;
+using CAPA_NEGOCIO.Oparations;
 using DataBaseModel;
 
 namespace BackgroundJob.Cron.Jobs
 {
+
+    public class SendMailCredentialsSchedulerJob : CronBackgroundJob
+    {
+        private readonly ILogger<SendMailCredentialsSchedulerJob> _log;
+
+        public SendMailCredentialsSchedulerJob(CronSettings<SendMailCredentialsSchedulerJob> settings, ILogger<SendMailCredentialsSchedulerJob> log)
+            : base(settings.CronExpression, settings.TimeZone)
+        {
+            _log = log;
+        }
+
+        protected override async Task<Task> DoWork(CancellationToken stoppingToken)
+        {
+            _log.LogInformation(":::::::::::Running...  SendMailCredentialsSchedulerJob at {0}", DateTime.UtcNow);            
+            try
+            {                
+                CredentialsOperation.sendInvitations();
+            }
+            catch (Exception ex)
+            {
+                _log.LogInformation(":::::::::::ERROR... at {0}", ex);
+            }
+
+            return Task.CompletedTask;
+        }
+    }
+
+
     public class SendMailNotificationsSchedulerJob : CronBackgroundJob
     {
         private readonly ILogger<SendMailNotificationsSchedulerJob> _log;
@@ -16,11 +45,9 @@ namespace BackgroundJob.Cron.Jobs
 
         protected override async Task<Task> DoWork(CancellationToken stoppingToken)
         {
-            _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
-            //CARGA AUTOMATICA DE CASOS
+            _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);            
             try
-            {
-                //ENVIO DE NOTIFICACIONES
+            {                
                 NotificationSenderOperation.SendNotifications();
             }
             catch (Exception ex)

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            font-size: 12px;
+        }
+
+        .logo {
+            width: 150px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            margin-top: 10px;
+        }
+
+        p,
+        ul {
+            margin: 10px 0;
+            text-align: justify;
+        }
+
+        ul {
+            padding-left: 20px;
+            list-style-type: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <img class="logo" src="https://cca.edu.ni/wp-content/uploads/2021/01/Logotipo-CCA_CCA-Color.png" alt="Logotipo CCA" />
+
+        <h1>Credenciales Portal CCA</h1>
+
+        <p>Estimado(a) {{ nombre }},</p>
+
+        <p>El Colegio Centro América se complace en presentar el <strong>"Portal CCA"</strong>, una nueva plataforma en línea que le permitirá:</p>
+
+        <ul>
+            <li>Actualizar la información principal de contacto, tal como: correo electrónico, celular, teléfono convencional (si aplica) y dirección.</li>
+            <li>Realizar pagos en línea de colegiatura y otros cargos.</li>
+            <li>Descargar reporte de calificaciones bimestrales y semestrales.</li>
+        </ul>
+
+        <p>Como primer paso, le pedimos que pueda acceder al Portal CCA y verifique o actualice la información de los PMF de su Familia. También, le pedimos que cree una contraseña personalizada para entrar al Portal.</p>
+
+        <p><strong>Haga clic en el siguiente enlace:</strong> <a href="https://portal.cca.edu.ni/Security/Login">https://portal.cca.edu.ni/Security/Login</a></p>
+
+        <ul>
+            <li><strong>Usuario:</strong> {{ usuario }}</li>
+            <li><strong>Contraseña:</strong> {{ contrasena }}</li>
+        </ul>
+
+        <p>Adjunto encontrará un documento paso a paso del uso del Portal CCA.</p>
+
+        <p>Atentamente,<br>
+        <strong>Colegio Centro América</strong></p>
+
+    </div>
+
+</body>
+
+</html>

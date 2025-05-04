@@ -52,6 +52,8 @@ namespace DataBaseModel
 		public string? Profesion { get; set; }
 		public int? EgresoExAlumno { get; set; }
 
+		public bool? Credenciales_Enviadas { get; set; }
+
 		[JsonProp]
 		public List<ProfileRequest>? ProfileRequest { get; internal set; }
 

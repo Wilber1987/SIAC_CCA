@@ -27,6 +27,29 @@ namespace BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operati
 			}
 			catch (Exception ex)
 			{
+				LoggerServices.AddMessageError("error enviando notificacion", ex);
+			}
+		}
+
+		public static void SendCredentialsToParents()
+		{
+			try
+			{				
+				List<Notificaciones> notificaciones = new Notificaciones().Where<Notificaciones>(
+					FilterData.Equal("Enviado", false)
+				);
+				if (notificaciones.Count > 0)
+				{
+					notificaciones.ForEach(notif => 
+					{
+					    MailServices.SendMail([notif.Email], "", notif.Titulo, notif.Mensaje, notif.Media);
+						notif.Enviado = true;
+						notif.Update();
+					});					
+				}
+			}
+			catch (Exception ex)
+			{
 				LoggerServices.AddMessageError("error enviando report", ex);
 			}
 		}

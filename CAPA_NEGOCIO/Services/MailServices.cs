@@ -49,7 +49,7 @@ namespace CAPA_NEGOCIO.Services
 				emailService.IncrementEmailSentCount(account.Email);
 
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError($"error enviando correos de invitacion", ex);
 			}

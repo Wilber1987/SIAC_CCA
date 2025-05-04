@@ -76,14 +76,20 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 });
 builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
-	options.CronExpression = "30 21 * * *";
+	options.CronExpression = "25 16 * * *";
 	//options.CronExpression = "30 21 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-{
-	// Corre cada minuto
+/*builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+{	
 	options.CronExpression = "* * * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
+*/
+builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
+{
+	options.CronExpression = "53 12 * * *";
+//	options.CronExpression = "0/15 21-23 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 

@@ -661,17 +661,17 @@ namespace CAPA_NEGOCIO.Oparations
 							existingClase.Repitente = clase.Repitente;
 							existingClase.Reprobadas = clase.Reprobadas;
 							existingClase.Update();
-							LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase actualizada: {clase.Id}");
+							//LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase actualizada: {clase.Id}");
 						}
 						else if (existingClase == null)
 						{
 							// Guardar un nuevo registro en Estudiante_clases
 							clase.Save();
-							LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase insertada: {clase.Id}");
+							//LoggerServices.AddMessageInfo($"migrateEstudiantesClases --> Clase insertada: {clase.Id}");
 						}
 					});
 
-					// CommitGlobalTransaction();  // Si estás usando transacciones, descoméntalo aquí
+					// CommitGlobalTransaction();  
 					LoggerServices.AddMessageInfo("migrateEstudiantesClases --> Migración de estudiantes y clases finalizada.");
 				}
 				catch (Exception ex)

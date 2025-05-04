@@ -148,7 +148,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 				var pagosAnulaosMysql = pagosAlumnosView.Where<Pagos_alumnos_view>(filtrosSqlserver.ToArray()).ToList();
 				var pagosAnulaosMysqlExtraordinarios = pagosAlumnosView.Where<ViewPagosAlumnosExtraordinarios>(filtrosSqlserver.ToArray()).ToList();
-				
+
 				extraordinarios.AddRange(pagosExtraordinarios);
 				anuladosEnMysqlExtraordinarios.AddRange(pagosAnulaosMysqlExtraordinarios);
 
@@ -185,12 +185,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 			if (pagoExistente != null)
 			{
+				pagoExistente.Monto_Pendiente = x.Importe_saldo_md;
+
 				// Solo actualizar el estado si ha cambiado
 				if (pagoExistente.Estado != nuevoEstado)
 				{
 					pagoExistente.Estado = nuevoEstado;
 					pagoExistente.Update();
 				}
+				pagoExistente.Update();
 				pagos.Add(pagoExistente);
 			}
 			else

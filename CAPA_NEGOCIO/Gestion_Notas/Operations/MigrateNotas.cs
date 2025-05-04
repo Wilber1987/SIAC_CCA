@@ -22,8 +22,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			await migrateTipoNotas();
-			await migrateEvaluaciones();
+			//await migrateTipoNotas();
+			//await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 
@@ -96,24 +96,30 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task<bool> migrateCalificaciones()
 		{
-			Console.Write("--> migrateCalificaciones");
+			LoggerServices.AddMessageInfo("migrateCalificaciones --> Iniciando migración de calificaciones");
+
 			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("CALIFICACIONES");
 
-			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
 				int i = 0;
 				siacSshClient.Connect();
+				LoggerServices.AddMessageInfo("migrateCalificaciones --> Cliente SSH conectado");
+
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 				siacTunnel.Start();
+				LoggerServices.AddMessageInfo("migrateCalificaciones --> Túnel SSH iniciado");
 
 				var calificacion = new ViewCalificacionesActivasSiac();
 				calificacion.SetConnection(MySqlConnections.SiacTest);
 				calificacion.CreateViewEstudiantesActivos();
 
-				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>();
+				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(
+					//FilterData.Equal("Id", 6372239)
+				);
+				LoggerServices.AddMessageInfo($"migrateCalificaciones --> Registros encontrados en MySQL: {calificacionMsql.Count}");
+
 				var clasesAgrupadas = calificacionMsql.GroupBy(cal => cal.Estudiante_clase_id);
-				Console.WriteLine("No de registros encontrados: " + calificacionMsql.Count);
 
 				try
 				{
@@ -126,10 +132,10 @@ namespace CAPA_NEGOCIO.Oparations
 							FilterData.Equal("Estudiante_clase_id", estudianteClaseId)
 						);
 
-						// Paso 1: Insertar o actualizar
 						foreach (var tn in grupo)
 						{
-							Console.WriteLine("Registro no: " + i.ToString());
+							//LoggerServices.AddMessageInfo($"migrateCalificaciones --> Procesando registro #{i}");
+
 							try
 							{
 								var existingCalificacion = new Calificaciones()
@@ -153,6 +159,7 @@ namespace CAPA_NEGOCIO.Oparations
 									existingCalificacion.Periodo = tn.Periodo;
 
 									existingCalificacion.Update();
+									LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación actualizada: ID = {existingCalificacion.Id}");
 								}
 								else
 								{
@@ -171,12 +178,14 @@ namespace CAPA_NEGOCIO.Oparations
 										Periodo = tn.Periodo
 									};
 									nuevaCalificacion.Save();
+									LoggerServices.AddMessageInfo($"migrateCalificaciones --> Nueva calificación insertada: ID = {nuevaCalificacion.Id}");
 								}
 							}
-							catch (System.Data.SqlClient.SqlException sqlEx)
+							catch (Exception sqlEx)
 							{
-								LoggerServices.AddMessageError("SQL Error migrateCalificaciones: ", sqlEx);
+								LoggerServices.AddMessageError("SQL Error migrateCalificaciones:", sqlEx);
 							}
+
 							i++;
 						}
 
@@ -184,23 +193,47 @@ namespace CAPA_NEGOCIO.Oparations
 						try
 						{
 							var idsDesdeMysql = grupo.Select(x => x.Id).ToList();
-							var idsEnSqlServer = existingCalificacionInSqlServer.Select(x => x.Id).ToList();
-							var idsAEliminar = idsEnSqlServer.Except(idsDesdeMysql).ToList();
+							var registrosEnSqlServer = existingCalificacionInSqlServer;
 
-							foreach (var id in idsAEliminar)
+							// Filtrar los que no están en MySQL
+							var registrosAEliminar = registrosEnSqlServer
+								.Where(x => !idsDesdeMysql.Contains(x.Id))
+								.ToList();
+
+							// Agrupar por clave compuesta si fuera necesario (ej. Estudiante_clase_id), o trabajar directamente
+							foreach (var idGroup in registrosAEliminar.GroupBy(x => x.Estudiante_clase_id))
 							{
-								try
+								var duplicados = idGroup.ToList();
+
+								if (duplicados.Count == 1)
 								{
-									var calificacionAEliminar = existingCalificacionInSqlServer.FirstOrDefault(x => x.Id == id);
-									if (calificacionAEliminar != null)
-									{
-										calificacionAEliminar.Delete();
-										Console.WriteLine($"Calificación eliminada: ID {id}");
-									}
+									// Solo uno para eliminar
+									var registro = duplicados[0];
+									registro.Delete();
+									LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación eliminada: ID = {registro.Id}");
 								}
-								catch (Exception ex)
+								else
 								{
-									LoggerServices.AddMessageError($"Error al eliminar calificación ID {id}", ex);
+									// Eliminar primero los que tengan Resultado == null
+									var conResultadoNull = duplicados.Where(x => x.Resultado == null).ToList();
+
+									if (conResultadoNull.Any())
+									{
+										foreach (var registro in conResultadoNull)
+										{
+											registro.Delete();
+											LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación con Resultado NULL eliminada: ID = {registro.Id}");
+										}
+									}
+									else
+									{
+										// Si no hay ninguno con Resultado null, eliminar todos (o dejar uno si lo deseas)
+										foreach (var registro in duplicados)
+										{
+											registro.Delete();
+											LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación eliminada (sin Resultado NULL disponible): ID = {registro.Id}");
+										}
+									}
 								}
 							}
 						}
@@ -216,12 +249,14 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 				finally
 				{
+					LoggerServices.AddMessageInfo("migrateCalificaciones --> Cerrando túnel SSH y eliminando vista.");
 					siacTunnel.Stop();
 					siacSshClient.Disconnect();
 					calificacion.DestroyView("viewcalificacionesactivassiac");
 				}
 			}
 
+			LoggerServices.AddMessageInfo("migrateCalificaciones --> Migración finalizada correctamente.");
 			return true;
 		}
 
@@ -256,7 +291,7 @@ namespace CAPA_NEGOCIO.Oparations
 				};
 
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filtros.ToArray());
-				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);			
+				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
 
 				// Destruir la vista después de obtener los datos
 				calificacion.DestroyView("viewcalificacionesactivassiac");

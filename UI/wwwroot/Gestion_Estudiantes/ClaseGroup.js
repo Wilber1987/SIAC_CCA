@@ -84,7 +84,7 @@ class ClaseGroup extends HTMLElement {
 				 ${maxDetailsHeaders != null ? html`<div class="container promedio">
 					<div class="element-description"><span class="value" style="text-align: right">PROMEDIO</span></div>   
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(1)} pts.</span></label>`)}
+						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(2)} pts.</span></label>`)}
 					</div> 
 					<div class="option" style="min-width: 85px; max-width: 85px; width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
