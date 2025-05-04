@@ -87,9 +87,9 @@ class Pagos_PendientesView extends HTMLElement {
 		}
 		for (const key in this.pagosSeleccionados) {
 			if (this.pagosSeleccionados[key].Monto == 0) {
-				document.body.appendChild(ModalMessage("El monto de un pago no puede ser 0"));			
-				return;	
-			}			
+				document.body.appendChild(ModalMessage("El monto de un pago no puede ser 0"));
+				return;
+			}
 		}
 		const response = await new PagosRequest({ Detalle_Pago: this.pagosSeleccionados }).Save();
 		if (response.status == 200) {
@@ -169,7 +169,7 @@ class Pagos_PendientesView extends HTMLElement {
 			// @ts-ignore
 			if (parseFloat(pagoInput.value) > pago.Monto_Pendiente) {
 				// @ts-ignore
-				pagoInput.value = pago.Monto_Pendiente;				
+				pagoInput.value = pago.Monto_Pendiente;
 			}
 			Detalle_Pago.ActualizarDetalle(newDetalle, parseFloat(ev.target.value))
 			this.UpdatePagos();
@@ -177,7 +177,7 @@ class Pagos_PendientesView extends HTMLElement {
 		const checkPago = html`<input type="checkbox" class="check-pago Btn pago-control${pago.Id_Pago}" id="pago${pago.Id_Pago}" onchange="${(ev) => {
 			// @ts-ignore
 			pagoInput.value = pago.Monto_Pendiente;
-			
+
 			this.AgregarPago(ev.target, pago, pagosSeleccionados, pagosPendientes, newDetalle)
 			Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
 			this.UpdatePagos();
@@ -196,22 +196,22 @@ class Pagos_PendientesView extends HTMLElement {
 		<div class="pago-options pago-parcial-check">
 			<label for="pago-parcial${pago.Id_Pago}">Pago parcial</label>
 			<input type="checkbox" class="check-pago" id="pago-parcial${pago.Id_Pago}"  onchange="${(ev) => {
-				
-				if (ev.target.checked) { 
+
+				if (ev.target.checked) {
 					// @ts-ignore
-					checkPago.checked = ev.target.checked;	
+					checkPago.checked = ev.target.checked;
 					// @ts-ignore
 					pagoInput.value = 0;
 					// @ts-ignore
 					this.AgregarPago(checkPago, pago, pagosSeleccionados, pagosPendientes, newDetalle, true)
 					Detalle_Pago.ActualizarDetalle(newDetalle, 0)
-				}		
+				}
 				else {
 					// @ts-ignore
 					pagoInput.value = pago.Monto_Pendiente;
 					Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
-				}		
-				pagoInput.style.display = ev.target.checked ? "block" : "none";				
+				}
+				pagoInput.style.display = ev.target.checked ? "block" : "none";
 				this.UpdatePagos();
 
 			}}"/>
@@ -232,7 +232,7 @@ class Pagos_PendientesView extends HTMLElement {
 	 * @param {Tbl_Pago[]} pagosPendientes - Pagos pendientes de pago
 	 */
 	AgregarPago(control, pago, pagosSeleccionados, pagosPendientes, newDetalle, isParcial = false) {
-		
+
 		/**@type {HTMLInputElement} */
 		// @ts-ignore
 		//const control = ev.target;
@@ -293,6 +293,7 @@ class Pagos_PendientesView extends HTMLElement {
 			grid-template-columns: calc(100% - 380px) 150px 150px;
 			gap: 20px;
 		}
+
 		.pago-detail {
 			display: flex;
 			flex-direction: column;
@@ -352,7 +353,32 @@ class Pagos_PendientesView extends HTMLElement {
 			gap: 5px;
 		}
 		@media (max-width: 600px) {
-		   
+			w-pagos-view {
+				grid-template-columns: 100%;
+			
+			}
+			.PagosContainer {
+				padding: 0px;
+				max-height: unset;
+			}
+			.pago-container {
+				padding: 5px;
+			}
+			.pago-card {
+				padding: 10px;
+				grid-template-columns: 48% 48%;
+			}
+			.pago-detail {
+				grid-column: span 2;
+			}
+			.pago-title {
+				font-size: 14px;
+			}
+			.pago-monto {
+				font-size: 16px;
+			}
+			
+			
 		}
 	`
 }

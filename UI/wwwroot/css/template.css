@@ -11,7 +11,7 @@
     /*   box-shadow: 0 0 5px 0 #b3b3b3; */
     padding: 20px;
     display: block;
-    
+
 
 }
 
@@ -343,6 +343,27 @@
         margin: 10px 0px;
     }
 
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--bs-heading-color);
+        font-weight: 600;
+        font-family: Montserrat, sans-serif;
+        font-size: 16px;
+    }
+    .vertical-menu {
+        top: 60px !important;
+    }
+
 }
 
 /*PRINT*/
@@ -498,6 +519,7 @@
         page-break-after: always;
         /* Ensure each .page-container starts on a new page */
     }
+
     .A4-horizontal {
         width: 297mm;
         height: 210mm;
@@ -507,4 +529,8 @@
         page-break-before: always;
     }
 
+}
+.metismenu .mm-collapse.mm-show  {
+    display: block;
+    height: auto !important;
 }
