@@ -57,8 +57,17 @@ namespace DataBaseModel
 
 		public string? NombreGradoCompleto
 		{
-			get { return $"{NumberUtility.ObtenerEnumeracion((Nombre_nivel?.ToUpper() == "SECUNDARIA" ?  this.Grado + 6: this.Grado )?? 0)}"; }
+			get { return $"{NumberUtility.ObtenerEnumeracion((Nombre_nivel?.ToUpper() == "SECUNDARIA" ?  this.Grado + 6: this.Grado )?? 0)} {GetGradeName()}"; }
 		}
+		
+		private string? GetGradeName()
+        {
+            if (Nombre_nivel?.ToUpper() == NivelesEnum.PREESCOLAR.ToString())
+            {
+                return "NIVEL";
+            }
+            return "GRADO";
+        }
 		public string? Evaluacion { get { return $"{Nombre_corto_nota}"; } }
 		public string? EvaluacionCompleta { get { return $"{Nombre_nota} {Tipo}"; } }
 		//public string? Nombre_Docente { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
