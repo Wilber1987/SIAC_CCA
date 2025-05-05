@@ -22,8 +22,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			//await migrateTipoNotas();
-			//await migrateEvaluaciones();
+			await migrateTipoNotas();
+			await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 

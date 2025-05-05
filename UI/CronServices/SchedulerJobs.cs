@@ -18,9 +18,9 @@ namespace BackgroundJob.Cron.Jobs
 
         protected override async Task<Task> DoWork(CancellationToken stoppingToken)
         {
-            _log.LogInformation(":::::::::::Running...  SendMailCredentialsSchedulerJob at {0}", DateTime.UtcNow);            
+            _log.LogInformation(":::::::::::Running...  SendMailCredentialsSchedulerJob at {0}", DateTime.UtcNow);
             try
-            {                
+            {
                 CredentialsOperation.sendInvitations();
             }
             catch (Exception ex)
@@ -45,9 +45,15 @@ namespace BackgroundJob.Cron.Jobs
 
         protected override async Task<Task> DoWork(CancellationToken stoppingToken)
         {
-            _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);            
+            _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
             try
-            {                
+            {
+                var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
+                if (now.TimeOfDay >= new TimeSpan(21, 30, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
+                {
+                    // fuera del rango permitido
+                    return Task.CompletedTask;
+                }
                 NotificationSenderOperation.SendNotifications();
             }
             catch (Exception ex)
