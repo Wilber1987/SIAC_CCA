@@ -118,7 +118,8 @@ namespace DataBaseModel
             Materias? materias = new Materias
             {
                 Id = materiasByClass.Materia_id,
-                Clase_id = materiasByClass.Clase_id
+                Clase_id = materiasByClass.Clase_id,
+                Asignatura_id = materiasByClass.Asignatura_id
             }.Find<Materias>();
             
             Docente_materias? docente_materia = materias?.Docentes_materias?
@@ -179,7 +180,8 @@ namespace DataBaseModel
             Materias? materias = new Materias
             {
                 Id = clase.Materia_id,
-                Clase_id = clase.Clase_id
+                Clase_id = clase.Clase_id,
+                //Asignatura_id = clase.Asignatura_id,
             }.Find<Materias>();
             
             Docente_materias? docente_materia = materias?.Docentes_materias?
