@@ -108,7 +108,21 @@ namespace DataBaseModel
                 clase = A.First();
             }
 
-            Docente_materias? docente_materia = new Docente_materias { Materia_id = materiasByClass.Materia_id, Seccion_id = materiasByClass.Seccion_id }.Find<Docente_materias>();
+            // Docente_materias? docente_materia
+            //  = new Docente_materias
+            // {
+            //     Materia_id = materiasByClass.Materia_id,
+            //     Seccion_id = materiasByClass.Seccion_id
+            // }.Find<Docente_materias>();
+            
+            Materias? materias = new Materias
+            {
+                Id = materiasByClass.Materia_id,
+                Clase_id = materiasByClass.Clase_id
+            }.Find<Materias>();
+            
+            Docente_materias? docente_materia = materias?.Docentes_materias?
+                 .Find(A => A.Seccion_id == materiasByClass.Seccion_id);
 
             var calificacion = A?.Select(Calificacion =>
                 {
@@ -122,14 +136,14 @@ namespace DataBaseModel
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha,
                         Porcentaje = Calificacion.Porcentaje,
-                        Observaciones =  Calificacion.Observaciones ?? "Sin observaciones",
+                        Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
                         //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
-                     };
+                    };
                 }).OrderBy(c => c.Fecha)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
                     c.Evaluacion.Contains("S") ? 2 :
-                    c.Evaluacion.Contains("F") ? 3 : 4).ToList()?? []; // Ordenar por Evaluacion
-                    
+                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []; // Ordenar por Evaluacion
+
 
             return new Asignatura_Group
             {
@@ -162,7 +176,14 @@ namespace DataBaseModel
         public static Asignatura_Group BuildAsignaturaGroup(IGrouping<string?, Estudiante_Clases_View> A)
         {
             var clase = A.First();
-            Docente_materias? docente_materia = new Docente_materias { Materia_id = clase.Materia_id, Seccion_id = clase.Seccion_id }.Find<Docente_materias>();
+            Materias? materias = new Materias
+            {
+                Id = clase.Materia_id,
+                Clase_id = clase.Clase_id
+            }.Find<Materias>();
+            
+            Docente_materias? docente_materia = materias?.Docentes_materias?
+                 .Find(A => A.Seccion_id == clase.Seccion_id);
             return new Asignatura_Group
             {
                 Descripcion = A.First().Nombre_asignatura,
