@@ -58,6 +58,7 @@ window.onload = () => {
         // @ts-ignore
         btn.onclick = () => {
             document.body.appendChild(new WModalForm({
+                title: "EDITAR PERFIL",
                 ModelObject: model,
                 AutoSave: true,
                 EditObject: new ProfileRequest({

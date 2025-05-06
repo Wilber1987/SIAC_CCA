@@ -34,7 +34,10 @@
 }
 
 .page-content {
-    padding: 110px calc(24px / 2) 60px calc(24px / 2);
+    padding: 110px 10px;
+}
+.alert-dismissible {
+    padding-right: unset;
 }
 .page-content.admin {
     padding: 10px calc(24px / 2) 60px calc(24px / 2);

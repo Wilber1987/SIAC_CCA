@@ -39,7 +39,7 @@ class Historial_PagosView extends HTMLElement {
 			AutoFilter: true,
 			ModelObject: new Tbl_Pagos_ModelComponent(),
 			//UseEntityMethods: false,
-			UseManualControlForFiltering : false,
+			UseManualControlForFiltering: false,
 			Display: true,
 			Dataset: [],
 			FilterFunction: async (Filters) => {
@@ -59,7 +59,7 @@ class Historial_PagosView extends HTMLElement {
 				tool.ExportPdf(body, PageType.A4_HORIZONTAL, false, "Historial de pagos")
 			}
 		})
-		container.append(this.Filter, html`<button class="btn-go" onclick="${()=> this.GetHistorialData()}">Filtrar</button>`)
+		container.append(this.Filter, html`<button class="btn-go" onclick="${() => this.GetHistorialData()}">Filtrar</button>`)
 		this.append(
 			StylesControlsV2.cloneNode(true),
 			StyleScrolls.cloneNode(true),
@@ -283,7 +283,7 @@ class Historial_PagosView extends HTMLElement {
 				</tr>
 			</table>`;
 
-			
+
 			//-------------------->
 			div.append(html`<h5>Abonos</h5>`);
 			div.append(abonosContainer);
@@ -345,7 +345,7 @@ class Historial_PagosView extends HTMLElement {
 		return WRender.Create({
 			tagName: "tr", className: "data-details-container",
 			children: [
-				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).formatDateToDDMMYY(pago.Fecha)},
+				{ tagName: "td", class: "pago-value", innerText: new DateTime(pago.Fecha).formatDateToDDMMYY(pago.Fecha) },
 				//{ tagName: "td", class: "pago-value", innerText: pago.Pago.Tipo },
 				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${findFactura?.Id_Pago_Request}" target="_blank">${this.formatNumber(findFactura?.Id_Pago_Request)}</a>`] },
 				{ tagName: "td", class: "pago-value", innerText: pago.Pago.Concepto },
@@ -364,7 +364,7 @@ class Historial_PagosView extends HTMLElement {
 		   display: block;
 		}    
 		.card-active {
-            background-color: #f1f1f1;
+            background-color: #e6e6e6;
         }
 		.CANCELADO {
 			color: green;
@@ -373,6 +373,7 @@ class Historial_PagosView extends HTMLElement {
 			color: red
 		}  
 		.pago-mes-container {
+			overflow-x: auto;
 			& h3, & h5 {
 				text-transform: uppercase;
 			}
@@ -503,6 +504,11 @@ class Historial_PagosView extends HTMLElement {
 		}
 		
 		@media (max-width: 768px) {
+			.estudiante-card-container * {
+				white-space: normal;     /* permite saltos de línea */
+				word-wrap: break-word;   /* fuerza corte de palabras largas si es necesario */
+				overflow-wrap: break-word; 
+			}
 			.Historial{               
 				grid-template-columns: 100%;
 			} 
@@ -512,6 +518,26 @@ class Historial_PagosView extends HTMLElement {
 			.TabContainer {
 				border-left: unset;
 				padding-left: unset;                
+			}
+			.estudiante-card-container {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+			.estudiante-card {
+                width: 100%;
+                min-width: unset;
+            }
+			.estudiante {
+				display: flex;
+				flex-direction: column;
+				& .data-container div {
+					display: flex;
+				}
+			}
+			.component {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 20px;
 			}
 		}
 	`

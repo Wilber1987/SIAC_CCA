@@ -78,7 +78,7 @@ class EstudiantesDetails extends HTMLElement {
 
     CustomStyle = css`
         .card-active {
-            background-color: #d6d6d6;
+            background-color: #e6e6e6;
         }
         .Historial{
             display: flex;
@@ -124,6 +124,11 @@ class EstudiantesDetails extends HTMLElement {
             object-fit: cover;
         }
         @media (max-width: 768px) {
+            .estudiante-card-container * {
+				white-space: normal;     /* permite saltos de línea */
+                word-wrap: break-word;   /* fuerza corte de palabras largas si es necesario */
+                overflow-wrap: break-word;
+			}
             .Historial{               
                 grid-template-columns: 100%;
             } 
@@ -133,6 +138,14 @@ class EstudiantesDetails extends HTMLElement {
             .TabContainer {
                 border-left: unset;
                 padding-left: unset;                
+            }
+            .estudiante-card-container {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            .estudiante-card {
+                width: 100%;
+                min-width: unset;
             }
         }
     `
