@@ -138,7 +138,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                 var pariente = new Parientes().Find<Parientes>(
                     FilterData.Like("ProfileRequest", $"{inst.Id}")
                 );
-
+                var dbUser = new Security_Users { Id_User = user.UserId}.Find<Security_Users>();
                 if (pariente != null)
                 {
                     ProfileRequest? solicitud = pariente.ProfileRequest?.Find(x => x.Id == inst.Id);
@@ -154,6 +154,10 @@ namespace CAPA_NEGOCIO.Security.Operations
                     pariente.Update();
                     LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
 
+                    if(dbUser != null && dbUser.Id_User.Equals(pariente.User_id)){//si el usuario responsable cambia el correo lo actualizamos en el user
+                        dbUser.Mail = inst.Correo;
+                        dbUser.Update();
+                    }
                     if (!SendToBellacom(inst, pariente))
                     {
                         return new ResponseService { status = 400, message = "Error, intentelo nuevamente" };

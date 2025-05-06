@@ -15,7 +15,10 @@
 
 }
 <script src="~/js/html2pdf.js"></script>
-@if(!pagos.IsInsolvente){
+@if(true){
+    <div id="Main" class="app-container"><h3 style="text-align: center;">Está opcion se habilitará próximamente.</h3></div>
+}
+else if(!pagos.IsInsolvente){
 <script type="module" >
     import {HistorialView} from "/Gestion_Estudiantes/HistorialView.mjs";
     window.onload = ()=> {

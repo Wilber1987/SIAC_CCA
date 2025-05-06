@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 using CAPA_DATOS.Cron.Jobs;
 
 //coneccion wilber
-SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
+//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
@@ -74,24 +74,26 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 	options.CronExpression = "0 19 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
+/*builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
 	// options.CronExpression = "25 16 * * *";
 	options.CronExpression = "30 21 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {	
 	options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
-/*builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
+builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
 {
-	options.CronExpression = "53 12 * * *";
-//	options.CronExpression = "0/15 21-23 * * *";
+	//options.CronExpression = "56 20 * * *";
+	options.CronExpression = "0 */15 * * * *";
+
+
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

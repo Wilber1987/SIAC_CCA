@@ -23,8 +23,8 @@ namespace CAPA_NEGOCIO.Oparations
                 FilterData.Distinc("credenciales_enviadas", true),
                 FilterData.NotNull("user_id")
             );
-            tutor.filterData?.Add(FilterData.Equal("Id", 1881));
-            //tutor.filterData?.Add(FilterData.Limit(100));
+            //tutor.filterData?.Add(FilterData.Equal("Id", 1881));
+            tutor.filterData?.Add(FilterData.Limit(200));
             var tutores = tutor.Where<Parientes>(filter);
 
             tutores.ForEach(t =>
@@ -37,7 +37,7 @@ namespace CAPA_NEGOCIO.Oparations
                     var template = TemplateServices.RenderTemplateCredenciales(plantillaString, usuario, t.Nombre_completo);
                     string subject = "Credenciales para acceso al Portal CCA";
 
-                    MailServices.SendMail(new List<String>() { t.Email/* "consultasaal@gmail.com","alder@gmail.com"*/ }, null, subject, template,
+                    MailServices.SendMail(new List<String>() { t.Email/*"consultasaal@gmail.com","alder@gmail.com","admin.sistemas@cca.edu.ni"*/ }, null, subject, template,
                     new List<ModelFiles>
                     {
                         new ModelFiles
