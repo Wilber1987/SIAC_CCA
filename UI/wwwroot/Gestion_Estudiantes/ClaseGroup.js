@@ -551,6 +551,7 @@ class ClaseGroup extends HTMLElement {
 			border-width: 0.8px;
 			border-radius: 0.3cm;
 			width: 100%;
+			overflow: auto;
 		} 
 		.detalle-btn {
 			margin-top: 5px !important;
@@ -721,9 +722,9 @@ class ClaseGroup extends HTMLElement {
 		} 
 			
 		@media (max-width: 800px) {
-			.detail-content .container, .detail-content .element-details {
-				flex-direction: column;
-				width: 100% !important;
+			.header {
+				height: 45px;
+				box-sizing: border-box;
 			}
 			.option {
 				display: flex;
@@ -732,7 +733,26 @@ class ClaseGroup extends HTMLElement {
 				width: 80px;
 				max-width: 85px;
 			}
-			.hidden {
+			.container .element-details, .container .element-description {
+				width: fit-content !important;
+				min-width: auto;
+				grid-template-rows: unset;
+				& .element-detail {
+					display: grid;
+				} 
+			}
+			.element-details .value { 
+				width: 45px;
+			}
+			.element-description .value {
+				flex: 1;
+				padding: 10px;
+				width: 150px;
+			}
+			/* .detail-content .container, .detail-content .element-details {
+				flex-direction: column;
+				width: 100% !important;
+			}.hidden {
 				display: block;
 			}
 			.element-detail {
@@ -750,7 +770,7 @@ class ClaseGroup extends HTMLElement {
 					width: 100%; 
 					border: solid 1px rgb(239, 240, 242);
 				}
-			}
+			} */
 			.page .hidden{                
 				display: none !important;
 			}  
