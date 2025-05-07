@@ -360,7 +360,7 @@ namespace CAPA_NEGOCIO.Oparations
 						PropName = "fechamodificacion",
 						FilterType = ">=",
 						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
-					};					
+					};
 					var dataMsql = data.Where<Tbl_aca_tutor>(filter);
 
 					BeginGlobalTransaction();

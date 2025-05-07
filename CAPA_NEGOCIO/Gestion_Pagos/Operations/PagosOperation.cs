@@ -97,15 +97,44 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			var estudiantes = Parientes.GetOwEstudiantes(identify, new Estudiantes(), true);
 			var responsable = Tbl_Profile.Get_Profile(AuthNetCore.User(identify));
 
-			var pagosInactivosSqlServer = new Tbl_Pago()
+			var pagosInSqlServer = new Tbl_Pago()
 			.Where<Tbl_Pago>(
-				FilterData.In("Id_Estudiante", estudiantes.Select(x => x.Id).ToArray()),
+				FilterData.In("Estudiante_Id", estudiantes.Select(x => x.Codigo).ToArray()),
 				FilterData.Equal("Estado", PagosState.PENDIENTE.ToString()),
-				FilterData.Greater("importe_saldo_md", 0)
+				FilterData.Greater("Monto_pendiente", 0)
 			);
 
+			// 1. Pagos normales
+			var pagosAlumnosView = new Pagos_alumnos_view();
+			pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
+			var pagosAlumnosView2 = new Pagos_alumnos_view();
+			pagosAlumnosView2.SetConnection(MySqlConnections.BellacomTest);
+
+			// 2. Pagos extraordinarios
+			var viewExtra = new ViewPagosAlumnosExtraordinarios();
+			viewExtra.SetConnection(MySqlConnections.BellacomTest);
+			var viewExtra2 = new ViewPagosAlumnosExtraordinarios();
+			viewExtra2.SetConnection(MySqlConnections.BellacomTest);
+
+
+			List<FilterData> filters = [
+				FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.Greater("importe_saldo_md", 0),
+					FilterData.ISNull("fecha_anulacion")
+			];
+			List<FilterData> filtersExtraordinarios = [
+				FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
+					FilterData.ISNull("fecha_anulacion"),
+					FilterData.Greater("importe_saldo_md", 0)
+			//,FilterData.Equal("no_documento", 32011419)
+			];
+			List<FilterData> filtrosSqlserver = [
+				FilterData.In("id_documento_cc", pagosInSqlServer.Select(x => x.Id_documento_cc).ToArray())
+			//,FilterData.NotNull("fecha_anulacion")
+			];
+
 			List<Pagos_alumnos_view> recientraidos;
-			List<ViewPagosAlumnosExtraordinarios> extraordinarios;
+			List<ViewPagosAlumnosExtraordinarios> pagosExtraordinarios;
 			List<Pagos_alumnos_view> anuladosEnMysql;
 			List<ViewPagosAlumnosExtraordinarios> anuladosEnMysqlExtraordinarios;
 
@@ -115,51 +144,24 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
 				siacTunnel.Start();
 
-				// 1. Pagos normales
-				var pagosAlumnosView = new Pagos_alumnos_view();
-				pagosAlumnosView.SetConnection(MySqlConnections.BellacomTest);
-				// 2. Pagos extraordinarios
-				var viewExtra = new ViewPagosAlumnosExtraordinarios();
-				viewExtra.SetConnection(MySqlConnections.BellacomTest);
-				extraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
-				anuladosEnMysql = new List<Pagos_alumnos_view>();
-				anuladosEnMysqlExtraordinarios = new List<ViewPagosAlumnosExtraordinarios>();
-
-				//filtro solo pagos activos de SIGE
-				List<FilterData> filters = [
-					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
-					FilterData.Greater("importe_saldo_md", 0),
-					FilterData.ISNull("fecha_anulacion")
-				];
-				List<FilterData> filtersExtraordinarios = [
-					FilterData.In("codigo_estudiante", estudiantes.Select(x => x.Codigo).ToArray()),
-					FilterData.ISNull("fecha_anulacion"),
-					FilterData.Greater("importe_saldo_md", 0)
-					//,FilterData.Equal("no_documento", 32011419)
-				];
-				//filtro los pagos activos de SQlServer y los busco si estan inactivos en mysql (SIGE)
-				List<FilterData> filtrosSqlserver = [
-					FilterData.In("id_documento_cc", pagosInactivosSqlServer.Select(x => x.Id_documento_cc).ToArray()),
-					FilterData.NotNull("fecha_anulacion")
-				];
-
 				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
-				var pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filtersExtraordinarios.ToArray()).ToList();
+				pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filtersExtraordinarios.ToArray()).ToList();
 
-				var pagosAnulaosMysql = pagosAlumnosView.Where<Pagos_alumnos_view>(filtrosSqlserver.ToArray()).ToList();
-				var pagosAnulaosMysqlExtraordinarios = pagosAlumnosView.Where<ViewPagosAlumnosExtraordinarios>(filtrosSqlserver.ToArray()).ToList();
-
-				extraordinarios.AddRange(pagosExtraordinarios);
-				anuladosEnMysqlExtraordinarios.AddRange(pagosAnulaosMysqlExtraordinarios);
+				anuladosEnMysql = pagosAlumnosView2.Where<Pagos_alumnos_view>(filtrosSqlserver.ToArray()).ToList();
+				anuladosEnMysqlExtraordinarios = viewExtra2.Where<ViewPagosAlumnosExtraordinarios>(filtrosSqlserver.ToArray()).ToList();
 
 				siacTunnel.Stop();
 				siacSshClient.Disconnect();
 			}
 
-			// 3. Unimos las dos listas
+			// 3. Unimos las 3 listas
 			var allPagos = new List<Pagos_alumnos_view>();
 			allPagos.AddRange(recientraidos);
-			allPagos.AddRange(extraordinarios);
+			allPagos.AddRange(pagosExtraordinarios);
+
+			allPagos.AddRange(anuladosEnMysql);
+			allPagos.AddRange(anuladosEnMysqlExtraordinarios);
+
 
 			// se usa todo el conjunto unificado
 			var recienTraidosPagos = allPagos.SelectMany(x =>
@@ -174,6 +176,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			List<Tbl_Pago> pagos = new List<Tbl_Pago>();
 
+			/*
+			1024029
+			1023112
+			*/
 			var pagoExistente = new Tbl_Pago().Where<Tbl_Pago>(
 				FilterData.Equal("Id_documento_cc", x.Id_documento_cc)
 			).FirstOrDefault();
