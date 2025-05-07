@@ -136,6 +136,8 @@ namespace CAPA_NEGOCIO
 				Id_Perfil = tbl_Profile?.Id_Perfil
 			};
 		}
+		
+		
 
 		private static string GetAvatar(Docentes? docente, Parientes? pariente, Tbl_Profile? tbl_Profile)
 		{

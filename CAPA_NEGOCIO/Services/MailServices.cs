@@ -1,29 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using CAPA_DATOS;
-using CAPA_DATOS.BDCore.Abstracts;
 using CAPA_DATOS.Services;
+using CAPA_NEGOCIO.SystemConfig;
 using CAPA_NEGOCIO.UpdateModule.Model;
 
 namespace CAPA_NEGOCIO.Services
 {
 	public class MailServices
 	{
-		static readonly MailConfig Config = new()
-		{
-			HOST = "smtp.gmail.com",
-			PASSWORD = "czavspiafvhcttdg",
-			USERNAME = "notificacionesportal@cca.edu.ni",
-			APIKEY = ""
-		};
-
+		public static readonly MailConfig? Config = SystemConfigImpl.GetSMTPDefaultConfig();
+		
 		public static async void SendMail(List<string> toMails,
-		string from, string subject, 
+		string from, string subject,
 		string templatePage,
 		 List<ModelFiles>? attachs = null)
 		{
@@ -31,7 +18,6 @@ namespace CAPA_NEGOCIO.Services
 			{
 				var emailService = new EmailAccountService();
 				var account = emailService.GetAvailableEmailAccount();
-
 				await SMTPMailServices.SendMail(
 					 "",//todo tomar el from
 					 toMails,
@@ -100,28 +86,19 @@ namespace CAPA_NEGOCIO.Services
 			{
 				LoggerServices.AddMessageError($"error guardando los archivos", ex);
 			}
-
 			try
 			{
 				var emailService = new EmailAccountService();
 				var account = emailService.GetAvailableEmailAccount();
-
 				await SMTPMailServices.SendMail(
 					"",
 					[tutor.Email],
 					"Contrato aceptado y datos familiares actualizados",
 					templatePage,
 					Attach_Files,
-					null,
-					new MailConfig
-					{
-						USERNAME = account.Email,
-						PASSWORD = account.Password,
-						HOST = account.Host
-					}
+					null, SystemConfigImpl.GetSMTPDefaultConfig()
 				 );
 				emailService.IncrementEmailSentCount(account.Email);
-
 			}
 			catch (Exception ex)
 			{
