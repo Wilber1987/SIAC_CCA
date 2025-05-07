@@ -74,12 +74,12 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 	options.CronExpression = "0 19 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-/*builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
+builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
 	// options.CronExpression = "25 16 * * *";
-	options.CronExpression = "30 21 * * *";
+	options.CronExpression = "30 22 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {	
 	options.CronExpression = "* * * * *";
@@ -89,8 +89,7 @@ builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
 {
 	//options.CronExpression = "56 20 * * *";
-	options.CronExpression = "0 */15 * * * *";
-
+	options.CronExpression = "0 */15 * * * ";
 
 	options.TimeZone = TimeZoneInfo.Local;
 });

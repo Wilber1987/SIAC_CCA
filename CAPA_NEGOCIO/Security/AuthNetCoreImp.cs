@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
 using CAPA_NEGOCIO.SystemConfig;
+using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 
 namespace BusinessLogic.Security
@@ -12,7 +13,8 @@ namespace BusinessLogic.Security
     {
         public static UserModel RecoveryPassword(string? mail) 
         {
-        	return RecoveryPassword(mail, SystemConfigImpl.GetSMTPDefaultConfig());
+            string password = StringUtil.GenerateRandomPassword(6);
+        	return RecoveryPassword(mail, SystemConfigImpl.GetSMTPDefaultConfig(),password);
         }
     }
 }

@@ -16,7 +16,8 @@ namespace CAPA_NEGOCIO.SystemConfig
 			return new MailConfig
 			{
 				PASSWORD = account.Password,
-				HOST = account.Host
+				HOST = account.Host,
+				USERNAME = account.Email
 			};
 		}
 		
