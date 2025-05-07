@@ -101,30 +101,11 @@ namespace DataBaseModel
                 A = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
                         .ToList().GroupBy(c => c.Nombre_asignatura).First();
             }
-
-
             if (A != null)
             {
                 clase = A.First();
-            }
-
-            // Docente_materias? docente_materia
-            //  = new Docente_materias
-            // {
-            //     Materia_id = materiasByClass.Materia_id,
-            //     Seccion_id = materiasByClass.Seccion_id
-            // }.Find<Docente_materias>();
+            }            
             
-            Materias? materias = new Materias
-            {
-                Id = materiasByClass.Materia_id,
-                Clase_id = materiasByClass.Clase_id,
-                Asignatura_id = materiasByClass.Asignatura_id
-            }.Find<Materias>();
-            
-            Docente_materias? docente_materia = materias?.Docentes_materias?
-                 .Find(A => A.Seccion_id == materiasByClass.Seccion_id);
-
             var calificacion = A?.Select(Calificacion =>
                 {
                     return new Calificacion_Group
@@ -150,7 +131,7 @@ namespace DataBaseModel
             {
                 Descripcion = materiasByClass.Nombre,
                 Descripcion_Corta = materiasByClass.Nombre,
-                Docente = docente_materia?.Docentes?.Nombre_completo,
+                Docente = materiasByClass.GetNombreCompletoDocente(),
                 Evaluaciones = A?.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList() ?? [],
                 Calificaciones = calificacion
             };
@@ -177,19 +158,17 @@ namespace DataBaseModel
         public static Asignatura_Group BuildAsignaturaGroup(IGrouping<string?, Estudiante_Clases_View> A)
         {
             var clase = A.First();
-            Materias? materias = new Materias
+            MateriasByClassQuery? materia = new MateriasByClassQuery 
             {
-                Id = clase.Materia_id,
+                Estudiante_id = clase.Estudiante_id,
                 Clase_id = clase.Clase_id,
-                //Asignatura_id = clase.Asignatura_id,
-            }.Find<Materias>();
+                Materia_id = clase.Materia_id
+            }.Find<MateriasByClassQuery>();
             
-            Docente_materias? docente_materia = materias?.Docentes_materias?
-                 .Find(A => A.Seccion_id == clase.Seccion_id);
             return new Asignatura_Group
             {
                 Descripcion = A.First().Nombre_asignatura,
-                Docente = docente_materia?.Docentes?.Nombre_completo,
+                Docente = materia?.GetNombreCompletoDocente(),
                 Evaluaciones = A.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList(),
                 Calificaciones = [.. A.Select(Calificacion =>
                 {
