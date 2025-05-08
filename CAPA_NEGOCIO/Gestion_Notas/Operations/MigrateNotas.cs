@@ -22,9 +22,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			await migrateTipoNotas();
+			//await migrateTipoNotas();
 			await migrateEvaluaciones();
-			await migrateCalificaciones();
+			//await migrateCalificaciones();
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -57,7 +57,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingNota = new Tipo_notas()
 						{
 							Id = tn.Id
-						}.Find<Tipo_notas>();
+						}.SimpleFind<Tipo_notas>();
 
 						tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
 						tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
@@ -261,125 +261,6 @@ namespace CAPA_NEGOCIO.Oparations
 		}
 
 
-		public async Task<bool> migrateCalificaciones_respaldo()
-		{
-			Console.Write("--> migrateCalificaciones");
-			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("CALIFICACIONES");
-
-			// Iniciar el túnel SSH para SiacTest
-			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
-			{
-				siacSshClient.Connect();
-				var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
-				siacTunnel.Start();
-
-				var calificacion = new ViewCalificacionesActivasSiac();
-				calificacion.SetConnection(MySqlConnections.SiacTest);
-				calificacion.CreateViewEstudiantesActivos();
-
-				// Obtener los registros desde la vista
-				var filter = new FilterData
-				{
-					PropName = "updated_at",
-					FilterType = ">=",
-					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
-				};
-
-
-				var filtros = new List<FilterData>(){
-					filter
-				};
-
-				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(filtros.ToArray());
-				var clases = calificacionMsql.GroupBy(calificacion => calificacion.Estudiante_clase_id);
-
-				// Destruir la vista después de obtener los datos
-				calificacion.DestroyView("viewcalificacionesactivassiac");
-
-				Console.Write("No de registros encontrados: " + calificacionMsql.Count);
-				int i = 0;
-
-				try
-				{
-					// Iterar sobre los registros obtenidos de la vista
-					calificacionMsql.ForEach(tn =>
-					{
-						Console.Write("Registro no: " + i.ToString());
-						try
-						{
-							// Buscar si el registro ya existe en la tabla Calificaciones
-							var existingCalificacion = new Calificaciones()
-							{
-								Id = tn.Id // Usar el ID de la vista para buscar en la tabla Calificaciones
-							}.Find<Calificaciones>();
-
-							// Validar y ajustar las fechas
-							tn.Created_at = DateUtil.ValidSqlDateTime(tn.Created_at.GetValueOrDefault());
-							tn.Updated_at = DateUtil.ValidSqlDateTime(tn.Updated_at.GetValueOrDefault());
-
-							// Si la calificación ya existe, actualizarla
-							if (existingCalificacion != null)
-							{
-								// Actualizar el registro existente en Calificaciones
-								existingCalificacion.Resultado = tn.Resultado;
-								existingCalificacion.Tipo_nota_id = tn.Tipo_nota_id;
-								existingCalificacion.Evaluacion_id = tn.Evaluacion_id;
-								existingCalificacion.Observaciones = tn.Observaciones;
-								existingCalificacion.Updated_at = tn.Updated_at;
-								existingCalificacion.Consolidado_id = tn.Consolidado_id;
-								existingCalificacion.Estudiante_clase_id = tn.Estudiante_clase_id;
-								existingCalificacion.Materia_id = tn.Materia_id;
-								existingCalificacion.Periodo = tn.Periodo;
-
-								// Guardar los cambios en la tabla Calificaciones
-								existingCalificacion.Update();
-							}
-							else
-							{
-								// Si no existe, mapear la entidad Calificaciones y guardar
-								var nuevaCalificacion = new Calificaciones()
-								{
-									Id = tn.Id,
-									Resultado = tn.Resultado,
-									Tipo_nota_id = tn.Tipo_nota_id,
-									Evaluacion_id = tn.Evaluacion_id,
-									Observaciones = tn.Observaciones,
-									Created_at = tn.Created_at,
-									Updated_at = tn.Updated_at,
-									Consolidado_id = tn.Consolidado_id,
-									Estudiante_clase_id = tn.Estudiante_clase_id,
-									Materia_id = tn.Materia_id,
-									Periodo = tn.Periodo
-								};
-
-								// Guardar el nuevo registro en la tabla Calificaciones
-								nuevaCalificacion.Save();
-							}
-						}
-						catch (System.Data.SqlClient.SqlException sqlEx)
-						{
-							LoggerServices.AddMessageError("SQL Error migrateCalificaciones: ", sqlEx);
-						}
-						i++;
-					});
-					MigrateService.UpdateLastUpdate("CALIFICACIONES");
-				}
-				catch (Exception ex)
-				{
-					LoggerServices.AddMessageError("ERROR: migrateCalificaciones.Migrate.", ex);
-				}
-				finally
-				{
-					// Detener el túnel SSH
-					siacTunnel.Stop();
-					siacSshClient.Disconnect();
-				}
-			}
-
-			return true;
-		}
-
-
 		public async Task<bool> migrateEvaluaciones()
 		{
 			Console.Write("--> migrateEvaluaciones");
@@ -427,6 +308,9 @@ namespace CAPA_NEGOCIO.Oparations
 							existingEvaluacion.Updated_at = evaluacion.Updated_at;
 							existingEvaluacion.Periodo = evaluacion.Periodo;
 							existingEvaluacion.Nota_maxima = evaluacion.Nota_maxima;
+							existingEvaluacion.Fecha = evaluacion.Fecha;
+							existingEvaluacion.Hora = evaluacion.Hora;
+							
 							// Guardar los cambios en la evaluación existente
 							existingEvaluacion.Update();
 						}
