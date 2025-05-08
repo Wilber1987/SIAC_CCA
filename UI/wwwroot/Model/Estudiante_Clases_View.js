@@ -45,6 +45,7 @@ class Estudiante_Clases_View extends EntityClass {
    /**@type {Number}*/ Seccion_id
    /**@type {Number}*/ Materia_id;
     /**@type {Number}*/ Id_familia;
+    /**@type {Number}*/ Idtfamilia;
    /**DATOS DEL DOCENTE */
    /**@type {String}*/ Primer_nombre;
    /**@type {String}*/ Segundo_nombre;

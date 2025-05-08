@@ -180,7 +180,7 @@ class Historial_PagosReportView extends HTMLElement {
 				div.append(html`<div class="data-details-container total-container">
 					<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-total diario</div>
 					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>					
-					<div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosDayD) ?? "0.00"}</div>
+					<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosDayD) ?? "0.00"}</div> -->
 				</div>`);
 			}
 			//-------------------->
@@ -197,7 +197,7 @@ class Historial_PagosReportView extends HTMLElement {
 			div.append(html`<div class="data-details-container total-container">
 				<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
 				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
-				<div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div>
+				<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div> -->
 			</div>`);
 			// div.append(html`<div class="data-details-container total-container">
 			// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
@@ -212,7 +212,7 @@ class Historial_PagosReportView extends HTMLElement {
 		div.append(html`<div class="data-details-container total-container">
 			<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
 			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>			
-			<div class="pago-title value total-cargos">$ ${ConvertToMoneyString(totalCargosD)}</div>
+			<!-- <div class="pago-title value total-cargos">$ ${ConvertToMoneyString(totalCargosD)}</div> -->
 		</div>`);
 		// div.append(html`<div class="data-details-container total-container">
 		// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
@@ -231,7 +231,7 @@ class Historial_PagosReportView extends HTMLElement {
 				{ tagName: "td", class: "data-value", innerText: new DateTime(pagosRequest.Fecha).toDDMMYYYY() },
 				{ tagName: "td", class: "pago-value", children: [html`<a href="../api/ApiPagos/GetFactura/${pagosRequest?.Id_Pago_Request}" target="_blank">${this.formatNumber(pagosRequest?.Id_Pago_Request)}</a>`] },
 				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Documento },
-				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Estudiante?.Id_familia },
+				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Estudiante?.Idtfamilia ?? " - " },
 				{ tagName: "td", class: "data-value", innerText: detallePago?.Pago?.Estudiante?.Nombre_completo + " - " + detallePago?.Pago?.Estudiante?.Codigo },
 				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Concepto },
 				{ tagName: "td", class: "data-value value", innerText: ConvertToMoneyString(detallePago.Total, detallePago.Pago.Money) },

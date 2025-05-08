@@ -92,7 +92,7 @@ namespace DataBaseModel
         private static Asignatura_Group BuildAsignaturaGroup(MateriasByClassQuery materiasByClass,
             List<Estudiante_Clases_View> clasesView)
         {
-            Estudiante_Clases_View clase = null;
+            Estudiante_Clases_View? clase = null;
             IGrouping<string?, Estudiante_Clases_View>? A = null;
             var datosClasesView = clasesView.Where(c => c.Nombre_asignatura == materiasByClass.Nombre)
                     .ToList();
