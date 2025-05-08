@@ -54,7 +54,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingParentesco = new Parentesco()
 						{
 							Id = tn.idrelacionfamiliar
-						}.Find<Parentesco>();
+						}.SimpleFind<Parentesco>();
 
 						if (existingParentesco != null)
 						{
@@ -129,7 +129,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 						foreach (var est in EstudiantesMsql)
 						{
-							var existingEstudiante = new Estudiantes() { Codigo = est.Codigo }.Find<Estudiantes>();
+							var existingEstudiante = new Estudiantes() { Codigo = est.Codigo }.SimpleFind<Estudiantes>();
 							Console.Write("migrando estudiantes: " + i.ToString()); i++;
 							est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
 							est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
@@ -269,7 +269,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingFamilia = new Familias()
 						{
 							Id = tn.Idfamilia
-						}.Find<Familias>();
+						}.SimpleFind<Familias>();
 
 						if (existingFamilia != null /*&& (existingFamilia.Fecha_ultima_notificacion != tn.Fechaultimanotificacion)*/)
 						{
@@ -361,7 +361,7 @@ namespace CAPA_NEGOCIO.Oparations
 						FilterType = ">=",
 						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
 					};
-					var dataMsql = data.Where<Tbl_aca_tutor>(filter);
+					var dataMsql = data.Where<Tbl_aca_tutor>(/*filter*/);
 
 					BeginGlobalTransaction();
 
@@ -370,7 +370,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existing = new Parientes()
 						{
 							Id = tn.Idtutor
-						}.Find<Parientes>();
+						}.SimpleFind<Parientes>();
 
 						tn.Fechagrabacion = DateUtil.ValidSqlDateTime(tn.Fechagrabacion.GetValueOrDefault());
 						tn.Fechamodificacion = DateUtil.ValidSqlDateTime(tn.Fechamodificacion.GetValueOrDefault());
@@ -405,6 +405,7 @@ namespace CAPA_NEGOCIO.Oparations
 								}.Save_User(null);
 
 								newPariente.User_id = user.Id_User;
+								newPariente.Credenciales_Enviadas = false;
 							}
 
 							newPariente.Save();

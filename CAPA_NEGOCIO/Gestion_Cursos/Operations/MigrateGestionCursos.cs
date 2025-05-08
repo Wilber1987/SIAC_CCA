@@ -33,13 +33,13 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			await migrateNiveles();
 			await migrateSecciones();
-			await migratePeriodosLectivos();
+			/*await migratePeriodosLectivos();
 			await migrateAsignaturas();
 			await migrateClases();
 			await migrateMateria();
 			await migrateEstudiantesClases();
 			await migrateDocentesAsignaturas();
-			await migrateDocentesMaterias();
+			await migrateDocentesMaterias();*/
 		}
 
 		public async Task<bool> migrateNiveles()
@@ -74,7 +74,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingNivel = new Niveles()
 						{
 							Id = niv.Id
-						}.Find<Niveles>();
+						}.SimpleFind<Niveles>();
 
 						// Validar y ajustar las fechas
 						niv.Created_at = DateUtil.ValidSqlDateTime(niv.Created_at.GetValueOrDefault());
@@ -168,7 +168,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingSeccion = new Secciones()
 						{
 							Id = secc.Id
-						}.Find<Secciones>();
+						}.SimpleFind<Secciones>();
 
 						if (existingSeccion != null)
 						{
@@ -254,7 +254,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingPeriodo = new Periodo_lectivos()
 						{
 							Id = p.Id
-						}.Find<Periodo_lectivos>();
+						}.SimpleFind<Periodo_lectivos>();
 
 						if (existingPeriodo != null && existingPeriodo.Updated_at != p.Updated_at)
 						{
@@ -336,7 +336,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					asignaturasMsql.ForEach(a =>
 					{
-						var existente = new Asignaturas { Id = a.Id }.Find<Asignaturas>();
+						var existente = new Asignaturas { Id = a.Id }.SimpleFind<Asignaturas>();
 
 						a.Created_at = DateUtil.ValidSqlDateTime(a.Created_at.GetValueOrDefault());
 						a.Updated_at = DateUtil.ValidSqlDateTime(a.Updated_at.GetValueOrDefault());
@@ -436,12 +436,12 @@ namespace CAPA_NEGOCIO.Oparations
 
 					materiasMsql.ForEach(m =>
 					{
-						var existente = new Materias { Id = m.Id }.Find<Materias>();
+						var existente = new Materias { Id = m.Id }.SimpleFind<Materias>();
 
 						m.Created_at = DateUtil.ValidSqlDateTime(m.Created_at.GetValueOrDefault());
 						m.Updated_at = DateUtil.ValidSqlDateTime(m.Updated_at.GetValueOrDefault());
 
-						if (existente != null && existente.Updated_at != m.Updated_at)
+						if (existente != null)
 						{
 							existente.Clase_id = m.Clase_id;
 							existente.Asignatura_id = m.Asignatura_id;
@@ -531,7 +531,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingClase = new Clases()
 						{
 							Id = clase.Id
-						}.Find<Clases>();
+						}.SimpleFind<Clases>();
 
 						clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
 						clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
@@ -641,7 +641,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var existingClase = new Estudiante_clases()
 						{
 							Id = clase.Id
-						}.Find<Estudiante_clases>();
+						}.SimpleFind<Estudiante_clases>();
 
 						// Validar fechas y actualizar registro si ya existe
 						clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
@@ -725,7 +725,7 @@ namespace CAPA_NEGOCIO.Oparations
 							item.Created_at = DateUtil.ValidSqlDateTime(item.Created_at.GetValueOrDefault());
 							item.Updated_at = DateUtil.ValidSqlDateTime(item.Updated_at.GetValueOrDefault());
 
-							var existing = new Docente_asignaturas { Id = item.Id }.Find<Docente_asignaturas>();
+							var existing = new Docente_asignaturas { Id = item.Id }.SimpleFind<Docente_asignaturas>();
 
 							if (existing != null)
 							{
@@ -789,7 +789,7 @@ namespace CAPA_NEGOCIO.Oparations
 						// Obtener datos desde SiacTest
 						var docMat = new Docente_materias();
 						docMat.SetConnection(MySqlConnections.SiacTest);
-						var docMatsMsql = docMat.Get<Docente_materias>();
+						var docMatsMsql = docMat.Where<Docente_materias>();						
 
 						// Transacción local
 						BeginGlobalTransaction();
@@ -799,19 +799,20 @@ namespace CAPA_NEGOCIO.Oparations
 							item.Created_at = DateUtil.ValidSqlDateTime(item.Created_at.GetValueOrDefault());
 							item.Updated_at = DateUtil.ValidSqlDateTime(item.Updated_at.GetValueOrDefault());
 
-							var existing = new Docente_materias { Id = item.Id }.Find<Docente_materias>();
+							var existing = new Docente_materias { Id = item.Id }.SimpleFind<Docente_materias>();
 
 							if (existing != null)
 							{
 								// Actualizar solo si hay cambios en Updated_at
-								if (existing.Updated_at != item.Updated_at)
-								{
+								//if (existing.Updated_at != item.Updated_at)
+								//{
 									existing.Materia_id = item.Materia_id;
 									existing.Seccion_id = item.Seccion_id;
 									existing.Docente_id = item.Docente_id;
 									existing.Updated_at = item.Updated_at;
+									existing.Docentes = null;
 									existing.Update();
-								}
+								//}
 							}
 							else
 							{
