@@ -53,6 +53,9 @@ namespace DataBaseModel
 		public int? Orden_Asignatura { get; set; }
 		public string? Observaciones_Puntaje { get; set; }
 
+		public DateTime? Fecha_Evaluacion { get; set; }
+		public TimeSpan? Hora { get; set; }
+
 
 		public string? Descripcion
 		{

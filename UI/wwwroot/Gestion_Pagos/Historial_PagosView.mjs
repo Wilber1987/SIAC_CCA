@@ -166,7 +166,7 @@ class Historial_PagosView extends HTMLElement {
 						<div>
 							<label class="estudiante-prop">ESTUDIANTE:</label>
 							<label>${pago.Estudiante?.Nombre_completo}</label>
-						</div>	
+						</div>
 					
 					</div>
 					<div class="data-container">

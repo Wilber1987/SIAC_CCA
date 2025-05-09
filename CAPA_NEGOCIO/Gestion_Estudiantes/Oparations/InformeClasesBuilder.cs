@@ -116,7 +116,10 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
                         Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha,
+                        //Fecha = Calificacion.Fecha,
+                        Fecha = Calificacion.Fecha_Evaluacion.HasValue
+                                                ? Calificacion.Fecha_Evaluacion.Value.Date + (Calificacion.Hora ?? TimeSpan.Zero)
+                                                : (DateTime?)null,
                         Porcentaje = Calificacion.Porcentaje,
                         Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
                         //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje

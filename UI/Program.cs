@@ -27,7 +27,7 @@ builder.Services.AddRazorPages();
 
 //new MigrateGestionCursos().Migrate();
 
-new MigrateNotas().Migrate();
+//new MigrateNotas().Migrate();
 
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 		JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
