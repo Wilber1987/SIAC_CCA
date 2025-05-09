@@ -5,10 +5,13 @@ namespace DataBaseModel
 {
 	public class Estudiante_View : EntityClass
 	{
+		[PrimaryKey]
+		public int? Clase_id { get; set; }
 		public DateTime? Transferido { get; set; }
 		public int? Estudiante_id { get; set; }
 		public int? Materia_id { get; set; }
-		public int? Clase_id { get; set; }
+		
+		
 		public int? Id { get; set; }
 		public DateTime? Retirado { get; set; }
 		public Double? Promedio { get; set; }

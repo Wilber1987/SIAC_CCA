@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CAPA_DATOS;
 using DataBaseModel;
 using DataBaseModel.SimpleModel;
+using MailKit.Search;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 {
