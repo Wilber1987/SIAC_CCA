@@ -82,6 +82,7 @@ SELECT ec.transferido,
     c.grado,
     ec.clase_id,
     e2.id_familia,
+    f2.Idtfamilia,
 	c.nivel_id,
     s.nombre as nombre_seccion,
     ec.seccion_id,
@@ -96,7 +97,9 @@ SELECT ec.transferido,
 from dbo.estudiante_clases ec 
 INNER JOIN dbo.estudiantes e2 on ec.estudiante_id = e2.id 
 inner join dbo.clases c   on ec.clase_id  = c.id
+INNER JOIN dbo.familias f2 on f2.id = e2.id_familia 
 INNER JOIN dbo.secciones s ON ec.seccion_id = s.id
 INNER JOIN dbo.periodo_lectivos pl ON pl.id = ec.periodo_lectivo_id 
 inner join niveles n on n.id = c.nivel_id
+
 GO

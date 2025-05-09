@@ -553,7 +553,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			inst.orderData = [OrdeData.Asc("Fecha")];
 			return inst.Where<PagosRequest>(
-			//FilterData.Equal("Responsable_Id", responsable.Pariente_id)
+				//FilterData.Equal("Responsable_Id", responsable.Pariente_id)
 			);
 		}
 	}
