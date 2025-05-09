@@ -33,13 +33,13 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			await migrateNiveles();
 			await migrateSecciones();
-			/*await migratePeriodosLectivos();
+			await migratePeriodosLectivos();
 			await migrateAsignaturas();
 			await migrateClases();
 			await migrateMateria();
 			await migrateEstudiantesClases();
 			await migrateDocentesAsignaturas();
-			await migrateDocentesMaterias();*/
+			await migrateDocentesMaterias();
 		}
 
 		public async Task<bool> migrateNiveles()
