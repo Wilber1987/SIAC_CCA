@@ -258,7 +258,7 @@ namespace CAPA_NEGOCIO.Oparations
 					FilterType = ">=",
 					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
 				};
-				var familiasMsql = familias.Where<Tbl_aca_familia>(filter);
+				var familiasMsql = familias.Where<Tbl_aca_familia>(/*filter*/);
 
 				
 				try
@@ -440,6 +440,7 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateEstudiantesReponsablesFamilia");
 			var familia = new Familias();
 			var familiasSqlserver = familia.Get<Familias>(
+				//FilterData.In("")
 			);
 			try
 			{

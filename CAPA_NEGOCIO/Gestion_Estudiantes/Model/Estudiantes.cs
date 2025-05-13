@@ -91,7 +91,7 @@ namespace DataBaseModel
 							$"SELECT DISTINCT e.* " +
 							$"FROM estudiantes e " +
 							$"INNER JOIN estudiante_clases ec ON ec.estudiante_id = e.id " +
-							// $"WHERE ec.periodo_lectivo_id = (SELECT id FROM periodo_lectivos pl WHERE pl.nombre_corto IN ('2023','2024')) " +
+							$"WHERE ec.periodo_lectivo_id = (SELECT id FROM periodo_lectivos pl WHERE pl.nombre_corto IN ('"+currentYear+"')) " +
 							$"ORDER BY e.id DESC;";
 
 

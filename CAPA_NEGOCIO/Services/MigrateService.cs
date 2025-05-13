@@ -19,7 +19,7 @@ namespace CAPA_NEGOCIO.Services
 			var ActualizacionesCron = new ActualizacionesCron();			
 			var resultado = ActualizacionesCron.Where<ActualizacionesCron>(FilterData.Equal("descripcion", tipo)).FirstOrDefault();			
 
-			return (DateTime)(resultado != null ? resultado.Fecha_Actualizacion : DateTime.Now);
+			return (DateTime)(resultado != null ? resultado.Fecha_Actualizacion : DateTime.Now.AddDays(-5));
 		}
 
 		public static void UpdateLastUpdate(string tipo)
@@ -30,8 +30,8 @@ namespace CAPA_NEGOCIO.Services
 						}.Find<ActualizacionesCron>();
 
 
-			existing.Fecha_Actualizacion = DateTime.Now.AddMinutes(-120);
-			existing.Update();
+			existing.Fecha_Actualizacion = DateTime.Now.AddDays(-2);
+			existing?.Update();
 		}
 	}
 }

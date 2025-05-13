@@ -91,11 +91,17 @@ namespace CAPA_NEGOCIO
 			Parientes? pariente = new Parientes { User_id = UserId }.Find<Parientes>();
 			Tbl_Profile? tbl_Profile = new Tbl_Profile { IdUser = UserId }.SimpleFind<Tbl_Profile>();
 			bool isPariente = false;
-			if (tbl_Profile != null)
+			if (docente == null && pariente == null)
 			{
 				tbl_Profile.ProfileType = CAPA_NEGOCIO.ProfileType.USER;
-				return tbl_Profile;
+				//return tbl_Profile;
+				return new Tbl_Profile(){
+					Nombres = user.Nombres,
+					Correo_institucional = user.Mail,
+					Foto = "/media/img/avatar.png"
+				};
 			}
+
 			List<Estudiantes_responsables_familia> familia = [];
 			if (pariente != null && pariente.Estudiantes_responsables_familia != null)
 			{

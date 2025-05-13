@@ -21,13 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
 builder.Services.AddRazorPages();
-
-
 //new MigrateNotas().Migrate("2752");
-
-//new MigrateGestionCursos().Migrate();
-
-//new MigrateNotas().Migrate();
+//new MigrateEstudiantes().Migrate();
+//new MigrateDocentes().Migrate();
 
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 		JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
@@ -63,7 +59,7 @@ builder.Services.AddSession(options =>
 	options.IdleTimeout = TimeSpan.FromMinutes(40);
 });
 
-//await new MigrateNotas().Migrate();
+
 #region CRONJOB
 
 builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
@@ -74,13 +70,12 @@ builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 
 builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {		
-	options.CronExpression = "0 19 * * *";
+	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
 {		
-	options.CronExpression = "0 1 * * *";
-	//options.CronExpression = "30 22 * * *";
+	options.CronExpression = "0 20 * * *";	
 	options.TimeZone = TimeZoneInfo.Local;
 });
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>

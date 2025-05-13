@@ -22,8 +22,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			//await migrateTipoNotas();
-			//await migrateEvaluaciones();
+			await migrateTipoNotas();
+			await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 
@@ -79,7 +79,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: migrateTipoNotas.Migrate.", ex);
 				}
@@ -114,17 +114,22 @@ namespace CAPA_NEGOCIO.Oparations
 				calificacion.SetConnection(MySqlConnections.SiacTest);
 				calificacion.CreateViewEstudiantesActivos();
 
+				var filter = new FilterData
+				{
+					PropName = "updated_at",
+					FilterType = ">=",
+					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
+				};
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(
-					//FilterData.Equal("Id", 6372239)
+					//filter
 				);
+
 				LoggerServices.AddMessageInfo($"migrateCalificaciones --> Registros encontrados en MySQL: {calificacionMsql.Count}");
 
 				var clasesAgrupadas = calificacionMsql.GroupBy(cal => cal.Estudiante_clase_id);
 
 				try
 				{
-					MigrateService.UpdateLastUpdate("CALIFICACIONES");
-
 					foreach (var grupo in clasesAgrupadas)
 					{
 						var estudianteClaseId = grupo.Key;
@@ -133,9 +138,7 @@ namespace CAPA_NEGOCIO.Oparations
 						);
 
 						foreach (var tn in grupo)
-						{
-							//LoggerServices.AddMessageInfo($"migrateCalificaciones --> Procesando registro #{i}");
-
+						{							
 							try
 							{
 								var existingCalificacion = new Calificaciones()
@@ -158,8 +161,7 @@ namespace CAPA_NEGOCIO.Oparations
 									existingCalificacion.Materia_id = tn.Materia_id;
 									existingCalificacion.Periodo = tn.Periodo;
 
-									existingCalificacion.Update();
-									LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación actualizada: ID = {existingCalificacion.Id}");
+									existingCalificacion.Update();									
 								}
 								else
 								{
@@ -256,6 +258,7 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 			}
 
+			MigrateService.UpdateLastUpdate("CALIFICACIONES");
 			LoggerServices.AddMessageInfo("migrateCalificaciones --> Migración finalizada correctamente.");
 			return true;
 		}
@@ -310,7 +313,7 @@ namespace CAPA_NEGOCIO.Oparations
 							existingEvaluacion.Nota_maxima = evaluacion.Nota_maxima;
 							existingEvaluacion.Fecha = evaluacion.Fecha;
 							existingEvaluacion.Hora = evaluacion.Hora;
-							
+
 							// Guardar los cambios en la evaluación existente
 							existingEvaluacion.Update();
 						}

@@ -37,7 +37,7 @@ namespace CAPA_NEGOCIO.Oparations
                     var template = TemplateServices.RenderTemplateCredenciales(plantillaString, usuario, t.Nombre_completo);
                     string subject = "Credenciales para acceso al Portal CCA";
 
-                    MailServices.SendMail(new List<String>() { t.Email/*"consultasaal@gmail.com","alder@gmail.com","admin.sistemas@cca.edu.ni"*/ }, null, subject, template,
+                    MailServices.SendMail(new List<String>() { t.Email }, null, subject, template,
                     new List<ModelFiles>
                     {
                         new ModelFiles

@@ -1,6 +1,7 @@
 
 
 using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace DataBaseModel
 {
@@ -104,8 +105,8 @@ namespace DataBaseModel
             if (A != null)
             {
                 clase = A.First();
-            }            
-            
+            }
+
             var calificacion = A?.Select(Calificacion =>
                 {
                     return new Calificacion_Group
@@ -116,10 +117,12 @@ namespace DataBaseModel
                         Evaluacion = Calificacion.Evaluacion ?? "",
                         EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
                         Tipo = Calificacion.Tipo,
-                        //Fecha = Calificacion.Fecha,
-                        Fecha = Calificacion.Fecha_Evaluacion.HasValue
+                        Fecha = Calificacion.Fecha,
+                        /*Fecha = Calificacion.Fecha_Evaluacion.HasValue
                                                 ? Calificacion.Fecha_Evaluacion.Value.Date + (Calificacion.Hora ?? TimeSpan.Zero)
-                                                : (DateTime?)null,
+                                                : (DateTime?)null,*/
+                        //Fecha = ObtenerFechaValida(Calificacion.Fecha_Evaluacion, Calificacion.Hora),
+
                         Porcentaje = Calificacion.Porcentaje,
                         Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
                         //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
@@ -139,6 +142,25 @@ namespace DataBaseModel
                 Calificaciones = calificacion
             };
         }
+
+        public static DateTime? ObtenerFechaValida(DateTime? fecha, TimeSpan? hora)
+        {
+            if (!fecha.HasValue || fecha.Value < new DateTime(1900, 1, 1))
+                return null;
+
+            var fechaCompleta = fecha.Value.Date + (hora ?? TimeSpan.Zero);
+            string fechaTexto = fechaCompleta.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (DateTime.TryParseExact(fechaTexto, "yyyy-MM-dd HH:mm:ss",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out DateTime resultado))
+            {
+                return resultado;
+            }
+
+            return null;
+        }
+
 
         public static Clase_Group BuildClaseGroup(IGrouping<string?, Estudiante_Clases_View> C)
         {
@@ -161,13 +183,13 @@ namespace DataBaseModel
         public static Asignatura_Group BuildAsignaturaGroup(IGrouping<string?, Estudiante_Clases_View> A)
         {
             var clase = A.First();
-            MateriasByClassQuery? materia = new MateriasByClassQuery 
+            MateriasByClassQuery? materia = new MateriasByClassQuery
             {
                 Estudiante_id = clase.Estudiante_id,
                 Clase_id = clase.Clase_id,
                 Materia_id = clase.Materia_id
             }.Find<MateriasByClassQuery>();
-            
+
             return new Asignatura_Group
             {
                 Descripcion = A.First().Nombre_asignatura,

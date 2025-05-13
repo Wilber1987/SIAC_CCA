@@ -49,7 +49,7 @@ namespace BackgroundJob.Cron.Jobs
             try
             {
                 var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
-                if (now.TimeOfDay >= new TimeSpan(21, 30, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
+                if (now.TimeOfDay >= new TimeSpan(20, 30, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
                 {
                     // fuera del rango permitido
                     return Task.CompletedTask;
