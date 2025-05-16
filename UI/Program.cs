@@ -25,6 +25,13 @@ builder.Services.AddRazorPages();
 //new MigrateEstudiantes().Migrate();
 //new MigrateDocentes().Migrate();
 
+
+//await new MigrateDocentes().Migrate();
+//await new MigrateEstudiantes().Migrate();
+//await new MigrateGestionCursos().Migrate();
+//await new MigrateNotas().Migrate();
+
+
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
 		JsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null);
 
@@ -62,34 +69,33 @@ builder.Services.AddSession(options =>
 
 #region CRONJOB
 
-builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
-{	
-	options.CronExpression = "*/4 8-20 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+{	*/
+	//options.CronExpression = "*/4 8-20 * * *";
+	/*options.TimeZone = TimeZoneInfo.Local;
+});*/
 
-builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
+/*builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {		
 	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
-builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
-{		
-	options.CronExpression = "0 20 * * *";	
-	options.TimeZone = TimeZoneInfo.Local;
-});
-builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-{	
-	options.CronExpression = "* * * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
+//builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
+///{		
+	//options.CronExpression = "30 15 * * *";	
+//	options.TimeZone = TimeZoneInfo.Local;
+//});
+/*builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+{	*/
+	//options.CronExpression = "* * * * *";
+	/*options.TimeZone = TimeZoneInfo.Local;
+});*/
 
-builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
-{
-	//options.CronExpression = "56 20 * * *";
-	options.CronExpression = "0 */15 * * * ";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+/*builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
+{	
+	*///options.CronExpression = "0 */15 * * * ";
+	/*options.TimeZone = TimeZoneInfo.Local;
+});*/
 
 /*builder.Services.AddCronJob<DailyCronJob>(options =>
 {	

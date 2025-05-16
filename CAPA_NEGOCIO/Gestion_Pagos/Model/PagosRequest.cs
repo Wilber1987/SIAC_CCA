@@ -67,7 +67,8 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 				return [];
 			}*/
 			return inst.Where<PagosRequest>(
-				FilterData.Equal("Responsable_Id", responsable.Pariente_id)
+				FilterData.Equal("Responsable_Id", responsable.Pariente_id),
+				FilterData.Equal("Estado", "PAGADO")
 			);
 		}
 	}

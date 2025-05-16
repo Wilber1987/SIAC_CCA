@@ -399,10 +399,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					};
 				}
 				if (datosDePago == null
-				|| datosDePago.CardNumber == null
-				|| datosDePago.Cvv == null
-				|| datosDePago.ExpYear == null
-				|| datosDePago.ExpMonth == null)
+						|| datosDePago.CardNumber == null
+						|| datosDePago.Cvv == null
+						|| datosDePago.ExpYear == null
+						|| datosDePago.ExpMonth == null)
 				{
 					return new ResponseService
 					{
@@ -410,7 +410,6 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = "Datos de la tarjeta no validos"
 					};
 				}
-
 
 				//TODO: Ejecutar el pago Y VALIDAR CAMPOS REALES				
 				datosDePago.pagosRequest = pagosRequest;
@@ -451,14 +450,53 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					SeasonServices.Set("PAGO_PROCESO_SERVICE", tPVService, pagosResponse.SpiToken);
 					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
 					SeasonServices.Set("PAGO_PROCESO_USER", user, pagosResponse.SpiToken);
-
 					SeasonServices.Set("PAGO_PROCESO_RESPONSE", pagosResponse, identify);
+
+					//guardado de pago previo en sql server, se guarda en  estado pendiente para luego marcarlo como autorizado en el metodo autorizarPago()
+
+					//pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
+					pagosRequest!.Fecha = DateTime.Now;
+					pagosRequest!.Estado = PagosState.PENDIENTE.ToString();
+					pagosRequest!.Responsable_Id = responsable.Pariente_id;
+					pagosRequest!.Id_User = user.UserId;
+					pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
+					pagosRequest!.Creador = user.UserData?.Descripcion;
+					pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
+					pagosRequest!.Descripcion += $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
+					pagosRequest!.TpvInfo = pagosResponse;
+
+					pagosRequest?.Detalle_Pago!.ForEach(detalle =>
+					{
+						//detalle.Pago!.Monto_Pendiente -= detalle.Monto;
+						if (detalle.Pago!.Monto_Pendiente <= 0)
+						{
+							/*detalle.Pago!.Monto_Pendiente = 0;
+							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();*/
+							pagosRequest!.Descripcion += $", pago de : { detalle.Pago.Concepto}";
+						}
+						else
+						{
+							pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
+						}
+						detalle.Fecha = DateTime.Now;
+						//detalle.Pago!.Monto_Pagado += detalle.Monto;
+						var updateResponse = detalle.Pago.Update();
+						if (updateResponse.status != 200)
+						{
+							throw new Exception("Error al actualizar el pago");
+						}
+					});
+
+					pagosRequest?.Save();
+					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
+
 					return new ResponseService
 					{
 						status = 200,
 						message = "PAGO_PROCESO"
 					};
 				}
+
 			}
 			catch (Exception e)
 			{
@@ -483,7 +521,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				var result = System.Text.Json.JsonSerializer.Serialize(pagosResponseAutorizarPago);
 				//LoggerServices.AddMessageInfo("pagosResponseAutorizarPago result: " + result);
 
-				if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors?.Count > 0)
+				if (pagosResponseAutorizarPago != null && pagosResponseAutorizarPago.Errors != null && pagosResponseAutorizarPago.Errors?.Count > 0)
 				{
 					return new ResponseService
 					{
@@ -491,19 +529,20 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						message = string.Join(" - ", pagosResponseAutorizarPago.Errors.Select(e => e.Message).ToList())
 					};
 				}
+				else if (pagosResponseAutorizarPago?.Approved == false)
+				{
+					return new ResponseService
+					{
+						status = 403,
+						message = pagosResponseAutorizarPago?.ResponseMessage
+					};
+				}
 				else
 				{
 					var responsable = Tbl_Profile.Get_Profile(user);
 
-					pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
-					pagosRequest!.Fecha = DateTime.Now;
-					pagosRequest!.Estado = PagosState.PAGADO.ToString();
-					pagosRequest!.Responsable_Id = responsable.Pariente_id;
-					pagosRequest!.Id_User = user.UserId;
-					pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
-					pagosRequest!.Creador = user.UserData?.Descripcion;
-					pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
-					pagosRequest!.Descripcion = $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
+					pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;					
+					pagosRequest!.Estado = PagosState.PAGADO.ToString();					
 					pagosRequest!.TpvInfo = pagosResponseAutorizarPago;
 
 					pagosRequest?.Detalle_Pago!.ForEach(detalle =>
@@ -512,14 +551,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						if (detalle.Pago!.Monto_Pendiente <= 0)
 						{
 							detalle.Pago!.Monto_Pendiente = 0;
-							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
-							pagosRequest!.Descripcion += ", pago de :" + detalle.Pago.Concepto;
-						}
-						else
-						{
-							pagosRequest!.Descripcion += ", pago parcial de :" + detalle.Pago.Concepto;
-						}
-						detalle.Fecha = DateTime.Now;
+							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();							
+						}						
+
+						//detalle.Fecha = DateTime.Now;
 						detalle.Pago!.Monto_Pagado += detalle.Monto;
 						var updateResponse = detalle.Pago.Update();
 						if (updateResponse.status != 200)
@@ -528,7 +563,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						}
 					});
 
-					pagosRequest?.Save();
+					pagosRequest?.Update();
 
 					return new ResponseService
 					{
@@ -553,7 +588,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			inst.orderData = [OrdeData.Asc("Fecha")];
 			return inst.Where<PagosRequest>(
-				//FilterData.Equal("Responsable_Id", responsable.Pariente_id)
+			 	FilterData.Equal("Estado", "PAGADO")
 			);
 		}
 	}

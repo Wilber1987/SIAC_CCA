@@ -17,13 +17,19 @@
 }
 
 
-<div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert" 
+<!--<div class="alert alert-success alert-dismissible alert-label-icon label-arrow fade show" role="alert" 
                     style="background: var(--bs-btn-active-bg) !important;color:white;margin-left: 15px;margin-right: 15px; font-size: 18px!important;">    
     <i class="mdi mdi-alert-outline label-icon" style="background: var(--bs-btn-active-bg) !important;color:white;">
 
     </i>Los pagos realizados en Portal CCA se aplicarán en 24 horas hábiles
-</div>
-@if (pagos.Amount > 0)
+</div>-->
+@if(true){
+    <div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <i class="mdi mdi-alert-outline label-icon"></i>Esta opción se habilitará pronto 
+    </div>
+}
+else if (pagos.Amount > 0)
 {
     <script src="~/js/html2pdf.js"></script>
     <script type="module">

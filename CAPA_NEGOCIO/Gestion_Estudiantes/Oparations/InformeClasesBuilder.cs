@@ -84,7 +84,10 @@ namespace DataBaseModel
                 Nivel = claseE?.Niveles?.Nombre,
                 Seccion = seccion?.Nombre,
                 Guia = seccion?.Guia?.Nombre_completo,
-                Asignaturas = clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
+                //Asignaturas =  clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
+                Asignaturas = clasesView.Any(e => e.Nombre_nivel == "PREESCOLAR")
+                                ? new List<Asignatura_Group>()
+                                : clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
                 /*Asignaturas = C.GroupBy(A => A.Nombre_asignatura)
                     .Select(A => BuildAsignaturaGroup(A)).ToList()*/
             };
