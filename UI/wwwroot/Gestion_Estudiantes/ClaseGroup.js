@@ -83,14 +83,14 @@ class ClaseGroup extends HTMLElement {
 				 ${maxDetailsHeaders != null ? html`<div class="container promedio">
 					<div class="element-description"><span class="value" style="text-align: right">PROMEDIO</span></div>   
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${element.Promedio.toFixed(2)} pts.</span></label>`)}
+						${evaluaciones.map(element => html`<label class="element-detail"><span class="value">${this.GetNota(ObjectF.Nivel, `${element.Promedio.toFixed(2)} pts.`)}</span></label>`)}
 					</div> 
 					<div class="option" style="min-width: 85px; max-width: 85px; width: 85px; display: ${isEstudiante ? "none" : "block"}"></div> 
 				 </div>` : ""}                   
 				 ${!isEstudiante ? html`<div class="details-options container">
 					<div class="element-description"><span class="value"></span></div>                                  
 					<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-						${this.GetEvaluations(evaluaciones)}
+						${this.GetEvaluations(evaluaciones, ObjectF.Nivel)}
 					</div>
 					<div style="width: 80px"></div> 
 				 </div>` : ""}                 
@@ -102,11 +102,24 @@ class ClaseGroup extends HTMLElement {
 		}
 
 	}
-	GetEvaluations(evaluaciones) {
+	GetEvaluations(evaluaciones, Nivel) {
 		return evaluaciones.map(element => {
 			if (element.ev == "F" || element.ev == "IS" || element.ev == "IIS") return html`<span></span>`;
-			return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element)}">detalle</label>`;
+			return html`<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowEvaluationDetails(element, Nivel)}">detalle</label>`;
 		});
+	}
+
+	GetNota = (nivel, nota, base = 100) => {
+		if (nivel == "PREESCOLAR") {
+			const value = parseFloat(nota.toString().replace(".pts", ""));
+			const basePorcentaje60 = base * 0.6;
+			if (value >= basePorcentaje60) {
+				return "AA";
+			} else {
+				return "AP";
+			}
+		}
+		return nota;
 	}
 
 	BuildConsolidado(Dataset) {
@@ -140,19 +153,19 @@ class ClaseGroup extends HTMLElement {
 				<span class="value">${instance.Descripcion}</span>                     
 			</div>                
 			<div class="element-details" style="${"width: 70%;" /*se quita porque no queiren la columna this.Config.WithoutDocente == true ? "width: 70%;" : ""*/} grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-				${instance.Details.map((detail, indexDetail) => { return this.buildDetail(detail, indexDetail, maxDetails, index); })}
+				${instance.Details.map((detail, indexDetail) => { return this.BuildDetalleNota(detail, indexDetail, maxDetails, index, ObjectF.Nivel); })}
 			</div>
 			<div class="${index == 0 ? "element-options option" : "option"} " > 
 				${index == 0 ? html`<span class="header"></span>` : ""}
-				<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowDetails(element)}">Detalle</label>
+				<label class="Btn-Mini detalle-btn" onclick="${() => this.ShowDetailsAsignatura(element, ObjectF.Nivel)}">Detalle</label>
 			</div>
 		</div>`;
 	}
 	/**
 	 * @param {Asignatura_Group} instance
-	 * 
+	 * devuelve la lista de caliFifaciones con sus detalles de la asignatura
 	 */
-	async ShowDetails(instance) {
+	async ShowDetailsAsignatura(instance, Nivel) {
 		/**@type {DocumentsData} */
 		const documentsData = await new DocumentsData().GetBoletinDataFragments();
 		BuildHeaderData(documentsData.Header, this.Config.Estudiante)
@@ -184,6 +197,8 @@ class ClaseGroup extends HTMLElement {
 					<h4 style='text-align: center;'>${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Nombre_completo} - ${this.Config.Estudiante_Clase_Seleccionado?.Estudiantes.Codigo}</h4>					
 				</div>`)
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
+			console.log(instance);
+
 			const datasetMap = asignatura.Calificaciones.map(c => {
 
 				const newObject = {};
@@ -191,7 +206,12 @@ class ClaseGroup extends HTMLElement {
 					newObject[key] = c[key]
 				}
 				if (newObject.Resultado !== "-" && newObject.Resultado != null) {
-					newObject.Resultado = newObject.Resultado + " pts.";
+					if (newObject.Porcentaje != null && newObject.Porcentaje !== "-") {
+						newObject.Resultado = this.GetNota(Nivel, newObject.Resultado + " pts.", newObject.Porcentaje);
+					} else {
+						newObject.Resultado = this.GetNota(Nivel, newObject.Resultado + " pts.");
+					}
+
 				}
 
 				if (newObject.Porcentaje != null && newObject.Porcentaje !== "-") {
@@ -205,8 +225,8 @@ class ClaseGroup extends HTMLElement {
 					newObject.Fecha = undefined;
 				} else {
 					//newObject.Fecha = new DateTime(newObject.Fecha).toDDMMYYYY()
-					console.log(newObject.Fecha)
-					console.log(new DateTime(newObject.Fecha).toDDMMYYYY());
+					//console.log(newObject.Fecha)
+					//console.log(new DateTime(newObject.Fecha).toDDMMYYYY());
 
 				}
 				newObject.Tipo = newObject.Tipo ? newObject.Tipo.charAt(0).toUpperCase() + newObject.Tipo.slice(1) : '';
@@ -214,9 +234,11 @@ class ClaseGroup extends HTMLElement {
 			})
 			//console.log(datasetMap);
 			//console.log(datasetMap);
+			const model = Nivel != "PREESCOLAR" ? new Calificacion_Group_ModelComponent()
+				: new Calificacion_Group_ModelComponent({ Porcentaje: undefined })
 			const table = new WTableComponent({
 				Dataset: datasetMap,
-				ModelObject: new Calificacion_Group_ModelComponent(),
+				ModelObject: model,
 				maxElementByPage: 100,
 				paginate: false,
 				isActiveSorts: false,
@@ -273,7 +295,7 @@ class ClaseGroup extends HTMLElement {
 				<span class="value">${instance.Descripcion}</span>
 			</div>
 			<div class="element-details" style="width: 70%; grid-template-columns: repeat(${maxDetails}, ${100 / maxDetails}%);">
-				${instance.Details.map((detail, indexDetail) => { return this.buildDetail(detail, indexDetail, maxDetails, index); })}                
+				${instance.Details.map((detail, indexDetail) => { return this.BuildDetalleNota(detail, indexDetail, maxDetails, index); })}                
 			</div>
 		</div>`;
 	}
@@ -281,9 +303,10 @@ class ClaseGroup extends HTMLElement {
 	 * Muestra los detalles de las evaluaciones de un estudiante en una clase, 
 	 * para una asignatura determinada.
 	 * @param {{ Evaluacion: string, ev:string, EvaluacionCompleta: string }} evalElement - objeto de evaluacion { Evaluacion: "IB", ev:"IB" }
-	 * contiene las calificaciones del estudiante.
+	 * @param {String} Nivel
+		*contiene las calificaciones del estudiante.
 	 */
-	async ShowEvaluationDetails(evalElement) {
+	async ShowEvaluationDetails(evalElement, Nivel) {
 		/**@type {DocumentsData} */
 		const documentsData = await new DocumentsData().GetBoletinDataFragments();
 		const response = await new Estudiante_Clases_View({
@@ -362,32 +385,15 @@ class ClaseGroup extends HTMLElement {
 				}
 				asignatura.Consolidados.push(consolidado);
 			})
-			//MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones"></div>`);
 			const consolidadoModel = {
 				//No: { type: "text" }
 			}
 			consolidadoModel[asignatura.Asignatura] = { type: "text" };
 			consolidadoModel.Resultado = { type: "text" };
-
-			/*MateriaDetailEvaluations.append(new WTableComponent({
-				Dataset: asignatura.Consolidados,
-				ModelObject: consolidadoModel,
-				maxElementByPage: 100,
-				paginate: false,
-				isActiveSorts: false,
-				CustomStyle: css`.WTable td label {
-					text-transform: uppercase;
-				}
-				 .WTable tbody tr:last-child { font-weight: bold !important; }`,
-				Options: {}
-			}))*/
-
-
-			//const notasTotales = asignatura.Calificaciones
 			MateriaDetailEvaluations.append(html`<div class="materia-details-calificaciones">
 				<h4>${asignatura.Asignatura}</h4>
 				<div class="calificcacion-container">
-					${asignatura.Calificaciones.map((calificacion, index) => this.BuildDetailCalificacion(calificacion, index))}
+					${asignatura.Calificaciones.map((calificacion, index) => this.BuildDetailCalificacion(calificacion, index, Nivel))}
 				</div>
 				<style>
 					.calificcacion-container{	
@@ -437,32 +443,48 @@ class ClaseGroup extends HTMLElement {
 	* @param {any} index
 	* @returns {any}
 	*/
-	BuildDetailCalificacion(calificacion, index) {
+	BuildDetailCalificacion(calificacion, index, Nivel) {
 		const tipo = calificacion.Tipo ?
 			calificacion.Tipo.charAt(0).toUpperCase() + calificacion.Tipo.slice(1) : '';
+		const newObject = {};
+		for (const key in calificacion) {
+			newObject[key] = calificacion[key]
+		}
+		if (newObject.Resultado !== "-" && newObject.Resultado != null) {
+			if (newObject.Porcentaje != null && newObject.Porcentaje !== "-") {
+				newObject.Resultado = this.GetNota(Nivel, newObject.Resultado + " pts.", newObject.Porcentaje);
+			} else {
+				newObject.Resultado = this.GetNota(Nivel, newObject.Resultado + " pts.");
+			}
+		}
+		if (newObject.Porcentaje != null && newObject.Porcentaje !== "-" && Nivel != "PREESCOLAR") {
+			newObject.Porcentaje = `(${newObject.Porcentaje} pts.)`;
+		} else {
+			newObject.Porcentaje = "";
+		}
 		return html`<div class="calificacion-row">
 			<div>${calificacion.Porcentaje ? `
 				${index + 1}` : ''}</div>			
 			<div style="${!calificacion.Porcentaje ? 'text-align: right; font-weight: bold;' : ''}">
 				${calificacion.Porcentaje ?
-							`${tipo} - ${calificacion.EvaluacionCompleta} (${calificacion.Porcentaje !== '-' ? calificacion.Porcentaje + ' Pts.' : calificacion.Porcentaje})`
-							: 'Total'}
+				`${tipo} - ${calificacion.EvaluacionCompleta} ${newObject.Porcentaje}`
+				: 'Total'}
 			</div>
 			<div style="text-align: right; width:65px">
-				${calificacion.Resultado}${calificacion.Resultado !== '-' ? ' pts.' : ''}
+				${newObject.Resultado}
 			</div>
 		</div>`
 	}
 
 
-	buildDetail(detail, indexDetail, maxDetails, index) {
+	BuildDetalleNota(detail, indexDetail, maxDetails, index, Nivel) {
 		let columStyle = detail.Order == 1
 			? "" : `grid-column-start: ${indexDetail + 1 + ((maxDetails % 2 !== 0 ? maxDetails - 1 : maxDetails) / 2)}`;
 
 		columStyle = detail.Evaluacion.includes("F") ? `grid-column-end: ${maxDetails + 1}` : columStyle;
 		let columnValue = detail.Evaluacion == "F" ? "NF" : detail.Evaluacion;
 		let isNotaF = detail.Evaluacion == "F" || detail.Evaluacion == "IS" || detail.Evaluacion == "IIS";
-		let styleRed = detail.Resultado != null && detail.Resultado < 60 ? "color: red;" : "";
+		let styleRed = detail.Resultado != null && detail.Resultado < 60 && Nivel != "PREESCOLAR" ? "color: red;" : "";
 
 
 		return html`<div class="element-detail" style="">
@@ -471,9 +493,8 @@ class ClaseGroup extends HTMLElement {
 				<span>${columnValue}</span>
 			</span>
 			<span class="value" style="${styleRed}${isNotaF ? 'font-weight: 700' : ''}">
-				${detail.Resultado == null ? "-" : detail.Resultado} ${detail.Resultado !== null && detail.Resultado !== '-' ? ' pts.' : ''}
+				${this.GetNota(Nivel, `${detail.Resultado == null ? "-" : detail.Resultado} ${detail.Resultado !== null && detail.Resultado !== '-' ? ' pts.' : ''}`)}  
 			</span>
-
 		</div>`;
 	}
 	PdfCustomStyle = css`		

@@ -140,7 +140,7 @@ class EstudiantesDetails extends HTMLElement {
                 padding-left: unset;                
             }
             .estudiante-card-container {
-                max-width: 100%;
+                width: 100%;
                 box-sizing: border-box;
             }
             .estudiante-card {
