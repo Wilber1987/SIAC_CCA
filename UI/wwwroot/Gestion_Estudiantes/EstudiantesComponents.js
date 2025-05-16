@@ -31,8 +31,6 @@ export { BuildHeaderData };
  * @returns {HTMLElement}
  */
 const DatosGenerales = (estudiante) => {
-console.log(estudiante);
-
     return html`<div class="estudiante-detail">
         <h4 class="header">DATOS GENERALES</h4>
         <div class="estudiante-detail-container">                

@@ -96,6 +96,8 @@ class Calificacion_Group {
     }
     /** @type {Number}*/
     Resultado;
+    /** @type {Number}*/
+    Porcentaje;
 
     /** @type {String}*/
     Evaluacion;
