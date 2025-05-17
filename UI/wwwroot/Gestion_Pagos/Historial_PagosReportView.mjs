@@ -165,6 +165,7 @@ class Historial_PagosReportView extends HTMLElement {
 						<td class="data-title">Estudiante</td>
 						<td class="data-title">Concepto</td>
 						<td class="data-title">Monto</td>
+						<td class="data-title">No Tarjeta</td>
 					</tr>
 				</table>`;
 				div.append(html`<h4>${pagosDay}</h4>`);		
@@ -235,6 +236,11 @@ class Historial_PagosReportView extends HTMLElement {
 				{ tagName: "td", class: "data-value", innerText: detallePago?.Pago?.Estudiante?.Nombre_completo + " - " + detallePago?.Pago?.Estudiante?.Codigo },
 				{ tagName: "td", class: "data-value", innerText: detallePago.Pago?.Concepto },
 				{ tagName: "td", class: "data-value value", innerText: ConvertToMoneyString(detallePago.Total, detallePago.Pago.Money) },
+				{ 
+					tagName: "td", 
+					class: "data-value", 
+					innerText: pagosRequest.CardNumber ? `**** **** **** ${pagosRequest.CardNumber}` : "-" 
+				},
 			]
 		});
 	}

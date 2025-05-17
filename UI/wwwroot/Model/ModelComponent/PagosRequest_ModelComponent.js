@@ -63,6 +63,13 @@ class PagosRequest_ModelComponent extends EntityClass {
      */
     Moneda = { type : "text", hiddenInTable: true , hiddenFilter: true}
 
+    
+    /**
+     * @type {ModelProperty}
+     * @description Ultimos 4 digitos de la tarjeta
+     */
+    CardNumber = { type : "text",  hiddenFilter: true}
+
     /**
      * @type {ModelProperty}
      * @description Lista de detalles del pago (relación uno a muchos con Detalle_Pago)

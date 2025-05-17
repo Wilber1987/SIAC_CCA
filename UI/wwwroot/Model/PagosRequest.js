@@ -88,6 +88,11 @@ class PagosRequest extends EntityClass {
 	 * @description datos de la referencia de la tpv
 	 */
 	TpvInfo
+	/**
+	 * @type {string}
+	 * @description ultimos 4 digitos de la tarjeta
+	 */
+	CardNumber;
 }
 
 export { PagosRequest };

@@ -462,8 +462,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
 					pagosRequest!.Creador = user.UserData?.Descripcion;
 					pagosRequest!.TasaCambio = PageConfig.GetTasaCambio(pagosRequest!.Moneda);
-					pagosRequest!.Descripcion += $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda} por los estudiantes: {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
+					pagosRequest!.Descripcion += $"pago de {pagosRequest!.Monto} {pagosRequest!.Moneda}  {String.Join(", ", pagosRequest!.Detalle_Pago.Select(x => x.Pago?.Concepto))}";
 					pagosRequest!.TpvInfo = pagosResponse;
+					pagosRequest!.CardNumber = datosDePago.CardNumber.Substring(datosDePago.CardNumber.Length - 4);
 
 					pagosRequest?.Detalle_Pago!.ForEach(detalle =>
 					{
@@ -472,7 +473,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						{
 							/*detalle.Pago!.Monto_Pendiente = 0;
 							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();*/
-							pagosRequest!.Descripcion += $", pago de : { detalle.Pago.Concepto}";
+							pagosRequest!.Descripcion += $", pago de : {detalle.Pago.Concepto}";
 						}
 						else
 						{
@@ -541,18 +542,24 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				{
 					var responsable = Tbl_Profile.Get_Profile(user);
 
-					pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;					
-					pagosRequest!.Estado = PagosState.PAGADO.ToString();					
-					pagosRequest!.TpvInfo = pagosResponseAutorizarPago;
+					var existingCalificacion = new PagosRequest()
+					{
+						Id_Pago_Request = pagosRequest?.Id_Pago_Request
+					}.Find<PagosRequest>();
 
-					pagosRequest?.Detalle_Pago!.ForEach(detalle =>
+
+					existingCalificacion!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
+					existingCalificacion!.Estado = PagosState.PAGADO.ToString();
+					existingCalificacion!.TpvInfo = pagosResponseAutorizarPago;
+
+					existingCalificacion?.Detalle_Pago!.ForEach(detalle =>
 					{
 						detalle.Pago!.Monto_Pendiente -= detalle.Monto;
 						if (detalle.Pago!.Monto_Pendiente <= 0)
 						{
 							detalle.Pago!.Monto_Pendiente = 0;
-							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();							
-						}						
+							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
+						}
 
 						//detalle.Fecha = DateTime.Now;
 						detalle.Pago!.Monto_Pagado += detalle.Monto;
@@ -563,7 +570,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						}
 					});
 
-					pagosRequest?.Update();
+					existingCalificacion?.Update();
 
 					return new ResponseService
 					{

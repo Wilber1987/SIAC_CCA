@@ -23,6 +23,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public  double? TasaCambio { get;  set; }
 		public double? Monto { get; set; }
 		public string? Moneda { get;  set; }
+		public string? CardNumber { get;  set; }
 		public string Year
 		{
 			get { return Fecha.GetValueOrDefault().Year.ToString(); }
