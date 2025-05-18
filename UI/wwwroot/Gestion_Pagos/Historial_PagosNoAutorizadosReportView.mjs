@@ -169,8 +169,8 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 				const subTotalAbonosDay = PagosGroupDays[pagosDay]?.filter(p => p.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
 				const subTotalAbonosDayD = PagosGroupDays[pagosDay]?.filter(p => p.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 				div.append(html`<div class="data-details-container total-container">
-					<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-total diario</div>
-					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>					
+					<!-- <div class="pago-title" style="margin-right: 40px; width: 70%">Sub-total diario</div>
+					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>					 -->
 				</div>`);
 			}
 
@@ -178,19 +178,19 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			const subTotalAbonosD = PagosGroup[pagosMes]?.filter(p => p.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 
 
-			div.append(html`<div class="data-details-container total-container">
-				<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
-				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
-				<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div> -->
-			</div>`)
+			// div.append(html`<div class="data-details-container total-container">
+			// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
+			// 	<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
+			// 	<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div> -->
+			// </div>`)
 			totalCargos += subTotalAbonos;
 			totalCargosD += subTotalAbonosD;
 
 		}
-		div.append(html`<div class="data-details-container total-container">
-			<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
-			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>			
-		</div>`);
+		// div.append(html`<div class="data-details-container total-container">
+		// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
+		// 	<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>			
+		// </div>`);
 		return div;
 	}
 	/**
