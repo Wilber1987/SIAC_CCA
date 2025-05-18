@@ -1,16 +1,13 @@
 using System.Text.Json.Serialization;
 using BackgroundJob.Cron.Jobs;
-using CAPA_DATOS;
-using CAPA_NEGOCIO.Gestion_Pagos.Model;
-using CAPA_NEGOCIO.Gestion_Pagos.Operations;
-using CAPA_NEGOCIO.Oparations;
 using Microsoft.AspNetCore.ResponseCompression;
 using CAPA_DATOS.Cron.Jobs;
+using BusinessLogic.Connection;
 
 //coneccion wilber
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 //coneccion alder
 //SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
@@ -21,15 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
 builder.Services.AddRazorPages();
-//new MigrateNotas().Migrate("2752");
-//new MigrateEstudiantes().Migrate();
-//new MigrateDocentes().Migrate();
-
-
-//await new MigrateDocentes().Migrate();
-//await new MigrateEstudiantes().Migrate();
-//await new MigrateGestionCursos().Migrate();
-//await new MigrateNotas().Migrate();
 
 
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
@@ -91,47 +79,10 @@ builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
-/*builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
-{	
-	*///options.CronExpression = "0 */15 * * * ";
-	/*options.TimeZone = TimeZoneInfo.Local;
-});*/
-
-/*builder.Services.AddCronJob<DailyCronJob>(options =>
-{	
-	options.CronExpression = "0 12 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});*/
-
-/***cron jobs de migracion***/
-/*builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
-{	
-	options.CronExpression = "0 12 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
-
-builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
-{	
-	options.CronExpression = "0 12 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
-
-builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
-{	
-	options.CronExpression = "0 12 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
-
-builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
-{	
-	options.CronExpression = "0 12 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});*/
-
 #endregion
 
 var app = builder.Build();
-
+new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

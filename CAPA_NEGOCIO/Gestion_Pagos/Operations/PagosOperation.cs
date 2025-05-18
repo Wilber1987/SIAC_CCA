@@ -185,9 +185,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			).FirstOrDefault();
 
 			//string nuevoEstado = x.Fecha_anulacion != null
-			string nuevoEstado = (x.Usuario_anulacion != null && x.Fecha_anulacion != null)
-				? PagosState.ANULADO.ToString()
-				: PagosState.PENDIENTE.ToString();
+			PagosState nuevoEstado = (x.Usuario_anulacion != null && x.Fecha_anulacion != null)
+				? PagosState.ANULADO
+				: PagosState.PENDIENTE;
 
 			if (pagoExistente != null)
 			{
@@ -280,7 +280,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					Money = moneyEnumValue,
 					Fecha = x.Fecha_documento ?? DateTime.Now,
 					Fecha_Limite = x.Fecha_documento?.AddDays(30) ?? DateTime.Now.AddDays(30),
-					Estado = PagosState.PENDIENTE.ToString(),
+					Estado = PagosState.PENDIENTE,
 					// Nuevas propiedades añadidas
 					Id_plazo = x.Id_plazo,
 					Anio = x.Anio,
@@ -456,7 +456,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 					//pagosRequest!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
 					pagosRequest!.Fecha = DateTime.Now;
-					pagosRequest!.Estado = PagosState.PENDIENTE.ToString();
+					pagosRequest!.Estado = PagosState.PENDIENTE;
 					pagosRequest!.Responsable_Id = responsable.Pariente_id;
 					pagosRequest!.Id_User = user.UserId;
 					pagosRequest!.Monto = pagosRequest!.Detalle_Pago!.Sum(x => x.Total);
@@ -532,6 +532,12 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				}
 				else if (pagosResponseAutorizarPago?.Approved == false)
 				{
+					var pagoPendiente = new PagosRequest()
+					{
+						Id_Pago_Request = pagosRequest?.Id_Pago_Request
+					}.Find<PagosRequest>();
+					pagoPendiente!.TpvInfo = pagosResponseAutorizarPago;
+					pagoPendiente.Update();
 					return new ResponseService
 					{
 						status = 403,
@@ -542,23 +548,23 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				{
 					var responsable = Tbl_Profile.Get_Profile(user);
 
-					var existingCalificacion = new PagosRequest()
+					var pagoPendiente = new PagosRequest()
 					{
 						Id_Pago_Request = pagosRequest?.Id_Pago_Request
 					}.Find<PagosRequest>();
 
 
-					existingCalificacion!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
-					existingCalificacion!.Estado = PagosState.PAGADO.ToString();
-					existingCalificacion!.TpvInfo = pagosResponseAutorizarPago;
+					pagoPendiente!.Referencia = pagosResponseAutorizarPago?.TransactionIdentifier;
+					pagoPendiente!.Estado = PagosState.PAGADO;
+					pagoPendiente!.TpvInfo = pagosResponseAutorizarPago;
 
-					existingCalificacion?.Detalle_Pago!.ForEach(detalle =>
+					pagoPendiente?.Detalle_Pago!.ForEach(detalle =>
 					{
 						detalle.Pago!.Monto_Pendiente -= detalle.Monto;
 						if (detalle.Pago!.Monto_Pendiente <= 0)
 						{
 							detalle.Pago!.Monto_Pendiente = 0;
-							detalle.Pago!.Estado = PagosState.CANCELADO.ToString();
+							detalle.Pago!.Estado = PagosState.CANCELADO;
 						}
 
 						//detalle.Fecha = DateTime.Now;
@@ -570,7 +576,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						}
 					});
 
-					existingCalificacion?.Update();
+					pagoPendiente?.Update();
 
 					return new ResponseService
 					{
@@ -595,7 +601,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			inst.orderData = [OrdeData.Asc("Fecha")];
 			return inst.Where<PagosRequest>(
-			 	FilterData.Equal("Estado", "PAGADO")
+			 	FilterData.Equal("Estado", PagosState.PAGADO)
+			);
+		}
+		
+		public List<PagosRequest> GetManagePagosNoRealizados(PagosRequest inst, string? identify)
+		{
+			inst.orderData = [OrdeData.Asc("Fecha")];
+			return inst.Where<PagosRequest>(
+			 	FilterData.Equal("Estado", PagosState.PENDIENTE)
 			);
 		}
 	}

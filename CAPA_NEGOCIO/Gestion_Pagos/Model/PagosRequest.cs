@@ -19,7 +19,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public int? Id_User { get; set; }
 		public DateTime? Fecha { get; set; } 
 		public string? Creador { get; set; }
-		public  string? Estado { get;  set; }
+		public  PagosState? Estado { get;  set; }
 		public  double? TasaCambio { get;  set; }
 		public double? Monto { get; set; }
 		public string? Moneda { get;  set; }

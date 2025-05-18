@@ -25,5 +25,12 @@ namespace UI.Controllers
 		{
 			return new PagosOperation().GetManagePagos(Inst, HttpContext.Session.GetString("seassonKey"));
 		}
+		
+		[HttpPost]
+		[AuthController(Permissions.REPORTE_ACCESS)]
+		public List<PagosRequest> GetPagosNoRealizados(PagosRequest Inst)
+		{
+			return new PagosOperation().GetManagePagosNoRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
+		}
 	}
 }

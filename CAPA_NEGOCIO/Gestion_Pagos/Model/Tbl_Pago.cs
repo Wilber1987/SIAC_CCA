@@ -26,7 +26,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 		public DateTime? Fecha_Pago { get; set; }
 		public DateTime? Fecha_Limite { get; set; }
 		public DateTime? Fecha { get; set; }
-		public string? Estado { get; set; }
+		public PagosState? Estado { get; set; }
 		
 		[ManyToOne(TableName = "Estudiante_View", KeyColumn  = "Codigo", ForeignKeyColumn = "Estudiante_Id", isView = true)]
 		public Estudiante_View? Estudiante { get; set; }
