@@ -55,3 +55,5 @@ LEFT OUTER JOIN dbo.tipo_notas t ON c2.tipo_nota_id = t.id;
 GO
 
 
+ALTER TABLE facturacion.PagosRequest
+ADD Ultimos4DigitosTarjeta VARCHAR(4);
