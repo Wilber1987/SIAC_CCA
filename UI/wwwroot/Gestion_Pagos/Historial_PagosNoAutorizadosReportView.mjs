@@ -171,31 +171,18 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 				div.append(html`<div class="data-details-container total-container">
 					<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-total diario</div>
 					<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonosDay) ?? "0.00"}</div>					
-					<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosDayD) ?? "0.00"}</div> -->
 				</div>`);
 			}
-			//-------------------->
-			//mesContainer.append(html`<h3>pagoes</h3>`);
 
 			const subTotalAbonos = PagosGroup[pagosMes]?.filter(p => p.Moneda == "CORDOBAS")?.reduce((acc, pago) => acc + pago.Monto, 0);
 			const subTotalAbonosD = PagosGroup[pagosMes]?.filter(p => p.Moneda == "DOLARES")?.reduce((acc, pago) => acc + pago.Monto, 0);
 
 
-			/*div.append(html`<div class="data-details-container total-container">
-				<div class="data-title" style="grid-column: span 12">Cantidad</div>
-				<div class="data-title value">${PagosGroup[pagosMes].flatMap(p => p.Detalle_Pago).length}</div>			
-			</div>`);*/
 			div.append(html`<div class="data-details-container total-container">
 				<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
 				<div class="pago-title value">C$ ${ConvertToMoneyString(subTotalAbonos) ?? "0.00"}</div>
 				<!-- <div class="pago-title value">$ ${ConvertToMoneyString(subTotalAbonosD) ?? "0.00"}</div> -->
-			</div>`);
-			// div.append(html`<div class="data-details-container total-container">
-			// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Sub-Total mensual</div>
-			// 	<div class="pago-title value">$ ${subTotalAbonos.toFixed(2)  ?? "0.00"}</div>
-			// </div>`);
-			//-------------------->
-			//mesContainer.append(html`<h3>Resumen</h3>`);
+			</div>`)
 			totalCargos += subTotalAbonos;
 			totalCargosD += subTotalAbonosD;
 
@@ -203,12 +190,7 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 		div.append(html`<div class="data-details-container total-container">
 			<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
 			<div class="pago-title value total-cargos">C$ ${ConvertToMoneyString(totalCargos)}</div>			
-			<!-- <div class="pago-title value total-cargos">$ ${ConvertToMoneyString(totalCargosD)}</div> -->
 		</div>`);
-		// div.append(html`<div class="data-details-container total-container">
-		// 	<div class="pago-title" style="margin-right: 40px; width: 70%">Total</div>
-		// 	<div class="pago-title value total-cargos">$ ${totalCargos.toFixed(2)}</div>
-		// </div>`);
 		return div;
 	}
 	/**
@@ -299,8 +281,6 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			color: red
 		}  
 		.mes-container {
-			/* display: grid;
-			grid-template-columns: repeat(14, 1fr); */
 			gap: 5px;
 			width: 100%;			
 		}   
@@ -324,7 +304,6 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			width: 100%;
 		}
 		.data-details-container {
-			/* display: contents; */
 			grid-column: span 14;
 		}
 		.total-container {
@@ -411,7 +390,6 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 				width: 100%;
 				display: flex;
 				justify-content: flex-start;
-				/* border-bottom: 1px solid #d6d6d6; */
 				& .pago-prop {
 					background-color: #f1f1f1;
 					width: 100px;
