@@ -152,7 +152,7 @@ class NotificacionesElements extends HTMLElement {
             className: "NotificationContainer " + (Notificacion.Leido == true ? "Leido" : "NoLeido"), children: [
                 { tagName: 'label', className: "titulo", innerText: Notificacion.Titulo },
                 { tagName: 'label', className: "fecha", innerText: Notificacion.Fecha?.toDateFormatEs() ?? "" },
-                { tagName: 'p', innerHTML: Notificacion.Descripcion }
+                { tagName: 'div', innerHTML: Notificacion.Descripcion }
             ]
         });
     }
