@@ -110,6 +110,10 @@ class ClaseGroup extends HTMLElement {
 	}
 
 	GetNota = (nivel, nota, base = 100) => {
+		const notaF = parseFloat(nota);
+		if (isNaN(notaF)) {
+			return "-";
+		}
 		if (nivel == "PREESCOLAR" && !nota?.toString()?.includes("-") && !nota?.toString()?.includes("0.00 pts.") && nota) {
 			const value = parseFloat(nota.toString().replace(".pts", ""));
 			const basePorcentaje60 = base * 0.6;
