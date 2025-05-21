@@ -40,6 +40,7 @@ namespace CAPA_NEGOCIO.Services
 				LoggerServices.AddMessageError($"error enviando correos de invitacion", ex);
 			}
 		}
+		
 		public static async void SendMailAceptedContract(Parientes_Data_Update tutor, UpdateData updateData)
 		{
 

@@ -34,36 +34,6 @@ namespace BackgroundJob.Cron.Jobs
 			//return Task.CompletedTask;
 		}
 	}
-	public class MigrateEstudiantesCronJob : CronBackgroundJob
-	{
-		private readonly ILogger<MigrateEstudiantesCronJob> _log;
-
-		public MigrateEstudiantesCronJob(CronSettings<MigrateEstudiantesCronJob> settings, ILogger<MigrateEstudiantesCronJob> log)
-			: base(settings.CronExpression, settings.TimeZone)
-		{
-			_log = log;
-		}
-
-		protected override Task DoWork(CancellationToken stoppingToken)
-		{
-			_log.LogInformation(":::::::::::Running...  MigrateEstudiantesCronJob at {0}", DateTime.UtcNow);
-			try
-			{
-				var job = new MigrateEstudiantes().Migrate();
-			}
-			catch (System.Exception ex)
-			{
-				_log.LogInformation(":::::::::::ERROR  MigrateEstudiantesCronJob... at {0}", ex);
-			}
-
-			return Task.CompletedTask;
-		}
-
-		private IEnumerable<object> Get<T>()
-		{
-			throw new NotImplementedException();
-		}
-	}
 
 	public class MigrateDocentesCronJob : CronBackgroundJob
 	{
@@ -95,6 +65,39 @@ namespace BackgroundJob.Cron.Jobs
 			throw new NotImplementedException();
 		}
 	}
+	
+	public class MigrateEstudiantesCronJob : CronBackgroundJob
+	{
+		private readonly ILogger<MigrateEstudiantesCronJob> _log;
+
+		public MigrateEstudiantesCronJob(CronSettings<MigrateEstudiantesCronJob> settings, ILogger<MigrateEstudiantesCronJob> log)
+			: base(settings.CronExpression, settings.TimeZone)
+		{
+			_log = log;
+		}
+
+		protected override Task DoWork(CancellationToken stoppingToken)
+		{
+			_log.LogInformation(":::::::::::Running...  MigrateEstudiantesCronJob at {0}", DateTime.UtcNow);
+			try
+			{
+				var job = new MigrateEstudiantes().Migrate();
+			}
+			catch (System.Exception ex)
+			{
+				_log.LogInformation(":::::::::::ERROR  MigrateEstudiantesCronJob... at {0}", ex);
+			}
+
+			return Task.CompletedTask;
+		}
+
+		private IEnumerable<object> Get<T>()
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	
 
 	public class MigrateGestionCursosCronJob : CronBackgroundJob
 	{

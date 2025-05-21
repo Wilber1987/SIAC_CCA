@@ -26,14 +26,15 @@ namespace BusinessLogic.Connection
 		{
 			if (isDebug)
 			{
-				string machineName = Environment.MachineName;
-				// Puedes hacer una validación según el nombre del servidor local
+				string machineName = Environment.MachineName;				
 				switch (machineName)
 				{
 					case "WILBER":
 						return SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
-					default:
+					case "Alder":
 						return SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
+					default:
+						return SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 				}
 			}
 			//CONEXIONES DE PRODUCCION

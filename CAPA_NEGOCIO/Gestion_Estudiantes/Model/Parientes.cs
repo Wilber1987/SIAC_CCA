@@ -93,7 +93,7 @@ namespace DataBaseModel
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id", pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-			}
+			} 
 			else if (pariente?.Estudiantes_responsables_familia != null && ignorarPeriodoLectivo)
 			{
 				return estudiante.Where<Estudiantes>(

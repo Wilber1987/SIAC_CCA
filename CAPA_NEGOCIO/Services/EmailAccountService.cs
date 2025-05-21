@@ -10,7 +10,7 @@ public class EmailAccountService : TransactionalClass
 
         var accounts = new EmailAccounts().withConection(this.MTConnection)
             .Where<EmailAccounts>(FilterData.Or(
-                FilterData.Less("SentCount", 300),
+                FilterData.Less("SentCount", 250),
                 FilterData.Less("LastUsedDate", today)
             ))
             .ToList();
@@ -27,7 +27,7 @@ public class EmailAccountService : TransactionalClass
         return accounts
             .Where(a => a.SentCount < 300 && (a.LastUsedDate == today || a.LastUsedDate == null))
             .OrderBy(a => a.Id)
-            .FirstOrDefault() ??  throw new Exception("No hay cuentas de correo disponibles.");
+            .FirstOrDefault() ?? throw new Exception("No hay cuentas de correo disponibles.");
     }
 
 
@@ -47,4 +47,5 @@ public class EmailAccountService : TransactionalClass
             throw new Exception($"No se encontró la cuenta de correo: {email}");
         }
     }
+
 }
