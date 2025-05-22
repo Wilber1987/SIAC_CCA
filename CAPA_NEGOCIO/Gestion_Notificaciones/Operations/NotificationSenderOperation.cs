@@ -15,6 +15,7 @@ namespace BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operati
 				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 				List<Notificaciones> notificaciones = new Notificaciones().Where<Notificaciones>(
 					FilterData.Equal("Enviado", false)
+					//,FilterData.Equal("Id", 12437)
 				);
 				var primerasNotificaciones = notificaciones.Take(40).ToList();
 
@@ -26,14 +27,14 @@ namespace BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operati
 							FilterData.Equal("user_id", notif.Id_User)
 						);
 						var tienePeriodoLectivo24 = parientesFamilia.Any(p =>
-							p.Estudiantes_responsables_familia.Any(erf =>
-								erf.Estudiantes.Any(est =>
-									est.Estudiante_clases.Any(ec =>
-										ec.Periodo_lectivo_id == periodoLectivo?.Id
-									)
+							p.Estudiantes_responsables_familia != null && p.Estudiantes_responsables_familia.Any(erf =>
+								erf.Estudiantes != null && erf.Estudiantes.Estudiante_clases != null &&
+								erf.Estudiantes.Estudiante_clases.Any(est =>
+									est.Periodo_lectivo_id == periodoLectivo?.Id
 								)
 							)
 						);
+
 
 						if (tienePeriodoLectivo24)
 						{
