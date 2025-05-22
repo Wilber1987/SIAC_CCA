@@ -49,9 +49,8 @@ namespace BackgroundJob.Cron.Jobs
             try
             {
                 var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
-                if (now.TimeOfDay >= new TimeSpan(20, 30, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
-                {
-                    // fuera del rango permitido
+                if (now.TimeOfDay >= new TimeSpan(17, 10, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
+                {                    
                     return Task.CompletedTask;
                 }
                 NotificationSenderOperation.SendNotifications();
