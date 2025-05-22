@@ -117,7 +117,7 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			const pago = pagos[pagoYear][0];
 			const pagoContainer = html`<div class="">
 				<h2 style="color: #09559c">${localStorage.getItem("TITULO")}</h2>
-				<h3 style="color: #0c3964;">Reporte de pasarela de pagos no aprobados del ${new DateTime(fechsFilter[0].value).toDDMMYYYY()} al ${new DateTime(fechsFilter[1].value).toDDMMYYYY()}</h3>				
+				<h3 style="color: #0c3964;">Reporte de pasarela de pagos no autorizados del ${new DateTime(fechsFilter[0].value).toDDMMYYYY()} al ${new DateTime(fechsFilter[1].value).toDDMMYYYY()}</h3>				
 				<hr/>
 			 </div>`;
 			const pagosMes = this.BuildPagosXMes(pagos[pagoYear]);
@@ -242,7 +242,7 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			Mensaje: pagosRequest.TpvInfo.ResponseMessage,
 			Identificador_de_transaccion: pagosRequest.TpvInfo.TransactionIdentifier,
 			Estado: pagosRequest.TpvInfo.Approved ? "-": "No aprobado",
-			Errores: pagosRequest.TpvInfo.Errors.map( error => `${error.Code} - ${error.Message}`).join(", ")
+			Errores: pagosRequest.TpvInfo?.Errors?.map( error => `${error.Code} - ${error.Message}`).join(", ")
 		});
 		return new WCardTable(card, new PowerTranzTpvResponse_ModelComponent());
 	}
@@ -400,7 +400,9 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 				}
 			}
 		}
-		
+		table tr{
+			border: 1px solid #b3b3b3;
+		}
 		@media (max-width: 768px) {
 			.Historial{               
 				grid-template-columns: 100%;

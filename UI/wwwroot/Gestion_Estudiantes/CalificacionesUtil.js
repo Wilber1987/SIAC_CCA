@@ -89,11 +89,11 @@ export class CalificacionesUtil {
         if (maxDetailsHeaders != null) {
             return maxDetailsHeaders.map((header, index) => {                
                 const validResults = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header &&  ev.Resultado && ev.Resultado != "-"  );
+                    .filter(ev => ev.Evaluacion == header &&  ev.Resultado && ev.Resultado != "-"  && !isNaN(ev.Resultado));
                 
                 const evFilts = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado) );
-                const suma = evFilts.reduce((a, b) => a + b, 0);     
+                    .filter(ev => ev.Evaluacion == header  && !isNaN(ev.Resultado)).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado));
+                const suma = evFilts.filter(f=> !isNaN(f)).reduce((a, b) => a + b, 0);
 
                 const Promedio = isNaN(suma / validResults.length) ? 0 : suma / validResults.length;
 

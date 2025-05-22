@@ -68,14 +68,35 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-builder.Services.AddCronJob<UpdateFromSiacCronJob>(options =>
-{		
-	options.CronExpression = "30 15 * * *";	
+builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+{
+	//options.CronExpression = "*/5 * * * *";
+	options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-{	
-	options.CronExpression = "* * * * *";
+
+/***sincronizacion de siac y bellacom a sistema*/
+builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
+{
+	options.CronExpression = "0 7 * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
+
+builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
+{
+	options.CronExpression = "10 17 * * *";	
+	options.TimeZone = TimeZoneInfo.Local;
+});
+
+builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
+{
+	options.CronExpression = "0 21 * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
+
+builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
+{
+	options.CronExpression = "0 2 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
