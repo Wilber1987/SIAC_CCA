@@ -54,6 +54,7 @@ namespace DataBaseModel
 		public string? Observaciones_Puntaje { get; set; }
 
 		public DateTime? Fecha_Evaluacion { get; set; }
+		public DateTime? Calificacion_updated_at { get; set; }
 		public TimeSpan? Hora { get; set; }
 
 
@@ -104,7 +105,7 @@ namespace DataBaseModel
 			{
 				Clase_id = Clase_id,
 				Estudiante_id = Estudiante_id
-			}.Get<MateriasByClassQuery>();
+			}.Get<MateriasByClassQuery>();			
 			var ClasesF = Get<Estudiante_Clases_View>();
 			if (clases.Count == 0) return new Clase_Group(); //throw  new Exception("Sin calificaciones para mostrar.");
 			var clase_Group = InformeClasesBuilder.BuildClaseGroupList(ClasesF, clases);

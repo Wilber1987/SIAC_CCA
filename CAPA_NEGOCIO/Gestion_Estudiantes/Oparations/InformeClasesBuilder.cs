@@ -109,6 +109,7 @@ namespace DataBaseModel
             {
                 clase = A.First();
             }
+            
 
             var calificacion = A?.Select(Calificacion =>
                 {
@@ -121,6 +122,7 @@ namespace DataBaseModel
                         EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha,
+                        Calificacion_updated_at = Calificacion.Calificacion_updated_at,
                         /*Fecha = Calificacion.Fecha_Evaluacion.HasValue
                                                 ? Calificacion.Fecha_Evaluacion.Value.Date + (Calificacion.Hora ?? TimeSpan.Zero)
                                                 : (DateTime?)null,*/
@@ -130,7 +132,7 @@ namespace DataBaseModel
                         Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
                         //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
                     };
-                }).OrderBy(c => c.Fecha)
+                }).OrderBy(c => c.Calificacion_updated_at)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
                     c.Evaluacion.Contains("S") ? 2 :
                     c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []; // Ordenar por Evaluacion

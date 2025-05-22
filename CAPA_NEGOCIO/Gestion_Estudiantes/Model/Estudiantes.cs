@@ -119,7 +119,8 @@ namespace DataBaseModel
 		public string? Observaciones { get; internal set; }
 		public string? ObservacionesPuntaje { get; internal set; }
 		public double? Porcentaje { get; set; }
-	}
+        public DateTime? Calificacion_updated_at { get; set; }
+    }
 
 	public class Asignatura_Group
 	{
