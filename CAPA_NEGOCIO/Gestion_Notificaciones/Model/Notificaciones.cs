@@ -30,14 +30,29 @@ namespace DatabaseModelNotificaciones
 
         public ResponseService MarcarComoLeido()
         {
-            new Notificaciones{ Id = Id, Leido = true }.Update();
-            return new ResponseService{
-                status = 200,
-                message = "leido"
-            };
+            try
+            {
+                new Notificaciones { Id = Id, Leido = true }.Update();
+                return new ResponseService
+                {
+                    status = 200,
+                    message = "leido"
+                };
+            }
+            catch (System.Exception ex)
+            {
+                LoggerServices.AddMessageError($"ERROR AL MARCAR NOTIFICACION COMO LEIDA #{Id}", ex);
+                return new ResponseService
+                {
+                    status = 400,
+                    message = "error: " + ex.Message
+                };
+            }
+
         }
     }
-    public enum NotificacionesStates {
+    public enum NotificacionesStates
+    {
         ACTIVA, INACTIVA, VENCIDA
-    }    
+    }
 }
