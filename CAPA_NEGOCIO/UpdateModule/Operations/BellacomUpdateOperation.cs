@@ -62,13 +62,13 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                         var updatedDataQuery = new UpdatedData
                         {
                             filterData = [new FilterData
-                        {
-                            ObjectName = "DataContract",
-                            PropName = "Id_Tutor_responsable",
-                            FilterType = "JSONPROP_EQUAL",
-                            PropSQLType = "int",
-                            Values = new List<string?> { t.Id.ToString() },
-                        }]
+                            {
+                                ObjectName = "DataContract",
+                                PropName = "Id_Tutor_responsable",
+                                FilterType = "JSONPROP_EQUAL",
+                                PropSQLType = "int",
+                                Values = new List<string?> { t.Id.ToString() },
+                            }]
                         };
 
                         updatedDataQuery.SetConnection(conection);

@@ -360,11 +360,30 @@
         font-family: Montserrat, sans-serif;
         font-size: 16px;
     }
+
     .vertical-menu {
         top: 60px !important;
     }
 
+    #Main.tpv-container {
+        display: grid;
+        grid-template-columns: 100%;
+        gap: 20px;
+    }
+
+    .detail-pago-container {
+        & .pago-total {
+            position: relative;
+            font-size: 20px;
+        }
+
+        & .pago-monto-max {
+            font-size: 20px
+        }
+    }
+
 }
+
 
 /*PRINT*/
 .A4,
@@ -530,7 +549,8 @@
     }
 
 }
-.metismenu .mm-collapse.mm-show  {
+
+.metismenu .mm-collapse.mm-show {
     display: block;
     height: auto !important;
 }
