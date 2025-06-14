@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Text;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv;
+using CAPA_NEGOCIO.Util;
 using Newtonsoft.Json;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
@@ -115,16 +117,17 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 
 		private string BuildJsonAuthRequest(TPV datosDePago)
 		{
+			double monto = Math.Round(datosDePago.pagosRequest?.Monto ?? 0, 2);
 			return @"{
 				""TransactionIdentifier"": """ + T_IDENTIFY + @""",
-				""TotalAmount"": " + datosDePago.pagosRequest?.Monto.ToString() + @",			
+				""TotalAmount"": " + monto.ToString("F2", CultureInfo.InvariantCulture) + @",			
 				""CurrencyCode"": ""558"",	
 				""ThreeDSecure"": true,		
 				""Source"": {					
 					""CardPan"": """ + datosDePago.CardNumber?.ToString() + @""", 
 					""CardCvv"": """ + datosDePago.Cvv?.ToString() + @""", 
-					""CardExpiration"": """ + datosDePago.ExpYear + datosDePago.ExpMonth.ToString() + @""", 
-					""CardholderName"": """ + datosDePago.CardholderName + @"""
+					""CardExpiration"": """ + datosDePago.ExpYear + datosDePago?.ExpMonth?.ToString() + @""", 
+					""CardholderName"": """ + StringUtil.NormalizeString(datosDePago?.CardholderName) + @"""
 				},
 				""OrderIdentifier"": """ + O_IDENTIFY + @""",
 				""AddressMatch"": false,
@@ -136,48 +139,14 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					""MerchantResponseUrl"":  ""https://portal.cca.edu.ni/api/ApiPagos/MerchantResponseURL""
 				},
 				 ""BillingAddress"": { 					
-					""EmailAddress"": """ + datosDePago.CardholderMail + @""", 
-					""PhoneNumber"": """ + datosDePago.CardholderPhone + @"""
+					""EmailAddress"": """ + datosDePago?.CardholderMail + @""", 
+					""PhoneNumber"": """ + datosDePago?.CardholderPhone + @"""
 				}
 			}";
 
 			//""MerchantResponseUrl"":  ""https://portal.cca.edu.ni/api/ApiPagos/MerchantResponseURL""
 		}
-		private string BuildJsonSalesRequest(TPV datosDePago)
-		{
-			return @"{""TransactionIdentifier"": """ + datosDePago.pagosRequest?.Monto.ToString() + @""",
-				""TotalAmount"": " + T_IDENTIFY + @",			
-				""CurrencyCode"": ""NIO"",	
-				""TerminalCode"":""""			
-				""Source"": {
-					""CardPresent"": true,
-					""CardEmvFallback"": true,
-					""ManualEntry"": true,
-					""Debit"": true,					
-					""Contactless"": true,					
-					""MaskedPan"": ""string""	
-					""CardPan"": """ + datosDePago.CardNumber?.ToString() + @""", 
-					""CardCvv"": """ + datosDePago.Cvv?.ToString() + @""", 
-					""CardExpiration"": """ + datosDePago.Cvv?.ToString() + @""", 
-					""CardholderName"": """ + datosDePago.CardholderName + @"""
-				},
-				 ""BillingAddress"": { 					
-					""EmailAddress"": """ + datosDePago.CardholderMail + @""", 
-					""PhoneNumber"": """ + datosDePago.CardholderPhone + @""", 
-				}				
-			}";
-			/*""BillingAddress"": { 
-					""FirstName"": ""John"", 
-					""LastName"": ""Smith"", 
-					""Line1"": ""1200 Whitewall Blvd."", 
-					""Line2"": "Unit 15", 
-					""City"": "Boston", 
-					""State"": "NY", 
-					""PostalCode"": "200341", 
-					""CountryCode"": "840", 
-					"EmailAddress": "john.smith@gmail.com", 
-					"PhoneNumber": "211-345-6790" */
-		}
+
 		private async Task<PowerTranzTpvResponse> Execute(string url, string jsonContent)
 		{
 			using HttpClient _httpClient = new HttpClient();
