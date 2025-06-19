@@ -113,7 +113,7 @@ namespace DataBaseModel
 		public string? Evaluacion { get; set; }
 		public string? Tipo { get; set; }
 		public DateTime? Fecha { get; set; }
-		public int? Periodo { get; set; }
+		public string? Periodo { get; set; }
 		public int? Order { get; set; }
 		public string? EvaluacionCompleta { get; set; }
 		public string? Observaciones { get; internal set; }

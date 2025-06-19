@@ -1,7 +1,9 @@
 
 
+using CAPA_DATOS.Services;
 using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Twilio.TwiML.Voice;
 
 namespace DataBaseModel
 {
@@ -84,7 +86,7 @@ namespace DataBaseModel
                 Nivel = claseE?.Niveles?.Nombre,
                 Seccion = seccion?.Nombre,
                 Guia = seccion?.Guia?.Nombre_completo,
-                Asignaturas =  clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
+                Asignaturas = clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
                 /*Asignaturas = clasesView.Any(e => e.Nombre_nivel == "PREESCOLAR")
                                 ? new List<Asignatura_Group>()
                                 : clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()*/
@@ -109,9 +111,64 @@ namespace DataBaseModel
             {
                 clase = A.First();
             }
-            
 
-            var calificacion = A?.Select(Calificacion =>
+            List<Calificacion_Group> calificaciones_Groups = [];
+            List<IGrouping<int?, Estudiante_Clases_View>>? periodos = A?.GroupBy(c => c.Periodo).ToList();
+
+
+            periodos?.ForEach(c =>
+            {
+                string roman = NumberUtility.ToRoman((c.First()?.Periodo) ?? 1);
+                List<Estudiante_Clases_View>? calificacionesValidas = c?.Where(Calificacion =>
+                    Calificacion.Evaluacion != "B"
+                ).ToList();
+                List<Estudiante_Clases_View>? acumulados = c?.Where(Calificacion =>
+                    Calificacion.Evaluacion != "S"
+                    && Calificacion.Evaluacion != "B"
+                    && Calificacion.Evaluacion != "F"
+                ).ToList();
+                calificaciones_Groups.AddRange([.. acumulados.Select(Calificacion => BuildCalificacionGroup(Calificacion, roman))]);
+
+                Estudiante_Clases_View? notaBimestral = c?.Where(Calificacion =>
+                   Calificacion.Evaluacion == "B"
+                ).ToList().FirstOrDefault();
+                if (notaBimestral != null)
+                {
+                    calificaciones_Groups.Add(BuildCalificacionGroup(notaBimestral, roman));
+                }
+                else
+                {
+                    calificaciones_Groups.Add(new Calificacion_Group
+                    {
+                        Order = c.First().ThisConfig?.periodo_inicio ?? 1,
+                        Resultado = acumulados.Sum(c => c.Resultado),
+                        Periodo = roman,
+                        Evaluacion = $"{roman}B",
+                        Tipo = $"{roman} BIMESTRE",
+                        EvaluacionCompleta = $"{roman} BIMESTRE",
+                        Porcentaje = 100,
+                        Observaciones = "Sin observaciones",
+                        Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10),
+                        Fecha = acumulados[acumulados.Count - 1].Fecha.GetValueOrDefault().AddSeconds(10)
+                    });
+                }
+                Estudiante_Clases_View? notaSemestral = c?.Where(Calificacion =>
+                    Calificacion.Evaluacion == "S"
+                ).ToList().FirstOrDefault();
+                Estudiante_Clases_View? notaFinal = c?.Where(Calificacion =>
+                    Calificacion.Evaluacion == "F"
+                ).ToList().FirstOrDefault();
+                if (notaSemestral != null)
+                {
+                    calificaciones_Groups.Add(BuildCalificacionGroup(notaSemestral, roman));
+                }
+                if (notaFinal != null)
+                {
+                    calificaciones_Groups.Add(BuildCalificacionGroup(notaFinal, roman));
+                }
+            });
+
+            /*var calificacion = A?.Select(Calificacion =>
                 {
                     return new Calificacion_Group
                     {
@@ -123,9 +180,9 @@ namespace DataBaseModel
                         Tipo = Calificacion.Tipo,
                         Fecha = Calificacion.Fecha,
                         Calificacion_updated_at = Calificacion.Calificacion_updated_at,
-                        /*Fecha = Calificacion.Fecha_Evaluacion.HasValue
+                        Fecha = Calificacion.Fecha_Evaluacion.HasValue
                                                 ? Calificacion.Fecha_Evaluacion.Value.Date + (Calificacion.Hora ?? TimeSpan.Zero)
-                                                : (DateTime?)null,*/
+                                                : (DateTime?)null,
                         //Fecha = ObtenerFechaValida(Calificacion.Fecha_Evaluacion, Calificacion.Hora),
 
                         Porcentaje = Calificacion.Porcentaje,
@@ -135,7 +192,7 @@ namespace DataBaseModel
                 }).OrderBy(c => c.Calificacion_updated_at)
                 .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
                     c.Evaluacion.Contains("S") ? 2 :
-                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []; // Ordenar por Evaluacion
+                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []; // Ordenar por Evaluacion*/
 
 
             return new Asignatura_Group
@@ -144,7 +201,28 @@ namespace DataBaseModel
                 Descripcion_Corta = materiasByClass.Nombre,
                 Docente = materiasByClass.GetNombreCompletoDocente(),
                 Evaluaciones = A?.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList() ?? [],
-                Calificaciones = calificacion
+                Calificaciones = calificaciones_Groups.OrderBy(c => c.Calificacion_updated_at)
+                .ThenBy(c => c.Evaluacion!.Contains('B') ? 1 :
+                    c.Evaluacion.Contains("S") ? 2 :
+                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []
+            };
+        }
+
+        private static Calificacion_Group BuildCalificacionGroup(Estudiante_Clases_View Calificacion, string roman)
+        {
+            return new Calificacion_Group
+            {
+                Id = Calificacion.Id,
+                Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
+                Resultado = Calificacion.Resultado,
+                Periodo = roman,
+                Evaluacion = $"{roman}" + (Calificacion.Evaluacion  ?? ""),
+                EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
+                Tipo = Calificacion.Tipo ?? ($"{roman}" + Calificacion.EvaluacionCompleta),
+                Fecha = Calificacion.Fecha,
+                Calificacion_updated_at = Calificacion.Calificacion_updated_at,
+                Porcentaje = Calificacion.Porcentaje,
+                Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
             };
         }
 

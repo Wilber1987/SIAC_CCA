@@ -148,6 +148,7 @@ class ClaseGroup extends HTMLElement {
 	}
 
 	BuildAsignaturasDetail(modelClass, element, ObjectF, prop, maxDetails) {
+		console.log(element);
 		///**@type {Asignatura_Group} */
 		const instance = new modelClass.constructor(element);
 		//this.UpdateCalificaciones(instance, maxDetails);
@@ -291,7 +292,8 @@ class ClaseGroup extends HTMLElement {
 			</div>`);
 	}
 
-	BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {
+	BuildEstudianteDetail(modelClass, element, ObjectF, prop, maxDetails) {	
+		
 		/**@type {Estudiante_Group} */
 		const instance = new modelClass.constructor(element);
 		const index = ObjectF[prop].indexOf(element);

@@ -32,10 +32,7 @@ export class CalificacionesUtil {
                     instance.Calificaciones.push(objetoF);
                 }
             }
-            function toRoman(num) {
-                const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-                return roman[num - 1];
-            }
+            
 
             const counters = {};
             // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
@@ -54,11 +51,10 @@ export class CalificacionesUtil {
                 }
 
                 // Actualizar la evaluación con el número romano
-                const numeroRomano = toRoman(counters[letra]) ?? "";
+                const numeroRomano =  "";
                 if (letra.toUpperCase() != "F") {
                     calificacion.Evaluacion = `${numeroRomano}${letra}`;
                     calificacion.EvaluacionCompleta = `${calificacion.EvaluacionCompleta ?? ""}`;
-                    //calificacion.Periodo = 
                 }
                 if (!evaluaciones.find(ev => ev.ev == `${letra}${counters[letra]}`) && calificacion.TipoColumna != "Relleno") {
                     evaluaciones.push({
@@ -69,7 +65,7 @@ export class CalificacionesUtil {
                         EvaluacionCompleta: calificacion.EvaluacionCompleta
                     });
                 }
-                
+
                 return calificacion;
             });
             instance.Calificaciones = updatedCalificaciones;
@@ -87,14 +83,14 @@ export class CalificacionesUtil {
             }
         });
         if (maxDetailsHeaders != null) {
-            return maxDetailsHeaders.map((header, index) => {                
+            const evaluacionesHeaders = maxDetailsHeaders.map((header, index) => {
                 const validResults = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header &&  ev.Resultado && ev.Resultado != "-"  && !isNaN(ev.Resultado));
-                
-                const evFilts = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
-                    .filter(ev => ev.Evaluacion == header  && !isNaN(ev.Resultado)).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado));
-                const suma = evFilts.filter(f=> !isNaN(f)).reduce((a, b) => a + b, 0);
+                    .filter(ev => ev.Evaluacion == header && ev.Resultado && ev.Resultado != "-" && !isNaN(ev.Resultado));
 
+                const evFilts = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
+                    .filter(ev => ev.Evaluacion == header && !isNaN(ev.Resultado)).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado));
+                
+                const suma = evFilts.filter(f => !isNaN(f)).reduce((a, b) => a + b, 0);
                 const Promedio = isNaN(suma / validResults.length) ? 0 : suma / validResults.length;
 
                 //console.log(suma, header, Promedio, Dataset.length);
@@ -106,7 +102,14 @@ export class CalificacionesUtil {
                     EvaluacionCompleta: HeaderEvaluacionesCompletas[index],
                 };
             })
+            /*console.log("maxDetailsHeaders");
+            console.table(evaluacionesHeaders);
+            console.table(maxDetailsHeaders);
+            console.trace();*/
+            return evaluacionesHeaders;
         }
+       /* console.log("evaluaciones");
+        console.table(evaluaciones)*/
         return evaluaciones;
     }
 
