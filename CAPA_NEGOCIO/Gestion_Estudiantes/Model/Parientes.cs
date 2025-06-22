@@ -104,7 +104,7 @@ namespace DataBaseModel
 		}
 
 
-		public object GetResponsables()
+		public  List<Parientes> GetResponsables()
 		{
 			//var parientes = Where<Parientes>(FilterData.NotNull("User_id"));
 			var estudianteActivos = new Estudiante_clases { }.Where<Estudiante_clases>(
@@ -119,19 +119,19 @@ namespace DataBaseModel
 				.ToList();
 
 			return parientesActivos
-				.Select(Pariente => new
+				.Select(Pariente => new Parientes
 				{
-					Pariente.Parientes?.Id,
-					Pariente.Parientes?.Primer_nombre,
-					Pariente.Parientes?.Segundo_nombre,
-					Pariente.Parientes?.Primer_apellido,
-					Pariente.Parientes?.Segundo_apellido,
-					Pariente.Parientes?.Sexo,
-					Pariente.Parientes?.Telefono,
-					Pariente.Parientes?.Celular,
-					Pariente.Parientes?.Telefono_trabajo,
-					Pariente.Parientes?.Email,
-					Pariente.Parientes?.User_id
+					Id = Pariente.Parientes?.Id,
+					Primer_nombre = Pariente.Parientes?.Primer_nombre,
+					Segundo_nombre = Pariente.Parientes?.Segundo_nombre,
+					Primer_apellido = Pariente.Parientes?.Primer_apellido,
+					Segundo_apellido = Pariente.Parientes?.Segundo_apellido,
+					Sexo = Pariente.Parientes?.Sexo,
+					Telefono = Pariente.Parientes?.Telefono,
+					Celular = Pariente.Parientes?.Celular,
+					Telefono_trabajo = Pariente.Parientes?.Telefono_trabajo,
+					Email = Pariente.Parientes?.Email,
+					User_id = Pariente.Parientes?.User_id
 				}).ToList();
 		}
 	}

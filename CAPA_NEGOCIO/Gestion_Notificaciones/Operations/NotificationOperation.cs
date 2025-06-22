@@ -68,7 +68,7 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 }
                 else
                 {
-                    parientesFiltrados = new Parientes().Where<Parientes>(FilterData.NotNull("User_Id"));
+                    parientesFiltrados = new Parientes().GetResponsables();;
                     SendNotificacion(request, parientesFiltrados);
                 }
 
