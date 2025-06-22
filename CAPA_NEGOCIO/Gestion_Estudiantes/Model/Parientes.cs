@@ -93,7 +93,7 @@ namespace DataBaseModel
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id", pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-			} 
+			}
 			else if (pariente?.Estudiantes_responsables_familia != null && ignorarPeriodoLectivo)
 			{
 				return estudiante.Where<Estudiantes>(
@@ -106,21 +106,33 @@ namespace DataBaseModel
 
 		public object GetResponsables()
 		{
-			var parientes = Where<Parientes>(FilterData.Limit(30), FilterData.NotNull("User_id"));
-			return parientes.Select(Pariente => new
-			{
-				Pariente.Id,
-				Pariente.Primer_nombre,
-				Pariente.Segundo_nombre,
-				Pariente.Primer_apellido,
-				Pariente.Segundo_apellido,
-				Pariente.Sexo,
-				Pariente.Telefono,
-				Pariente.Celular,
-				Pariente.Telefono_trabajo,
-				Pariente.Email,
-				Pariente.User_id
-			}).ToList();
+			//var parientes = Where<Parientes>(FilterData.NotNull("User_id"));
+			var estudianteActivos = new Estudiante_clases { }.Where<Estudiante_clases>(
+				FilterData.Equal("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)
+			).Select(e => e.Estudiante_id).Distinct().ToArray();
+
+			var parientesActivos = new Estudiantes_responsables_familia()
+				.Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", estudianteActivos))
+				.Where(responsable => responsable.Parientes?.User_id != null)
+				.GroupBy(responsable => responsable.Pariente_id)
+				.Select(group => group.First()) // Elegir un representante por Pariente_id
+				.ToList();
+
+			return parientesActivos
+				.Select(Pariente => new
+				{
+					Pariente.Parientes?.Id,
+					Pariente.Parientes?.Primer_nombre,
+					Pariente.Parientes?.Segundo_nombre,
+					Pariente.Parientes?.Primer_apellido,
+					Pariente.Parientes?.Segundo_apellido,
+					Pariente.Parientes?.Sexo,
+					Pariente.Parientes?.Telefono,
+					Pariente.Parientes?.Celular,
+					Pariente.Parientes?.Telefono_trabajo,
+					Pariente.Parientes?.Email,
+					Pariente.Parientes?.User_id
+				}).ToList();
 		}
 	}
 }
