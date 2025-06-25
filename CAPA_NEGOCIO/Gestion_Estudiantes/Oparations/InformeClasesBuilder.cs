@@ -118,7 +118,7 @@ namespace DataBaseModel
 
             periodos?.ForEach(c =>
             {
-                string roman = NumberUtility.ToRoman((c.First()?.Periodo) ?? 1);
+                //string roman = NumberUtility.ToRoman((c.First()?.Periodo) ?? 1);
                 List<Estudiante_Clases_View>? calificacionesValidas = c?.Where(Calificacion =>
                     Calificacion.Evaluacion != "B"
                 ).ToList();
@@ -127,6 +127,8 @@ namespace DataBaseModel
                     && Calificacion.Evaluacion != "B"
                     && Calificacion.Evaluacion != "F"
                 ).ToList();
+                
+                string roman = NumberUtility.ToRoman((c.First()?.Periodo) ?? 1);
                 calificaciones_Groups.AddRange([.. acumulados.Select(Calificacion => BuildCalificacionGroup(Calificacion, roman))]);
 
                 Estudiante_Clases_View? notaBimestral = c?.Where(Calificacion =>
@@ -160,11 +162,11 @@ namespace DataBaseModel
                 ).ToList().FirstOrDefault();
                 if (notaSemestral != null)
                 {
-                    calificaciones_Groups.Add(BuildCalificacionGroup(notaSemestral, roman));
+                    calificaciones_Groups.Add(BuildCalificacionGroup(notaSemestral, NumberUtility.ToRoman(((c.First()?.Periodo)/2) ?? 1)));
                 }
                 if (notaFinal != null)
                 {
-                    calificaciones_Groups.Add(BuildCalificacionGroup(notaFinal, roman));
+                    calificaciones_Groups.Add(BuildCalificacionGroup(notaFinal, ""));
                 }
             });
 
