@@ -1,4 +1,4 @@
-using CAPA_DATOS;
+using APPCORE;
 using System;
 using Microsoft.Extensions.Configuration;
 using Twilio;

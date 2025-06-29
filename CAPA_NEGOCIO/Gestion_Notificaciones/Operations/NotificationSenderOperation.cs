@@ -1,5 +1,5 @@
 using APPCORE;
-using CAPA_DATOS;
+using APPCORE;
 using CAPA_NEGOCIO.Services;
 using DataBaseModel;
 using DatabaseModelNotificaciones;

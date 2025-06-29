@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CAPA_DATOS;
+using APPCORE;
 using DataBaseModel;
 using DataBaseModel.SimpleModel;
 using MailKit.Search;

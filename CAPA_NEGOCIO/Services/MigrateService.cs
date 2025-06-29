@@ -5,9 +5,9 @@ using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using CAPA_DATOS;
-using CAPA_DATOS.BDCore.Abstracts;
-using CAPA_DATOS.Services;
+using APPCORE;
+using APPCORE.BDCore.Abstracts;
+using APPCORE.Services;
 using CAPA_NEGOCIO.UpdateModule.Model;
 
 namespace CAPA_NEGOCIO.Services

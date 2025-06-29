@@ -1,7 +1,7 @@
 
 using System.Configuration;
-using CAPA_DATOS;
-using CAPA_DATOS.BDCore.Abstracts;
+using APPCORE;
+using APPCORE.BDCore.Abstracts;
 using Microsoft.Extensions.Configuration;
 
 namespace CAPA_NEGOCIO.Util

@@ -1,5 +1,5 @@
 using API.Controllers;
-using CAPA_DATOS;
+using APPCORE;
 namespace DataBaseModel
 {
 	public class Transactional_Configuraciones : EntityClass

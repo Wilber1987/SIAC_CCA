@@ -1,10 +1,11 @@
-using CAPA_DATOS;
+using APPCORE;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
-using CAPA_DATOS.Security;
+using APPCORE.Security;
 using Microsoft.Extensions.Configuration;
 using Renci.SshNet;
 using CAPA_NEGOCIO.Services;
+using AppCore.Services;
 
 namespace CAPA_NEGOCIO.Oparations
 {

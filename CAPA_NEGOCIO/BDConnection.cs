@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using APPCORE;
 using APPCORE.SystemConfig;
-using CAPA_DATOS;
-using CAPA_DATOS.BDCore.Abstracts;
+using APPCORE;
+using APPCORE.BDCore.Abstracts;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
 

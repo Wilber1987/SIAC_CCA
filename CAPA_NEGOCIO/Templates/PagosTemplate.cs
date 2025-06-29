@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CAPA_DATOS.Services;
+using APPCORE.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Templates;
-using CAPA_NEGOCIO.Utility;
+using AppCore.Services;
 using DataBaseModel;
+using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 {

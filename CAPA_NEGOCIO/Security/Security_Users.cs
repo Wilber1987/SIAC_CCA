@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
-using CAPA_DATOS;
-using CAPA_DATOS.Security;
+using APPCORE;
 using CAPA_NEGOCIO.Gestion_Pagos.Operations;
 using DataBaseModel;
 
 namespace CAPA_NEGOCIO
 {
-	public class Security_Users : CAPA_DATOS.Security.Security_Users
+	public class Security_Users : APPCORE.Security.Security_Users
 	{
 		public new Tbl_Profile? Tbl_Profile { get; set; }
 		public static object Login(UserModel Inst, string? idetify)
@@ -60,13 +59,13 @@ namespace CAPA_NEGOCIO
 			return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault(), this);
 		}
 
-		public Security_Users withConection(CAPA_DATOS.BDCore.Abstracts.WDataMapper mapper)
+		public Security_Users withConection(APPCORE.BDCore.Abstracts.WDataMapper mapper)
 		{
 			this.SetConnection(mapper);
 			return this;
 		}
 	}
-	public class Tbl_Profile : CAPA_DATOS.Security.Tbl_Profile
+	public class Tbl_Profile : APPCORE.Security.Tbl_Profile
 	{
 		public string? Direccion { get; set; }
 		public string? Profesion { get; set; }
@@ -79,13 +78,14 @@ namespace CAPA_NEGOCIO
 		public int? Pariente_id { get; private set; }
 		public int? Docente_id { get; private set; }
         public bool IsPariente { get; internal set; }
+        
 
         public static Tbl_Profile Get_Profile(UserModel User)
 		{
 			return Get_Profile(User.UserId.GetValueOrDefault(), User.UserData);
 		}
 
-		public static Tbl_Profile Get_Profile(int UserId, CAPA_DATOS.Security.Security_Users user)
+		public static Tbl_Profile Get_Profile(int UserId, APPCORE.Security.Security_Users user)
 		{
 			Docentes? docente = new Docentes { Id_User = UserId }.SimpleFind<Docentes>();
 			Parientes? pariente = new Parientes { User_id = UserId }.Find<Parientes>();

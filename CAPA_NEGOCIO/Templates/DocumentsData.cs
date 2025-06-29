@@ -1,11 +1,12 @@
 using System.Security.Cryptography.Pkcs;
-using CAPA_DATOS;
+using APPCORE;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
-using CAPA_NEGOCIO.Utility;
+using AppCore.Services;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
+using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.Templates
 {

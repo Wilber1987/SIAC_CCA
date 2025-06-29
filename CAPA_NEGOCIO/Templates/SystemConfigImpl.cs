@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using DataBaseModel;
-using CAPA_DATOS.Services;
+using APPCORE.Services;
 namespace CAPA_NEGOCIO.SystemConfig
 {
 	public class SystemConfigImpl : APPCORE.SystemConfig.SystemConfig

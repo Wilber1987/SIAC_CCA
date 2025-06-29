@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using AppCore.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv;
 using CAPA_NEGOCIO.Util;

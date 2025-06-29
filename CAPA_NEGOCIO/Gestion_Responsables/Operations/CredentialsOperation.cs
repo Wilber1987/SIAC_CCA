@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CAPA_DATOS;
-using CAPA_DATOS.Security;
-using CAPA_DATOS.Services;
+using APPCORE;
+using APPCORE.Security;
+using APPCORE.Services;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.Util;
-using CAPA_NEGOCIO.Utility;
+using AppCore.Services;
 using DataBaseModel;
 using Microsoft.Identity.Client;
+using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.Oparations
 {

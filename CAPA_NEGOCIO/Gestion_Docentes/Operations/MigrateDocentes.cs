@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataBaseModel;
-using CAPA_DATOS;
+using APPCORE;
 using CAPA_NEGOCIO.Util;
 using Microsoft.Extensions.Configuration;
 using Renci.SshNet;
