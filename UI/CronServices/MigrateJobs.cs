@@ -1,4 +1,4 @@
-using CAPA_DATOS.Cron.Jobs;
+using APPCORE.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 using CAPA_NEGOCIO.UpdateModule.Operations;
 using DataBaseModel;

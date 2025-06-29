@@ -13,6 +13,7 @@ using CAPA_NEGOCIO.Util;
 using AppCore.Services;
 using DataBaseModel;
 using MailKit;
+using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {

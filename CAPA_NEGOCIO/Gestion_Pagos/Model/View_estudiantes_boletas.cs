@@ -66,7 +66,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         }
         public List<Viewestudiantesboletas> GetBoletas()
         {
-            return AdapterUtil.ConvertDataTable<Viewestudiantesboletas>(this.MTConnection?.GDatos.TraerDatosSQL(GetBoletasQuery()), this);
+            return AdapterUtil.ConvertDataTable<Viewestudiantesboletas>(this.MDataMapper?.GDatos.TraerDatosSQL(GetBoletasQuery()), this);
         }
     }
 }

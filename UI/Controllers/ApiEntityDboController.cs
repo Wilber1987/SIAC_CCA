@@ -359,25 +359,25 @@ namespace API.Controllers
 		//Log
 		[HttpPost]
 		[AuthController]
-		public List<CAPA_DATOS.Log> getLog(CAPA_DATOS.Log Inst)
+		public List<APPCORE.Log> getLog(APPCORE.Log Inst)
 		{
-			return Inst.Where<CAPA_DATOS.Log>(FilterData.Limit(30));
+			return Inst.Where<APPCORE.Log>(FilterData.Limit(30));
 		}
 		[HttpPost]
 		[AuthController]
-		public CAPA_DATOS.Log? findLog(CAPA_DATOS.Log Inst)
+		public APPCORE.Log? findLog(APPCORE.Log Inst)
 		{
-			return Inst.Find<CAPA_DATOS.Log>();
+			return Inst.Find<APPCORE.Log>();
 		}
 		[HttpPost]
 		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
-		public object? saveLog(CAPA_DATOS.Log inst)
+		public object? saveLog(APPCORE.Log inst)
 		{
 			return inst.Save();
 		}
 		[HttpPost]
 		[AuthController(Permissions.ADMIN_PANEL_ACCESS)]
-		public object? updateLog(CAPA_DATOS.Log inst)
+		public object? updateLog(APPCORE.Log inst)
 		{
 			return inst.Update();
 		}

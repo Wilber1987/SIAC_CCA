@@ -1,5 +1,5 @@
 using BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operations;
-using CAPA_DATOS.Cron.Jobs;
+using APPCORE.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 using DataBaseModel;
 

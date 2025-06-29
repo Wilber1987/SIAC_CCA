@@ -19,7 +19,7 @@ configuracion de modulos
 	url = https://github.com/Wilber1987/WDevCore
 [submodule "CAPA_DATOS"]
 	path = CAPA_DATOS
-	url = https://github.com/Wilber1987/CAPA_DATOS.git
+	url = https://github.com/Wilber1987/APPCORE.git
 
 
 git submodule update --remote

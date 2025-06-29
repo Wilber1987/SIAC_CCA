@@ -8,7 +8,7 @@ public class EmailAccountService : TransactionalClass
     {
         var today = DateTime.Today;
 
-        var accounts = new EmailAccounts().withConection(this.MTConnection)
+        var accounts = new EmailAccounts().withConection(this.MDataMapper)
             .Where<EmailAccounts>(FilterData.Or(
                 FilterData.Less("SentCount", 250),
                 FilterData.Less("LastUsedDate", today)
@@ -35,7 +35,7 @@ public class EmailAccountService : TransactionalClass
     {
         var filter = FilterData.Equal("Email", email);
 
-        var account = new EmailAccounts().withConection(this.MTConnection).Where<EmailAccounts>(filter).FirstOrDefault();
+        var account = new EmailAccounts().withConection(this.MDataMapper).Where<EmailAccounts>(filter).FirstOrDefault();
         if (account != null)
         {
             account.SentCount = (account.SentCount ?? 0) + 1;

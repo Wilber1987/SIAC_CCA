@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using BackgroundJob.Cron.Jobs;
 using Microsoft.AspNetCore.ResponseCompression;
-using CAPA_DATOS.Cron.Jobs;
+using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 
 //coneccion wilber
