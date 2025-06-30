@@ -3,7 +3,7 @@ using BackgroundJob.Cron.Jobs;
 using Microsoft.AspNetCore.ResponseCompression;
 using CAPA_DATOS.Cron.Jobs;
 using BusinessLogic.Connection;
-
+using CAPA_NEGOCIO.Oparations;
 //coneccion wilber
 //SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
 //MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
@@ -18,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
 builder.Services.AddRazorPages();
+
 
 
 builder.Services.AddControllers().AddJsonOptions(JsonOptions =>
@@ -47,6 +48,7 @@ builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
 
 #endregion
 
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession(options =>
@@ -57,26 +59,27 @@ builder.Services.AddSession(options =>
 
 #region CRONJOB
 
-builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {	
-	options.CronExpression = "*/4 8-20 * * *";
+	options.CronExpression = "/4 8-20 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 
-builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
-{		
+/*builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
+{
 	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
+
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {
-	options.CronExpression = "*/5 * * * *";
+	options.CronExpression = "*/3 * * * *";
 	//options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
 /***sincronizacion de siac y bellacom a sistema*/
-builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
+/*builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
 {
 	options.CronExpression = "0 15 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
@@ -99,7 +102,7 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 	options.CronExpression = "0 1 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-
+*/
 #endregion
 
 var app = builder.Build();
@@ -111,6 +114,13 @@ if (!app.Environment.IsDevelopment())
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
+
+
+await new MigrateDocentes().Migrate();
+await new MigrateGestionCursos().Migrate();
+await new MigrateEstudiantes().Migrate();
+await new MigrateNotas().Migrate(null);
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

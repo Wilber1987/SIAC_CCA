@@ -1,13 +1,5 @@
--- dbo.Estudiante_Clases_View source
-
--- dbo.Estudiante_Clases_View source
-
--- dbo.Estudiante_Clases_View source
-
--- dbo.Estudiante_Clases_View source
-/* dbo.Estudiante_Clases_View source
- dbo.Estudiante_Clases_View source*/
-alter VIEW dbo.Estudiante_Clases_View AS
+ALTER VIEW [dbo].[Estudiante_Clases_View] 
+AS
 SELECT ec.transferido,
     ec.estudiante_id,
     ec.id,
@@ -27,6 +19,7 @@ SELECT ec.transferido,
     t.consolidado_id,
     t.orden,
     c2.resultado,
+    c2.periodo,
     e.tipo,
     e.hora,
     c2.updated_at AS fecha,
@@ -48,8 +41,8 @@ SELECT ec.transferido,
     CONCAT(e2.primer_nombre , ' ',e2.segundo_nombre, ' ', e2.primer_apellido  , ' ',e2.segundo_apellido) AS Nombre_Estudiantes,
     e2.codigo, 
     e2.sexo,
-    e2.estatus as estado,
-    c2.observaciones
+	t.orden as orden_Asignatura , c2.updated_at as calificacion_updated_at,
+	ISNULL(e.observaciones,' ') as observaciones_Puntaje
 from dbo.estudiante_clases ec 
 INNER JOIN dbo.estudiantes e2 on ec.estudiante_id = e2.id 
 inner join dbo.clases c   on ec.clase_id  = c.id
@@ -61,3 +54,4 @@ INNER JOIN dbo.asignaturas a ON m.asignatura_id = a.id
 LEFT OUTER JOIN dbo.niveles n ON a.nivel_id = n.id
 LEFT OUTER JOIN dbo.evaluaciones e ON c2.evaluacion_id = e.id
 LEFT OUTER JOIN dbo.tipo_notas t ON c2.tipo_nota_id = t.id;
+GO

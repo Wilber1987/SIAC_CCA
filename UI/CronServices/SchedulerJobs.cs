@@ -48,11 +48,11 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
             try
             {
-                var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
+                /*var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
                 if (now.TimeOfDay >= new TimeSpan(17, 10, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
                 {                    
                     return Task.CompletedTask;
-                }
+                }*/
                 NotificationSenderOperation.SendNotifications();
             }
             catch (Exception ex)

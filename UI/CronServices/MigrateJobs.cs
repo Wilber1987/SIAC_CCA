@@ -207,7 +207,7 @@ namespace BackgroundJob.Cron.Jobs
 			_log.LogInformation(":::::::::::Running...  UpdateDataBellacomCronJob at {0}", DateTime.UtcNow);
 			try
 			{
-				new BellacomUpdateOperation().updateBellacomData();
+				//new BellacomUpdateOperation().updateBellacomData();
 			}
 			catch (Exception ex)
 			{
@@ -238,7 +238,7 @@ namespace BackgroundJob.Cron.Jobs
 			_log.LogInformation(":::::::::::Running...  MigrateDataFromSiacJob at {0}", DateTime.UtcNow);
 			try
 			{
-				//new BellacomUpdateOperation().updateBellacomData();
+				new BellacomUpdateOperation().updateBellacomData();
 			}
 			catch (Exception ex)
 			{
