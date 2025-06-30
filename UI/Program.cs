@@ -70,7 +70,7 @@ builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 });
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {
-	options.CronExpression = "*/5 * * * *";
+	options.CronExpression = "* * * * *";
 	//options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });

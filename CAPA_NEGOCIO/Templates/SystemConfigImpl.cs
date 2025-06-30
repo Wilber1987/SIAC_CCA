@@ -7,7 +7,7 @@ namespace CAPA_NEGOCIO.SystemConfig
 	{
 		public SystemConfigImpl()
 		{
-			configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();			
+			configuraciones = new Transactional_Configuraciones().Get<Transactional_Configuraciones>();
 		}
 		public static new MailConfig? GetSMTPDefaultConfig()
 		{
@@ -20,8 +20,8 @@ namespace CAPA_NEGOCIO.SystemConfig
 				USERNAME = account.Email
 			};
 		}
-		
-		
+
+
 		public new List<Transactional_Configuraciones> configuraciones = [];
 
 		public static bool IsAutomaticCaseActive()
@@ -32,7 +32,9 @@ namespace CAPA_NEGOCIO.SystemConfig
 		public static bool IsNotificationsActive()
 		{
 			//TODO IMPLEMENTAR ESTE METODO
-			return true;
+			return Convert.ToBoolean(new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.ENVIO_NOTIFICACIONES_ACTIVO,
+				 "false", ConfiguracionesTypeEnum.BOOLEAN)?.Valor ?? "false");
+
 		}
 		public static bool IsMessagesActive()
 		{

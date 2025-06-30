@@ -43,6 +43,22 @@ namespace DataBaseModel
 			}
 			return this.Update();
 		}
+		public  Transactional_Configuraciones? GetParam(ConfiguracionesThemeEnum prop, string defaultValor = "", ConfiguracionesTypeEnum TYPE = ConfiguracionesTypeEnum.THEME)
+		{
+			Nombre = prop.ToString();
+
+			var find = Find<Transactional_Configuraciones>();
+			if (find == null)
+			{
+				
+				Valor = defaultValor;
+				Descripcion = prop.ToString();
+				Nombre = prop.ToString();
+				Tipo_Configuracion = TYPE.ToString();				
+				find = (Transactional_Configuraciones?)Save();
+			}
+			return find;
+		}
 	}
 	public class PageConfig
 	{
@@ -108,8 +124,9 @@ namespace DataBaseModel
 
 	public enum ConfiguracionesTypeEnum
 	{
-		THEME, GENERAL_DATA, NUMBER
-	}
+		THEME, GENERAL_DATA, NUMBER,
+        BOOLEAN
+    }
 
 	public enum ConfiguracionesThemeEnum
 	{
@@ -122,7 +139,8 @@ namespace DataBaseModel
 		SUB_TITULO2,
 		URL_BASE,
 		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES,
-        RUC
+        RUC,
+        ENVIO_NOTIFICACIONES_ACTIVO
     }
 
 	public class Config

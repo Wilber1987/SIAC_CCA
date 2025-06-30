@@ -2,6 +2,8 @@ using BusinessLogic.Notificaciones_Mensajeria.Gestion_Notificaciones.Operations;
 using APPCORE.Cron.Jobs;
 using CAPA_NEGOCIO.Oparations;
 using DataBaseModel;
+using APPCORE.SystemConfig;
+using CAPA_NEGOCIO.SystemConfig;
 
 namespace BackgroundJob.Cron.Jobs
 {
@@ -48,12 +50,16 @@ namespace BackgroundJob.Cron.Jobs
             _log.LogInformation(":::::::::::Running...  SendMailNotificationsSchedulerJob at {0}", DateTime.UtcNow);
             try
             {
-                var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
-                if (now.TimeOfDay >= new TimeSpan(17, 10, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
-                {                    
-                    return Task.CompletedTask;
+                if (SystemConfigImpl.IsNotificationsActive())
+                {
+                    var now = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local);
+                    if (now.TimeOfDay >= new TimeSpan(17, 10, 0) || now.TimeOfDay < new TimeSpan(4, 0, 0))
+                    {
+                        return Task.CompletedTask;
+                    }
+                    NotificationSenderOperation.SendNotifications();
                 }
-                NotificationSenderOperation.SendNotifications();
+
             }
             catch (Exception ex)
             {
