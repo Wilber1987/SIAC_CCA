@@ -3,7 +3,7 @@
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @using DataBaseModel
 @{
-	string Identify = Context.Session.GetString("seassonKey");
+	string Identify = Context.Session.GetString("sessionKey");
 	if (Identify != null)
 	{
 		var estudiantes = Parientes.GetOwEstudiantes(Identify, new Estudiantes());

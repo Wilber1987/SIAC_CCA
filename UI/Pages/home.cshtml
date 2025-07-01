@@ -2,7 +2,7 @@
 @using API.Controllers;
 @using APPCORE.Security;
 @{
-    string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";  
+    string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";  
     /*var admin = new Security_Users { Id_User = 1}.Find<Security_Users>();
     admin.Password = EncrypterServices.Encrypt("Acceso1");
     admin.Update();*/
@@ -18,7 +18,7 @@
     } 
 
 }
-@if (!SecurityController.HavePermission(HttpContext.Session.GetString("seassonKey"), Permissions.ADMIN_PANEL_ACCESS))
+@if (!SecurityController.HavePermission(HttpContext.Session.GetString("sessionKey"), Permissions.ADMIN_PANEL_ACCESS))
 {
     <div id="Main">
         <img class="mg-boletin" height="500px" src="/Media/img/inicio2.jpeg" alt="Header Avatar">

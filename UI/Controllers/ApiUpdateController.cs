@@ -16,19 +16,19 @@ namespace UI.Controllers
 		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
 		public UpdateData GetUpdateData()
 		{
-			return UpdateOperation.GetUpdateData(HttpContext.Session.GetString("seassonKey"));
+			return UpdateOperation.GetUpdateData(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
 		public ResponseService UpdateEstudiante(Estudiantes_Data_Update Inst)
 		{
-			return UpdateOperation.UpdateEstudiante(HttpContext.Session.GetString("seassonKey"), Inst);
+			return UpdateOperation.UpdateEstudiante(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
 		public ResponseService UpdatePariente(Parientes_Data_Update Inst)
 		{
-			return UpdateOperation.UpdateParientes(HttpContext.Session.GetString("seassonKey"), Inst);
+			return UpdateOperation.UpdateParientes(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
@@ -40,7 +40,7 @@ namespace UI.Controllers
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public ResponseService SaveUpdateDataRequest(UpdateDataRequest Inst)
 		{
-			return new UpdateOperation().Save(HttpContext.Session.GetString("seassonKey"), Inst );
+			return new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst );
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]

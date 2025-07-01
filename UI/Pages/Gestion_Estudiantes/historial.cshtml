@@ -5,7 +5,7 @@
 @using DataBaseModel;
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @{
-    string? identify = HttpContext?.Session.GetString("seassonKey");
+    string? identify = HttpContext?.Session.GetString("sessionKey");
      if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
         Response.Redirect("/Security/Login");

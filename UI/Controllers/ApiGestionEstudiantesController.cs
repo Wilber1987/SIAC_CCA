@@ -23,14 +23,14 @@ namespace UI.Controllers
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public List<Estudiantes> GetOwEstudiantes(Estudiantes Inst)
 		{
-			return Parientes.GetOwEstudiantes(HttpContext.Session.GetString("seassonKey"), Inst);
+			return Parientes.GetOwEstudiantes(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService UpdateOwEstudiantes(Estudiantes Inst)
 		{
-			return Inst.UpdateOwEstudiantes(HttpContext.Session.GetString("seassonKey"));
+			return Inst.UpdateOwEstudiantes(HttpContext.Session.GetString("sessionKey"));
 		}
 		//CRUD ESTUDIANTES
 		//Estudiantes
@@ -46,7 +46,7 @@ namespace UI.Controllers
 		{
 			try
 			{
-				return Ok(Inst.FindEstudiante(HttpContext.Session.GetString("seassonKey")));
+				return Ok(Inst.FindEstudiante(HttpContext.Session.GetString("sessionKey")));
 			}
 			catch (Exception ex)
 			{
