@@ -14,7 +14,7 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />    
+    <meta charset="utf-8" />
     <title>Portal CCA</title>
     <link rel="icon" type="image/x-icon" href="@pageConfig.MEDIA_IMG_PATH/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,10 +30,18 @@
     {
         <link rel="stylesheet" href="~/css/admin.css">
     }
+    @if (SecurityController.HavePermission(identify, Permissions.NOTIFICACIONES_READER))
+    {
+        <script type="module">
+            import { NotificacionesReader } from "/Gestion_Mensajes/NotificacionesView.js";
+            window.addEventListener("load", () => {
+                document.body.append(new NotificacionesReader({ Leidas: false }))
+            })
+        </script>
+    }
     @*<link rel="stylesheet" href="~/css/AdminTemplate.css" /> *@
     <script type="module">
         import { WSecurity } from "/WDevCore/Security/WSecurity.js";
-        import { NotificacionesReader } from "/Gestion_Mensajes/NotificacionesView.js";
         const logout = () => {
             WSecurity.LogOut();
         }
@@ -46,9 +54,6 @@
             })
             //logOut
             btnLogOut.onclick = logout;
-            //notificaciones 
-            document.body.append(new NotificacionesReader({ Leidas: false }))
-
         })
         //logOut
         btnLogOut.onclick = logout;
@@ -91,7 +96,8 @@
                 </div>
             }
 
-            <div class="page-content @(SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS) ? "admin" : "")">
+            <div
+                class="page-content @(SecurityController.HavePermission(identify, Permissions.ADMIN_PANEL_ACCESS) ? "admin" : "")">
                 <div class="container-fluid">
                     @RenderBody()
                 </div>
