@@ -501,6 +501,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			}
 			catch (Exception e)
 			{
+				LoggerServices.AddMessageError("ERROR: ejecutando pago", e);
 				return new ResponseService
 				{
 					status = 500,

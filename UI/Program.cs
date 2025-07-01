@@ -4,13 +4,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 using CAPA_NEGOCIO.Oparations;
-//coneccion wilber
-//SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
-//MySQLConnection.IniciarConexion("root", "", "localhost", "siac_cca_production", 3306);
-//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
-//coneccion alder
-//SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 
+//SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 
 //AppGeneratorProgram.Main(); //generador de codigo
 
@@ -73,7 +68,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {
-	options.CronExpression = "*/3 * * * *";
+	options.CronExpression = "*/4 * * * *";
 	//options.CronExpression = "* * * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
