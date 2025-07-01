@@ -15,12 +15,16 @@ namespace CAPA_NEGOCIO.Util
                 return MySQLConnection.BuildDataMapper("127.0.0.1", "root", "HytttGHjasd66LittleBarco", "siac_cca_production", 3307);
             }
         }
+        private static WDataMapper? BellacomTestConection;
         public static WDataMapper? BellacomTest
         {
             get
-            {            
-                return MySQLConnection.BuildDataMapper("127.0.0.1", "root", "LY2016$root", "bellacom_dbcca", 3308);
-                //return MySQLConnection.BuildDataMapper("localhost", "root", "", "bellacom_dbcca", 3306);
+            {
+                if (BellacomTestConection == null)
+                {
+                    BellacomTestConection = MySQLConnection.BuildDataMapper("127.0.0.1", "root", "LY2016$root", "bellacom_dbcca", 3308);
+                }
+                return BellacomTestConection;
             }
         }
 
@@ -52,8 +56,8 @@ namespace CAPA_NEGOCIO.Util
             {
                 var configuration = LoadConfiguration();
 
-                var mysqlSettingsSiac = configuration.GetSection("ConnectionStrings:MySQLConnectionSige");
-                var sshSettings = configuration.GetSection("ConnectionStrings:SSHConnectionSige");
+                var mysqlSettingsSiac = configuration.GetSection("ConnectionStrings:MySQLConnectionBellacom");
+                var sshSettings = configuration.GetSection("ConnectionStrings:SSHConnectionBellacom");
 
                 return MySQLConnection.BuildDataMapper(
                             mysqlSettingsSiac["Server"],
