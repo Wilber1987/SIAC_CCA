@@ -143,7 +143,6 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				siacSshClient.Connect();
 				var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
 				siacTunnel.Start();
-
 				recientraidos = pagosAlumnosView.Where<Pagos_alumnos_view>(filters.ToArray()).ToList();
 				pagosExtraordinarios = viewExtra.Where<ViewPagosAlumnosExtraordinarios>(filtersExtraordinarios.ToArray()).ToList();
 
@@ -484,7 +483,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 						var updateResponse = detalle.Pago.Update();
 						if (updateResponse.status != 200)
 						{
-							throw new Exception("Error al actualizar el pago");
+							throw new Exception($"Error al actualizar el pago: {updateResponse.status} - {updateResponse.message}");
 						}
 					});
 
