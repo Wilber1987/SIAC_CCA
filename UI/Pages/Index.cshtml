@@ -7,7 +7,7 @@
     admin.Update(); */  
 
     
-    string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";   
+    string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";   
     if (!SecurityController.Auth(identify))
     {
         Response.Redirect("./Security/Login");

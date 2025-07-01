@@ -31,7 +31,7 @@ namespace API.Controllers
         [AdminAuth]
         public Object saveSecurity_Users(CAPA_NEGOCIO.Security_Users inv)
         {
-            return inv.SaveUser(HttpContext.Session.GetString("seassonKey"));
+            return inv.SaveUser(HttpContext.Session.GetString("sessionKey"));
         }
 
         [HttpPost]
@@ -41,7 +41,7 @@ namespace API.Controllers
         [AuthController(Permissions.CAN_CHANGE_OW_PASSWORD)]
         public Object? changePassword(CAPA_NEGOCIO.Security_Users inv)
         {
-            return inv.changePassword(HttpContext.Session.GetString("seassonKey"));
+            return inv.changePassword(HttpContext.Session.GetString("sessionKey"));
         }
 
         #endregion

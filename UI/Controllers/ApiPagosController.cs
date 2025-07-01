@@ -23,32 +23,32 @@ namespace UI.Controllers
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public List<Tbl_Pago> GetTbl_Pago(Tbl_Pago Inst)
 		{
-			return new PagosOperation().GetPagos(Inst, HttpContext.Session.GetString("seassonKey"));
+			return new PagosOperation().GetPagos(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public Object GetTbl_Pagos(Tbl_Pago Inst)
 		{
-			return new PagosOperation().GetPagosAllPagos(Inst, HttpContext.Session.GetString("seassonKey"));
+			return new PagosOperation().GetPagosAllPagos(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService SavePagosRequest(PagosRequest Inst)
 		{
-			return PagosOperation.SetPagosRequest(Inst, HttpContext.Session.GetString("seassonKey"));
+			return PagosOperation.SetPagosRequest(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public List<PagosRequest> GetPagosRequest(PagosRequest Inst)
 		{
-			return PagosRequest.GetPagosRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
+			return PagosRequest.GetPagosRealizados(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		public async Task<IActionResult> EjecutarPago([FromForm] TPV datosDePago)
 		{
 			// Obtener el objeto PagosRequest desde la base de datos o la sesión según el Id
 
-			var response = await PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("seassonKey"));
+			var response = await PagosOperation.EjecutarPago(datosDePago, HttpContext.Session.GetString("sessionKey"));
 			//return RedirectToAction("PagoExitoso");
 			if (response.status == 200) return RedirectToAction("AutorizatePayment");
 			else return BadRequest(response.message);
@@ -69,7 +69,7 @@ namespace UI.Controllers
 
 				LoggerServices.AddMessageInfo("Antes de llamar a AutorizarPago");*/
 
-				var sessionKey = HttpContext.Session.GetString("seassonKey");
+				var sessionKey = HttpContext.Session.GetString("sessionKey");
 				var pt3dsResponse = JsonConvert.DeserializeObject<PT3DSResponse>(responseStr);
 
 				var pagosResponse = await PagosOperation.AutorizarPago(sessionKey, pt3dsResponse);
@@ -122,7 +122,7 @@ namespace UI.Controllers
 		public List<CuentasPorCobrarDocumentos> getCuentasPorCobrar()
 		{
 			// Obtener el los documentos que el padre tiene pendiente de pagar
-			return CuentasPorCobrarOperation.GetCuentasPorCorar(HttpContext.Session.GetString("seassonKey"));
+			return CuentasPorCobrarOperation.GetCuentasPorCorar(HttpContext.Session.GetString("sessionKey"));
 			
 		}*/
 	}

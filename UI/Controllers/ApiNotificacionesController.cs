@@ -21,14 +21,14 @@ namespace UI.Controllers
 		[AuthController(Permissions.NOTIFICACIONES_READER)]
 		public List<Notificaciones> getNotificaciones(Notificaciones Inst)
 		{
-			return NotificationOperation.GetNotificaciones(Inst, HttpContext.Session.GetString("seassonKey"));
+			return NotificationOperation.GetNotificaciones(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public ResponseService SaveNotificationRequest(NotificationRequest notificationRequest)
 		{
-			return new NotificationOperation().SaveNotificacion(HttpContext.Session.GetString("seassonKey"), notificationRequest);
+			return new NotificationOperation().SaveNotificacion(HttpContext.Session.GetString("sessionKey"), notificationRequest);
 		}
 
 		[HttpPost]
@@ -44,14 +44,14 @@ namespace UI.Controllers
 		public List<Contacto> getContactos(Contacto Inst)
 		{
 			throw new NotImplementedException();
-			// return new Conversacion().GetContactos(HttpContext.Session.GetString("seassonKey"), Inst);
+			// return new Conversacion().GetContactos(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES)]
 		public List<Conversacion> getConversacion(Contacto Inst)
 		{
 			throw new NotImplementedException();
-			//return Conversacion.GetConversaciones(HttpContext.Session.GetString("seassonKey"), Inst);
+			//return Conversacion.GetConversaciones(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.NOTIFICACIONES)]
@@ -65,7 +65,7 @@ namespace UI.Controllers
 		public object? saveConversacion(Conversacion Inst)
 		{
 			throw new NotImplementedException();
-			//return Inst.SaveConversacion(HttpContext.Session.GetString("seassonKey"));
+			//return Inst.SaveConversacion(HttpContext.Session.GetString("sessionKey"));
 		}
 		#endregion
 		//Notificaciones

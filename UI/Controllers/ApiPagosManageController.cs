@@ -23,14 +23,14 @@ namespace UI.Controllers
 		[AuthController(Permissions.REPORTE_ACCESS)]
 		public List<PagosRequest> GetPagosRealizados(PagosRequest Inst)
 		{
-			return new PagosOperation().GetManagePagos(Inst, HttpContext.Session.GetString("seassonKey"));
+			return new PagosOperation().GetManagePagos(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 		
 		[HttpPost]
 		[AuthController(Permissions.REPORTE_ACCESS)]
 		public List<PagosRequest> GetPagosNoRealizados(PagosRequest Inst)
 		{
-			return new PagosOperation().GetManagePagosNoRealizados(Inst, HttpContext.Session.GetString("seassonKey"));
+			return new PagosOperation().GetManagePagosNoRealizados(Inst, HttpContext.Session.GetString("sessionKey"));
 		}
 	}
 }

@@ -19,9 +19,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
 	public class UpdateOperation : TransactionalClass
 	{
-		public static UpdateData GetUpdateData(string seassonKey)
+		public static UpdateData GetUpdateData(string sessionKey)
 		{
-			UserModel user = AuthNetCore.User(seassonKey);
+			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
 			Parientes? parienteE = new Parientes { Id = pariente?.Id }.Find<Parientes>();
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
@@ -140,7 +140,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				BeginGlobalTransaction();
 				parientes?.ForEach(tn =>
 				{
-					//MailServices.SendMailAceptedContract(pariente, GetUpdateData(seassonKey));
+					//MailServices.SendMailAceptedContract(pariente, GetUpdateData(sessionKey));
 					Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = tn.Id }.Find<Parientes_Data_Update>();
 					if (pariente != null)
 					{
@@ -210,9 +210,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			return rolPadreResponsable;
 		}
 
-		public static ResponseService UpdateEstudiante(string? seassonKey, Estudiantes_Data_Update inst)
+		public static ResponseService UpdateEstudiante(string? sessionKey, Estudiantes_Data_Update inst)
 		{
-			UserModel user = AuthNetCore.User(seassonKey);
+			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var estudiante = new Estudiantes_Data_Update { Id = inst.Id }.SimpleFind<Estudiantes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
@@ -241,9 +241,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
-		public static ResponseService UpdateParientes(string? seassonKey, Parientes_Data_Update inst)
+		public static ResponseService UpdateParientes(string? sessionKey, Parientes_Data_Update inst)
 		{
-			UserModel user = AuthNetCore.User(seassonKey);
+			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var parienteData = new Parientes_Data_Update { Id = inst.Id }.SimpleFind<Parientes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
@@ -336,9 +336,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			return inst.SimpleGet<Parientes_Data_Update>();*/
 		}
 
-		public ResponseService Save(string? seassonKey, UpdateDataRequest inst)
+		public ResponseService Save(string? sessionKey, UpdateDataRequest inst)
 		{
-			UserModel user = AuthNetCore.User(seassonKey);
+			UserModel user = AuthNetCore.User(sessionKey);
 			try
 			{
 
@@ -386,7 +386,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					try
 					{
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-						MailServices.SendMailAceptedContract(pariente, GetUpdateData(seassonKey));
+						MailServices.SendMailAceptedContract(pariente, GetUpdateData(sessionKey));
 					}
 					catch (Exception ex)
 					{

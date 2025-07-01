@@ -7,7 +7,7 @@
 @{
     Layout = "_LayoutUpdates";
 
-    string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";
+    string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";
     if (!SecurityController.HavePermission(identify, Permissions.UPDATE_FAMILY_DATA))
     {
         Response.Redirect("/Security/Login");

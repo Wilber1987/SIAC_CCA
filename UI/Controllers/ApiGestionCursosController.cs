@@ -20,7 +20,7 @@ namespace UI.Controllers
         {
             try
             {
-                return Ok(Materias.GetOwMaterias(HttpContext.Session.GetString("seassonKey"), Inst));
+                return Ok(Materias.GetOwMaterias(HttpContext.Session.GetString("sessionKey"), Inst));
             }
             catch (Exception ex)
             {
