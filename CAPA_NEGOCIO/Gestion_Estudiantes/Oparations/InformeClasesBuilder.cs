@@ -136,6 +136,7 @@ namespace DataBaseModel
                 ).ToList().FirstOrDefault();
                 if (notaBimestral != null)
                 {
+                    notaBimestral.Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10);
                     calificaciones_Groups.Add(BuildCalificacionGroup(notaBimestral, roman));
                 }
                 else
@@ -169,33 +170,6 @@ namespace DataBaseModel
                     calificaciones_Groups.Add(BuildCalificacionGroup(notaFinal, ""));
                 }
             });
-
-            /*var calificacion = A?.Select(Calificacion =>
-                {
-                    return new Calificacion_Group
-                    {
-                        Id = Calificacion.Id,
-                        Order = Calificacion.ThisConfig?.periodo_inicio ?? 1,
-                        Resultado = Calificacion.Resultado,
-                        Evaluacion = Calificacion.Evaluacion ?? "",
-                        EvaluacionCompleta = Calificacion.Observaciones_Puntaje ?? "",
-                        Tipo = Calificacion.Tipo,
-                        Fecha = Calificacion.Fecha,
-                        Calificacion_updated_at = Calificacion.Calificacion_updated_at,
-                        Fecha = Calificacion.Fecha_Evaluacion.HasValue
-                                                ? Calificacion.Fecha_Evaluacion.Value.Date + (Calificacion.Hora ?? TimeSpan.Zero)
-                                                : (DateTime?)null,
-                        //Fecha = ObtenerFechaValida(Calificacion.Fecha_Evaluacion, Calificacion.Hora),
-
-                        Porcentaje = Calificacion.Porcentaje,
-                        Observaciones = Calificacion.Observaciones ?? "Sin observaciones",
-                        //ObservacionesPuntaje = Calificacion.Observaciones_Puntaje
-                    };
-                }).OrderBy(c => c.Calificacion_updated_at)
-                .ThenBy(c => c.Evaluacion!.Contains("B") ? 1 :
-                    c.Evaluacion.Contains("S") ? 2 :
-                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []; // Ordenar por Evaluacion*/
-
 
             return new Asignatura_Group
             {
