@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Controllers;
-using CAPA_DATOS;
-using CAPA_DATOS.Services;
+using APPCORE;
+using APPCORE.Services;
 using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv;
 using CAPA_NEGOCIO.Util;
@@ -337,7 +337,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			inst.Monto = inst.Detalle_Pago!.Sum(x => x.Total);
 			inst.Moneda = inst.Detalle_Pago.First().Pago!.Money.ToString();
 
-			SeasonServices.Set("PagosRequest", inst, identify);
+			SessionServices.Set("PagosRequest", inst, identify);
 			return new ResponseService
 			{
 				status = 200,
@@ -346,7 +346,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 		public static PagosRequest? GetPagoARealizar(string? identify)
 		{
-			return SeasonServices.Get<PagosRequest>("PagosRequest", identify);
+			return SessionServices.Get<PagosRequest>("PagosRequest", identify);
 		}
 
 		public static InfoPagos GetSaldoPendiente(string? identify)
@@ -447,10 +447,10 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				}
 				else
 				{
-					SeasonServices.Set("PAGO_PROCESO_SERVICE", tPVService, pagosResponse.SpiToken);
-					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
-					SeasonServices.Set("PAGO_PROCESO_USER", user, pagosResponse.SpiToken);
-					SeasonServices.Set("PAGO_PROCESO_RESPONSE", pagosResponse, identify);
+					SessionServices.Set("PAGO_PROCESO_SERVICE", tPVService, pagosResponse.SpiToken);
+					SessionServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
+					SessionServices.Set("PAGO_PROCESO_USER", user, pagosResponse.SpiToken);
+					SessionServices.Set("PAGO_PROCESO_RESPONSE", pagosResponse, identify);
 
 					//guardado de pago previo en sql server, se guarda en  estado pendiente para luego marcarlo como autorizado en el metodo autorizarPago()
 
@@ -489,7 +489,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 					});
 
 					pagosRequest?.Save();
-					SeasonServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
+					SessionServices.Set("PAGO_PROCESO_REQUEST", pagosRequest, pagosResponse.SpiToken);
 
 					return new ResponseService
 					{
@@ -513,9 +513,9 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		{
 			try
 			{
-				TPVService? tPVService = SeasonServices.Get<TPVService>("PAGO_PROCESO_SERVICE", PT3DSResponse.SpiToken);
-				PagosRequest? pagosRequest = SeasonServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);
-				UserModel? user = SeasonServices.Get<UserModel>("PAGO_PROCESO_USER", PT3DSResponse.SpiToken);
+				TPVService? tPVService = SessionServices.Get<TPVService>("PAGO_PROCESO_SERVICE", PT3DSResponse.SpiToken);
+				PagosRequest? pagosRequest = SessionServices.Get<PagosRequest>("PAGO_PROCESO_REQUEST", PT3DSResponse.SpiToken);
+				UserModel? user = SessionServices.Get<UserModel>("PAGO_PROCESO_USER", PT3DSResponse.SpiToken);
 
 				PowerTranzTpvResponse pagosResponseAutorizarPago = await tPVService!.PaymentAsync(PT3DSResponse.SpiToken);
 

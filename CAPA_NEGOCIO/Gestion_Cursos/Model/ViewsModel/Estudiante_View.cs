@@ -1,6 +1,6 @@
-using CAPA_DATOS;
-using CAPA_DATOS.Services;
-using CAPA_NEGOCIO.Utility;
+using APPCORE;
+using APPCORE.Services;
+using AppCore.Services;
 namespace DataBaseModel
 {
 	public class Estudiante_View : EntityClass

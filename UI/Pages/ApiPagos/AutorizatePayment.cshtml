@@ -1,8 +1,8 @@
 @page
 @using API.Controllers;
-@using CAPA_DATOS.Security;
-@using CAPA_DATOS;
-@using CAPA_DATOS.Services
+@using APPCORE.Security;
+@using APPCORE;
+@using APPCORE.Services
 @using CAPA_NEGOCIO.Gestion_Pagos.Model
 @using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
@@ -16,7 +16,7 @@
 	}
 	// double pagoTotal = 0;
 	//PagosRequest? pagosRequest = PagosOperation.GetPagoARealizar(identify);
-	PowerTranzTpvResponse? pagosResponse = SeasonServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
+	PowerTranzTpvResponse? pagosResponse = SessionServices.Get<PowerTranzTpvResponse>("PAGO_PROCESO_RESPONSE", identify);
 }
 <div>
 	@* <button onclick="printIframe()" class="btn-success">Print</button> *@

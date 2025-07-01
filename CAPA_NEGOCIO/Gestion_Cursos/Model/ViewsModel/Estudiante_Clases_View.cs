@@ -1,7 +1,7 @@
-using CAPA_DATOS;
-using CAPA_DATOS.Services;
+using APPCORE;
+using APPCORE.Services;
 using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
-using CAPA_NEGOCIO.Utility;
+using AppCore.Services;
 namespace DataBaseModel
 {
 	public class Estudiante_Clases_View : EntityClass

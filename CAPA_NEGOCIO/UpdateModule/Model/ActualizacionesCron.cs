@@ -1,5 +1,5 @@
-using CAPA_DATOS;
-using CAPA_DATOS.Services;
+using APPCORE;
+using APPCORE.Services;
 using DataBaseModel;
 
 namespace CAPA_NEGOCIO.UpdateModule.Model

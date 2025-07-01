@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using BackgroundJob.Cron.Jobs;
 using Microsoft.AspNetCore.ResponseCompression;
-using CAPA_DATOS.Cron.Jobs;
+using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 using CAPA_NEGOCIO.Oparations;
 //coneccion wilber
@@ -116,10 +116,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-await new MigrateDocentes().Migrate();
+/*await new MigrateDocentes().Migrate();
 await new MigrateGestionCursos().Migrate();
 await new MigrateEstudiantes().Migrate();
-await new MigrateNotas().Migrate(null);
+await new MigrateNotas().Migrate(null);*/
 
 
 app.UseHttpsRedirection();

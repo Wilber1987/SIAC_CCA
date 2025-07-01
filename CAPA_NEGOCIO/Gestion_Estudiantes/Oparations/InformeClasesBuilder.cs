@@ -1,6 +1,6 @@
 
 
-using CAPA_DATOS.Services;
+using APPCORE.Services;
 using CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Twilio.TwiML.Voice;

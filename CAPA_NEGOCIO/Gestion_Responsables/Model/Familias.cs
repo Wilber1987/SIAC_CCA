@@ -1,5 +1,5 @@
-using CAPA_DATOS;
-using CAPA_DATOS.Security;
+using APPCORE;
+using APPCORE.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;

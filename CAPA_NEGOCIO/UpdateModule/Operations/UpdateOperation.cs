@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using API.Controllers;
-using CAPA_DATOS;
-using CAPA_DATOS.Security;
+using APPCORE;
+using APPCORE.Security;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
-using CAPA_NEGOCIO.Utility;
+using AppCore.Services;
 using DataBaseModel;
 using MailKit;
+using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {

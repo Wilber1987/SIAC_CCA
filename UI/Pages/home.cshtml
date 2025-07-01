@@ -1,6 +1,6 @@
 @page
 @using API.Controllers;
-@using CAPA_DATOS.Security;
+@using APPCORE.Security;
 @{
     string? identify = HttpContext.Session?.GetString("seassonKey") ?? "";  
     /*var admin = new Security_Users { Id_User = 1}.Find<Security_Users>();

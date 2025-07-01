@@ -42,7 +42,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         this.FilterOptions = new WFilterOptions({
             Dataset: dataset,
             ModelObject: model,
-            UseManualControlForFiltering : true,
+            UseManualControlForFiltering: true,
             FilterFunction: (DFilt) => {
                 this.MainComponent?.DrawTable(DFilt);
             }
@@ -61,8 +61,15 @@ class Transactional_ConfiguracionesView extends HTMLElement {
             return "DRAW";
         } else if (this.IsNumber(element)) {
             return "NUMBER";
+        } else if (this.IsBoolean(element)) {
+            return "CHECKBOX";
         }
         return "TEXT"
+    }
+    IsBoolean(element) {
+        return element.Tipo_Configuracion == "CHECKBOX"
+            || element.Tipo_Configuracion == "BOOL"
+            || element.Tipo_Configuracion == "BOOLEAN"
     }
 
     IsNumber(element) {
@@ -92,7 +99,7 @@ class Transactional_Configuraciones extends EntityClass {
     Nombre = { type: 'text', disabled: true };
     Descripcion = { type: 'text', disabled: true };
     Valor = { type: 'text' };
-    Tipo_Configuracion = { type: 'text' , disabled: true, hiddenInTable:true };
+    Tipo_Configuracion = { type: 'text', disabled: true, hiddenInTable: true };
 }
 export { Transactional_Configuraciones };
 

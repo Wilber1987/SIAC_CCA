@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CAPA_DATOS\CAPA_DATOS.csproj" />
+    <ProjectReference Include="..\AppCore\AppCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

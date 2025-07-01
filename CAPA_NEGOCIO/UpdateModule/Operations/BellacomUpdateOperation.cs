@@ -1,4 +1,4 @@
-using CAPA_DATOS;
+using APPCORE;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
@@ -63,8 +63,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                         {
                             filterData = [new FilterData
                             {
-                                ObjectName = "DataContract",
-                                PropName = "Id_Tutor_responsable",
+                                PropName = "DataContract",
+                                JsonPropName = "Id_Tutor_responsable",
                                 FilterType = "JSONPROP_EQUAL",
                                 PropSQLType = "int",
                                 Values = new List<string?> { t.Id.ToString() },
