@@ -647,7 +647,7 @@ namespace CAPA_NEGOCIO.Oparations
 						clase.Created_at = DateUtil.ValidSqlDateTime(clase.Created_at.GetValueOrDefault());
 						clase.Updated_at = DateUtil.ValidSqlDateTime(clase.Updated_at.GetValueOrDefault());
 
-						if (existingClase != null && existingClase.Updated_at != clase.Updated_at)
+						if (existingClase != null /*&& existingClase.Updated_at != clase.Updated_at*/)
 						{
 							// Actualizar el registro existente
 							existingClase.Estudiante_id = clase.Estudiante_id;

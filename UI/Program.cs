@@ -66,12 +66,12 @@ builder.Services.AddSession(options =>
 	options.TimeZone = TimeZoneInfo.Local;
 });*/
 
-builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-{
-	options.CronExpression = "*/4 * * * *";
-	//options.CronExpression = "* * * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+//builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+//{
+	//options.CronExpression = "*/4 * * * *";
+
+	//options.TimeZone = TimeZoneInfo.Local;
+//});
 
 /***sincronizacion de siac y bellacom a sistema*/
 /*builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
@@ -111,10 +111,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-/*await new MigrateDocentes().Migrate();
-await new MigrateGestionCursos().Migrate();
-await new MigrateEstudiantes().Migrate();
-await new MigrateNotas().Migrate(null);*/
+
 
 
 app.UseHttpsRedirection();
@@ -126,7 +123,10 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
-
+//await new MigrateDocentes().Migrate();
+//await new MigrateGestionCursos().Migrate();
+//await new MigrateEstudiantes().Migrate();
+//await new MigrateNotas().Migrate(null);
 app.MapRazorPages();
 app.UseEndpoints(endpoints =>
 	{

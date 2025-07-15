@@ -136,11 +136,19 @@ namespace DataBaseModel
                 ).ToList().FirstOrDefault();
                 if (notaBimestral != null)
                 {
-                    notaBimestral.Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10);
+                    //notaBimestral.Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10);
+                     notaBimestral.Calificacion_updated_at = acumulados.Count > 0
+                                                        ? acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10)
+                                                        : DateTime.Now;
+    
                     calificaciones_Groups.Add(BuildCalificacionGroup(notaBimestral, roman));
                 }
                 else
                 {
+                     var ultimaCalificacion = acumulados.Count > 0
+                                                ? acumulados[acumulados.Count - 1]
+                                                : null;
+
                     calificaciones_Groups.Add(new Calificacion_Group
                     {
                         Order = c.First().ThisConfig?.periodo_inicio ?? 1,
@@ -151,7 +159,8 @@ namespace DataBaseModel
                         EvaluacionCompleta = $"{roman} BIMESTRE",
                         Porcentaje = 100,
                         Observaciones = "Sin observaciones",
-                        Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10),
+                        //Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10),
+                        Calificacion_updated_at = ultimaCalificacion?.Calificacion_updated_at.GetValueOrDefault().AddSeconds(10) ?? DateTime.Now,
                         Fecha = acumulados[acumulados.Count - 1].Fecha.GetValueOrDefault().AddSeconds(10)
                     });
                 }
