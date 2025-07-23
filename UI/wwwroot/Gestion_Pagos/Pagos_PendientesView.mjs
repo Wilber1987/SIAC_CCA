@@ -231,7 +231,7 @@ class Pagos_PendientesView extends HTMLElement {
 	 * @param {Detalle_Pago[]} pagosSeleccionados - Pagos ya seleccionados
 	 * @param {Tbl_Pago[]} pagosPendientes - Pagos pendientes de pago
 	 */
-	AgregarPago(control, pago, pagosSeleccionados, pagosPendientes, newDetalle, isParcial = false) {
+	AgregarPago(control, pago, pagosSeleccionados, pagosPendientes, newDetalle) {
 
 		/**@type {HTMLInputElement} */
 		// @ts-ignore
@@ -246,10 +246,17 @@ class Pagos_PendientesView extends HTMLElement {
 			pagosAnteriores.forEach(pagoSeleccionado => {
 				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago == pagoSeleccionado?.Id_Pago)) {
 					pagosAnterioresNoSeleccionados = true;
+				} else {
+					/**@type {Detalle_Pago|undefined} */
+					const pagoSeleccionado = pagosSeleccionados.find(p => p.Pago?.Id_Pago == pagoSeleccionado?.Id_Pago);
+					// @ts-ignore
+					if (pagoSeleccionado?.Monto < pagoSeleccionado?.Pago?.Monto_Pendiente) {
+						pagosAnterioresNoSeleccionados = true;
+					}
 				}
 			});
 			if (pagosAnterioresNoSeleccionados) {
-				document.body.appendChild(ModalMessage('Debe seleccionar los pagos anteriores antes de agregar este.'));
+				document.body.appendChild(ModalMessage('Debe cancelar los pagos anteriores antes de agregar este.'));
 				control.checked = false;  // Desmarcar el checkbox
 				return;
 			}

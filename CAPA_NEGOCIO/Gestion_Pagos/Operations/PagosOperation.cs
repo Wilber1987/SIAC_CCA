@@ -9,6 +9,7 @@ using CAPA_NEGOCIO.Gestion_Pagos.Model;
 using CAPA_NEGOCIO.Gestion_Pagos.Model.PowerTranzTpv;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
+using iText.StyledXmlParser.Jsoup.Helper;
 using Microsoft.Extensions.Configuration;
 
 namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
@@ -46,6 +47,18 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 				FilterData.Greater("Monto_Pendiente", 0)
 			);
 
+		}
+		private List<Tbl_Pago> GetPagosEstudiante(int? estudianteId)
+		{
+			return new Tbl_Pago
+			{
+				orderData = [OrdeData.Asc("Fecha")]
+			}.Where<Tbl_Pago>(
+				FilterData.Equal("Estudiante_Id", estudianteId),
+				//FilterData.ISNull("Fecha_anulacion"),
+				FilterData.Equal("Estado", PagosState.PENDIENTE),
+				FilterData.Greater("Monto_Pendiente", 0)
+			);
 		}
 
 		public List<Estudiantes> UpdatePagosFromBellaconrespaldo(string identify)
@@ -331,17 +344,74 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 		}
 
 
-		public static ResponseService SetPagosRequest(PagosRequest inst, string? identify)
+		public static ResponseService SetPagosRequest(PagosRequest pagosRequest, string? identify)
 		{
-			inst.Monto = inst.Detalle_Pago!.Sum(x => x.Total);
-			inst.Moneda = inst.Detalle_Pago.First().Pago!.Money.ToString();
-
-			SessionServices.Set("PagosRequest", inst, identify);
-			return new ResponseService
+			try
 			{
-				status = 200,
-				message = "solicitud guardada"
-			};
+				#region validar pagos
+
+				var pagosEstudianteSeleccionados = pagosRequest.Detalle_Pago.GroupBy(p => p.Pago?.Estudiante_Id);
+				foreach (var grupo in pagosEstudianteSeleccionados)
+				{
+					int? estudianteId = grupo.Key; // El ID del estudiante
+					List<Tbl_Pago> pagos = new PagosOperation().GetPagosEstudiante(estudianteId);
+					var pagosEstudiantesPendientes = pagos.Where(x => x.Estudiante_Id == estudianteId).ToList();
+					// Iterar por cada pago de ese estudiante
+					foreach (var pago in grupo)
+					{
+						if (ValidarPagos(pago.Pago, grupo.ToList(), pagosEstudiantesPendientes))
+						{
+							return new ResponseService(403, "Debe cancelar los pagos anteriores.");
+						}
+					}
+				}
+				#endregion
+
+				pagosRequest.Monto = pagosRequest.Detalle_Pago!.Sum(x => x.Total);
+				pagosRequest.Moneda = pagosRequest.Detalle_Pago.First().Pago!.Money.ToString();
+
+				SessionServices.Set("PagosRequest", pagosRequest, identify);
+				return new ResponseService
+				{
+					status = 200,
+					message = "solicitud guardada"
+				};
+			}
+			catch (System.Exception ex)
+			{
+				return new ResponseService(500, ex.Message);
+			}
+
+		}
+
+
+
+		public static bool ValidarPagos(Tbl_Pago pago, List<Detalle_Pago> pagosSeleccionados, List<Tbl_Pago> pagosPendientes)
+		{
+			DateTime fechaPagoSeleccionado = pago.Fecha.GetValueOrDefault();
+			// Buscar todos los pagos con fecha menor a la del pago actual
+			var pagosAnteriores = pagosPendientes
+				.Where(p => p.Fecha < fechaPagoSeleccionado)
+				.ToList();
+			bool pagosAnterioresNoSeleccionados = false;
+			foreach (var pagoAnterior in pagosAnteriores)
+			{
+				var detalleSeleccionado = pagosSeleccionados
+					.FirstOrDefault(dp => dp.Pago?.Id_Pago == pagoAnterior.Id_Pago);
+				if (detalleSeleccionado == null)
+				{
+					// No está seleccionado
+					pagosAnterioresNoSeleccionados = true;
+					break;
+				}
+				else if (detalleSeleccionado.Monto < detalleSeleccionado.Pago?.Monto_Pendiente)
+				{
+					// Está seleccionado pero incompleto
+					pagosAnterioresNoSeleccionados = true;
+					break;
+				}
+			}
+			return pagosAnterioresNoSeleccionados;
 		}
 		public static PagosRequest? GetPagoARealizar(string? identify)
 		{
@@ -604,7 +674,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			 	FilterData.Equal("Estado", PagosState.PAGADO)
 			);
 		}
-		
+
 		public List<PagosRequest> GetManagePagosNoRealizados(PagosRequest inst, string? identify)
 		{
 			inst.orderData = [OrdeData.Asc("Fecha")];
