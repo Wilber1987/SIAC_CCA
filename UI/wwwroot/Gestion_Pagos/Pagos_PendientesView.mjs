@@ -331,7 +331,7 @@ class Pagos_PendientesView extends HTMLElement {
 		}
 		
 		.pago-title, .pago-monto {
-			font-size: 20px;
+			font-size: 16px;
 			font-weight: bold;
 		}
 		.pago-monto, .check-pago { 
@@ -408,10 +408,10 @@ class Pagos_PendientesView extends HTMLElement {
 				font-size: 9px;
 			}
 			.pago-title {
-				font-size: 10px;
+				font-size: 9px;
 			}
 			.pago-monto {
-				font-size: 12px;
+				font-size: 10px;
 			}		
 			
 		}
