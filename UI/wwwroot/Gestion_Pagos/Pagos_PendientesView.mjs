@@ -306,6 +306,7 @@ class Pagos_PendientesView extends HTMLElement {
 			flex-direction: column;
 			gap: 5px;
 			flex: 1;
+			font-size: 12px;
 			justify-content:center!important;
 		}
 		.TabContainer {
@@ -377,14 +378,41 @@ class Pagos_PendientesView extends HTMLElement {
 			}
 			.pago-detail {
 				grid-column: span 2;
+				font-size: 11px;
 			}
 			.pago-title {
-				font-size: 14px;
+				font-size: 12px;
 			}
 			.pago-monto {
-				font-size: 16px;
-			}
+				font-size: 14px;
+			}		
 			
+		}
+		@media (max-width: 400px) {
+			w-pagos-view {
+				grid-template-columns: 100%;			
+			}
+			.PagosContainer {
+				padding: 0px;
+				max-height: unset;
+			}
+			.pago-container {
+				padding: 4px;
+			}
+			.pago-card {
+				padding: 8px;
+				grid-template-columns: 48% 48%;
+			}
+			.pago-detail {
+				grid-column: span 2;
+				font-size: 9px;
+			}
+			.pago-title {
+				font-size: 10px;
+			}
+			.pago-monto {
+				font-size: 12px;
+			}		
 			
 		}
 	`
