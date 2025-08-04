@@ -3,13 +3,13 @@ import { Detalle_Pago } from "../Model/Detalle_Pago.js";
 import { PagosRequest } from "../Model/PagosRequest.js";
 import { Tbl_Pago } from "../Model/Tbl_Pago.js";
 import { StylesControlsV2 } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { WOrtograficValidation } from "../WDevCore/WModules/WOrtograficValidation.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 class Pagos_PendientesView extends HTMLElement {
 	constructor() {
 		super();
@@ -62,6 +62,7 @@ class Pagos_PendientesView extends HTMLElement {
 		//console.log(this.pagosSeleccionados);
 		this.DetailContainer.innerHTML = "";
 		this.TotalContainer.innerHTML = "";
+console.log(this.pagosSeleccionados);
 
 		this.pagosSeleccionados.forEach(detalle => {
 			this.DetailContainer.append(html`<div class="pago-details-container">
@@ -70,7 +71,6 @@ class Pagos_PendientesView extends HTMLElement {
 			</div>`);
 			total += detalle.Total ?? 0;
 		});
-
 		this.TotalContainer.append(html`<div class="pago-details-container">
 			<div>Total</div>                 
 			<div>${WOrtograficValidation.es(this.pagosSeleccionados[0]?.Pago?.Money)} ${ConvertToMoneyString(total)}</div>                
@@ -171,7 +171,7 @@ class Pagos_PendientesView extends HTMLElement {
 				// @ts-ignore
 				pagoInput.value = pago.Monto_Pendiente;
 			}
-			Detalle_Pago.ActualizarDetalle(newDetalle, parseFloat(ev.target.value))
+			Detalle_Pago.ActualizarDetalle(newDetalle, parseFloat(ev.target.value))			
 			this.UpdatePagos();
 		}}" />`
 		const checkPago = html`<input type="checkbox" class="check-pago Btn pago-control${pago.Id_Pago}" id="pago${pago.Id_Pago}" onchange="${(ev) => {
@@ -189,19 +189,22 @@ class Pagos_PendientesView extends HTMLElement {
 		<div class="pago-options pago-parcial-check">
 			<label for="pago-parcial${pago.Id_Pago}">Pago parcial</label>
 			<input type="checkbox" class="check-pago" id="pago-parcial${pago.Id_Pago}"  onchange="${(ev) => {
-
 				if (ev.target.checked) {
 					// @ts-ignore
 					checkPago.checked = ev.target.checked;
 					// @ts-ignore
 					pagoInput.value = 0;
 					// @ts-ignore
-					this.AgregarPago(checkPago, pago, pagosSeleccionados, pagosPendientes, newDetalle, true)
+					this.AgregarPago(checkPago, pago, pagosSeleccionados, pagosPendientes, newDetalle)
 					Detalle_Pago.ActualizarDetalle(newDetalle, 0)
 				}
 				else {
 					// @ts-ignore
 					pagoInput.value = pago.Monto_Pendiente;
+					// @ts-ignore
+					checkPago.checked = false;
+					// @ts-ignore
+					this.AgregarPago(checkPago, pago, pagosSeleccionados, pagosPendientes, newDetalle)
 					Detalle_Pago.ActualizarDetalle(newDetalle, pago.Monto_Pendiente)
 				}
 				pagoInput.style.display = ev.target.checked ? "block" : "none";
@@ -225,7 +228,6 @@ class Pagos_PendientesView extends HTMLElement {
 	 * @param {Tbl_Pago[]} pagosPendientes - Pagos pendientes de pago
 	 */
 	AgregarPago(control, pago, pagosSeleccionados, pagosPendientes, newDetalle) {
-
 		/**@type {HTMLInputElement} */
 		// @ts-ignore
 		//const control = ev.target;
@@ -260,7 +262,7 @@ class Pagos_PendientesView extends HTMLElement {
 			// Si se está deseleccionando el pago, eliminar los pagos con fecha posterior
 			// Filtrar todos los pagos seleccionados que tengan una fecha mayor a la del pago deseleccionado
 			// @ts-ignore
-			const pagosASerRemovidos = pagosSeleccionados.filter(p => new Date(p.Pago.Fecha) > fechaPagoSeleccionado);
+			const pagosASerRemovidos = pagosSeleccionados.filter(p => new Date(p.Pago.Fecha).getMonth() > fechaPagoSeleccionado.getMonth());
 			// Eliminar los pagos con fechas posteriores
 			pagosASerRemovidos.forEach(p => {
 				WArrayF.AddOrRemove(p, pagosSeleccionados, false);  // Elimina el pago
@@ -300,7 +302,9 @@ class Pagos_PendientesView extends HTMLElement {
 			gap: 5px;
 			flex: 1;
 			font-size: 12px;
-			justify-content:center!important;
+			justify-content: flex-start !important;
+			border-radius: 10px;
+			padding: 10px;
 		}
 		.TabContainer {
 				display: flex;
