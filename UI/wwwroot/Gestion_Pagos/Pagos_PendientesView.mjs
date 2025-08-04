@@ -184,14 +184,7 @@ class Pagos_PendientesView extends HTMLElement {
 		}}" />`
 		return html`<div class="pago-card" id="pago${pago.Id_Pago}">
 		<div class="pago-detail">
-			<div class="pago-title">${pago.Concepto}</div>
-			<!-- <div class="pago-subtitle">${pago.Concepto}</div> -->
-			<!--<div class="pago-details-container">
-				<div class="pago-subtitle">Documento: ${pago.Documento}</div>
-				<div class="pago-subtitle">Fecha de pago: ${new DateTime(pago.Fecha).toDateFormatEs()}</div>
-				<div class="pago-subtitle">Fecha de limite: ${new DateTime(pago.Fecha_Limite).toDateFormatEs()}</div>
-			</div>-->
-		   
+			<div class="pago-title">${pago.Concepto}</div>		   
 		</div>  
 		<div class="pago-options pago-parcial-check">
 			<label for="pago-parcial${pago.Id_Pago}">Pago parcial</label>
@@ -242,13 +235,13 @@ class Pagos_PendientesView extends HTMLElement {
 		if (control.checked) {
 			let pagosAnterioresNoSeleccionados = false;
 			// @ts-ignore
-			const pagosAnteriores = pagosPendientes.filter(p => new Date(p.Fecha) < fechaPagoSeleccionado);
-			pagosAnteriores.forEach(pagoSeleccionado => {
-				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago == pagoSeleccionado?.Id_Pago)) {
+			const pagosAnteriores = pagosPendientes.filter(p => new Date(p.Fecha).getMonth() < fechaPagoSeleccionado.getMonth());
+			pagosAnteriores.forEach(pagoSeleccionadoAnterior => {
+				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago == pagoSeleccionadoAnterior?.Id_Pago)) {
 					pagosAnterioresNoSeleccionados = true;
 				} else {
 					/**@type {Detalle_Pago|undefined} */
-					const pagoSeleccionado = pagosSeleccionados.find(p => p.Pago?.Id_Pago == pagoSeleccionado?.Id_Pago);
+					const pagoSeleccionado = pagosSeleccionados.find(p => p.Pago?.Id_Pago == pagoSeleccionadoAnterior?.Id_Pago);
 					// @ts-ignore
 					if (pagoSeleccionado?.Monto < pagoSeleccionado?.Pago?.Monto_Pendiente) {
 						pagosAnterioresNoSeleccionados = true;

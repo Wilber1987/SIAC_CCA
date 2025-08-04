@@ -391,7 +391,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Operations
 			DateTime fechaPagoSeleccionado = pago.Fecha.GetValueOrDefault();
 			// Buscar todos los pagos con fecha menor a la del pago actual
 			var pagosAnteriores = pagosPendientes
-				.Where(p => p.Fecha < fechaPagoSeleccionado)
+				.Where(p => p.Fecha.GetValueOrDefault().Month < fechaPagoSeleccionado.Month)
 				.ToList();
 			bool pagosAnterioresNoSeleccionados = false;
 			foreach (var pagoAnterior in pagosAnteriores)
