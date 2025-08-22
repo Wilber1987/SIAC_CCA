@@ -54,27 +54,26 @@ builder.Services.AddSession(options =>
 
 #region CRONJOB
 
-/*builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
 {	
-	options.CronExpression = "/4 8-20 * * *";
+	options.CronExpression = "*/4 8-17 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
-/*builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
+builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {
 	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
-//builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-//{
-	//options.CronExpression = "*/4 * * * *";
-
-	//options.TimeZone = TimeZoneInfo.Local;
-//});
+builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+{
+	options.CronExpression = "*/4 * * * *";
+	options.TimeZone = TimeZoneInfo.Local;
+});
 
 /***sincronizacion de siac y bellacom a sistema*/
-/*builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
+builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
 {
 	options.CronExpression = "0 15 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
@@ -97,7 +96,7 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 	options.CronExpression = "0 1 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
-*/
+
 #endregion
 
 var app = builder.Build();

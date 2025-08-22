@@ -161,7 +161,10 @@ namespace DataBaseModel
                         Observaciones = "Sin observaciones",
                         //Calificacion_updated_at = acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10),
                         Calificacion_updated_at = ultimaCalificacion?.Calificacion_updated_at.GetValueOrDefault().AddSeconds(10) ?? DateTime.Now,
-                        Fecha = acumulados[acumulados.Count - 1].Fecha.GetValueOrDefault().AddSeconds(10)
+                        //Fecha = acumulados[acumulados.Count - 1].Fecha.GetValueOrDefault().AddSeconds(10)
+                        Fecha = acumulados.Count > 0
+                                                        ? acumulados[acumulados.Count - 1].Calificacion_updated_at.GetValueOrDefault().AddSeconds(10)
+                                                        : DateTime.Now
                     });
                 }
                 Estudiante_Clases_View? notaSemestral = c?.Where(Calificacion =>

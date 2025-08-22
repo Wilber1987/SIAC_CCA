@@ -264,7 +264,7 @@ namespace CAPA_NEGOCIO.Oparations
 				
 				try
 				{
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 					familiasMsql.ForEach(tn =>
 					{
 						var existingFamilia = new Familias()
@@ -309,7 +309,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					});
 					MigrateService.UpdateLastUpdate("FAMILIAS");
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 				}
 				catch (Exception ex)
 				{
@@ -364,7 +364,7 @@ namespace CAPA_NEGOCIO.Oparations
 					};
 					var dataMsql = data.Where<Tbl_aca_tutor>(/*filter*/);
 
-					BeginGlobalTransaction();
+				//	BeginGlobalTransaction();
 
 					dataMsql.ForEach(static tn =>
 					{
@@ -413,7 +413,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 					MigrateService.UpdateLastUpdate("PARIENTESUSUARIOS");
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 				}
 				catch (Exception ex)
 				{
@@ -423,7 +423,7 @@ namespace CAPA_NEGOCIO.Oparations
 						forwardedPort.Stop();
 					}
 					client.Disconnect();
-					RollBackGlobalTransaction();
+					//RollBackGlobalTransaction();
 					throw;
 				}
 				finally
@@ -445,7 +445,7 @@ namespace CAPA_NEGOCIO.Oparations
 			);
 			try
 			{
-				BeginGlobalTransaction();
+				//BeginGlobalTransaction();
 				familiasSqlserver.ForEach(f =>
 				{
 					var estudiantesFamilia = new Estudiantes().Where<Estudiantes>(FilterData.Equal("id_familia", f.Id));
@@ -484,7 +484,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 				});
 
-				CommitGlobalTransaction();
+				//CommitGlobalTransaction();
 			}
 			catch (Exception ex)
 			{

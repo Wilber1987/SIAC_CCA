@@ -25,6 +25,29 @@
 			overflow-y: scroll;
 		}
 	</style>
+	
+	<!-- Alerta importante para los padres -->	
+		<div class="alert-warning">
+			⚠️ <strong>Importante:</strong> Estimado padre/madre de familia, después de que se cargue el formulario de pago, el sistema de su banco le solicitará que autorice la transacción mediante un código de verificación.
+
+			<br /><br />
+
+			👉 Este código será enviado por el medio que usted seleccione (mensaje de texto SMS o correo electrónico). Por favor, espere el formulario, elija el medio de envío y revise su bandeja de entrada o su teléfono para obtener el código.
+
+			<br /><br />
+
+			🚫 Si el banco requiere este código y usted no lo ingresa, <strong>el pago no se completará</strong>.
+
+			<br /><br />
+
+			✅ En algunos casos, si su banco no requiere verificación, el pago se completará automáticamente y se mostrará directamente el comprobante.
+
+			<br /><br />
+
+			Gracias por su atención y comprensión.
+		</div>
+
+
 	<iframe id="paymentFrame" style="width: 100%; height: 600px;"
 		src="data:text/html;charset=utf-8,@pagosResponse?.RedirectData" frameborder="0"></iframe>
 	<a style="float: left; margin: 10px" href="https://portal.cca.edu.ni/Gestion_Pagos/Historial_Pagos"	class="btn-success">Ver Historial</a>

@@ -57,7 +57,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     LoggerServices.AddMessageInfo($"migrateDocentes--> Docentes encontrados en MySQL: {docentesMsql.Count}");
 
-                    BeginGlobalTransaction();
+                    //BeginGlobalTransaction();
                     int actualizados = 0;
                     int insertados = 0;
 
@@ -101,13 +101,13 @@ namespace CAPA_NEGOCIO.Oparations
                         }
                     });
 
-                    CommitGlobalTransaction();
+                    //CommitGlobalTransaction();
                     LoggerServices.AddMessageInfo($"migrateDocentes--> Transacción completada. Docentes actualizados: {actualizados}, insertados: {insertados}");
                 }
                 catch (Exception ex)
                 {
                     LoggerServices.AddMessageError("migrateDocentes--> ERROR: migrateDocentes", ex);
-                    RollBackGlobalTransaction(); // restaurar si falla
+                    //RollBackGlobalTransaction(); // restaurar si falla
                 }
                 finally
                 {
