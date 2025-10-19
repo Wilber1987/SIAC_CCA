@@ -32,8 +32,17 @@ export class CalificacionesUtil {
                     instance.Calificaciones.push(objetoF);
                 }
             }
-            
 
+            function toRoman(num, evaluacion) {
+                const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+                // Verifica si 'evaluacion' ya contiene un número romano del 1 al 10
+                const regex = /\b(I|II|III|IV|V|VI|VII|VIII|IX|X)\b/;
+                if (regex.test(evaluacion)) {
+                    return "";
+                }
+                // Si no contiene un número romano, devuelve el correspondiente
+                return roman[num - 1];
+            }
             const counters = {};
             // Mapear sobre las calificaciones para modificar la propiedad "Evaluacion"
             const updatedCalificaciones = instance.Calificaciones.map(calificacion => {
@@ -51,7 +60,7 @@ export class CalificacionesUtil {
                 }
 
                 // Actualizar la evaluación con el número romano
-                const numeroRomano =  "";
+                const numeroRomano = toRoman(counters[letra], calificacion.Evaluacion) ?? "";
                 if (letra.toUpperCase() != "F") {
                     calificacion.Evaluacion = `${numeroRomano}${letra}`;
                     calificacion.EvaluacionCompleta = `${calificacion.EvaluacionCompleta ?? ""}`;
@@ -89,7 +98,7 @@ export class CalificacionesUtil {
 
                 const evFilts = Dataset.filter(A => A.Descripcion != "CONDUCTA").flatMap(instance => instance.Calificaciones)
                     .filter(ev => ev.Evaluacion == header && !isNaN(ev.Resultado)).map(ev => parseFloat(ev.Resultado == "-" ? 0 : ev.Resultado));
-                
+
                 const suma = evFilts.filter(f => !isNaN(f)).reduce((a, b) => a + b, 0);
                 const Promedio = isNaN(suma / validResults.length) ? 0 : suma / validResults.length;
 
@@ -108,8 +117,8 @@ export class CalificacionesUtil {
             console.trace();*/
             return evaluacionesHeaders;
         }
-       /* console.log("evaluaciones");
-        console.table(evaluaciones)*/
+        /* console.log("evaluaciones");
+         console.table(evaluaciones)*/
         return evaluaciones;
     }
 
