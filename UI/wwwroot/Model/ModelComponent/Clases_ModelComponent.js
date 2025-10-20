@@ -5,6 +5,11 @@ import { EntityClass } from '../../WDevCore/WModules/EntityClass.js';
 import { Niveles_ModelComponent } from './Niveles_ModelComponent.js';
 import { Periodo_lectivos_ModelComponent } from './Periodo_lectivos_ModelComponent.js';
 const periodosLectivos = [
+    /*{
+      "Id": new Date().getFullYear() - 2002 ,
+      "Nombre": "Año Lectivo "+ (new Date().getFullYear() - 1),
+      "Nombre_corto": new Date().getFullYear() - 1,
+    },*/
     {
       "Id": new Date().getFullYear() - 2001 ,
       "Nombre": "Año Lectivo "+ new Date().getFullYear(),
