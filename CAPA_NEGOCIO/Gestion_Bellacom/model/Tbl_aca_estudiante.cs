@@ -53,7 +53,7 @@ namespace DataBaseModel
 
     public class ViewEstudiantesMigracion : Tbl_aca_estudiante
     {
-        public int? Id { get; set; }
+        //public int? Id { get; set; }
 
         public object? CreateView()
         {
