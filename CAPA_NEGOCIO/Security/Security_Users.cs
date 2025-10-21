@@ -93,7 +93,7 @@ namespace CAPA_NEGOCIO
 			bool isPariente = false;
 			if (docente == null && pariente == null)
 			{
-				tbl_Profile.ProfileType = CAPA_NEGOCIO.ProfileType.USER;
+				//tbl_Profile.ProfileType = CAPA_NEGOCIO.ProfileType.USER;
 				//return tbl_Profile;
 				return new Tbl_Profile(){
 					Nombres = user.Nombres,
