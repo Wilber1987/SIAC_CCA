@@ -102,7 +102,7 @@ class BaremoComponent extends HTMLElement {
                 //row.push({ value: estudiante.Sexo?.toUpperCase() })
                 //row.push({ value: estudiante.Estado })
 
-                CalificacionesUtil.UpdateCalificaciones(estudiante.Asignaturas);
+                CalificacionesUtil.UpdateByBaremoCalificaciones(estudiante.Asignaturas);
                 //console.log(estudiante.Asignaturas, groupAsignatura);
 
                 groupAsignatura.forEach(asignaturasG => {
