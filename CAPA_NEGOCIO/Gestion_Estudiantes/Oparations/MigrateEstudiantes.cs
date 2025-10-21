@@ -99,10 +99,9 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateEstudiantesSiac(SshTunnelService sshService)
 		{
 			Console.Write("-->migrateEstudiantes");
-
+            int currentYear = MigrationDates.GetCurrentYear();
 			try
-			{
-				
+			{				
 				using (var siacSshClient = sshService.GetSshClient("Siac"))
 				{
 					siacSshClient.Connect();
@@ -112,10 +111,10 @@ namespace CAPA_NEGOCIO.Oparations
 					// Obtener estudiantes de SiacTestViewEstudiantesActivosSiac
 					var estudiante = new ViewEstudiantesActivosSiac();
 					estudiante.SetConnection(MySqlConnections.SiacTest);
-					estudiante.CreateViewEstudiantesActivos();
-					var EstudiantesMsql = estudiante.Get<ViewEstudiantesActivosSiac>();				
+					//estudiante.CreateViewEstudiantesActivos();
+					var EstudiantesMsql = estudiante.Where<ViewEstudiantesActivosSiac>(FilterData.Equal("nombre_corto", currentYear));				
 
-					estudiante.DestroyView("viewestudiantesactivossiac");
+					//estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
 					int i = 0;
 					using (var bellacomSshClient = sshService.GetSshClient("Bellacom"))
@@ -126,7 +125,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 						var estudianteview = new ViewEstudiantesMigracion();
 						estudianteview.SetConnection(MySqlConnections.BellacomTest);
-						estudianteview.CreateView();
+						//estudianteview.CreateView();
 
 						foreach (var est in EstudiantesMsql)
 						{
@@ -151,7 +150,7 @@ namespace CAPA_NEGOCIO.Oparations
 							}
 						}
 
-						estudianteview.DestroyView("viewestudiantesmigracion");
+						//estudianteview.DestroyView("viewestudiantesmigracion");
 						bellacomTunnel.Stop();
 						bellacomSshClient.Disconnect();
 					}
@@ -177,10 +176,11 @@ namespace CAPA_NEGOCIO.Oparations
 			var bellacomConnection = MySqlConnections.BellacomTest;
 			var estudianteView = new ViewEstudiantesMigracion();
 			estudianteView.SetConnection(bellacomConnection);
-			estudianteView.CreateView();
+			//estudianteView.CreateView();
 			var estudiantesView = estudianteView.Where<ViewEstudiantesMigracion>(FilterData.Equal("idtestudiante", est.Codigo)).FirstOrDefault();
 			if (estudiantesView == null)
 			{
+				LoggerServices.AddMessageInfo($"Estudiante con código {est.Codigo} no encontrado en la vista de migración ViewEstudiantesMigracion de bellacom. Registro omitido.");
 				Console.WriteLine($"Estudiante con código {est.Codigo} no encontrado en la vista de migración. Registro omitido.");
 				return;
 			}
