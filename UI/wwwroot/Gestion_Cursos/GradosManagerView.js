@@ -1,17 +1,12 @@
 //@ts-check
 import { Clases } from "../Model/Clases.js";
 import { Estudiante_Clases_View } from "../Model/Estudiante_Clases_View.js";
-import { Materias } from "../Model/Materias.js";
 import { Clases_ModelComponent } from "../Model/ModelComponent/Clases_ModelComponent.js";
-import { Materias_ModelComponent } from "../Model/ModelComponent/Materias_ModelComponent.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
-import { LoadinModal } from "../WDevCore/WComponents/LoadinModal.js";
-import { FilterDateRange, WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { ComponentsManager, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
 import { BaremoComponent } from "./BaremoComponent.js";
-import { MateriasDetails } from "./MateriasDetails.js";
 
 
 /**
@@ -43,7 +38,7 @@ class GradosManagerView extends HTMLElement {
         const MainTable = new WTableComponent({
             ModelObject: new Clases_ModelComponent(),
             EntityModel: new Clases(),
-            isActiveSorts: false,            
+            isActiveSorts: false,
             Options: {
                 Filter: true,
                 UseManualControlForFiltering: true,
@@ -54,14 +49,19 @@ class GradosManagerView extends HTMLElement {
                         name: "Baremo", action: async (/** @type {Clases} */ Clases) => {
                             if (this.Manager.DomComponents.find(c => c.id == `Clase${Clases.Id}`)) {
                                 this.Manager.NavigateFunction(`Clase${Clases.Id}`);
-                            }          
+                            }
                             this.claseResponse = await new Estudiante_Clases_View({
                                 Grado: Clases.Grado,
                                 Nombre_corto_periodo: Clases.Periodo_lectivos.Nombre_corto,
                                 Nombre_corto_nivel: Clases.Niveles.Nombre_corto
-                            }).GetClasesCompleta();                                                    
+                            }).GetClasesCompleta();
                             // @ts-ignore
-                            this.Manager.NavigateFunction(`Clase${Clases.Id}`, new BaremoComponent({ Clase: Clases ,  Dataset: this.claseResponse }));
+                            this.Manager.NavigateFunction(`Clase${Clases.Id}`,
+                                new BaremoComponent({
+                                    Clase: Clases, Dataset: this.claseResponse,
+                                    Controls: [html`<button class="toolbar-button cyan" onclick="${() => this.Manager.NavigateFunction("Main-Table", MainTable)}">Regresar</button>`]
+                                })
+                            );
                         }
                     }
                 ]

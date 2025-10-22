@@ -11,6 +11,7 @@ import { css } from "../WDevCore/WModules/WStyledRender.js";
  * @typedef {Object} BaremoComponentConfig 
     * @property {Array<Clase_Group>} Dataset
     * @property {Clases} Clase
+    * @property {Array<any>} Controls
 **/
 class BaremoComponent extends HTMLElement {
     /**
@@ -26,14 +27,13 @@ class BaremoComponent extends HTMLElement {
     }
     connectedCallback() { }
     Draw = async () => {
-
         const data = []
         //HEADER
         this.OptionContainer.append(html`<div class="header-baremo-container">
             <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>          
             <div class="header-detail"><label class="detail">Nivel:</label><label  class="value">${this.Config.Clase.Niveles.Nombre}</label></div>
             <div class="header-detail"><label class="detail">Grado:</label><label  class="value">${this.Config.Clase.Nombre_Grado}</label></div>
-            ${new WPrintExportToolBar({ ExportXlsAction: (tool) => this.ExportXlsAction(tool, data) })}
+            ${new WPrintExportToolBar({ ExportXlsAction: (tool) => this.ExportXlsAction(tool, data), Controls: this.Config.Controls })}
         </div>`);
         this.header = html`<div class="header-baremo-container">
             <h3>BAREMO ${this.Config.Clase.Nombre_Grado} GRADO ${this.Config.Clase.Periodo_lectivos.Nombre_corto}</h3>           
@@ -71,6 +71,9 @@ class BaremoComponent extends HTMLElement {
         </div>`
         this.Config.Dataset?.forEach((clase_Group, groupIndex) => {
 
+            //const asigs = clase_Group.Estudiantes.flatMap(est => est.Asignaturas).map(asi => asi);
+            //console.log(asigs);
+
             clase_Group.Estudiantes.forEach((estudiante, estudianteIndex) => {
                 const headers = []
                 const headersB1 = []
@@ -103,7 +106,7 @@ class BaremoComponent extends HTMLElement {
                 //row.push({ value: estudiante.Estado })
 
                 CalificacionesUtil.UpdateByBaremoCalificaciones(estudiante.Asignaturas);
-                //console.log(estudiante.Asignaturas, groupAsignatura);
+                console.log(estudiante.Asignaturas, groupAsignatura);
 
                 groupAsignatura.forEach(asignaturasG => {
                     const asignatura = estudiante.Asignaturas.find(ea => ea.Descripcion_Corta == asignaturasG?.EvalProperty) ?? new Asignatura_Group();
@@ -114,12 +117,12 @@ class BaremoComponent extends HTMLElement {
                     const calificacion = this.GetBaremoCal(asignatura);
 
                     if (estudianteIndex == 0 && groupIndex == 0) {
-                        asignaturaColumnB1.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
-                        asignaturaColumnB2.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
-                        asignaturaColumnB3.append(html`<label class="header-name">${asignatura.Descripcion_Corta}</label>`)
-                        headersB1.push({ value: asignatura.Descripcion_Corta });
-                        headersB2.push({ value: asignatura.Descripcion_Corta });
-                        headersBR.push({ value: asignatura.Descripcion_Corta });
+                        asignaturaColumnB1.append(html`<label class="header-name">${asignaturasG.Descripcion_Corta}</label>`)
+                        asignaturaColumnB2.append(html`<label class="header-name">${asignaturasG.Descripcion_Corta}</label>`)
+                        asignaturaColumnB3.append(html`<label class="header-name">${asignaturasG.Descripcion_Corta}</label>`)
+                        headersB1.push({ value: asignaturasG.Descripcion_Corta });
+                        headersB2.push({ value: asignaturasG.Descripcion_Corta });
+                        headersBR.push({ value: asignaturasG.Descripcion_Corta });
                         if (calificacion.length == 2) {
                             btnDesplegarB1.innerText = calificacion[0].EvaluacionCompleta;
                             btnDesplegarB2.innerText = calificacion[1].EvaluacionCompleta;
@@ -137,7 +140,7 @@ class BaremoComponent extends HTMLElement {
                         asignaturaColumnB2.append(html`<label class="asig-value b2 ${styleLabel} ${asignatura.Descripcion_Corta}" style="${style2}">
                             ${calificacion[1].Resultado}</label>`)
                         asignaturaColumnB3.append(html`<label class="asig-value br ${styleLabel} ${asignatura.Descripcion_Corta}" style="${styleR}">
-                            ${result < 0 ? "-" : result }</label>`)
+                            ${result < 0 ? "-" : result}</label>`)
                         rowB1.push({ value: calificacion[0].Resultado, style: style1 })
                         rowB2.push({ value: calificacion[1].Resultado, style: style2 })
                         rowBR.push({ value: result < 0 ? "-" : result, style: styleR })
