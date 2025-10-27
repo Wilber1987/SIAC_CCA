@@ -5,13 +5,13 @@
 @using DataBaseModel
 @using System.Text.Json
 @{
-    Layout = "_LayoutUpdates";
+   // Layout = "_LayoutUpdates";
 
     string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";
     if (!SecurityController.HavePermission(identify, Permissions.UPDATE_FAMILY_DATA))
     {
-        Response.Redirect("/Security/Login");
-        return;
+        //Response.Redirect(location: "/Security/Login");
+        //return;
     }
     UserModel user = AuthNetCore.User(identify);
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
@@ -19,11 +19,11 @@
     if(pariente != null){
         pariente.Entro_al_sistema = true;
     }
-    var Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
-    var Religiones = new Religiones().Get<Religiones>();
-    var Paises = new Paises().Get<Paises>();
-    var Regiones = new Regiones().Get<Regiones>();
-    var Titulos = new Titulos().Get<Titulos>();
+    List<Estados_Civiles>? Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
+    List<Religiones>? Religiones = new Religiones().Get<Religiones>();
+    List<Paises>? Paises = new Paises().Get<Paises>();
+    List<Regiones>? Regiones = new Regiones().Get<Regiones>();
+    List<Titulos>? Titulos = new Titulos().Get<Titulos>();
     // Convertir las listas en JSON para usarlas en JavaScript
     string estadosCivilesJson = JsonSerializer.Serialize(Estados_Civiless);
     string religionesJson = JsonSerializer.Serialize(Religiones);

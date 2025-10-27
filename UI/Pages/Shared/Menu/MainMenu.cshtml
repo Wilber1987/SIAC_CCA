@@ -118,6 +118,9 @@
 				<li><a href="~/Gestion_Pagos/Historial_Pagos" data-key="t-sales">Pagos pendientes</a></li>
 			</ul>
 		</li>
+		<li class="menuParentOption">
+			<li><a href="~/update/index" class="alert-success-link" data-key="t-sales">Actualización Datos</a></li>
+		</li>
 	}
 	@if (SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))
 	{    
@@ -135,6 +138,8 @@
 				<li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li>
 				<li><a href="~/Reports/PagosReport" data-key="t-report">Informes de pagos</a></li>
 				<li><a href="~/Reports/PagosNoAutorizadosReport" data-key="t-report">Informes de pagos no autorizados</a></li>
+				<!-- template -->
+				<li><a href="~/Templates/TemplateView" data-key="t-report">Configuracion de plantillas</a></li>
 			</ul>
 		</li>
 	}

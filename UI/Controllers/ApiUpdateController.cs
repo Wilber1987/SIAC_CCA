@@ -13,19 +13,19 @@ namespace UI.Controllers
 	public class ApiUpdateController : ControllerBase
 	{
 		[HttpPost]
-		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public UpdateData GetUpdateData()
 		{
 			return UpdateOperation.GetUpdateData(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
-		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService UpdateEstudiante(Estudiantes_Data_Update Inst)
 		{
 			return UpdateOperation.UpdateEstudiante(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
-		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService UpdatePariente(Parientes_Data_Update Inst)
 		{
 			return UpdateOperation.UpdateParientes(HttpContext.Session.GetString("sessionKey"), Inst);

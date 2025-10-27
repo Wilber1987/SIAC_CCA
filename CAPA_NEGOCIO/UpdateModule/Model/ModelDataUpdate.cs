@@ -4,7 +4,7 @@ using DataBaseModel;
 
 namespace CAPA_NEGOCIO.UpdateModule.Model
 {
-    public class Parientes_Data_Update : Parientes
+	public class Parientes_Data_Update : Parientes
 	{
 
 		public Parientes_Data_Update()
@@ -14,8 +14,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		{
 			AdapterUtil.SetMatchingProperties(inst, this);
 		}
-
-
+		[PrimaryKey(Identity = false)]
+		public new int? Id { get; set; }
+		[PrimaryKey(Identity = false)]
+		public string? Periodo_Lectivo_Update { get; set; }
 		public bool? Correo_enviado { get; set; }
 		public bool? Actualizo { get; set; }
 		public DateTime? Fecha_actualizacion { get; set; }
@@ -23,7 +25,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public bool? Entro_al_sistema { get; set; }
 		public string? Ip_ingreso { get; set; }
 		public DateTime? Fecha_ingreso_al_sistema { get; set; }
-		public bool? Migrado { get; set;}
+		public bool? Migrado { get; set; }
 
 	}
 
@@ -32,7 +34,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public ViewParientesUpdate()
 		{
 		}
-		public string? Idtfamilia { get; set;}
+		public string? Idtfamilia { get; set; }
 
 	}
 

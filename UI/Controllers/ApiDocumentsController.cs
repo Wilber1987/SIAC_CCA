@@ -10,6 +10,8 @@ using iText.Layout;
 using iText.Html2pdf;
 using iText.Layout.Properties;
 using iText.Kernel.Geom;
+using CAPA_NEGOCIO.Templates.Model;
+using APPCORE;
 //using Microsoft.Playwright;
 
 namespace UI.Controllers
@@ -24,6 +26,7 @@ namespace UI.Controllers
 		{
 			return Inst.GetBoletinDataFragments();
 		}
+
 		[HttpPost]
 		[AuthController]
 		public object GetDataFragments(DocumentsData Inst)
@@ -82,17 +85,7 @@ namespace UI.Controllers
 				return memoryStream.ToArray();
 			}
 		}
-		/*public async Task<byte[]> GeneratePdfWithPlaywright(string htmlContent, string? pageType)
-		{
-			using var playwright = await Playwright.CreateAsync();
-			await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions { Headless = true });
-			var page = await browser.NewPageAsync();
-			await page.SetContentAsync(htmlContent);
-			var pdfStream = await page.PdfStreamAsync(new PagePdfOptions { Format =  pageType ?? "A4"  });
-			using var memoryStream = new MemoryStream();
-			await pdfStream.CopyToAsync(memoryStream);
-			return memoryStream.ToArray();
-		}*/
+
 		private static iText.Kernel.Geom.PageSize GetPageSize(string? pageType)
 		{
 			switch (pageType)
@@ -115,6 +108,23 @@ namespace UI.Controllers
 		}
 
 
+		//Manejo de templates
+		[HttpPost]
+		[AuthController]
+		[AdminAuth]
+		public List<TemplateData> GetTemplateData(TemplateData Inst)
+		{
+			return Inst.Get<TemplateData>();
+		}
+		
+		//Manejo de templates
+		[HttpPost]
+		[AuthController]
+		[AdminAuth]
+		public ResponseService UpdateTemplateData(TemplateData Inst)
+		{
+			return Inst.Update();
+		}
 	}
 	public class PdfRequest
 	{

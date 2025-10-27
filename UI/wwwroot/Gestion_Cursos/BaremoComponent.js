@@ -106,7 +106,7 @@ class BaremoComponent extends HTMLElement {
                 //row.push({ value: estudiante.Estado })
 
                 CalificacionesUtil.UpdateByBaremoCalificaciones(estudiante.Asignaturas);
-                console.log(estudiante.Asignaturas, groupAsignatura);
+                //console.log(estudiante.Asignaturas, groupAsignatura);
 
                 groupAsignatura.forEach(asignaturasG => {
                     const asignatura = estudiante.Asignaturas.find(ea => ea.Descripcion_Corta == asignaturasG?.EvalProperty) ?? new Asignatura_Group();

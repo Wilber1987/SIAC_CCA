@@ -22,9 +22,22 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static UpdateData GetUpdateData(string sessionKey)
 		{
 			UserModel user = AuthNetCore.User(sessionKey);
-			Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-			Parientes? parienteE = new Parientes { Id = pariente?.Id }.Find<Parientes>();
+			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+
+			Parientes_Data_Update? pariente = new Parientes_Data_Update
+			{
+				Id = parienteE?.Id,
+				Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+			}.Find<Parientes_Data_Update>();
+			if (pariente == null)
+			{
+				pariente = new Parientes_Data_Update();
+				AdapterUtil.SetMatchingProperties(parienteE, pariente);
+				pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
+				pariente.Save(fullInsert: false);
+			}
+
 			if (pariente?.Estudiantes_responsables_familia != null)
 			{
 				if (pariente.Actualizo == true)
@@ -306,23 +319,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		public static List<ViewParientesUpdate>? GetParientesQueLoguearon(Parientes_Data_Update inst)
 		{
 			UpdateFechaActualizacion();
-			//inst.filterData?.Add(FilterData.Limit(100));
-			//inst.Entro_al_sistema = true;
-			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
-
-			//return inst.SimpleGet<Parientes_Data_Update>();
-
 			var parientes = new ViewParientesUpdate();
 			return parientes.Where<ViewParientesUpdate>(FilterData.Equal("Entro_al_sistema", true));
 		}
 		public static List<ViewParientesUpdate>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
 			UpdateFechaActualizacion();
-			//inst.filterData?.Add(FilterData.Limit(100));
-			//inst.Actualizo = true;
-			//inst.filterData?.Add(FilterData.Equal("Actualizo", 1));
-			//return inst.SimpleGet<Parientes_Data_Update>();
-
 			var parientes = new ViewParientesUpdate();
 			return parientes.Where<ViewParientesUpdate>(FilterData.Equal("Actualizo", true));
 		}
@@ -467,14 +469,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static List<ViewParientesUpdate>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
 		{
-			//inst.filterData?.Add(FilterData.Limit(100));
-			//inst.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
-			//inst.filterData?.Add(FilterData.NotNull("User_id"));
-			//inst.filterData?.Add(FilterData.Equal("Entro_al_sistema", 1));
-			//return inst.SimpleGet<Parientes_Data_Update>();
-
-
-
 			var parientes = new ViewParientesUpdate();
 			parientes.filterData?.Add(FilterData.ISNull("Entro_al_sistema"));
 			parientes.filterData?.Add(FilterData.NotNull("User_id"));

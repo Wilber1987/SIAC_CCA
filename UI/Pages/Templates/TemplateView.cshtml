@@ -1,0 +1,18 @@
+@page
+@using API.Controllers
+@using APPCORE.Security;
+@{
+	string? identify = HttpContext?.Session.GetString("sessionKey");
+	if (!SecurityController.IsAdmin(identify))
+	{
+		Response.Redirect("/Security/Login");
+		return;
+	}
+}
+<script type="module">
+    import {TemplateView} from "/Template/TemplateView.mjs";
+    window.onload = ()=> {
+        Main.append(new TemplateView());
+    } 
+</script>
+<div id="Main"></div>
