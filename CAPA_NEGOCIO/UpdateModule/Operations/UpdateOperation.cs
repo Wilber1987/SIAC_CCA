@@ -350,6 +350,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							pariente.Acepto_terminos = true;
 							pariente.User_id = parienteF.User_id;
 							pariente.Fecha_actualizacion = DateTime.Now;
+							pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							pariente.Update();
 						}
 						else
@@ -369,6 +370,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						}.Find<Estudiantes_Data_Update>();
 						if (estudianteF != null)
 						{
+							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							estudiante.Update();
 						}
 						else
@@ -404,6 +406,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			}
 			catch (Exception ex)
 			{
+				RollBackGlobalTransaction();
 				LoggerServices.AddMessageError("Error al guardar la informacion", ex);
 				throw;
 			}
