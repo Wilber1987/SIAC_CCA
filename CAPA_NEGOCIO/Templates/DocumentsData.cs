@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using APPCORE.Util;
 using CAPA_NEGOCIO.Templates.Model;
 using Microsoft.IdentityModel.Tokens;
+using CAPA_NEGOCIO.SystemConfig;
+using APPCORE.Services;
 
 namespace CAPA_NEGOCIO.Templates
 {
@@ -72,14 +74,12 @@ namespace CAPA_NEGOCIO.Templates
 			var theme = new PageConfig();
 			var contratos = new List<string>();
 
-			var template = new TemplateData { Id_Template = 1 }.Find<TemplateData>();
-			if (template!.Descripcion == null)
-			{
-				template.Descripcion = TemplatesDataType.CONTRATO_ACTUALIZACION;
-				template.Update();
-			}
+			var template = new TemplateData { Descripcion = TemplatesDataType.CONTRATO_ACTUALIZACION }.Find<TemplateData>();
+			
 			//var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
-			var plantilla = $"<!DOCTYPE html><head><meta charset=\"UTF-8\"/></head><body>{string.Join("", template.Sections.Select(section => section.Data).ToList())}</body></html>";
+			var plantilla = @$"<div style=""page-break-after: always; margin-bottom: 40px;"">{
+				string.Join("", template?.Sections.Select(section => section.Body).ToList())
+			}</div>";
 
 			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
 
@@ -138,52 +138,42 @@ namespace CAPA_NEGOCIO.Templates
 			{
 				try
 				{
-					using (var client = _sshTunnelService.GetSshClient("Bellacom"))
+					List<Viewestudiantesboletas> boletasMsql;
+					var contratoEstudiante = plantillaBase;
+					var anio = fechaActual.Year;
+					var nexanio = fechaActual.Year + 1;
+					if (SystemConfigImpl.IsWMachine())
 					{
-						client.Connect();
-						var forwardedPort = _sshTunnelService.GetForwardedPort("Bellacom", client, 3308);
-						forwardedPort.Start();
+						boletasMsql = BoletasTestData.GetTestData();
+					}
+					else
+                    {
+                        boletasMsql = GetBoletas(fechaActual, estudiante);
+                    }
+                    if (boletasMsql != null)
+					{
+						var boletaMatricula = boletasMsql.Find(b => b.idservicio != 7);
+						var boletaColegiatura = boletasMsql.Find(b => b.idservicio == 7);
 
-						var boleta = new Viewestudiantesboletas();
-						boleta.SetConnection(MySqlConnections.BellacomTest);
-						boleta.IdTEstudiante = Convert.ToInt32(estudiante.Codigo);
-						boleta.Ejercicio = fechaActual.Year;
-						boleta.IdTPeriodoAcademico = fechaActual.Year + 1;
+						var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
+						var familia = new Familias().Where<Familias>(FilterData.Equal("id", estudiante.Id_familia)).FirstOrDefault();
 
-						var contratoEstudiante = plantillaBase;
-						var anio = fechaActual.Year;
-						var nexanio = fechaActual.Year + 1;
+						double? total = boletaMatricula?.ImporteNetoMD + boletaColegiatura?.ImporteNetoMD;
+						string footer = Transactional_Configuraciones.GetBoletaFooter()?.Valor ?? "";
 
-						var boletaMsql = boleta.GetBoletas().FirstOrDefault();
-						forwardedPort.Stop();
-						client.Disconnect();
-
-						if (boletaMsql != null)
-						{
-							var fechaVencimiento = theme.FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES;
-							var familia = new Familias().Where<Familias>(FilterData.Equal("id", estudiante.Id_familia)).FirstOrDefault();
-
-							contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
-																   .Replace("{{ ciclo }}", nexanio.ToString())
-																   .Replace("{{ nombre }}", $"{boletaMsql?.Nombres} {boletaMsql?.Apellidos}".Trim())
-																   .Replace("{{ no_expediente }}", familia?.Idtfamilia?.ToString() ?? string.Empty)
-																   .Replace("{{ curso_actual }}", $"{boletaMsql?.Grado_Actual} {boletaMsql?.Curso_Actual}".Trim())
-																   .Replace("{{ promueve }}", $"{boletaMsql?.Grado_Siguiente} {boletaMsql?.Curso_Siguiente}".Trim())
-																   .Replace("{{ moneda }}", boletaMsql?.IdTMoneda.ToString() ?? string.Empty)
-																   .Replace("{{ importe_matricula }}", boletaMsql?.ImporteNetoMD.ToString() ?? string.Empty)
-																   .Replace("{{ fecha_vencimiento }}", fechaVencimiento);
-
-							boletas.Add(contratoEstudiante);
-						}
-						else
-						{
-							forwardedPort.Stop();
-							client.Disconnect();
-							Console.Write($"No se encontró boleta para el estudiante con código {estudiante.Codigo}");
-							//throw new Exception("No se encontró boleta para el estudiante con código " + estudiante.Codigo);
-						}
-
-
+						contratoEstudiante = contratoEstudiante.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
+							.Replace("{{ ciclo }}", nexanio.ToString())
+							.Replace("{{ nombre }}", $"{estudiante?.Nombre_completo}".Trim())
+							.Replace("{{ no_expediente }}", familia?.Idtfamilia?.ToString() ?? string.Empty)
+							.Replace("{{ curso_actual }}", $"{boletaMatricula?.Grado_Actual} {boletaMatricula?.Curso_Actual}".Trim())
+							.Replace("{{ promueve }}", $"{boletaMatricula?.Grado_Siguiente} {boletaMatricula?.Curso_Siguiente}".Trim())
+							.Replace("{{ moneda }}", "C$")
+							.Replace("{{ importe_matricula }}", NumberUtility.ConvertToMoneyString(boletaMatricula?.ImporteNetoMD) )
+							.Replace("{{ importe_colegiatura }}", NumberUtility.ConvertToMoneyString(boletaColegiatura?.ImporteNetoMD))
+							.Replace("{{ importe_total }}", NumberUtility.ConvertToMoneyString(total))
+							.Replace("{{ footer }}", footer)
+							.Replace("{{ fecha_vencimiento }}", fechaVencimiento);
+						boletas.Add(contratoEstudiante);
 					}
 				}
 				catch (System.Exception ex)
@@ -198,7 +188,28 @@ namespace CAPA_NEGOCIO.Templates
 			return this;
 		}
 
-		public DocumentsData GetGeneralFragments()
+        private List<Viewestudiantesboletas> GetBoletas(DateTime fechaActual, Estudiantes_Data_Update estudiante)
+        {
+            List<Viewestudiantesboletas> boletasMsql;
+            using (var client = _sshTunnelService.GetSshClient("Bellacom"))
+            {
+                client.Connect();
+                var forwardedPort = _sshTunnelService.GetForwardedPort("Bellacom", client, 3308);
+                forwardedPort.Start();
+                var boleta = new Viewestudiantesboletas();
+                boleta.SetConnection(MySqlConnections.BellacomTest);
+                boleta.IdTEstudiante = Convert.ToInt32(estudiante.Codigo);
+                boleta.Ejercicio = fechaActual.Year;
+                boleta.IdTPeriodoAcademico = fechaActual.Year + 1;
+                boletasMsql = boleta.GetBoletas();
+                forwardedPort.Stop();
+                client.Disconnect();
+
+            }
+            return boletasMsql;
+        }
+
+        public DocumentsData GetGeneralFragments()
 		{
 			var theme = new PageConfig();
 			Header = HtmlContentGetter.ReadHtmlFile("header.html", "Resources");
@@ -215,5 +226,4 @@ namespace CAPA_NEGOCIO.Templates
 		}
 
 	}
-
 }

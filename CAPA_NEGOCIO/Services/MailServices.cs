@@ -8,9 +8,9 @@ namespace CAPA_NEGOCIO.Services
 	public class MailServices
 	{
 		public static readonly MailConfig? Config = SystemConfigImpl.GetSMTPDefaultConfig();
-		
+
 		public static async void SendMail(List<string> toMails,
-		string from, string subject,
+		string? from, string subject,
 		string templatePage,
 		 List<ModelFiles>? attachs = null)
 		{
@@ -40,7 +40,7 @@ namespace CAPA_NEGOCIO.Services
 				LoggerServices.AddMessageError($"error enviando correos de invitacion", ex);
 			}
 		}
-		
+
 		public static async void SendMailAceptedContract(Parientes_Data_Update tutor, UpdateData updateData)
 		{
 
@@ -76,19 +76,31 @@ namespace CAPA_NEGOCIO.Services
 						Tutor_responsable = tutor.Nombre_completo,
 						Estudiantes = updateData.Estudiantes.Select(e => e.Id.GetValueOrDefault()).ToList(),
 						Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList(),
-						Fecha = DateTime.Now
+						Fecha = DateTime.Now,
+						Year = DateTime.Now.Year.ToString(),
 					},
 					Documents_Contracts = [contrato],
 					Documents_Boletas = [boleta]
 
 				}.Save();
+				//ENVIO DE CORREO
+				await SendContractMail(tutor, templatePage, Attach_Files);
 			}
 			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError($"error guardando los archivos", ex);
 			}
+
+		}
+
+		private static async Task SendContractMail(Parientes_Data_Update tutor, string templatePage, List<ModelFiles> Attach_Files)
+		{
 			try
 			{
+				if (SystemConfigImpl.IsWMachine())
+				{
+					return;
+				}
 				var emailService = new EmailAccountService();
 				var account = emailService.GetAvailableEmailAccount();
 				await SMTPMailServices.SendMail(
@@ -106,6 +118,5 @@ namespace CAPA_NEGOCIO.Services
 				LoggerServices.AddMessageError($"error enviando correos de contrato y boleta", ex);
 			}
 		}
-
 	}
 }

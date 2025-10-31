@@ -55,7 +55,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						.Select(r => r.Parientes ?? new Parientes())
 						.DistinctBy(p => p.Id)
 						.ToList();
-						
+
 					UpdateData updateData = new UpdateData
 					{
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
@@ -79,7 +79,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			try
 			{
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
-				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;		
+				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			}
 			catch (System.Exception)
 			{
@@ -203,9 +203,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateEstudiante(string? sessionKey, Estudiantes_Data_Update inst)
 		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var estudiante = new Estudiantes_Data_Update { Id = inst.Id }.SimpleFind<Estudiantes_Data_Update>();
+			var estudiante = new Estudiantes_Data_Update
+			{
+				Id = inst.Id,
+				Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+			}.SimpleFind<Estudiantes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
 			{
 				if (estudiante != null)
@@ -234,9 +239,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateParientes(string? sessionKey, Parientes_Data_Update inst)
 		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var parienteData = new Parientes_Data_Update { Id = inst.Id }.SimpleFind<Parientes_Data_Update>();
+			var parienteData = new Parientes_Data_Update
+			{
+				Id = inst.Id,
+				Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+			}.SimpleFind<Parientes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
 			{
 				if (parienteData != null)
@@ -321,13 +331,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			UserModel user = AuthNetCore.User(sessionKey);
 			try
 			{
+				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
 					BeginGlobalTransaction();
 					inst.Parientes?.ForEach(pariente =>
 					{
-						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
+						Parientes_Data_Update? parienteF = new Parientes_Data_Update
+						{
+							Id = pariente.Id,
+							Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+						}.Find<Parientes_Data_Update>();
+
 						if (parienteF != null)
 						{
 							pariente.Actualizo = true;
@@ -340,12 +356,17 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						{
 							pariente.Estudiantes_responsables_familia = null;
 							pariente.Fecha_actualizacion = DateTime.Now;
+							pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							pariente.Save();
 						}
 					});
 					inst.Estudiantes?.ForEach(estudiante =>
 					{
-						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update { Id = estudiante.Id }.Find<Estudiantes_Data_Update>();
+						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update
+						{
+							Id = estudiante.Id,
+							Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+						}.Find<Estudiantes_Data_Update>();
 						if (estudianteF != null)
 						{
 							estudiante.Update();
@@ -354,6 +375,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						{
 							estudiante.Responsables = null;
 							estudiante.Estudiante_clases = null;
+							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							if (estudiante?.Puntos_Transportes?.Count > 0)
 							{
 								estudiante.Usa_transporte = true;

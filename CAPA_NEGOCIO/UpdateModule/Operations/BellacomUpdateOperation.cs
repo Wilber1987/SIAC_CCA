@@ -61,14 +61,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                         //obtenemos los datos de las nuevas actualizaciones para trasladarlos a bellacom
                         var updatedDataQuery = new UpdatedData
                         {
-                            filterData = [new FilterData
-                            {
-                                PropName = "DataContract",
-                                JsonPropName = "Id_Tutor_responsable",
-                                FilterType = "JSONPROP_EQUAL",
-                                PropSQLType = "int",
-                                Values = new List<string?> { t.Id.ToString() },
-                            }]
+                            filterData = [
+                                FilterData.JsonPropEqual("DataContract", "Id_Tutor_responsable", t.Id),
+                                FilterData.JsonPropEqual("DataContract", "Year", DateTime.Now.Year.ToString())
+                            ]
                         };
 
                         updatedDataQuery.SetConnection(conection);

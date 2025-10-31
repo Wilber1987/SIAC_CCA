@@ -1,6 +1,7 @@
 using APPCORE;
 using APPCORE.Services;
 using DataBaseModel;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace CAPA_NEGOCIO.UpdateModule.Model
 {
@@ -45,6 +46,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		{
 			AdapterUtil.SetMatchingProperties(inst, this);
 		}
+		[PrimaryKey(Identity = false)]
+		public new int? Id { get; set; }
+		
+		[PrimaryKey(Identity = false)]
+		public string? Periodo_Lectivo_Update { get; set; }
 
 		[JsonProp]
 		public SecurityOption? SecurityOption { get; set; }
@@ -116,6 +122,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public List<int>? Estudiantes { get; set; }
 		public List<int>? Tutores { get; set; }
 		public DateTime? Fecha { get; set; }
-
+		public string? Year { get; set; }
 	}
 }

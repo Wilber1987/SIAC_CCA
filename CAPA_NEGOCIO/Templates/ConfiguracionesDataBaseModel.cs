@@ -10,7 +10,7 @@ namespace DataBaseModel
 		public string? Descripcion { get; set; }
 		public string? Valor { get; set; }
 		public string? Tipo_Configuracion { get; set; }
-		public Transactional_Configuraciones? GetConfig(String prop)
+		public Transactional_Configuraciones? GetConfig(string prop)
 		{
 			Nombre = prop;
 			return Find<Transactional_Configuraciones>();
@@ -59,13 +59,18 @@ namespace DataBaseModel
 			}
 			return find;
 		}
-		
-        public static void InitDefaultParams()
+
+		public static void InitDefaultParams()
 		{
 			Transactional_Configuraciones transactional_Configuraciones = new Transactional_Configuraciones();
 			//PIE DE PAGINA DE LAS BOLETAS QUE SE ENVIAN POR CORREO
-			transactional_Configuraciones.GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);            
-        }
+			transactional_Configuraciones.GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+		}
+		
+		public static Transactional_Configuraciones? GetBoletaFooter()
+        {
+            return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+        } 
 	}
 	public class PageConfig
 	{

@@ -119,13 +119,13 @@
             <tr>
                 <td class="bg-gray" style="width: 250px;"><strong>COLEGIATURA (ENERO):</strong></td>
                 <td class="celda-datos">
-                    {{ moneda }} {{ importe_matricula }}
+                    {{ moneda }} {{ importe_colegiatura }}
                 </td>
             </tr>
             <tr>
                 <td class="bg-gray" style="width: 250px;"><strong>TOTAL A PAGAR:</strong></td>
                 <td class="celda-datos">
-                    {{ moneda }} {{ importe_matricula }}
+                    {{ moneda }} {{ importe_total }}
                 </td>
             </tr>
             <tr>
@@ -137,8 +137,11 @@
         </table>
         <hr/>
         <br/><br/>
-        <div style="width: 100%; text-align: right;">
-            <p style="text-align: center; width: 380px; border-top: 1px dashed black; float: right">
+        <div style="width: 100%; text-align: justify; margin-top: 10px;">
+             {{ footer }}
+        </div>
+        <div style="width: 100%; text-align: center; margin-top: 30px;">
+            <p style="text-align: center; width: 380px; border-top: 1px dashed black; margin: 20px auto;">
                 <strong>Firma y Sello</strong>
             </p>
         </div>

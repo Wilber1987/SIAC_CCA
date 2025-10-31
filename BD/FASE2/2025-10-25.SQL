@@ -128,7 +128,5 @@ ALTER TABLE OLIMPO.update_data.parientes_data_update ADD CONSTRAINT parientes_da
 ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD SecurityOption nvarchar(MAX) NULL;
 --todo borrar manualmente si es necesario la llave primeria actual de estudiantes_data_update y colocar las llaves primarias de periodo lectivo y id
 ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD Periodo_Lectivo_Update nvarchar(100) DEFAULT 2024 NOT NULL;
-
-
 ALTER TABLE OLIMPO.update_data.estudiantes_data_update DROP CONSTRAINT PK__estudian__3213E83FD683993A;
 ALTER TABLE OLIMPO.update_data.estudiantes_data_update ADD CONSTRAINT estudiantes_data_update_PK PRIMARY KEY (Periodo_Lectivo_Update,id);

@@ -51,6 +51,11 @@ namespace CAPA_NEGOCIO.SystemConfig
 			//TODO IMPLEMENTAR ESTE METODO
 			return false;
 		}
+
+		public static bool IsWMachine()
+        {
+			return Environment.MachineName == "WILBER";
+        }
 	}
 
 }

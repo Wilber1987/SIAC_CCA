@@ -37,7 +37,7 @@ namespace UI.Controllers
 			return new UpdateOperation().StartUpdateProcess(updateData);
 		}
 		[HttpPost]
-		[AuthController(Permissions.SEND_MESSAGE)]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public ResponseService SaveUpdateDataRequest(UpdateDataRequest Inst)
 		{
 			return new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst );
