@@ -44,13 +44,15 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 	                            inner  join  tbl_aca_periodoacademico per on per.idperiodoacademico = matri.idperiodoacademico
 	                            inner join tbl_aca_academianivel nactual on nactual.idacademianivel = matri.idacademianivel 
 	                            inner join tbl_aca_academiaarea areaactual on areaactual.idacademiaarea = nactual.idacademiaarea
-	                            where idestudiante = (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"')  and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + this.Ejercicio + @"))
+	                            where idestudiante = 
+                                (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"')  and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + this.Ejercicio + @"))
 	                            nactual on nactual.idestudiante = est.idestudiante 
 	                            left join ( select matri.idestudiante, nactual.texto as grado, areaactual.texto as nivel from tbl_aca_matricula matri
 	                            inner  join  tbl_aca_periodoacademico per on per.idperiodoacademico = matri.idperiodoacademico
 	                            inner join tbl_aca_academianivel nactual on nactual.idacademianivel = matri.idacademianivel 
 	                            inner join tbl_aca_academiaarea areaactual on areaactual.idacademiaarea = nactual.idacademiaarea
-	                            where idestudiante = (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"') and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + (this.Ejercicio + 1) + @"))
+	                            where idestudiante = 
+                                (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"') and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + (this.Ejercicio + 1) + @"))
 	                            nsiguiente on nsiguiente.idestudiante = est.idestudiante 
                                 inner join tbl_gen_moneda tgm on tgm.idmoneda  = cargo.idmoneda
                             where 	est.idtestudiante  = '" + this.IdTEstudiante + @"'

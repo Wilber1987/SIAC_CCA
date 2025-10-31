@@ -54,11 +54,11 @@ builder.Services.AddSession(options =>
 
 #region CRONJOB
 
-builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
-{	
-	options.CronExpression = "*/4 8-17 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+//builder.Services.AddCronJob<SendInvitationToUpdateCronJob>(options =>
+//{	
+	//options.CronExpression = "*/4 8-17 * * *";
+	//options.TimeZone = TimeZoneInfo.Local;
+//});
 
 //ENVIA DATOS A BELLACOM
 builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>

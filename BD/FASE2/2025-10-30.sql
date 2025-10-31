@@ -1,0 +1,3 @@
+
+ALTER TABLE estudiantes
+ADD retenido BIT NOT NULL DEFAULT 0;
