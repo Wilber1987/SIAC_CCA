@@ -30,6 +30,7 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
         public string? Grado_Siguiente { get; set; }
         public string? Curso_Siguiente { get; set; }
         public int? idfamilia { get; set; }
+        public int? idservicio { get; set; }
 
 
         public string GetBoletasQuery()
