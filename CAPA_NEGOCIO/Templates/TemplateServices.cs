@@ -11,7 +11,6 @@ namespace CAPA_NEGOCIO.Templates
 
         public static string ClaseBoletin(Clase_Group clase_Group)
         {
-
             return "";
         }
 

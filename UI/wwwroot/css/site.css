@@ -62,7 +62,8 @@
     font-weight: 100 !important;
 }
 .main-content{
-    margin-top: 2vh !important;
+    margin-top: 2vh !important;    
+    min-height: 100% !important;
 }
 .notification-item {
     cursor: pointer;

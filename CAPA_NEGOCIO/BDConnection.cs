@@ -22,7 +22,7 @@ namespace BusinessLogic.Connection
 		//  public WDataMapper? DataMapper = SqlADOConexion.BuildDataMapper("localhost", "sa", "zaxscd", "IPS5Db");
 		public WDataMapper? DataMapperSeguimiento { get; set; }
 		public IConfigurationSection SqlCredentials { get; private set; }
-		public bool IniciarMainConecction(bool isDebug = false)
+		public bool InitMainConnection(bool isDebug = false)
 		{
 			if (isDebug)
 			{

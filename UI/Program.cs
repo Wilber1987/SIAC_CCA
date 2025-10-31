@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 using CAPA_NEGOCIO.Oparations;
+using DataBaseModel;
 
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 
@@ -101,7 +102,8 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 #endregion
 
 var app = builder.Build();
-new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
+new BDConnection().InitMainConnection(app.Environment.IsDevelopment());
+Transactional_Configuraciones.InitDefaultParams();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

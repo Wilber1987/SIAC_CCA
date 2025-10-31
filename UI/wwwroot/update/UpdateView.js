@@ -122,17 +122,14 @@ class UpdateView extends HTMLElement {
      */
     EstudianteCard(estudiante) {
         const original = new Estudiantes(estudiante);
-        const idaVueltaForm = this.IdaVueltaForm(estudiante);
+        //const idaVueltaForm = this.IdaVueltaForm(estudiante);
         const form = this.buildUpdateEstForm(estudiante);
         this.Forms.push(form);
         const card = html`<div class="element-detail">
             <div class="element-title">
                 ${estudiante.Nombre_completo} - ${estudiante.Codigo}
-                <button class="Btn" onclick="${() => {
-                if (estudiante.IdaVueltaForm && estudiante.IdaVueltaForm.Form) {
-                    estudiante.IdaVueltaForm.Form.DrawComponent();
-                }
-                this.EditEstudiante(estudiante, original, idaVueltaForm, form)
+                <button class="Btn" onclick="${() => {                
+                this.EditEstudiante(estudiante, original, form)
             }}">Actualizar datos</button>
             </div>            
         </div>`
@@ -145,7 +142,7 @@ class UpdateView extends HTMLElement {
      * 
      * @param {Estudiantes} estudiante - The student object for which the form is being generated.
      * @returns {HTMLElement} - The HTML element containing the transportation form.
-     */
+     
     IdaVueltaForm(estudiante) {
         estudiante.Puntos_Transportes = estudiante.Puntos_Transportes ?? [];
 
@@ -232,7 +229,7 @@ class UpdateView extends HTMLElement {
             <div class="element-title">${inputDireccion}</div>
         </div>`;
         return formIdaYVuelta;
-    }
+    }*/
 
 
     /**
@@ -240,18 +237,16 @@ class UpdateView extends HTMLElement {
      * The form is created with the student's data and allows the user to update the student's details.
      * The form also has buttons to go back to the list of students and to save the changes.
      * @param {Estudiantes} estudiante - The student object to be edited.
-     * @param {Estudiantes} original - The student object with the original data.
-     * @param {HTMLElement} idaVueltaForm - The form element for selecting transportation options.
+     * @param {Estudiantes} original - The student object with the original data.     
      * @param {WForm} form - The form object for editing the student's details.
      */
-    EditEstudiante(estudiante, original, idaVueltaForm, form) {
+    EditEstudiante(estudiante, original, form) {
 
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
             <h3>${estudiante.Nombre_completo}</h3>  
             ${form}
-            ${idaVueltaForm}
             <div  class="form-options">
                 <button class="Btn" onclick="${() => this.regresarEstudiantes(estudiante, original)}">Regresar</button>
                 <button class="Btn" onclick="${() => this.GuardarEstudinte(estudiante, original)}">Actualizar datos</button>
@@ -335,8 +330,6 @@ class UpdateView extends HTMLElement {
     }
 
     GuardarPariente(pariente, original) {
-        console.log(pariente, original);
-
         this.append(ModalVericateAction(() => {
             for (const prop in pariente) {
                 original[prop] = pariente[prop];
@@ -487,6 +480,9 @@ class UpdateView extends HTMLElement {
             width: 20px;
             background-color: #fff;
             color: #fff;
+        }
+        .element-container {
+            padding: 20px;
         }
         .element-container .element-detail{
            display: block;

@@ -18,19 +18,45 @@ export const sexos = [
 ];
 export const viveConJson = [
     { "id": "A", "Descripcion": "Ambos Padres" },
-    { "id": "M", "Descripcion": "Madre" }, 
+    { "id": "M", "Descripcion": "Madre" },
     { "id": "P", "Descripcion": "Padre" },
-    { "id": "B", "Descripcion": "Abuelo(a)" }, 
+    { "id": "B", "Descripcion": "Abuelo(a)" },
     { "id": "T", "Descripcion": "Tio(a)" },
     { "id": "O", "Descripcion": "Otros" }
 ];
+
+export class SecurityOption {
+    /** @param {Partial<SecurityOption>} [props] */
+    constructor(props) {
+        //@ts-ignore   
+        for (const prop in props) { this[prop] = props[prop]; };
+    }
+    /**@type {Number?} */ Id = null;
+    /**@type {String?} */ Descripcion = null;
+}
+export class SecurityOption_ModelComponent {
+    /** @param {Partial<SecurityOption_ModelComponent>} [props] */
+    constructor(props) {
+        //@ts-ignore   
+        for (const prop in props) { this[prop] = props[prop]; };
+    }
+    /**@type {ModelProperty} */ Id = { type: "Number" };
+    /**@type {ModelProperty} */ Descripcion = { type: "TEXT" };
+}
+
+export const securityOptions = [
+    new SecurityOption({ Descripcion: "No, deseo que el colegio lo gestione para este estudiante. ", Id: 1 }),
+    new SecurityOption({ Descripcion: "No, pero voy a gestionarlo por mi cuenta. ", Id: 2 }),
+    new SecurityOption({ Descripcion: "Sí, ya cuento con un seguro vigente hasta diciembre 2026.", Id: 3 }),
+]
+
+
 class Estudiantes_ModelComponent extends EntityClass {
     /** @param {Partial<Estudiantes_ModelComponent>} [props] */
     constructor(props) {
         super(props, 'Update');
-        for (const prop in props) {
-            this[prop] = props[prop];
-        }
+        //@ts-ignore   
+        for (const prop in props) { this[prop] = props[prop]; };
     }
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: 'date', disabled: true };
     /**@type {ModelProperty}*/ Religion = { type: 'WSelect', ModelObject: () => new Religiones_ModelComponent(), hiddenInTable: true, fullDetail: false, require: false };
@@ -44,6 +70,11 @@ class Estudiantes_ModelComponent extends EntityClass {
     }
     /**@type {ModelProperty}*/ Aniosacra = { type: 'number', label: "Año de Sacramento", min: 1990, require: false };
 
+    /**@type {ModelProperty}*/ SecurityOption = {
+        type: 'WRADIO', label: "Seleccione",
+        Dataset: securityOptions,
+        //ModelObject: new SecurityOption_ModelComponent()
+    };
 }
 export { Estudiantes_ModelComponent }
 

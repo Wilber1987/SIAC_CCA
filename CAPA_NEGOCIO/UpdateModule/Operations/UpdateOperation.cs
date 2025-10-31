@@ -42,7 +42,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
-
 					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
@@ -51,24 +50,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
 
-					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-						.Get<Estudiantes_responsables_familia>();*/
-
-					//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
-
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])
 						.Select(r => r.Parientes ?? new Parientes())
 						.DistinctBy(p => p.Id)
 						.ToList();
-
+						
 					UpdateData updateData = new UpdateData
 					{
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
 					};
 					GetBoletaContracts(updateData);
-
 					return updateData;
 				}
 
@@ -86,16 +79,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			try
 			{
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
-				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-				/*if (updateData.Contrato == "")
-				{
-					updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
-				}
-				if (updateData.Boleta == "") 
-				{
-					updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
-				}*/
-
+				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;		
 			}
 			catch (System.Exception)
 			{
@@ -109,16 +93,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
 										FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 									).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-			/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-				.Get<Estudiantes_responsables_familia>();*/
-
 			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
-
 			List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
 					FilterData.In("Id", parientesId)
 				).ToList();
-
 			UpdateData updateData = new UpdateData
 			{
 				Estudiantes = estudiantes,

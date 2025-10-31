@@ -7,6 +7,8 @@ using AppCore.Services;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
 using APPCORE.Util;
+using CAPA_NEGOCIO.Templates.Model;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CAPA_NEGOCIO.Templates
 {
@@ -70,9 +72,17 @@ namespace CAPA_NEGOCIO.Templates
 			var theme = new PageConfig();
 			var contratos = new List<string>();
 
-			var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+			var template = new TemplateData { Id_Template = 1 }.Find<TemplateData>();
+			if (template!.Descripcion == null)
+			{
+				template.Descripcion = TemplatesDataType.CONTRATO_ACTUALIZACION;
+				template.Update();
+			}
+			//var plantilla = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
+			var plantilla = $"<!DOCTYPE html><head><meta charset=\"UTF-8\"/></head><body>{string.Join("", template.Sections.Select(section => section.Data).ToList())}</body></html>";
 
 			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
+
 			DateTime fechaActual = DateTime.Now;
 			DateTime fechaManana = fechaActual.AddDays(1);
 
@@ -80,7 +90,7 @@ namespace CAPA_NEGOCIO.Templates
 			var mes = fechaManana.ToString("MMMM", new System.Globalization.CultureInfo("es-ES"));
 			var anio = fechaManana.Year;
 
-    		int currentYear = (fechaActual.Month == 12) ? fechaActual.Year + 1 : fechaActual.Year;
+			int currentYear = (fechaActual.Month == 12) ? fechaActual.Year + 1 : fechaActual.Year;
 
 			plantilla = plantilla.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
 								.Replace("{{ current_year }}", currentYear.ToString())
@@ -89,34 +99,22 @@ namespace CAPA_NEGOCIO.Templates
 			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
 
-			/*var segundoResponsable = data.Parientes?
-						   .FirstOrDefault(p => p.User_id == null && p.Id != primerParienteConUserId?.Id);*/
-
 			var segundoResponsable = data.Parientes?
 						   .FirstOrDefault(p => p.User_id == null && p.Id != primerParienteConUserId?.Id);
-
-
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
-
-
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
-
 			plantilla = plantilla.Replace("{{ nombre_responsable2_firma }}", segundoResponsable?.Nombre_completo ?? string.Empty);
-			
-
 			var familia = new Familias().Where<Familias>(
 										FilterData.Equal("id", primerParienteConUserId.Id_familia)
 									).FirstOrDefault();
-
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
 				var contratoEstudiante = plantilla;
 				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
 													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
 													   .Replace("{{ codigo_familia }}", familia?.Idtfamilia?.ToString() ?? string.Empty);
-
 				contratoEstudiante = contratoEstudiante.Replace("{{ dia }}", dia.ToString())
 														.Replace("{{ mes }}", mes)
 														.Replace("{{ anio }}", anio.ToString());
@@ -185,7 +183,7 @@ namespace CAPA_NEGOCIO.Templates
 							//throw new Exception("No se encontró boleta para el estudiante con código " + estudiante.Codigo);
 						}
 
-						
+
 					}
 				}
 				catch (System.Exception ex)
@@ -217,4 +215,5 @@ namespace CAPA_NEGOCIO.Templates
 		}
 
 	}
+
 }

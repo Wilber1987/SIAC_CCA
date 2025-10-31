@@ -40,16 +40,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 
 	public class Estudiantes_Data_Update : Estudiantes
 	{
-		public Estudiantes_Data_Update()
-		{
-
-		}
+		public Estudiantes_Data_Update() { }
 		public Estudiantes_Data_Update(Estudiantes inst)
 		{
 			AdapterUtil.SetMatchingProperties(inst, this);
 		}
-		public bool? Usa_transporte { get; set; }
 
+		[JsonProp]
+		public SecurityOption? SecurityOption { get; set; }
+
+		#region  DEPRECADOS DESDE EL 2024
+		public bool? Usa_transporte { get; set; }
+		//DEPRECADOS EN EL 2024
 		[JsonProp]
 		public List<Adress>? Puntos_Transportes { get; set; }
 
@@ -73,12 +75,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 				e.Puntos_Transportes?.Count > 0
 			).ToList();
 		}
+		#endregion
 	}
 
 	public class Adress
 	{
 		public string? Direccion { get; set; }
 		public string? Trayecto { get; set; } //IDA y VUELTA
+	}
+
+	public class SecurityOption
+	{
+		public int? Id { get; set; }
+		public string? Descripcion { get; set; }
 	}
 
 

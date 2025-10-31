@@ -1,13 +1,16 @@
 :root {
-    --primary-color: rgb(9, 68, 108);
-    --secundary-color: rgb(255, 255, 255);
-    --tertiary-color: rgba(0, 0, 0, 0);
-    --fourth-color: rgba(255, 255, 255, 0.9);
-    --font: "Open Sans", sans-serif;
-    --font-primary-color: #ffffff;
-    --font-secundary-color: #ffffff;
-    --font-tertiary-color: rgb(0, 191, 165);
-    --font-fourth-color: #595959;
+    --primary-color: rgba(255, 255, 255, 100%);
+	--secundary-color: rgb(244 244 244);
+	--tertiary-color: rgb(240, 240, 240);
+	--fourth-color: rgb(224, 224, 224);
+	--fifty-color: rgb(214, 214, 214);
+	--sexty-color: rgb(184, 183, 183);
+
+	--font: "Open Sans", sans-serif;
+	--font-primary-color: #222222;
+	--font-secundary-color: rgb(11, 89, 153);
+	--font-tertiary-color: rgb(255, 255, 255);
+	--font-fourth-color: #444444;
 
 
     --base-link-menu: #1B2850;
