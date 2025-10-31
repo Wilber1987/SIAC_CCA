@@ -123,8 +123,8 @@ namespace CAPA_NEGOCIO.Oparations
 						var bellacomTunnel = sshService.GetForwardedPort("Bellacom", bellacomSshClient, 3308);
 						bellacomTunnel.Start();
 
-						var estudianteview = new ViewEstudiantesMigracion();
-						estudianteview.SetConnection(MySqlConnections.BellacomTest);
+						//var estudianteview = new ViewEstudiantesMigracion();
+						//estudianteview.SetConnection(MySqlConnections.BellacomTest);
 						//estudianteview.CreateView();
 
 						foreach (var est in EstudiantesMsql)
@@ -205,7 +205,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Segundo_apellido = est.Segundo_apellido;
 			existingEstudiante.Fecha_nacimiento = est.Fecha_nacimiento;
 			existingEstudiante.Sexo = est.Sexo;
-			existingEstudiante.Foto = est.Foto;  // Usa el operador null conditional
+			existingEstudiante.Foto = est.Foto;  // Usar el operador null conditional
 			existingEstudiante.Direccion = est.Direccion;
 			existingEstudiante.Codigo = est.Codigo;
 			existingEstudiante.Created_at = est.Created_at;
@@ -221,6 +221,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Sacramento = estudiantesView.Sacramento;
 			existingEstudiante.Aniosacra = estudiantesView.Aniosacra;
 			existingEstudiante.Colegio_procede = estudiantesView.Colegio;
+			existingEstudiante.Retenido = estudiantesView.Retenido;
 
 
 			// Verifica la foto de SIAC usando el cliente SSH pasado
