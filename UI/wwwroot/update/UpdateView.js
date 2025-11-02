@@ -19,7 +19,7 @@ import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
 import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 /**
  * @typedef {Object} ComponentConfig
- * * @property {Object} [propierty]
+ * * @property {Object<string, any>} [ActualizacionFooter]
  */
 class UpdateView extends HTMLElement {
     /**
@@ -41,35 +41,54 @@ class UpdateView extends HTMLElement {
         this.UpdateData = new UpdateData();
         /**@type {Array<WForm>} */
         this.Forms = [];
-        this.Draw();
+        this.AllEstudiantesRetenidos = false;
+        this.ActualizacionFooter = props.ActualizacionFooter;
 
+        this.Draw();
     }
     Draw = async () => {
         // @ts-ignore
         this.UpdateData = await new UpdateData().Get();
+        this.AllEstudiantesRetenidos = this.UpdateData.Estudiantes.every(est => est.Retenido == true);
         this.NavManager = new WAppNavigator({
             NavStyle: "tab",
             Inicialize: true,
             TabContainer: this.TabContainer,
             Elements: this.NavElements()
-        })
-
+        });
         this.append(this.NavManager);
     }
     OptionsContainer() {
         return WRender.Create({
             className: "OptionsContainer", children: [
                 html`<button class="Btn check-icon" onclick="${() => {
-                    this.Manager.NavigateFunction("finalizacio-proceso", this.ActualizacionForm());
+                    if (this.AllEstudiantesRetenidos) {
+                        this.Manager.NavigateFunction("finalizacio-proceso",
+                            html`<div class="OptionsContainer">
+                                <h3>Estimados padres de familia, no es posible actualizar a ningún estudiante</h3>
+                                <hr>
+                                <div>
+                                    <h4>Estimados retenidos:</h4>
+                                    <ul> 
+                                        ${this.UpdateData?.Estudiantes?.map(estudiante => html`<li class="element-detail">                                           
+                                                ${estudiante.Nombre_completo} - ${estudiante.Codigo}
+                                        </li>`)}
+                                    </ul>                                    
+                                </div>
+                            </div>`,
+                        );
+                    } else {
+                        this.Manager.NavigateFunction("finalizacio-proceso", this.ActualizacionForm());
+                    }
                 }}">Finalizar proceso de actualización</button>`,
             ]
         });
     }
 
-
     NavElements() {
         return [{
-            name: "Tutores", action: () => {
+            name: "Tutores", rendered: this.UpdateData?.Parientes?.length > 0,
+            action: () => {
                 return html`<div class="element-container">
                     <div class="element-data">
                         ${this.UpdateData?.Parientes?.map(pariente => this.TutorCard(pariente))}
@@ -129,9 +148,7 @@ class UpdateView extends HTMLElement {
         const card = html`<div class="element-detail">
             <div class="element-title">
                 ${estudiante.Nombre_completo} - ${estudiante.Codigo}
-                ${this.GetSchoolarState(estudiante, original, form)
-            }
-                
+                ${this.GetSchoolarState(estudiante, original, form)}                
             </div>            
         </div>`
         return card;
@@ -263,6 +280,7 @@ class UpdateView extends HTMLElement {
             ${this.CustomStyle.cloneNode(true)}      
             <h3>${estudiante.Nombre_completo}</h3>  
             ${form}
+            <div  class="form-options"> ${this.ActualizacionFooter?.Valor ?? ""}</div>           
             <div  class="form-options">
                 <button class="Btn" onclick="${() => this.regresarEstudiantes(estudiante, original)}">Regresar</button>
                 <button class="Btn" onclick="${() => this.GuardarEstudinte(estudiante, original)}">Actualizar datos</button>
@@ -429,7 +447,11 @@ class UpdateView extends HTMLElement {
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
-                            if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent())) {
+                            if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent({
+                                SecurityOption: {
+                                    type: 'WRADIO', require: true
+                                }
+                            }))) {
                                 this.append(ModalMessage(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
                                 return;
                             }
@@ -449,8 +471,8 @@ class UpdateView extends HTMLElement {
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
                             console.log(response);
-                            
-                            this.append(ModalMessage(response.message, undefined));
+
+                            this.append(ModalMessage(response.message, undefined, true));
                         }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                     }}">Aceptar</button>
@@ -472,6 +494,7 @@ class UpdateView extends HTMLElement {
         }
         w-form, .form-container, .form-options {
             padding: 20px;
+            margin: 20px;
             border: #d6d6d6 solid 1px;
             border-radius: 0.2cm;
             background-color: #fff;

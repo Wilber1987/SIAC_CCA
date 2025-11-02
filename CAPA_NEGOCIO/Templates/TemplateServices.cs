@@ -57,7 +57,7 @@ namespace CAPA_NEGOCIO.Templates
                 sb.Replace("{{ logo }}", theme.MEDIA_IMG_PATH + theme.LOGO_PRINCIPAL)
                   .Replace("{{ link }}", theme.URL_BASE)
                   .Replace("{{ usuario }}", model.Mail ?? string.Empty)
-                  .Replace("{{ contrasena }}", decryptedPassword)
+                  //.Replace("{{ contrasena }}", decryptedPassword)
                   .Replace("{{ nombre }}", sanitizedNombreCompleto);
 
                 return sb.ToString();

@@ -16,7 +16,7 @@ namespace UI.Controllers
 		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
 		public UpdateData GetUpdateData()
 		{
-			return UpdateOperation.GetUpdateData(HttpContext.Session.GetString("sessionKey"));
+			return UpdateOperation.GetOwUpdateData(HttpContext.Session.GetString("sessionKey"));
 		}
 		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
@@ -75,7 +75,7 @@ namespace UI.Controllers
 		}		
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
-		public UpdateData GetUpdatedData(Parientes_Data_Update inst)
+		public UpdateData? GetUpdatedData(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetUpdateDataById(inst);
 		}	

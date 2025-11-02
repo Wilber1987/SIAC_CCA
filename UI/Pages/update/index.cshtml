@@ -2,10 +2,12 @@
 @using API.Controllers
 @using APPCORE.Security
 @using CAPA_NEGOCIO.UpdateModule.Model
+@using CAPA_NEGOCIO.UpdateModule.Operations
 @using DataBaseModel
 @using System.Text.Json
+@using DocumentFormat.OpenXml.EMMA
 @{
-   // Layout = "_LayoutUpdates";
+    // Layout = "_LayoutUpdates";
 
     string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";
     if (!SecurityController.HavePermission(identify, Permissions.UPDATE_FAMILY_DATA))
@@ -16,48 +18,59 @@
     UserModel user = AuthNetCore.User(identify);
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
     string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "IP no disponible";
-    if(pariente != null){
+    if (pariente != null)
+    {
         pariente.Entro_al_sistema = true;
     }
+    UpdateData? getUpdateData = UpdateOperation.GetOwUpdateData(identify);
     List<Estados_Civiles>? Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
     List<Religiones>? Religiones = new Religiones().Get<Religiones>();
     List<Paises>? Paises = new Paises().Get<Paises>();
     List<Regiones>? Regiones = new Regiones().Get<Regiones>();
     List<Titulos>? Titulos = new Titulos().Get<Titulos>();
+    Transactional_Configuraciones? ActualizacionFooter = Transactional_Configuraciones.GetActualizacionFooter();
+
     // Convertir las listas en JSON para usarlas en JavaScript
     string estadosCivilesJson = JsonSerializer.Serialize(Estados_Civiless);
     string religionesJson = JsonSerializer.Serialize(Religiones);
     string paisesJson = JsonSerializer.Serialize(Paises);
     string regionesJson = JsonSerializer.Serialize(Regiones);
     string titulosJson = JsonSerializer.Serialize(Titulos);
+    string ActualizacionFooterJson = JsonSerializer.Serialize(ActualizacionFooter);
 
 }
 
-@if (pariente != null && pariente.Acepto_terminos == true)
+@if (pariente != null && pariente.Acepto_terminos == true
+&& getUpdateData?.UpdatedData?.HaveRetenidos == false)
 {
-    <h1 style="text-align: center;">¡Datos actualizados! Revise la información enviada a su correo.</h1>
+    <div id="Main" class="app-container">
+        <h1 style="text-align: center;">¡Datos actualizados! Revise la información enviada a su correo.</h1>
+    </div>
 }
 else
 {
-    if(pariente!= null){
+    if (pariente != null)
+    {
         pariente!.Ip_ingreso = ipAddress;
         pariente.Update();
         pariente.Fecha_ingreso_al_sistema = DateTime.Now;
     }
-    <script type="module">        
+    <script type="module">
         import { UpdateView } from "/update/UpdateView.js";
         const ESTADOS_CIVILES = @Html.Raw(estadosCivilesJson);
         const RELIGIONES = @Html.Raw(religionesJson);
         const PAISES = @Html.Raw(paisesJson);
         const REGIONES = @Html.Raw(regionesJson);
         const TITULOS = @Html.Raw(titulosJson);
+        const ActualizacionFooter = @Html.Raw(ActualizacionFooterJson);
         window.onload = () => {
             Main.append(new UpdateView({
                 ESTADOS_CIVILES: ESTADOS_CIVILES,
                 RELIGIONES: RELIGIONES,
                 PAISES: PAISES,
                 REGIONES: REGIONES,
-                TITULOS: TITULOS
+                TITULOS: TITULOS,
+                ActualizacionFooter: ActualizacionFooter
             }));
         }
     </script>

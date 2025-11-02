@@ -14,12 +14,13 @@ using AppCore.Services;
 using DataBaseModel;
 using MailKit;
 using APPCORE.Util;
+using APPCORE.Services;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
 	public class UpdateOperation : TransactionalClass
 	{
-		public static UpdateData GetUpdateData(string sessionKey)
+		public static UpdateData? GetOwUpdateData(string sessionKey)
 		{
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
@@ -37,12 +38,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 				pariente.Save(fullInsert: false);
 			}
-
 			if (pariente?.Estudiantes_responsables_familia != null)
 			{
 				if (pariente.Actualizo == true)
 				{
-					return GetUpdatedData(pariente, periodoLectivo);
+					return GetUpdatedData(pariente, periodoLectivo, true);
 				}
 				else
 				{
@@ -61,25 +61,31 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
 					};
-					GetBoletaContracts(updateData);
+					GetBoletaContracts(updateData, pariente);
 					return updateData;
 				}
 
 			}
+
+			var updatedDataQuery = new UpdatedData().Find<UpdatedData>(
+				FilterData.JsonPropEqual("DataContract", "Id_Tutor_responsable", parienteE?.Id),
+				FilterData.JsonPropEqual("DataContract", "Year", periodoLectivo?.Nombre_corto)
+			);
 			return new UpdateData
 			{
 				Estudiantes = [],
-				Parientes = []
+				Parientes = [],
+				UpdatedData = updatedDataQuery
 			};
 
 		}
 
-		private static void GetBoletaContracts(UpdateData updateData)
+		private static void GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
 		{
 			try
 			{
-				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
-				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
+				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData, pariente)?.Body;
+				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData, pariente)?.Body;
 			}
 			catch (System.Exception)
 			{
@@ -88,27 +94,57 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			}
 		}
 
-		private static UpdateData GetUpdatedData(Parientes_Data_Update? pariente, Periodo_lectivos? periodoLectivo)
+		private static UpdateData? GetUpdatedData(Parientes_Data_Update? pariente, Periodo_lectivos? periodoLectivo, bool onlyRetenidos = false)
 		{
+
+			var updatedDataQuery = new UpdatedData().Find<UpdatedData>(
+				FilterData.JsonPropEqual("DataContract", "Id_Tutor_responsable", pariente?.Id),
+				FilterData.JsonPropEqual("DataContract", "Year", periodoLectivo?.Nombre_corto)
+			);
+
 			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
-										FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-									).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
+				FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray()),
+				FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto)
+			);
+
+			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? [])
+				.Select(f => f.Pariente_id).Distinct().ToArray();
+
 			List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
-					FilterData.In("Id", parientesId)
-				).ToList();
+					FilterData.In("Id", parientesId),
+					FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto)
+			).ToList();
+
+			/* solo estudiantes que fueron retenidos al momento de actualizar, 
+			 * es posible que estos dejen de estar retenidos a posterior, 
+			 * son los unicos que estaran filtrados*/
+			var estudiantesRetenidos = updatedDataQuery?.HaveRetenidos == true && onlyRetenidos ?
+			 new Estudiantes().Where<Estudiantes>(
+				FilterData.In("Id", updatedDataQuery?.DataContract?.EstudiantesRetenidos?.ToArray())
+			) : [];
+
 			UpdateData updateData = new UpdateData
 			{
-				Estudiantes = estudiantes,
-				Parientes = parientes
+				Estudiantes = updatedDataQuery?.HaveRetenidos == true ? estudiantesRetenidos.Select(e => new Estudiantes_Data_Update(e)).ToList() : estudiantes,
+				EstudiantesRetenidos = estudiantesRetenidos.Select(e => new Estudiantes_Data_Update(e)).ToList(),
+				Parientes = updatedDataQuery?.HaveRetenidos == false ? parientes : [],
+				ParientesId = parientes.Select(e => e.Id.GetValueOrDefault()).ToList(),
+				UpdatedData = updatedDataQuery
 			};
-			GetBoletaContracts(updateData);
+			GetBoletaContracts(updateData, pariente);
 			//updateData.Contrato = new DocumentsData().GetBoletaFragment(updateData)?.Body;
 			return updateData;
 		}
 
 		public ResponseService StartUpdateProcess(UpdateData updateData)
 		{
+			if (true)
+			{
+				return new ResponseService
+				{
+					status = 200, message = "Esta opción esta deshabilitada, debido a nuevos requerimientos"
+				};
+			}
 			List<Parientes_Data_Update>? parientes = [];
 			if (updateData.SendAll != null)
 			{
@@ -336,6 +372,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
 					BeginGlobalTransaction();
+					List<Estudiantes_Data_Update> retenidos = [];
 					inst.Parientes?.ForEach(pariente =>
 					{
 						Parientes_Data_Update? parienteF = new Parientes_Data_Update
@@ -363,19 +400,25 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					});
 					inst.Estudiantes?.ForEach(estudiante =>
 					{
+						if (estudiante?.Retenido == true)
+						{
+							retenidos.Add(estudiante);
+							return;
+						}
 						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update
 						{
-							Id = estudiante.Id,
+							Id = estudiante?.Id,
 							Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
 						}.Find<Estudiantes_Data_Update>();
+
 						if (estudianteF != null)
 						{
-							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
+							estudiante!.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							estudiante.Update();
 						}
 						else
 						{
-							estudiante.Responsables = null;
+							estudiante!.Responsables = null;
 							estudiante.Estudiante_clases = null;
 							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							if (estudiante?.Puntos_Transportes?.Count > 0)
@@ -385,15 +428,15 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 							estudiante?.Save();
 						}
 					});
-
-					CommitGlobalTransaction();
 					try
 					{
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-						MailServices.SendMailAceptedContract(pariente, GetUpdateData(sessionKey));
+						SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
+						CommitGlobalTransaction();
 					}
 					catch (Exception ex)
 					{
+						RollBackGlobalTransaction();
 						LoggerServices.AddMessageError("Error al enviar correo de actualizacion (userid: " + user.UserId + ") ", ex);
 					}
 					return new ResponseService { status = 200, message = "¡Datos actualizados!" };
@@ -401,6 +444,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				}
 				else
 				{
+					RollBackGlobalTransaction();
 					return new ResponseService { status = 403, message = "Debe aceptar los terminos y condiciones" };
 				}
 			}
@@ -413,8 +457,89 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
-		public void sendInvitations()
+		public static async void SaveUpdateData(Parientes_Data_Update tutor, UpdateData updateData, List<Estudiantes_Data_Update> retenidos)
 		{
+
+			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Hemos adjuntado los contratos y boletas, favor descarguelos</p></div>";
+			List<ModelFiles> Attach_Files = [];
+			ModelFiles boleta = new ModelFiles();
+			ModelFiles contrato = new ModelFiles();
+			if (updateData.Contrato != null && updateData.Contrato != "")
+			{
+				contrato = FileService.HtmlToPdfBase64(updateData.Contrato, "contrato_.pdf");
+				Attach_Files.Add(contrato);
+			}
+			if (updateData.Boleta != null && updateData.Boleta != "")
+			{
+				boleta = FileService.HtmlToPdfBase64(updateData.Boleta, "boleta_.pdf");
+				Attach_Files.Add(boleta);
+			}
+			foreach (var file in Attach_Files ?? new List<ModelFiles>())
+			{
+				ModelFiles? Response = (ModelFiles?)FileService.upload("Attach\\", file).body;
+				file.Value = Response?.Value;
+				file.Type = Response?.Type;
+			}
+
+			try
+			{
+				/*var updatedDataQuery = new UpdatedData().Find<UpdatedData>(
+					FilterData.JsonPropEqual("DataContract", "Id_Tutor_responsable", tutor?.Id),
+					FilterData.JsonPropEqual("DataContract", "Year", periodoLectivo?.Nombre_corto)
+				);*/
+				// Primero agregas los estudiantes NO retenidos a la lista Estudiantes
+				var idsNoRetenidos = updateData.Estudiantes
+					.Where(e => e.Retenido == false)
+					.Select(e => e.Id.GetValueOrDefault())
+					.ToList();
+				if (updateData.UpdatedData != null)
+				{
+					updateData.UpdatedData.DataContract?.Estudiantes?.AddRange(idsNoRetenidos);
+					// Ahora removemos de EstudiantesRetenidos todos los Ids que están en Estudiantes
+					var idsEstudiantes = updateData.UpdatedData.DataContract?.Estudiantes?.ToHashSet() ?? new HashSet<int>();
+					updateData.UpdatedData.DataContract!.EstudiantesRetenidos =
+						updateData.UpdatedData.DataContract.EstudiantesRetenidos
+							.Where(id => !idsEstudiantes.Contains(id))
+							.ToList();
+					updateData.UpdatedData?.Documents_Contracts?.Add(contrato);
+					updateData.UpdatedData?.Documents_Boletas?.Add(boleta);
+					updateData.UpdatedData?.Update();
+				}
+				else
+				{
+					// guardo los archivos con su ruta
+					var updatedData = new UpdatedData//todo meter en el try catch solo si se envia el correo
+					{
+						DataContract = new DataContract
+						{
+							Id_Tutor_responsable = tutor.Id,
+							Tutor_responsable = tutor.Nombre_completo,
+							Estudiantes = idsNoRetenidos,
+							EstudiantesRetenidos = retenidos.Select(estud => estud.Id.GetValueOrDefault())
+								.ToList(),
+							Tutores = updateData.Parientes.Select(p => p.Id.GetValueOrDefault()).ToList(),
+							Fecha = DateTime.Now,
+							Year = DateTime.Now.Year.ToString(),
+						},
+						Documents_Contracts = [contrato],
+						Documents_Boletas = [boleta]
+					}.Save();
+				}
+				//ENVIO DE CORREO
+				await MailServices.SendContractMail(tutor, templatePage, Attach_Files);
+			}
+			catch (Exception ex)
+			{
+				LoggerServices.AddMessageError($"error guardando los archivos", ex);
+			}
+
+		}
+		/// <summary>
+		/// envio de invitaciones
+		/// </summary>
+
+		public void sendInvitations()
+		{			
 			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
@@ -459,7 +584,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			});
 		}
 
-		public static UpdateData GetUpdateDataById(Parientes_Data_Update inst)
+		public static UpdateData? GetUpdateDataById(Parientes_Data_Update inst)
 		{
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = inst.Id }.Find<Parientes_Data_Update>();
