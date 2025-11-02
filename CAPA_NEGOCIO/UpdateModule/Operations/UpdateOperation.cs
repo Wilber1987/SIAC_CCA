@@ -59,7 +59,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					UpdateData updateData = new UpdateData
 					{
 						Estudiantes = estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
-						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
+						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList(),
+						ParientesId = parientes.Select(e => e.Id.GetValueOrDefault()).ToList(),
 					};
 					GetBoletaContracts(updateData, pariente);
 					return updateData;
@@ -142,7 +143,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				return new ResponseService
 				{
-					status = 200, message = "Esta opción esta deshabilitada, debido a nuevos requerimientos"
+					status = 200,
+					message = "Esta opción esta deshabilitada, debido a nuevos requerimientos"
 				};
 			}
 			List<Parientes_Data_Update>? parientes = [];
@@ -539,7 +541,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		/// </summary>
 
 		public void sendInvitations()
-		{			
+		{
 			var tutor = new Parientes_Data_Update();
 			var filter = FilterData.Or(
 				FilterData.Distinc("correo_enviado", true),
