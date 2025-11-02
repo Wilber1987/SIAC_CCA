@@ -10,7 +10,7 @@ namespace CAPA_NEGOCIO.Templates.Model
     {
         [PrimaryKey(Identity = true)]
         public int? Id_Template { get; set; }
-        public string? Descripcion { get; set; }
+        public TemplatesDataType? Descripcion { get; set; }
         [JsonProp]
         public List<Section>? Sections { get; set; }
 
@@ -21,5 +21,11 @@ namespace CAPA_NEGOCIO.Templates.Model
         public int? Id_Section { get; set; }
         public string? Data { get; set; }
         public string? Body { get; set; }
+    }
+
+    
+    public enum TemplatesDataType
+    {
+        CONTRATO_ACTUALIZACION
     }
 }

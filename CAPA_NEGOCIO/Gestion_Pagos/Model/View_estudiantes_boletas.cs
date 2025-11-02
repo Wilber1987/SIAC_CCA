@@ -35,40 +35,90 @@ namespace CAPA_NEGOCIO.Gestion_Pagos.Model
 
         public string GetBoletasQuery()
         {
-            return @"SELECT  cargo.ejercicio, cargo.tipo, cargo.idperiodoacademico, cargo.idestudiante, est.idtestudiante, cargo.periodo, cargo.idmoneda, tgm.idtmoneda
-                        , cargo.importemd as importemd
-                        , cargo.descuento as descuento
-                        , cargo.importedescuentomd as importedescuentomd
-                        , cargo.importenetomd as importenetomd, cargo.estatus,  cargo.fechagrabacion, est.idestudiante as codigo, est.nombres, est.apellidos, YEAR(current_date)as ciclo
-                        ,nactual.grado grado_actual, nactual.nivel as curso_actual    ,nsiguiente.grado grado_siguiente, nsiguiente.nivel as curso_siguiente                    
-                            from tbl_aca_estudiantecargo cargo
-                                inner join tbl_aca_estudiante est on est.idestudiante = cargo.idestudiante                                
-                                inner join ( select matri.idestudiante, nactual.texto as grado, areaactual.texto as nivel from tbl_aca_matricula matri
-	                            inner  join  tbl_aca_periodoacademico per on per.idperiodoacademico = matri.idperiodoacademico
-	                            inner join tbl_aca_academianivel nactual on nactual.idacademianivel = matri.idacademianivel 
-	                            inner join tbl_aca_academiaarea areaactual on areaactual.idacademiaarea = nactual.idacademiaarea
-	                            where idestudiante = 
-                                (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"')  
-                                and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + this.Ejercicio + @"))
-	                            nactual on nactual.idestudiante = est.idestudiante 
-	                            left join ( select matri.idestudiante, nactual.texto as grado, areaactual.texto as nivel from tbl_aca_matricula matri
-	                            inner  join  tbl_aca_periodoacademico per on per.idperiodoacademico = matri.idperiodoacademico
-	                            inner join tbl_aca_academianivel nactual on nactual.idacademianivel = matri.idacademianivel 
-	                            inner join tbl_aca_academiaarea areaactual on areaactual.idacademiaarea = nactual.idacademiaarea
-	                            where idestudiante = 
-                                (SELECT idestudiante from tbl_aca_estudiante where idtestudiante = '" + this.IdTEstudiante + @"') 
-                                and per.idperiodoacademico = (SELECT idperiodoacademico from tbl_aca_periodoacademico where idtperiodoacademico = " + (this.Ejercicio + 1) + @"))
-	                            nsiguiente on nsiguiente.idestudiante = est.idestudiante 
-                                inner join tbl_gen_moneda tgm on tgm.idmoneda  = cargo.idmoneda
-                            where 	est.idtestudiante  = '" + this.IdTEstudiante + @"'
-                                and (cargo.ejercicio = " + this.Ejercicio + @" or cargo.ejercicio = " + (this.Ejercicio + 1) + @" )
-                                and idservicio in (7,2,39)                                
-                                and cargo.periodo = 1                                
-                            /*group by
-                            cargo.ejercicio,cargo.tipo, cargo.idperiodoacademico, cargo.idestudiante, est.idtestudiante, cargo.periodo, cargo.idmoneda,tgm.idtmoneda
-                            , cargo.estatus,  cargo.fechagrabacion, est.idestudiante, est.nombres, est.apellidos, YEAR(current_date)*/
-                            order by cargo.fechagrabacion desc";
+            return @"
+                SELECT 
+                    cargo.*,  
+                    cargo.ejercicio, cargo.tipo, cargo.idperiodoacademico, cargo.idestudiante, 
+                    est.idtestudiante, 
+                    cargo.periodo, cargo.idmoneda, tgm.idtmoneda,
+                    cargo.importemd AS importemd,
+                    cargo.descuento AS descuento,
+                    cargo.importedescuentomd AS importedescuentomd,
+                    cargo.importenetomd AS importenetomd,
+                    cargo.estatus,
+                    cargo.fechagrabacion,
+                    est.idestudiante AS codigo,
+                    est.nombres,
+                    est.apellidos,
+                    YEAR(current_date) AS ciclo,
+                    nactual.grado AS grado_actual,
+                    nactual.nivel AS curso_actual,
+                    nsiguiente.grado AS grado_siguiente,
+                    nsiguiente.nivel AS curso_siguiente
+                            
+                FROM tbl_aca_estudiantecargo cargo
+                INNER JOIN tbl_aca_estudiante est 
+                    ON est.idestudiante = cargo.idestudiante                                
+
+                INNER JOIN (
+                    SELECT 
+                        matri.idestudiante, 
+                        nactual.texto AS grado, 
+                        areaactual.texto AS nivel
+                    FROM tbl_aca_matricula matri
+                    INNER JOIN tbl_aca_periodoacademico per 
+                        ON per.idperiodoacademico = matri.idperiodoacademico
+                    INNER JOIN tbl_aca_academianivel nactual 
+                        ON nactual.idacademianivel = matri.idacademianivel 
+                    INNER JOIN tbl_aca_academiaarea areaactual 
+                        ON areaactual.idacademiaarea = nactual.idacademiaarea
+                    WHERE idestudiante = (
+                        SELECT idestudiante 
+                        FROM tbl_aca_estudiante 
+                        WHERE idtestudiante = '" + this.IdTEstudiante + @"'
+                    )
+                    AND per.idperiodoacademico = (
+                        SELECT idperiodoacademico 
+                        FROM tbl_aca_periodoacademico 
+                        WHERE idtperiodoacademico = " + this.Ejercicio + @"
+                    )
+                ) nactual ON nactual.idestudiante = est.idestudiante 
+
+                LEFT JOIN (
+                    SELECT 
+                        matri.idestudiante, 
+                        nactual.texto AS grado, 
+                        areaactual.texto AS nivel
+                    FROM tbl_aca_matricula matri
+                    INNER JOIN tbl_aca_periodoacademico per 
+                        ON per.idperiodoacademico = matri.idperiodoacademico
+                    INNER JOIN tbl_aca_academianivel nactual 
+                        ON nactual.idacademianivel = matri.idacademianivel 
+                    INNER JOIN tbl_aca_academiaarea areaactual 
+                        ON areaactual.idacademiaarea = nactual.idacademiaarea
+                    WHERE idestudiante = (
+                        SELECT idestudiante 
+                        FROM tbl_aca_estudiante 
+                        WHERE idtestudiante = '" + this.IdTEstudiante + @"'
+                    )
+                    AND per.idperiodoacademico = (
+                        SELECT idperiodoacademico 
+                        FROM tbl_aca_periodoacademico 
+                        WHERE idtperiodoacademico = " + (this.Ejercicio + 1) + @"
+                    )
+                ) nsiguiente ON nsiguiente.idestudiante = est.idestudiante 
+
+                INNER JOIN tbl_gen_moneda tgm 
+                    ON tgm.idmoneda = cargo.idmoneda
+
+                WHERE est.idtestudiante = '" + this.IdTEstudiante + @"'
+                    AND (cargo.ejercicio = " + this.Ejercicio + @" OR cargo.ejercicio = " + (this.Ejercicio + 1) + @")
+                    AND idservicio IN (7,2,39)
+                    AND cargo.periodo = 1
+                ORDER BY cargo.fechagrabacion DESC
+            ";
         }
+
         public List<Viewestudiantesboletas> GetBoletas()
         {
             return AdapterUtil.ConvertDataTable<Viewestudiantesboletas>(this.MDataMapper?.GDatos.TraerDatosSQL(GetBoletasQuery()), this);

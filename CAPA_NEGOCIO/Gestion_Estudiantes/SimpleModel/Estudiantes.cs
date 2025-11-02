@@ -51,7 +51,5 @@ namespace DataBaseModel.SimpleModel
 		public bool? Activo { get; set; }
 		public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
 		public bool? Retenido { get; set; }
-
-
 	}
 }

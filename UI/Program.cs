@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 using CAPA_NEGOCIO.Oparations;
+using DataBaseModel;
 
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 
@@ -80,17 +81,17 @@ builder.Services.AddSession(options =>
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
-builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
-{
-	options.CronExpression = "10 16 * * *";	
-	options.TimeZone = TimeZoneInfo.Local;
-});
+// builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
+// {
+// 	options.CronExpression = "10 16 * * *";	
+// 	options.TimeZone = TimeZoneInfo.Local;
+// });
 
-builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
-{
-	options.CronExpression = "0 20 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+// builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
+// {
+// 	options.CronExpression = "0 20 * * *";
+// 	options.TimeZone = TimeZoneInfo.Local;
+// });
 
 builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 {
@@ -101,7 +102,8 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 #endregion
 
 var app = builder.Build();
-new BDConnection().IniciarMainConecction(app.Environment.IsDevelopment());
+new BDConnection().InitMainConnection(app.Environment.IsDevelopment());
+Transactional_Configuraciones.InitDefaultParams();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

@@ -16,6 +16,7 @@ import { WArrayF } from "../WDevCore/WModules/WArrayF.js";
 import { WForm } from "../WDevCore/WComponents/WForm.js";
 import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 import { ModalMessage } from "../WDevCore/WComponents/ModalMessage.js";
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 /**
  * @typedef {Object} ComponentConfig
  * * @property {Object} [propierty]
@@ -122,21 +123,33 @@ class UpdateView extends HTMLElement {
      */
     EstudianteCard(estudiante) {
         const original = new Estudiantes(estudiante);
-        const idaVueltaForm = this.IdaVueltaForm(estudiante);
+        //const idaVueltaForm = this.IdaVueltaForm(estudiante);
         const form = this.buildUpdateEstForm(estudiante);
         this.Forms.push(form);
         const card = html`<div class="element-detail">
             <div class="element-title">
                 ${estudiante.Nombre_completo} - ${estudiante.Codigo}
-                <button class="Btn" onclick="${() => {
-                if (estudiante.IdaVueltaForm && estudiante.IdaVueltaForm.Form) {
-                    estudiante.IdaVueltaForm.Form.DrawComponent();
-                }
-                this.EditEstudiante(estudiante, original, idaVueltaForm, form)
-            }}">Actualizar datos</button>
+                ${this.GetSchoolarState(estudiante, original, form)
+            }
+                
             </div>            
         </div>`
         return card;
+    }
+
+    /**
+     * @param {Estudiantes} estudiante
+     * @param {Estudiantes} original
+     * @param {WForm} form
+     */
+    GetSchoolarState(estudiante, original, form) {
+        return estudiante.Retenido
+            ? html`<button class="BtnAlert" onclick="${() => {
+                WAlertMessage.Warning("No es posible actualizar este estudiante", true);
+            }}">Estudiante Retenido</button>`
+            : html`<button class="Btn" onclick="${() => {
+                this.EditEstudiante(estudiante, original, form);
+            }}">Actualizar datos</button>`;
     }
 
     /**
@@ -145,7 +158,7 @@ class UpdateView extends HTMLElement {
      * 
      * @param {Estudiantes} estudiante - The student object for which the form is being generated.
      * @returns {HTMLElement} - The HTML element containing the transportation form.
-     */
+     
     IdaVueltaForm(estudiante) {
         estudiante.Puntos_Transportes = estudiante.Puntos_Transportes ?? [];
 
@@ -232,7 +245,7 @@ class UpdateView extends HTMLElement {
             <div class="element-title">${inputDireccion}</div>
         </div>`;
         return formIdaYVuelta;
-    }
+    }*/
 
 
     /**
@@ -240,18 +253,16 @@ class UpdateView extends HTMLElement {
      * The form is created with the student's data and allows the user to update the student's details.
      * The form also has buttons to go back to the list of students and to save the changes.
      * @param {Estudiantes} estudiante - The student object to be edited.
-     * @param {Estudiantes} original - The student object with the original data.
-     * @param {HTMLElement} idaVueltaForm - The form element for selecting transportation options.
+     * @param {Estudiantes} original - The student object with the original data.     
      * @param {WForm} form - The form object for editing the student's details.
      */
-    EditEstudiante(estudiante, original, idaVueltaForm, form) {
+    EditEstudiante(estudiante, original, form) {
 
         //estudiante.IdaVueltaForm.Form = form;
         this.Manager.NavigateFunction("EstDetail_" + Date.now(), html`<div class="TabContainer">      
             ${this.CustomStyle.cloneNode(true)}      
             <h3>${estudiante.Nombre_completo}</h3>  
             ${form}
-            ${idaVueltaForm}
             <div  class="form-options">
                 <button class="Btn" onclick="${() => this.regresarEstudiantes(estudiante, original)}">Regresar</button>
                 <button class="Btn" onclick="${() => this.GuardarEstudinte(estudiante, original)}">Actualizar datos</button>
@@ -277,9 +288,14 @@ class UpdateView extends HTMLElement {
         });
     }
 
+    /**
+     * @param {Estudiantes} estudiante
+     * @param {Estudiantes} original
+     */
     GuardarEstudinte(estudiante, original) {
         this.append(ModalVericateAction(() => {
             for (const prop in estudiante) {
+                // @ts-ignore
                 original[prop] = estudiante[prop];
             }
             this.NavManager?.ActiveTab("Hijos");
@@ -294,6 +310,7 @@ class UpdateView extends HTMLElement {
     regresarEstudiantes(estudiante, original) {
         this.append(ModalVericateAction(() => {
             for (const prop in original) {
+                // @ts-ignore
                 estudiante[prop] = original[prop];
             }
             this.NavManager?.ActiveTab("Hijos");
@@ -301,6 +318,11 @@ class UpdateView extends HTMLElement {
     }
 
 
+    /**
+     * @param {Parientes} pariente
+     * @param {Parientes} original
+     * @param {WForm} form
+     */
     EditTutor(pariente, original, form) {
 
         this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
@@ -334,13 +356,13 @@ class UpdateView extends HTMLElement {
         });
     }
 
+    /**
+     * @param {Parientes} pariente
+     * @param {Parientes} original
+     */
     GuardarPariente(pariente, original) {
-        console.log(pariente, original);
-
         this.append(ModalVericateAction(() => {
-            for (const prop in pariente) {
-                original[prop] = pariente[prop];
-            }
+            Object.assign(original, pariente);
             this.NavManager?.ActiveTab("Tutores");
         }, "¿Esta seguro que desea actualizar los datos del tutor?"));
 
@@ -353,15 +375,13 @@ class UpdateView extends HTMLElement {
 
     regresarPariente(pariente, original) {
         this.append(ModalVericateAction(() => {
-            for (const prop in original) {
-                pariente[prop] = original[prop];
-            }
+            Object.assign(pariente, original);
             this.NavManager?.ActiveTab("Tutores");
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
     ActualizacionForm() {
-        const inputTerminosYCondiciones = html`<input type="checkbox" class="inputChecked" id="terminos" name="terminos" value="terminos">`;
+        const inputTerminosYCondiciones = html`<input type="checkbox" checked class="inputChecked" id="terminos" name="terminos" value="terminos">`;
         return html`<div class="OptionsContainer">
             ${this.CustomStyle.cloneNode(true)}
             ${StylesControlsV2.cloneNode(true)}
@@ -428,7 +448,9 @@ class UpdateView extends HTMLElement {
                                 // @ts-ignore
                                 AceptaTerminosYCondiciones: inputTerminosYCondiciones.checked
                             }).Save();
-                            this.append(ModalMessage(response.message, undefined, true));
+                            console.log(response);
+                            
+                            this.append(ModalMessage(response.message, undefined));
                         }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                     }}">Aceptar</button>
@@ -446,6 +468,7 @@ class UpdateView extends HTMLElement {
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
+            padding: 10px 20px;
         }
         w-form, .form-container, .form-options {
             padding: 20px;
@@ -453,6 +476,10 @@ class UpdateView extends HTMLElement {
             border-radius: 0.2cm;
             background-color: #fff;
             margin-bottom: 10px;
+        }
+        .finalizacio-proceso {
+            padding: 20px;
+            border-radius: 10px;
         }
         .element-data {
             min-height: 300px;
@@ -481,12 +508,16 @@ class UpdateView extends HTMLElement {
             gap: 10px;
             align-items: center;
             font-size: 16px;
+            padding: 10px 20px;
         }
         .inputChecked {
             height: 20px;
             width: 20px;
             background-color: #fff;
             color: #fff;
+        }
+        .element-container {
+            padding: 20px;
         }
         .element-container .element-detail{
            display: block;

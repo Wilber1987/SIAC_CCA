@@ -22,7 +22,7 @@ namespace BusinessLogic.Connection
 		//  public WDataMapper? DataMapper = SqlADOConexion.BuildDataMapper("localhost", "sa", "zaxscd", "IPS5Db");
 		public WDataMapper? DataMapperSeguimiento { get; set; }
 		public IConfigurationSection SqlCredentials { get; private set; }
-		public bool IniciarMainConecction(bool isDebug = false)
+		public bool InitMainConnection(bool isDebug = false)
 		{
 			if (isDebug)
 			{
@@ -31,7 +31,7 @@ namespace BusinessLogic.Connection
 				{
 					case "WILBER":
 						return SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
-					case "Alder":
+					case "DESKTOP-GJQ59U2":
 						return SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 					default:
 						return SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");

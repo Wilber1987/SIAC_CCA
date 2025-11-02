@@ -63,24 +63,45 @@ class Transactional_ConfiguracionesView extends HTMLElement {
             return "NUMBER";
         } else if (this.IsBoolean(element)) {
             return "CHECKBOX";
+        } else if (this.ComplexText(element)) {
+            return "RICHTEXT";
         }
         return "TEXT"
     }
+    /**
+     * @param {{ Tipo_Configuracion: string; }} element
+     */
+    ComplexText(element) {
+        return element.Tipo_Configuracion == "RICHTEXT"
+            || element.Tipo_Configuracion == "TEMPLATE";
+    }
+    /**
+     * @param {{ Tipo_Configuracion: string; }} element
+     */
     IsBoolean(element) {
         return element.Tipo_Configuracion == "CHECKBOX"
             || element.Tipo_Configuracion == "BOOL"
             || element.Tipo_Configuracion == "BOOLEAN"
     }
 
+    /**
+     * @param {{ Tipo_Configuracion: string; }} element
+     */
     IsNumber(element) {
         return element.Tipo_Configuracion == "INTERESES" ||
             element.Tipo_Configuracion == "BENEFICIOS" ||
             element.Tipo_Configuracion == "NUMBER";
     }
+    /**
+     * @param {{ Nombre: string; }} element
+     */
     IsDrawImage(element) {
         return element.Nombre == "FIRMA_DIGITAL_APODERADO" ||
             element.Nombre == "FIRMA_DIGITAL_APODERADO_VICEPRESIDENTE"
     }
+    /**
+     * @param {{ Nombre: string; }} element
+     */
     IsImage(element) {
         return element.Nombre == "LOGO"
     }

@@ -10,7 +10,7 @@ namespace DataBaseModel
 		public string? Descripcion { get; set; }
 		public string? Valor { get; set; }
 		public string? Tipo_Configuracion { get; set; }
-		public Transactional_Configuraciones? GetConfig(String prop)
+		public Transactional_Configuraciones? GetConfig(string prop)
 		{
 			Nombre = prop;
 			return Find<Transactional_Configuraciones>();
@@ -43,22 +43,39 @@ namespace DataBaseModel
 			}
 			return this.Update();
 		}
-		public  Transactional_Configuraciones? GetParam(ConfiguracionesThemeEnum prop, string defaultValor = "", ConfiguracionesTypeEnum TYPE = ConfiguracionesTypeEnum.THEME)
+		public Transactional_Configuraciones? GetParam(ConfiguracionesThemeEnum prop, string defaultValor = "", ConfiguracionesTypeEnum TYPE = ConfiguracionesTypeEnum.THEME)
 		{
 			Nombre = prop.ToString();
 
 			var find = Find<Transactional_Configuraciones>();
 			if (find == null)
 			{
-				
+
 				Valor = defaultValor;
 				Descripcion = prop.ToString();
 				Nombre = prop.ToString();
-				Tipo_Configuracion = TYPE.ToString();				
+				Tipo_Configuracion = TYPE.ToString();
 				find = (Transactional_Configuraciones?)Save();
 			}
 			return find;
 		}
+
+		public static void InitDefaultParams()
+		{
+			Transactional_Configuraciones transactional_Configuraciones = new Transactional_Configuraciones();
+			//PIE DE PAGINA DE LAS BOLETAS QUE SE ENVIAN POR CORREO
+			transactional_Configuraciones.GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+		}
+
+		public static Transactional_Configuraciones? GetBoletaFooter()
+		{
+			return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+		}
+		
+		public static Transactional_Configuraciones? GetActualizacionFooter()
+        {
+            return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.ACTUALIZACION_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+        }
 	}
 	public class PageConfig
 	{
@@ -125,7 +142,8 @@ namespace DataBaseModel
 	public enum ConfiguracionesTypeEnum
 	{
 		THEME, GENERAL_DATA, NUMBER,
-        BOOLEAN
+        BOOLEAN,
+        TEMPLATE
     }
 
 	public enum ConfiguracionesThemeEnum
@@ -139,9 +157,11 @@ namespace DataBaseModel
 		SUB_TITULO2,
 		URL_BASE,
 		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES,
-        RUC,
-        ENVIO_NOTIFICACIONES_ACTIVO
-    }
+		RUC,
+		ENVIO_NOTIFICACIONES_ACTIVO,
+		BOLETA_FOOTER,
+		ACTUALIZACION_FOOTER
+	}
 
 	public class Config
 	{

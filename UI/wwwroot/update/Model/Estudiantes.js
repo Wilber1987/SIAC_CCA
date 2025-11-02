@@ -50,6 +50,7 @@ class Estudiantes extends EntityClass {
     /**@type {Regiones}*/ Region
     /**@type {Array<Estudiante_clases>} OneToMany*/ Estudiante_clases;
     /**@type {Array<any>} OneToMany*/ Responsables;
+    /**@type {Boolean}*/  Retenido = false;
 
     /**
     * @returns {Promise<Array<Estudiantes>>}

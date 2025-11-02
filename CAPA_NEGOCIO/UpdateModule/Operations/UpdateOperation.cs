@@ -42,7 +42,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				if (pariente.Actualizo == true)
 				{
-
 					return GetUpdatedData(pariente, periodoLectivo);
 				}
 				else
@@ -50,11 +49,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					var estudiantes = new Estudiantes().Where<Estudiantes>(
 							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-					/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-						.Get<Estudiantes_responsables_familia>();*/
-
-					//List<int?>? familiasId = pariente?.Estudiantes_responsables_familia?.Select(f => f.Familia_id).Distinct().ToList();
 
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])
@@ -68,7 +62,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Parientes = parientes.Select(e => new Parientes_Data_Update(e)).ToList()
 					};
 					GetBoletaContracts(updateData);
-
 					return updateData;
 				}
 
@@ -87,15 +80,6 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			{
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData)?.Body;
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData)?.Body;
-				/*if (updateData.Contrato == "")
-				{
-					updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
-				}
-				if (updateData.Boleta == "") 
-				{
-					updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
-				}*/
-
 			}
 			catch (System.Exception)
 			{
@@ -109,16 +93,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
 										FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
 									).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
-
-			/*var familia = new Estudiantes_responsables_familia{Pariente_id = pariente?.Id}
-				.Get<Estudiantes_responsables_familia>();*/
-
 			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? []).Select(f => f.Pariente_id).Distinct().ToArray();
-
 			List<Parientes_Data_Update>? parientes = new Parientes_Data_Update().Where<Parientes_Data_Update>(
 					FilterData.In("Id", parientesId)
 				).ToList();
-
 			UpdateData updateData = new UpdateData
 			{
 				Estudiantes = estudiantes,
@@ -225,9 +203,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateEstudiante(string? sessionKey, Estudiantes_Data_Update inst)
 		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var estudiante = new Estudiantes_Data_Update { Id = inst.Id }.SimpleFind<Estudiantes_Data_Update>();
+			var estudiante = new Estudiantes_Data_Update
+			{
+				Id = inst.Id,
+				Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+			}.SimpleFind<Estudiantes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
 			{
 				if (estudiante != null)
@@ -256,9 +239,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateParientes(string? sessionKey, Parientes_Data_Update inst)
 		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var parienteData = new Parientes_Data_Update { Id = inst.Id }.SimpleFind<Parientes_Data_Update>();
+			var parienteData = new Parientes_Data_Update
+			{
+				Id = inst.Id,
+				Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+			}.SimpleFind<Parientes_Data_Update>();
 			if (pariente?.Responsable_Pago == true)
 			{
 				if (parienteData != null)
@@ -343,39 +331,53 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			UserModel user = AuthNetCore.User(sessionKey);
 			try
 			{
+				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
 					BeginGlobalTransaction();
 					inst.Parientes?.ForEach(pariente =>
 					{
-						Parientes_Data_Update? parienteF = new Parientes_Data_Update { Id = pariente.Id }.Find<Parientes_Data_Update>();
+						Parientes_Data_Update? parienteF = new Parientes_Data_Update
+						{
+							Id = pariente.Id,
+							Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+						}.Find<Parientes_Data_Update>();
+
 						if (parienteF != null)
 						{
 							pariente.Actualizo = true;
 							pariente.Acepto_terminos = true;
 							pariente.User_id = parienteF.User_id;
 							pariente.Fecha_actualizacion = DateTime.Now;
+							pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							pariente.Update();
 						}
 						else
 						{
 							pariente.Estudiantes_responsables_familia = null;
 							pariente.Fecha_actualizacion = DateTime.Now;
+							pariente.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							pariente.Save();
 						}
 					});
 					inst.Estudiantes?.ForEach(estudiante =>
 					{
-						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update { Id = estudiante.Id }.Find<Estudiantes_Data_Update>();
+						Estudiantes_Data_Update? estudianteF = new Estudiantes_Data_Update
+						{
+							Id = estudiante.Id,
+							Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto
+						}.Find<Estudiantes_Data_Update>();
 						if (estudianteF != null)
 						{
+							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							estudiante.Update();
 						}
 						else
 						{
 							estudiante.Responsables = null;
 							estudiante.Estudiante_clases = null;
+							estudiante.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
 							if (estudiante?.Puntos_Transportes?.Count > 0)
 							{
 								estudiante.Usa_transporte = true;
@@ -404,6 +406,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			}
 			catch (Exception ex)
 			{
+				RollBackGlobalTransaction();
 				LoggerServices.AddMessageError("Error al guardar la informacion", ex);
 				throw;
 			}
