@@ -31,7 +31,7 @@ namespace BusinessLogic.Connection
 				{
 					case "WILBER":
 						return SqlADOConexion.IniciarConexion("sa", "zaxscd", "localhost", "OLIMPO");
-					case "Alder":
+					case "DESKTOP-GJQ59U2":
 						return SqlADOConexion.IniciarConexion("sa", "123", "localhost\\SQLEXPRESS", "SIAC_CCA_BEFORE_DEMO");
 					default:
 						return SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");

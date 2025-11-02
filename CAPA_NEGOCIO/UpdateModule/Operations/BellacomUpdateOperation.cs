@@ -1,4 +1,5 @@
 using APPCORE;
+using BusinessLogic.Connection;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
@@ -38,16 +39,19 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 {
 
                     //manejo conexion por aparte, todo cambiar estas credenciales a configuracion
-                    //var conection = SqlADOConexion.BuildDataMapper("localhost\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");                
-                    var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+                   // var conection = SqlADOConexion.BuildDataMapper("DESKTOP-GJQ59U2\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");  
+                    //var conection = new BDConnection().InitMainConnection(APPCORE.SystemConfig.SystemConfig.IsDevelopment);              
+                    //var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO"); //TODO USAR CONFIGURACION
                     var tutor = new Parientes_Data_Update();
-                    tutor.SetConnection(conection);
-                    var filter = FilterData.Or(
-                        FilterData.Distinc("migrado", true),
-                        FilterData.Equal("migrado", false),
-                        FilterData.ISNull("migrado")
-                    );
-
+                    //tutor.SetConnection(conection);
+                    var filter = FilterData.And(
+                                    FilterData.Or(
+                                        FilterData.Distinc("migrado", true),
+                                        FilterData.Equal("migrado", false),
+                                        FilterData.ISNull("migrado")
+                                    ),
+                                    FilterData.Equal("Periodo_Lectivo_Update", 2025)
+                                );
 
                     var tutores = tutor.Where<Parientes_Data_Update>(filter);
                     Console.WriteLine($"Número total de tutores encontrados: {tutores.Count}");
@@ -67,7 +71,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                             ]
                         };
 
-                        updatedDataQuery.SetConnection(conection);
+                       // updatedDataQuery.SetConnection(conection);
                         var updatedData = updatedDataQuery.Get<UpdatedData>();
                         //si se encutran datos en updatedData continuamos con la actualización
                         var ultimoRegistro = updatedData.OrderByDescending(e => e.Id).FirstOrDefault();
@@ -87,14 +91,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
                         var datosOriginalesPadre = new List<Tbl_aca_tutor>();
                         var datosOriginalesEstudiantes = new List<Tbl_aca_estudiante>();
-
-
                         //actualizacion datos del padre
                         try
                         {
-
-
-
                             int padreIndex = 0;
                             foreach (var padre in listaPadres)
                             {
@@ -149,7 +148,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                         foreach (var est in misEstudiantes)
                         {
                             var estudiante = new Estudiantes_Data_Update();
-                            estudiante.SetConnection(conection);
+                            //estudiante.SetConnection(conection);
 
                             var estudiantesDataSql = estudiante.Where<Estudiantes_Data_Update>(FilterData.Equal("id", est)).FirstOrDefault();
                             if (estudiantesDataSql != null)

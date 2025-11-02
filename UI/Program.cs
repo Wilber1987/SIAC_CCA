@@ -62,42 +62,43 @@ builder.Services.AddSession(options =>
 //});
 
 //ENVIA DATOS A BELLACOM
-builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
-{
-	options.CronExpression = "0 4 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+//builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
+//{
+	//options.CronExpression = "0 4 * * *";
+	//options.CronExpression = "* * * * *";
+	//options.TimeZone = TimeZoneInfo.Local;
+//});
 
-builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
-{
-	options.CronExpression = "*/4 * * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+//builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
+//{
+	//options.CronExpression = "*/4 * * * *";
+	//options.TimeZone = TimeZoneInfo.Local;
+//});
 
 /***sincronizacion de siac y bellacom a sistema*/
-builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
-{
-	options.CronExpression = "0 15 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+//builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
+//{
+	//options.CronExpression = "0 15 * * *";
+	//options.TimeZone = TimeZoneInfo.Local;
+//});
 
-builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
-{
-	options.CronExpression = "10 16 * * *";	
-	options.TimeZone = TimeZoneInfo.Local;
-});
+// builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
+// {
+// 	options.CronExpression = "10 16 * * *";	
+// 	options.TimeZone = TimeZoneInfo.Local;
+// });
 
-builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
-{
-	options.CronExpression = "0 20 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+// builder.Services.AddCronJob<MigrateGestionCursosCronJob>(options =>
+// {
+// 	options.CronExpression = "0 20 * * *";
+// 	options.TimeZone = TimeZoneInfo.Local;
+// });
 
-builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
-{
-	options.CronExpression = "0 1 * * *";
-	options.TimeZone = TimeZoneInfo.Local;
-});
+// builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
+// {
+// 	options.CronExpression = "0 1 * * *";
+	//options.TimeZone = TimeZoneInfo.Local;
+// });
 
 #endregion
 

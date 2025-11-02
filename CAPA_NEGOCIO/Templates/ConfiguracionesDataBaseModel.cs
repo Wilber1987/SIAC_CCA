@@ -66,11 +66,16 @@ namespace DataBaseModel
 			//PIE DE PAGINA DE LAS BOLETAS QUE SE ENVIAN POR CORREO
 			transactional_Configuraciones.GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
 		}
-		
+
 		public static Transactional_Configuraciones? GetBoletaFooter()
+		{
+			return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+		}
+		
+		public static Transactional_Configuraciones? GetActualizacionFooter()
         {
-            return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETA_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
-        } 
+            return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.ACTUALIZACION_FOOTER, "", ConfiguracionesTypeEnum.TEMPLATE);
+        }
 	}
 	public class PageConfig
 	{
@@ -152,10 +157,11 @@ namespace DataBaseModel
 		SUB_TITULO2,
 		URL_BASE,
 		FECHA_VENCIMIENTO_BOLETAS_ESTUDIANTES,
-        RUC,
-        ENVIO_NOTIFICACIONES_ACTIVO,
-        BOLETA_FOOTER
-    }
+		RUC,
+		ENVIO_NOTIFICACIONES_ACTIVO,
+		BOLETA_FOOTER,
+		ACTUALIZACION_FOOTER
+	}
 
 	public class Config
 	{
