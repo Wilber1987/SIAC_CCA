@@ -31,8 +31,8 @@ namespace CAPA_NEGOCIO.Templates
 					Ciclo = 2025,
 					Grado_Actual = "OCTAVO GRADO",
 					Curso_Actual = "SECUNDARIA",
-					Grado_Siguiente = null,
-					Curso_Siguiente = null,
+					Grado_Siguiente = "NOVENO GRADO",
+					Curso_Siguiente = "SECUNDARIA",
 					idfamilia = null,
 					idservicio = 7
 				},
@@ -60,8 +60,8 @@ namespace CAPA_NEGOCIO.Templates
 					Ciclo = 2025,
 					Grado_Actual = "OCTAVO GRADO",
 					Curso_Actual = "SECUNDARIA",
-					Grado_Siguiente = null,
-					Curso_Siguiente = null,
+					Grado_Siguiente = "NOVENO GRADO",
+					Curso_Siguiente = "SECUNDARIA",
 					idfamilia = null,
 					idservicio = 39
 				}
