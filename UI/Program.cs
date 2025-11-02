@@ -127,7 +127,7 @@ app.UseSession();
 app.UseAuthorization();
 //await new MigrateDocentes().Migrate();
 //await new MigrateGestionCursos().Migrate();
-await new MigrateEstudiantes().Migrate();
+//await new MigrateEstudiantes().Migrate();
 //await new MigrateNotas().Migrate(null);
 app.MapRazorPages();
 app.UseEndpoints(endpoints =>
