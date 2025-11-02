@@ -69,7 +69,7 @@ namespace CAPA_NEGOCIO.Templates
 			return this;
 		}
 
-		public DocumentsData GetContratoFragment(UpdateData data)
+		public DocumentsData GetContratoFragment(UpdateData data, Parientes_Data_Update pariente)
 		{
 			var theme = new PageConfig();
 			var contratos = new List<string>();
@@ -81,7 +81,7 @@ namespace CAPA_NEGOCIO.Templates
 				string.Join("", template?.Sections.Select(section => section.Body).ToList())
 			}</div>";
 
-			var primerParienteConUserId = data.Parientes?.FirstOrDefault(p => p.User_id != null);
+			var primerParienteConUserId = pariente ?? data.Parientes?.FirstOrDefault(p => p.User_id != null);
 
 			DateTime fechaActual = DateTime.Now;
 			DateTime fechaManana = fechaActual.AddDays(1);
@@ -99,8 +99,10 @@ namespace CAPA_NEGOCIO.Templates
 			plantilla = plantilla.Replace("{{ nombre_responsable1 }}", primerParienteConUserId?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula1 }}", primerParienteConUserId?.Identificacion ?? string.Empty);
 
-			var segundoResponsable = data.Parientes?
+			List<Parientes> parientes = new Parientes().Where<Parientes>(FilterData.In("Id", data.ParientesId?.ToArray()));
+			var segundoResponsable = parientes?
 						   .FirstOrDefault(p => p.User_id == null && p.Id != primerParienteConUserId?.Id);
+
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
 								 .Replace("{{ cedula2 }}", segundoResponsable?.Identificacion ?? string.Empty);
 			plantilla = plantilla.Replace("{{ nombre_responsable2 }}", segundoResponsable?.Nombre_completo ?? string.Empty)
@@ -111,6 +113,10 @@ namespace CAPA_NEGOCIO.Templates
 									).FirstOrDefault();
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
+				if (estudiante.Retenido == true)
+				{
+					continue;
+				}
 				var contratoEstudiante = plantilla;
 				contratoEstudiante = contratoEstudiante.Replace("{{ nombre_estudiante }}", estudiante?.Nombre_completo ?? string.Empty)
 													   .Replace("{{ codigo_estudiante }}", estudiante?.Codigo ?? string.Empty)
@@ -126,7 +132,7 @@ namespace CAPA_NEGOCIO.Templates
 			return this;
 		}
 
-		public DocumentsData GetBoletaFragment(UpdateData data)
+		public DocumentsData GetBoletaFragment(UpdateData data, Parientes_Data_Update pariente)
 		{
 			var theme = new PageConfig();
 			var boletas = new List<string>();
@@ -136,6 +142,10 @@ namespace CAPA_NEGOCIO.Templates
 
 			foreach (var estudiante in data.Estudiantes ?? new List<Estudiantes_Data_Update>())
 			{
+				if (estudiante.Retenido == true)
+				{
+					continue;
+				}
 				try
 				{
 					List<Viewestudiantesboletas> boletasMsql;

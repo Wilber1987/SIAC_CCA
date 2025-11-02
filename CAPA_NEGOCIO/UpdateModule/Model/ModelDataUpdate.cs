@@ -48,7 +48,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		}
 		[PrimaryKey(Identity = false)]
 		public new int? Id { get; set; }
-		
+
 		[PrimaryKey(Identity = false)]
 		public string? Periodo_Lectivo_Update { get; set; }
 
@@ -112,7 +112,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		[JsonProp]
 		public List<Tbl_aca_estudiante>? Data_Before_Update_Alumnos { get; set; }
 
-
+		public bool HaveRetenidos
+		{
+			get =>  DataContract?.EstudiantesRetenidos?.Count > 0;			
+		}
 	}
 
 	public class DataContract
@@ -120,6 +123,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		public int? Id_Tutor_responsable { get; set; }
 		public string? Tutor_responsable { get; set; }
 		public List<int>? Estudiantes { get; set; }
+		public List<int>? EstudiantesRetenidos { get; set; }
 		public List<int>? Tutores { get; set; }
 		public DateTime? Fecha { get; set; }
 		public string? Year { get; set; }
