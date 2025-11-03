@@ -38,9 +38,9 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
-		public async Task< ResponseService> SaveUpdateDataRequest(UpdateDataRequest Inst)
+		public async Task<ResponseService> SaveUpdateDataRequest(UpdateDataRequest Inst)
 		{
-			return await new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst );
+			return await new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst);
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
@@ -60,7 +60,7 @@ namespace UI.Controllers
 		{
 			return UpdateOperation.GetParientesQueActulizaron(inst);
 		}
-		
+
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public List<ViewParientesUpdate>? GetParientesQueNoLoguearon(Parientes_Data_Update inst)
@@ -72,12 +72,12 @@ namespace UI.Controllers
 		public List<ViewParientesUpdate>? GetParientesInvitados(ViewParientesUpdate inst)
 		{
 			return UpdateOperation.GetParientesInvitados(inst);
-		}		
+		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public UpdateData? GetUpdatedData(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetUpdateDataById(inst);
-		}	
+		}
 	}
 }

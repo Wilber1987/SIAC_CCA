@@ -434,8 +434,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					try
 					{
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-						(string? templatePage, var Attach_Files) = SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
 						CommitGlobalTransaction();
+						(string? templatePage, var Attach_Files) = SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
+						
 						await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 					}
 					catch (Exception ex)
