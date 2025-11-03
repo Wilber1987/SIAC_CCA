@@ -38,9 +38,9 @@ namespace UI.Controllers
 		}
 		[HttpPost]
 		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
-		public ResponseService SaveUpdateDataRequest(UpdateDataRequest Inst)
+		public async Task< ResponseService> SaveUpdateDataRequest(UpdateDataRequest Inst)
 		{
-			return new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst );
+			return await new UpdateOperation().Save(HttpContext.Session.GetString("sessionKey"), Inst );
 		}
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]

@@ -15,6 +15,7 @@ using DataBaseModel;
 using MailKit;
 using APPCORE.Util;
 using APPCORE.Services;
+using CAPA_NEGOCIO.Templates.Model;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
@@ -364,7 +365,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			return inst.SimpleGet<Parientes_Data_Update>();*/
 		}
 
-		public ResponseService Save(string? sessionKey, UpdateDataRequest inst)
+		public async Task<ResponseService> Save(string? sessionKey, UpdateDataRequest inst)
 		{
 			UserModel user = AuthNetCore.User(sessionKey);
 			try
@@ -433,8 +434,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					try
 					{
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-						SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
+						(string? templatePage, var Attach_Files) = SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
 						CommitGlobalTransaction();
+						await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 					}
 					catch (Exception ex)
 					{
@@ -459,7 +461,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
-		public static async void SaveUpdateData(Parientes_Data_Update tutor, UpdateData updateData, List<Estudiantes_Data_Update> retenidos)
+		public static (string?, List<ModelFiles>?) SaveUpdateData(Parientes_Data_Update tutor, UpdateData updateData, List<Estudiantes_Data_Update> retenidos)
 		{
 
 			string templatePage = "<div><h1> Contrato aceptado y datos actualizados</h1><p>Hemos adjuntado los contratos y boletas, favor descarguelos</p></div>";
@@ -526,13 +528,15 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 						Documents_Contracts = [contrato],
 						Documents_Boletas = [boleta]
 					}.Save();
+
 				}
-				//ENVIO DE CORREO
-				await MailServices.SendContractMail(tutor, templatePage, Attach_Files);
+				return (templatePage, Attach_Files);
+
 			}
 			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError($"error guardando los archivos", ex);
+				return (templatePage, Attach_Files);
 			}
 
 		}
