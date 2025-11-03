@@ -6,16 +6,11 @@
 @{
 	string? Identify = Context.Session?.GetString("sessionKey");
 	var PageConfig = Config.pageConfig();
-	UserModel user = AuthNetCore.User(Identify);
-	Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
-	UpdateData? getUpdateData = UpdateOperation.GetOwUpdateData(Identify);
+	
 }
 
 
-@if (pariente != null && pariente.Acepto_terminos != true 
-    && getUpdateData?.UpdatedData?.HaveRetenidos != false)
-{
-    <text>
+
         <style>
             .alert-success-link {
                 color: rgb(123, 129, 144) !important;
@@ -44,8 +39,7 @@
                 }, 1000);
             });
         </script>
-    </text>
-}
+
 
 
 <!-- Left Menu Start -->
