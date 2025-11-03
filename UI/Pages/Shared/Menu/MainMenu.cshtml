@@ -1,14 +1,54 @@
 @using API.Controllers
 @using APPCORE.Security
+@using CAPA_NEGOCIO.UpdateModule.Model
+@using CAPA_NEGOCIO.UpdateModule.Operations
 @using DataBaseModel
 @{
 	string? Identify = Context.Session?.GetString("sessionKey");
 	var PageConfig = Config.pageConfig();
+	UserModel user = AuthNetCore.User(Identify);
+	Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
+	UpdateData? getUpdateData = UpdateOperation.GetOwUpdateData(Identify);
 }
 
+
+@if (pariente != null && pariente.Acepto_terminos != true 
+    && getUpdateData?.UpdatedData?.HaveRetenidos != false)
+{
+    <text>
+        <style>
+            .alert-success-link {
+                color: rgb(123, 129, 144) !important;
+                background-color: #ffffff !important;
+                border-radius: 8px;
+                padding: 10px 15px;
+                display: inline-block;
+                transition: all 0.8s ease-in-out;
+            }
+
+            .alert-success-link.active {
+                color: #ffffff !important;
+                background-color: #1838b9 !important;
+            }
+        </style>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const btn = document.querySelector(".alert-success-link");
+                if (!btn) return;
+
+                let active = false;
+                setInterval(() => {
+                    active = !active;
+                    btn.classList.toggle("active", active);
+                }, 1000);
+            });
+        </script>
+    </text>
+}
+
+
 <!-- Left Menu Start -->
-
-
 <button id="backButton" style="display: none;">
 	<i class="bx bx-home-alt"></i> Inicio
 </button>
@@ -119,7 +159,7 @@
 			</ul>
 		</li>
 		<li class="menuParentOption">
-			<li><a href="~/update/index" class="alert-success-link" data-key="t-sales">Actualización Datos</a></li>
+			<li><a href="~/update/index" class="alert-success-link" data-key="t-sales">Actualización de Datos</a></li>
 		</li>
 	}
 	@if (SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))

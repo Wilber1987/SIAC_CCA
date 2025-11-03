@@ -447,6 +447,8 @@ class UpdateView extends HTMLElement {
                             }
                         }
                         for (const estudiante of this.UpdateData?.Estudiantes) {
+                            if (estudiante.Retenido === true) continue;
+
                             if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent({
                                 SecurityOption: {
                                     type: 'WRADIO', require: true
