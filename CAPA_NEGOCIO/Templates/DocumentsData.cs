@@ -189,7 +189,7 @@ namespace CAPA_NEGOCIO.Templates
 				catch (System.Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: GetBoletaFragment para el estudiante con código " + estudiante.Codigo, ex);
-					continue;
+					throw new Exception("ERROR: GetBoletaFragment para el estudiante con código " + estudiante.Codigo, ex);
 				}
 			}
 

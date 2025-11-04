@@ -49,7 +49,7 @@ namespace CAPA_NEGOCIO.Services
 				{
 					tutor.Email = "wilberj1987@gmail.com";
 				}
-				tutor.Email = "alderhernandez@gmail.com";
+				//tutor.Email = "alderhernandez@gmail.com";
 				var emailService = new EmailAccountService();
 				var account = emailService.GetAvailableEmailAccount();
 				await SMTPMailServices.SendMail(

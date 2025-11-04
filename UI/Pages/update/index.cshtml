@@ -10,10 +10,10 @@
     // Layout = "_LayoutUpdates";
 
     string? identify = HttpContext.Session?.GetString("sessionKey") ?? "";
-    if (!SecurityController.HavePermission(identify, Permissions.UPDATE_FAMILY_DATA))
+    if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
-        //Response.Redirect(location: "/Security/Login");
-        //return;
+        Response.Redirect(location: "/Security/Login");
+        return;
     }
     UserModel user = AuthNetCore.User(identify);
     Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
@@ -22,7 +22,15 @@
     {
         pariente.Entro_al_sistema = true;
     }
-    UpdateData? getUpdateData = UpdateOperation.GetOwUpdateData(identify);
+
+    UpdateData? getUpdateData = null;
+    try {
+         getUpdateData = UpdateOperation.GetOwUpdateData(identify);
+    } catch (Exception Ex){
+        Response.Redirect(location: "/update/index");
+        return;
+    }
+   
     List<Estados_Civiles>? Estados_Civiless = new Estados_Civiles().Get<Estados_Civiles>();
     List<Religiones>? Religiones = new Religiones().Get<Religiones>();
     List<Paises>? Paises = new Paises().Get<Paises>();

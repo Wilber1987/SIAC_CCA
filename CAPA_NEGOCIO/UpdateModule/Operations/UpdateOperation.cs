@@ -9,13 +9,10 @@ using APPCORE.Security;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
 using CAPA_NEGOCIO.UpdateModule.Model;
-using CAPA_NEGOCIO.Util;
 using AppCore.Services;
 using DataBaseModel;
-using MailKit;
 using APPCORE.Util;
 using APPCORE.Services;
-using CAPA_NEGOCIO.Templates.Model;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
@@ -82,17 +79,18 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
-		private static void GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
+		private static ResponseService GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
 		{
 			try
 			{
 				updateData.Contrato = new DocumentsData().GetContratoFragment(updateData, pariente)?.Body;
 				updateData.Boleta = new DocumentsData().GetBoletaFragment(updateData, pariente)?.Body;
+				return new ResponseService { status = 200, message = "Correcto" };
 			}
-			catch (System.Exception)
+			catch (Exception ex)
 			{
-				updateData.Contrato = HtmlContentGetter.ReadHtmlFile("contratotemplate.html", "Resources");
-				updateData.Boleta = HtmlContentGetter.ReadHtmlFile("boleta.html", "Resources");
+				LoggerServices.AddMessageError("Error recuperando los documentos", ex);
+				throw new Exception("Error recuperando boleta", ex);
 			}
 		}
 
@@ -371,9 +369,17 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			try
 			{
 				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
-
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
+					UpdateData? updatedData = null;
+					try
+					{
+						updatedData = GetOwUpdateData(sessionKey);
+					}
+					catch (Exception)
+					{
+						return new ResponseService(500, "Error procesando la solicitud, vuelva a intentarlo!");
+					}
 					BeginGlobalTransaction();
 					List<Estudiantes_Data_Update> retenidos = [];
 					inst.Parientes?.ForEach(pariente =>
@@ -435,8 +441,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					{
 						Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
 						CommitGlobalTransaction();
-						(string? templatePage, var Attach_Files) = SaveUpdateData(pariente, GetOwUpdateData(sessionKey), retenidos);
-						
+						(string? templatePage, var Attach_Files) = SaveUpdateData(pariente, updatedData, retenidos);
+
 						await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 					}
 					catch (Exception ex)
