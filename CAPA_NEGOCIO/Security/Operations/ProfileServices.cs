@@ -150,7 +150,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                     pariente.Fecha_Modificacion = DateTime.Now;
                     pariente.Foto = inst.Foto;
 
-                    solicitud!.Estado = inst.Estado;
+                    //solicitud!.Estado = inst.Estado;
                     pariente.Update();
                     LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
 
@@ -170,7 +170,7 @@ namespace CAPA_NEGOCIO.Security.Operations
             catch (Exception e)
             {
                 LoggerServices.AddMessageError("ERROR: UpdateProfileRequestParientes", e);
-                return new ResponseService { status = 400, message = "Error, intentelo nuevamente" };
+                return new ResponseService { status = 500, message = "Error, intentelo nuevamente" };
             }
         }
 
@@ -192,7 +192,7 @@ namespace CAPA_NEGOCIO.Security.Operations
                 {
                     if (dataMsql != null)
                     {
-                        BeginGlobalTransaction(); // Inicia la transacción global
+                        //BeginGlobalTransaction(); // Inicia la transacción global
                         dataMsql.Direccion = inst.Direccion;
                         dataMsql.Telefono = inst.Telefono;
                         dataMsql.Celular = inst.Celular;
@@ -201,12 +201,12 @@ namespace CAPA_NEGOCIO.Security.Operations
                         Console.WriteLine($"Actualización {(success.status == 200 ? "exitosa" : "fallida")}");
 
 
-                        CommitGlobalTransaction(); // Confirmar la transacción global
+                        //CommitGlobalTransaction(); // Confirmar la transacción global
                     }
                 }
                 catch (Exception ex)
                 {
-                    RollBackGlobalTransaction();
+                    //RollBackGlobalTransaction();
                     LoggerServices.AddMessageError("ERROR: SendToBellacom.", ex);
                     return false;
                 }
