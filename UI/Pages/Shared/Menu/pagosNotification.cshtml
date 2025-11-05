@@ -2,11 +2,14 @@
 @using APPCORE.Security
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @using DataBaseModel
+@using System.Text.Json
 @{
-	string Identify = Context.Session.GetString("sessionKey");
+	string Identify = Context.Session.GetString(key: "sessionKey");
+	List<Estudiantes>? estudiantes = null;
 	if (Identify != null)
 	{
-		var estudiantes = Parientes.GetOwEstudiantes(Identify, new Estudiantes());
+		estudiantes = Parientes.GetOwEstudiantes(Identify, estudiante: new Estudiantes());
+		
 		if (!AuthNetCore.User(Identify).isAdmin && AuthNetCore.HavePermission(Identify,
 		Permissions.GESTION_ESTUDIANTES_PROPIOS))
 		{
@@ -48,5 +51,10 @@
 		}
 
 	}
+	List<int?>? ids = estudiantes?.Select(e => e.Id).ToList() ?? [];
+	<script>
+		// Creamos una variable global accesible desde cualquier script
+		window.EstudiantesIds = @JsonSerializer.Serialize(ids);
+	</script>
 
 }

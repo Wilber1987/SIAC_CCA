@@ -79,5 +79,18 @@ namespace UI.Controllers
 		{
 			return UpdateOperation.GetUpdateDataById(inst);
 		}
+
+		[HttpPost]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
+		public List<Estudiantes_Data_Update> GetEstudiantes_Data_Update(Estudiantes_Data_Update inst)
+		{
+			return UpdateOperation.GetEstudiantesActualizados(HttpContext.Session.GetString("sessionKey"), inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.UPDATE_FAMILY_DATA, Permissions.GESTION_ESTUDIANTES_PROPIOS)]
+		public ResponseService UpdateEstudiantes_Data_Update(Estudiantes_Data_Update Inst)
+		{
+			return UpdateOperation.UpdateEstudianteActualizados(HttpContext.Session.GetString("sessionKey"), Inst);
+		}
 	}
 }

@@ -15,7 +15,7 @@
     {
         Response.Redirect("./update/index");
         return;
-    } 
+    }
 
 }
 @if (!SecurityController.HavePermission(HttpContext.Session.GetString("sessionKey"), Permissions.ADMIN_PANEL_ACCESS))

@@ -1,3 +1,4 @@
+using API.Controllers;
 using APPCORE;
 using APPCORE.Services;
 using DataBaseModel;
@@ -61,7 +62,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		[JsonProp]
 		public List<Adress>? Puntos_Transportes { get; set; }
 
-		public List<Estudiantes_Data_Update> GetEstudiantesConRecorridos()
+        
+
+        public List<Estudiantes_Data_Update> GetEstudiantesConRecorridos()
 		{
 			if (filterData?.Count == 0)
 			{
