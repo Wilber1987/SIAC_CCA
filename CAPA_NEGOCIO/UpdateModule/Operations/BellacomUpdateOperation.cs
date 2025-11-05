@@ -1,11 +1,9 @@
 using APPCORE;
-using BusinessLogic.Connection;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using CAPA_NEGOCIO.Util;
 using DataBaseModel;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+using APPCORE.BDCore.Abstracts;
 
 namespace CAPA_NEGOCIO.UpdateModule.Operations
 {
@@ -28,7 +26,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 .Build();
         }
 
-        public void updateBellacomData()
+        public void updateBellacomDataOld()//TODO BORRAR CUANDO SE COMPRUEBE EL NUEVO
         {
             using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
             {
@@ -37,13 +35,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 siacTunnel.Start();
                 try
                 {
-
                     //manejo conexion por aparte, todo cambiar estas credenciales a configuracion
-                   // var conection = SqlADOConexion.BuildDataMapper("DESKTOP-GJQ59U2\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");  
-                    //var conection = new BDConnection().InitMainConnection(APPCORE.SystemConfig.SystemConfig.IsDevelopment);              
-                    //var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO"); //TODO USAR CONFIGURACION
+                    //var conection = SqlADOConexion.BuildDataMapper("DESKTOP-GJQ59U2\\SQLEXPRESS", "sa", "123", "SIAC_CCA_BEFORE_DEMO");  
+                    var conection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO"); //TODO USAR CONFIGURACION
                     var tutor = new Parientes_Data_Update();
-                    //tutor.SetConnection(conection);
+                    tutor.SetConnection(conection);
                     var filter = FilterData.And(
                                     FilterData.Or(
                                         FilterData.Distinc("migrado", true),
@@ -71,7 +67,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                             ]
                         };
 
-                       // updatedDataQuery.SetConnection(conection);
+                        // updatedDataQuery.SetConnection(conection);
                         var updatedData = updatedDataQuery.Get<UpdatedData>();
                         //si se encutran datos en updatedData continuamos con la actualización
                         var ultimoRegistro = updatedData.OrderByDescending(e => e.Id).FirstOrDefault();
@@ -97,7 +93,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                             int padreIndex = 0;
                             foreach (var padre in listaPadres)
                             {
-                                Console.WriteLine($"Actualizando padre en b ellacom {padreIndex + 1} de {listaPadres.Count}, ID: {padre}");
+                                Console.WriteLine($"Actualizando padre en bellacom {padreIndex + 1} de {listaPadres.Count}, ID: {padre}");
                                 padreIndex++;
                                 var data = new Tbl_aca_tutor();
                                 data.SetConnection(MySqlConnections.BellacomTest);
@@ -142,8 +138,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                             LoggerServices.AddMessageError("ERROR: updateBellacomData error actualizando tutores id:" + t.Id, ex);
                         }
                         finally
-                        {                            
-                        }                        
+                        {
+                        }
 
                         foreach (var est in misEstudiantes)
                         {
@@ -153,13 +149,23 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                             var estudiantesDataSql = estudiante.Where<Estudiantes_Data_Update>(FilterData.Equal("id", est)).FirstOrDefault();
                             if (estudiantesDataSql != null)
                             {
-                                
+
 
                                 try
                                 {
                                     var data = new Tbl_aca_estudiante();
                                     data.SetConnection(MySqlConnections.BellacomTest);
-                                    var dataMsql = data.Where<Tbl_aca_estudiante>(FilterData.Equal("idtestudiante", estudiantesDataSql.Codigo)).FirstOrDefault();
+                                    var filterEstudiante = FilterData.And(
+                                                    FilterData.Or(
+                                                        FilterData.Distinc("migrado", true),
+                                                        FilterData.Equal("migrado", false),
+                                                        FilterData.ISNull("migrado")
+                                                    ),
+                                                    FilterData.Equal("idtestudiante", estudiantesDataSql.Codigo),
+                                                    FilterData.Equal("Periodo_Lectivo_Update", 2025)
+                                                );
+
+                                    var dataMsql = data.Where<Tbl_aca_estudiante>(filterEstudiante).FirstOrDefault();
                                     dataMsql?.SetConnection(MySqlConnections.BellacomTest);
 
                                     if (dataMsql != null)
@@ -194,9 +200,9 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                                 }
                                 finally
                                 {
-                                    
+
                                 }
-                                
+
                             }
                         }
 
@@ -206,7 +212,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
                         t.Migrado = true;
                         t.Update();
-                    };
+                    }
+                    ;
 
                 }
                 catch (Exception ex)
@@ -218,6 +225,170 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 {
                     siacTunnel.Stop();
                     siacSshClient.Disconnect();
+                }
+            }
+        }
+
+        public void updateBellacomData()
+        {
+            using (var siacSshClient = _sshTunnelService.GetSshClient("Bellacom"))
+            {
+                siacSshClient.Connect();
+                var siacTunnel = _sshTunnelService.GetForwardedPort("Bellacom", siacSshClient, 3308);
+                siacTunnel.Start();
+
+                try
+                {
+                    // Conexión SQL Server (SIAC)
+                    var connection = SqlADOConexion.BuildDataMapper("BDSRV\\SQLCCA", "sa", "**$NIcca24@$PX", "SIAC_CCA_BEFORE_DEMO");
+                    Console.WriteLine("Conexión a SQL Server establecida correctamente.");
+                    MigratePadres(connection);
+                    MigrateEstudiantes(connection);
+                }
+                catch (Exception ex)
+                {
+                    LoggerServices.AddMessageError("Error general en updateBellacomData:", ex);
+                    throw;
+                }
+                finally
+                {
+                    siacTunnel.Stop();
+                    siacSshClient.Disconnect();
+                }
+            }
+        }
+
+        private void MigratePadres(WDataMapper? connection)
+        {
+            var tutorRepo = new Parientes_Data_Update();
+           // tutorRepo.SetConnection(connection);
+
+            // Filtro: migrado null o false y periodo 2025
+            var filter = FilterData.And(
+                FilterData.Or(
+                    FilterData.ISNull("migrado"),
+                    FilterData.Equal("migrado", false)
+                ),
+                FilterData.Equal("Periodo_Lectivo_Update", 2025),
+                FilterData.Equal("id_familia", 2727)
+            );
+
+            var tutores = tutorRepo.Where<Parientes_Data_Update>(filter);
+            Console.WriteLine($"Migrando {tutores.Count} padres...");
+            var datosOriginalesPadre = new List<Tbl_aca_tutor>();
+            int index = 0;
+            foreach (var padre in tutores)
+            {
+                Console.WriteLine($"[{++index}/{tutores.Count}] Migrando padre ID: {padre.Id}");
+                try
+                {
+                    var dataBellacom = new Tbl_aca_tutor();
+                    dataBellacom.SetConnection(MySqlConnections.BellacomTest);
+
+                    var registroBellacom = dataBellacom.Where<Tbl_aca_tutor>(FilterData.Equal("idtutor", padre.Id)).FirstOrDefault();
+
+                    if (registroBellacom == null)
+                    {
+                        LoggerServices.AddMessageError($"No se encontró el tutor en Bellacom, ID: {padre.Id}", new Exception());
+                        continue;
+                    }
+
+                    // Respaldar datos originales
+                    //registroBellacom.BeginGlobalTransaction();
+                    var dataMsql = dataBellacom.Where<Tbl_aca_tutor>(FilterData.Equal("idtutor", padre.Id)).FirstOrDefault();
+                                dataMsql?.SetConnection(MySqlConnections.BellacomTest);                   
+
+                    datosOriginalesPadre.Add(dataMsql);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
+                    // Actualizar datos
+                    registroBellacom.Idestadocivil = padre.Id_Estado_Civil;
+                    registroBellacom.Idpais = (short?)padre.Id_Pais;
+                    registroBellacom.Idregion = (short?)padre.Id_Region;
+                    registroBellacom.Direccion = padre.Direccion;
+                    registroBellacom.Telefono = padre.Telefono;
+                    registroBellacom.Lugartrabajo = padre.Lugar_trabajo;
+                    registroBellacom.Telefonotrabajo = padre.Telefono_trabajo ?? "";
+                    registroBellacom.Email = padre.Email;
+                    registroBellacom.Idreligion = padre.Id_religion;
+                    registroBellacom.Exalumno = padre.Ex_Alumno;
+                    registroBellacom.Ejercicio = padre.EgresoExAlumno;
+                    registroBellacom.Celular = padre.Celular;
+                    registroBellacom.Noidentificacion = padre.Identificacion;
+                    registroBellacom.Fechamodificacion = DateTime.Now.Date;
+
+                    registroBellacom.Update();
+                    //registroBellacom.CommitGlobalTransaction();
+
+                    // Marcar como migrado
+                    padre.Migrado = true;
+                    padre.Update();
+                }
+                catch (Exception ex)
+                {
+                    LoggerServices.AddMessageError($"Error migrando padre ID: {padre.Id}", ex);
+                }
+            }
+        }
+
+        private void MigrateEstudiantes(WDataMapper? connection)
+        {
+            var estudianteRepo = new Estudiantes_Data_Update();
+            //estudianteRepo.SetConnection(connection);
+            var datosOriginalesEstudiantes = new List<Tbl_aca_estudiante>();
+
+            var filter = FilterData.And(
+                FilterData.Or(
+                    FilterData.ISNull("migrado"),
+                    FilterData.Equal("migrado", false)
+                ),
+                FilterData.Equal("Periodo_Lectivo_Update", 2025),
+                FilterData.Equal("id_familia", 2727)
+            );
+
+            var estudiantes = estudianteRepo.Where<Estudiantes_Data_Update>(filter);
+            Console.WriteLine($"Migrando {estudiantes.Count} estudiantes...");
+
+            int index = 0;
+            foreach (var est in estudiantes)
+            {
+                Console.WriteLine($"[{++index}/{estudiantes.Count}] Migrando estudiante ID: {est.Id}");
+                try
+                {
+                    var dataBellacom = new Tbl_aca_estudiante();
+                    dataBellacom.SetConnection(MySqlConnections.BellacomTest);
+
+                    var registroBellacom = dataBellacom.Where<Tbl_aca_estudiante>(
+                        FilterData.Equal("idtestudiante", est.Codigo)                        
+                    ).FirstOrDefault();
+
+                    if (registroBellacom == null)
+                    {
+                        LoggerServices.AddMessageError($"No se encontró estudiante en Bellacom, ID: {est.Id}", new Exception());
+                        continue;
+                    }
+
+                    //registroBellacom.BeginGlobalTransaction();
+                    datosOriginalesEstudiantes.Add(registroBellacom);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
+
+                    // Actualizar campos
+                    registroBellacom.Idreligion = est.Id_religion;
+                    registroBellacom.Idpais = (short?)est.Id_pais;
+                    registroBellacom.Idregion = (short?)est.Id_region;
+                    registroBellacom.Direccion = est.Direccion;
+                    registroBellacom.Vivecon = est.Vivecon;
+                    registroBellacom.Colegio = est.Colegio_procede;
+                    registroBellacom.Sacramento = est.Sacramento;
+                    registroBellacom.Aniosacra = est.Aniosacra;
+                    registroBellacom.Fechamodificacion = DateTime.Now.Date;
+
+                    registroBellacom.Update();
+                   // registroBellacom.CommitGlobalTransaction();
+
+                    est.Migrado = true;
+                    est.Update();
+                }
+                catch (Exception ex)
+                {
+                    LoggerServices.AddMessageError($"Error migrando estudiante ID: {est.Id}", ex);
                 }
             }
         }

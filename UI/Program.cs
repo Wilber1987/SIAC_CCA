@@ -5,6 +5,7 @@ using APPCORE.Cron.Jobs;
 using BusinessLogic.Connection;
 using CAPA_NEGOCIO.Oparations;
 using DataBaseModel;
+using CAPA_NEGOCIO.UpdateModule.Operations;
 
 //SqlADOConexion.IniciarConexion("sa", "**$NIcca24@$PX", "BDSRV\\SQLCCA", "SIAC_CCA_BEFORE_DEMO");
 
@@ -77,13 +78,13 @@ builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 /***sincronizacion de siac y bellacom a sistema*/
 builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
 {
-	options.CronExpression = "0 15 * * *";
+	options.CronExpression = "30 17 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
 });
 
  builder.Services.AddCronJob<MigrateEstudiantesCronJob>(options =>
  {
- 	options.CronExpression = "10 16 * * *";	
+ 	options.CronExpression = "10 18 * * *";	
  	options.TimeZone = TimeZoneInfo.Local;
  });
 
@@ -125,6 +126,9 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
+
+new BellacomUpdateOperation().updateBellacomData();
+
 //await new MigrateDocentes().Migrate();
 //await new MigrateGestionCursos().Migrate();
 //await new MigrateEstudiantes().Migrate();

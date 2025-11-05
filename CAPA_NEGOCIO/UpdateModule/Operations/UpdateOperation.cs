@@ -90,7 +90,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("Error recuperando los documentos", ex);
-				throw new Exception("Error recuperando boleta", ex);
+				throw new Exception("Error recuperando boleta, por favor intentelo nuevamente", ex);
 			}
 		}
 

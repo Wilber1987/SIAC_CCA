@@ -48,6 +48,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Model
 		}
 		[PrimaryKey(Identity = false)]
 		public new int? Id { get; set; }
+		public bool? Migrado { get; set; }
 
 		[PrimaryKey(Identity = false)]
 		public string? Periodo_Lectivo_Update { get; set; }

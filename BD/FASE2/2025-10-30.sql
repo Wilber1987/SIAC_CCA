@@ -19,3 +19,8 @@ cada una en los <b>meses de febrero a junio 2026</b>.<o:p></o:p></span></p>
 <p class="MsoNormal" style="text-align:justify"><span lang="ES-NI">Para los pagos de <b>Matrícula 2026 por Transferencias, Depósitos
 bancarios o Débitos automáticos</b>, se debe <b>enviar correo de comprobante y
 de póliza de seguro vigente</b> hasta diciembre 2026 al correo: <b>caja@cca.edu.ni</b></span><span lang="ES-NI"><o:p></o:p></span></p>', N'TEMPLATE');
+
+
+
+ALTER TABLE update_data.estudiantes_data_update
+ADD migrado BIT NULL;
