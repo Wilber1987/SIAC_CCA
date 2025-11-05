@@ -3,10 +3,10 @@ import { Detalle_Pago } from "../Model/Detalle_Pago.js";
 import { PagosRequest_ModelComponent, PowerTranzTpvResponse_ModelComponent } from "../Model/ModelComponent/PagosRequest_ModelComponent.js";
 import { PagosRequest, PowerTranzTpvResponse } from "../Model/PagosRequest.js";
 import { StylesControlsV2, StylesControlsV3, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { WCard } from "../WDevCore/WComponents/WCard.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WPrintExportToolBar } from "../WDevCore/WComponents/WPrintExportToolBar.mjs";
 import { PageType } from "../WDevCore/WComponents/WReportComponent.js";
-import { WCardTable } from "../WDevCore/WComponents/WTableComponent.js";
 import { DateTime } from "../WDevCore/WModules/Types/DateTime.js";
 import { ComponentsManager, ConvertToMoneyString, html, WRender } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
@@ -244,7 +244,7 @@ class Historial_PagosNoAutorizadosReportView extends HTMLElement {
 			Estado: pagosRequest.TpvInfo.Approved ? "-": "No aprobado",
 			Errores: pagosRequest.TpvInfo?.Errors?.map( error => `${error.Code} - ${error.Message}`).join(", ")
 		});
-		return new WCardTable(card, new PowerTranzTpvResponse_ModelComponent());
+		return new WCard(card, new PowerTranzTpvResponse_ModelComponent());
 	}
 
 	formatNumber(num) {
