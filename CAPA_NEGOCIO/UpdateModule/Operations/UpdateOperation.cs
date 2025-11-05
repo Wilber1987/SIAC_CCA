@@ -653,5 +653,31 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 			return password.ToString();
 		}
-	}
+
+		public static List<Estudiantes_Data_Update> GetEstudiantesActualizados(string? sessionKey,
+		 Estudiantes_Data_Update inst)
+		{
+
+			UserModel user = AuthNetCore.User(sessionKey);
+			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			inst.filterData?.Add(FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto));
+			inst.filterData?.Add(FilterData.Equal("Id_familia", parienteE?.Id_familia));
+			return inst.Get<Estudiantes_Data_Update>();
+        }
+
+        public static ResponseService UpdateEstudianteActualizados(string? sessionKey, Estudiantes_Data_Update inst)
+        {
+            UserModel user = AuthNetCore.User(sessionKey);
+			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			if (inst.Id_familia != null && inst.Id_familia == parienteE?.Id_familia)
+			{
+				inst.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
+				return inst.Update();
+			}
+			return new ResponseService(400, "Error al actualizar estudiantes");
+			
+        }
+    }
 }
