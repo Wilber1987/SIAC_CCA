@@ -71,7 +71,7 @@ class Estudiantes_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Aniosacra = { type: 'number', label: "Año de Sacramento", min: 1990, require: false };
 
     /**@type {ModelProperty}*/ SecurityOption = {
-        type: 'WRADIO', label: "Seguro estudiantil: *",
+        type: 'WRADIO', label: "<b style='color:black;'>SEGURO ESTUDIANTIL:</b><br>¿Este estudiante cuenta con seguro vigente hasta diciembre 2026?",
         Dataset: securityOptions,
         require: false
         //ModelObject: new SecurityOption_ModelComponent()

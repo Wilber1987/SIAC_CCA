@@ -63,11 +63,11 @@ builder.Services.AddSession(options =>
 //});
 
 //ENVIA DATOS A BELLACOM
-/*builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
+builder.Services.AddCronJob<UpdateDataBellacomCronJob>(options =>
 {
 	options.CronExpression = "0 4 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});*/
+});
 
 builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 {
@@ -127,7 +127,7 @@ app.UseSession();
 
 app.UseAuthorization();
 
-new BellacomUpdateOperation().updateBellacomData();
+//new BellacomUpdateOperation().updateBellacomData();
 
 //await new MigrateDocentes().Migrate();
 //await new MigrateGestionCursos().Migrate();

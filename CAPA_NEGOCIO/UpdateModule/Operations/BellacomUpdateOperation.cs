@@ -261,19 +261,16 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
         private void MigratePadres(WDataMapper? connection)
         {
             var tutorRepo = new Parientes_Data_Update();
-           // tutorRepo.SetConnection(connection);
-
-            // Filtro: migrado null o false y periodo 2025
             var filter = FilterData.And(
                 FilterData.Or(
                     FilterData.ISNull("migrado"),
                     FilterData.Equal("migrado", false)
                 ),
-                FilterData.Equal("Periodo_Lectivo_Update", 2025),
-                FilterData.Equal("id_familia", 2727)
+                FilterData.Equal("Periodo_Lectivo_Update", 2025)//,
+                ///FilterData.Equal("id_familia", 2727)
             );
 
-            var tutores = tutorRepo.Where<Parientes_Data_Update>(filter);
+            var tutores = tutorRepo.Where<Parientes_Data_Update>(filter);//2 rsultados
             Console.WriteLine($"Migrando {tutores.Count} padres...");
             var datosOriginalesPadre = new List<Tbl_aca_tutor>();
             int index = 0;
@@ -315,9 +312,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     registroBellacom.Noidentificacion = padre.Identificacion;
                     registroBellacom.Fechamodificacion = DateTime.Now.Date;
 
-                    registroBellacom.Update();
-                    //registroBellacom.CommitGlobalTransaction();
+                    var respuesta = registroBellacom.Update();
 
+                    if (respuesta.status != 200)
+                    {
+                        continue;
+                    }
                     // Marcar como migrado
                     padre.Migrado = true;
                     padre.Update();
@@ -334,14 +334,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
             var estudianteRepo = new Estudiantes_Data_Update();
             //estudianteRepo.SetConnection(connection);
             var datosOriginalesEstudiantes = new List<Tbl_aca_estudiante>();
-
+            
             var filter = FilterData.And(
                 FilterData.Or(
                     FilterData.ISNull("migrado"),
                     FilterData.Equal("migrado", false)
                 ),
-                FilterData.Equal("Periodo_Lectivo_Update", 2025),
-                FilterData.Equal("id_familia", 2727)
+                FilterData.Equal("Periodo_Lectivo_Update", 2025)//,
+                ///FilterData.Equal("id_familia", 2727)
             );
 
             var estudiantes = estudianteRepo.Where<Estudiantes_Data_Update>(filter);
@@ -355,11 +355,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                 {
                     var dataBellacom = new Tbl_aca_estudiante();
                     dataBellacom.SetConnection(MySqlConnections.BellacomTest);
-
+                   
                     var registroBellacom = dataBellacom.Where<Tbl_aca_estudiante>(
                         FilterData.Equal("idtestudiante", est.Codigo)                        
                     ).FirstOrDefault();
-
+                    registroBellacom?.SetConnection(MySqlConnections.BellacomTest);
+                                    
                     if (registroBellacom == null)
                     {
                         LoggerServices.AddMessageError($"No se encontró estudiante en Bellacom, ID: {est.Id}", new Exception());
@@ -367,7 +368,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     }
 
                     //registroBellacom.BeginGlobalTransaction();
-                    datosOriginalesEstudiantes.Add(registroBellacom);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
+                    //datosOriginalesEstudiantes.Add(registroBellacom);//respaldo los datos para guardarlos en nuestra tabla de sqlServer, estos son los datos originales de SIGE
 
                     // Actualizar campos
                     registroBellacom.Idreligion = est.Id_religion;
@@ -380,9 +381,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
                     registroBellacom.Aniosacra = est.Aniosacra;
                     registroBellacom.Fechamodificacion = DateTime.Now.Date;
 
-                    registroBellacom.Update();
-                   // registroBellacom.CommitGlobalTransaction();
+                    var respuesta = registroBellacom.Update();
 
+                    if (respuesta.status != 200)
+                    {
+                        continue;
+                    }
                     est.Migrado = true;
                     est.Update();
                 }

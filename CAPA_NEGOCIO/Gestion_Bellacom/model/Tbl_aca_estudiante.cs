@@ -4,6 +4,11 @@ namespace DataBaseModel
 {
     public class Tbl_aca_estudiante : EntityClass
     {
+
+        public Tbl_aca_estudiante()
+        {
+            this.MDataMapper = MySqlConnections.BellacomTest;
+        }
         [PrimaryKey(Identity = false)]
         public int? Idestudiante { get; set; }
         public string? Idtestudiante { get; set; }

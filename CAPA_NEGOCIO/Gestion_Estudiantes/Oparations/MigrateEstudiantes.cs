@@ -20,11 +20,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate()
 		{
-			//await MigrateParentesco();
-			//await MigrateFamilia();
+			await MigrateParentesco();
+			await MigrateFamilia();
 			await migrateEstudiantesSiac(_sshTunnelService);
-			//await MigrateParientesAndUsers();
-			//await migrateEstudiantesReponsablesFamilia();
+			await MigrateParientesAndUsers();
+			await migrateEstudiantesReponsablesFamilia();
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -363,7 +363,7 @@ namespace CAPA_NEGOCIO.Oparations
 						FilterType = ">=",
 						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
 					};
-					var dataMsql = data.Where<Tbl_aca_tutor>(/*filter*/);
+					var dataMsql = data.Where<Tbl_aca_tutor>();
 
 				//	BeginGlobalTransaction();
 

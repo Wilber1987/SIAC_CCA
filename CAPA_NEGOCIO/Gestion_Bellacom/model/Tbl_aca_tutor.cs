@@ -1,7 +1,13 @@
 using APPCORE;
+using CAPA_NEGOCIO.Util;
 namespace DataBaseModel
 {
     public class Tbl_aca_tutor : EntityClass {
+
+        public Tbl_aca_tutor()
+        {
+            this.MDataMapper = MySqlConnections.BellacomTest;
+        }
        [PrimaryKey(Identity = false)]
        public int? Idtutor { get; set; }
        public int? Idfamilia { get; set; }

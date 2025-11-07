@@ -23,7 +23,7 @@ class Estudiantes_Data_Update_ModelComponent extends EntityClass {
         for (const prop in props) { this[prop] = props[prop]; };
     }
     /**@type {ModelProperty}*/ SecurityOption = {
-        type: 'WRADIO', label: "¿Este estudiante cuenta con seguro vigente hasta diciembre 2026?",
+        type: 'WRADIO', label: "<b style='color:black;'>SEGURO ESTUDIANTIL:</b><br>¿Este estudiante cuenta con seguro vigente hasta diciembre 2026?",
         Dataset: securityOptions,
         require: false
     };
