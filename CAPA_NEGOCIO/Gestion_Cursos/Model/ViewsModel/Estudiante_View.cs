@@ -27,6 +27,7 @@ namespace DataBaseModel
 		public string? Nombre_corto_nota { get; set; }
 		public int? Numero_consolidados { get; set; }
 		public int? Consolidado_id { get; set; }
+		public int? Id_familia { get; set; }		
 		public int? Orden { get; set; }
 		public Double? Resultado { get; set; }
 		public string? Tipo { get; set; }
@@ -50,8 +51,8 @@ namespace DataBaseModel
 		public string? Estado { get; set; } 
 		public string? Idtfamilia { get; set; } 
 		public string? Codigo_familia { get; set; }
-		public string? Observaciones { get;  set; }
-		
+		public string? Observaciones { get; set; }		
+		public int? Periodo_lectivo_id { get; set; }		
 		public string? Nombre_completo { get { return $"{Nombre_Estudiantes}"; } }
 
 		public string? Descripcion

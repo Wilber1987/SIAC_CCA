@@ -43,6 +43,7 @@ class Parientes extends EntityClass {
     async GetParientesQueActulizaron() {
         return await this.GetData("ApiUpdate/GetParientesQueActulizaron");
     }
+
     async GetParientesInvitados() {
         return await this.GetData("ApiUpdate/GetParientesInvitados");
     }
@@ -51,6 +52,24 @@ class Parientes extends EntityClass {
     }
     async GetParientesQueNoLoguearon() {
         return await this.GetData("ApiUpdate/GetParientesQueNoLoguearon");
+    }
+    
+    //ACTUALIZACXIONES 2025
+
+    async GetParientesActulizacionData() {
+        return await this.GetData("ApiUpdate/GetParientesActulizacionData");
+    }
+    async GetParientesActualizados() {
+        return await this.GetData("ApiUpdate/GetParientesActualizados");
+    }
+    async GetParientesQueNoActulizaron() {
+        return await this.GetData("ApiUpdate/GetParientesQueNoActulizaron");
+    }
+    /**
+     * @returns {Promise<any>}
+     */
+    async ReenviarBoleta() {
+        return await this.GetData("ApiUpdate/ReenviarBoleta");
     }
 }
 export { Parientes };

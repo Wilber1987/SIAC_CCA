@@ -28,18 +28,6 @@ namespace CAPA_NEGOCIO.Gestion_Cursos.Model.QueryModel
 			return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}";
 		}
 
-        public override List<MateriasByClassQuery> Get<MateriasByClassQuery>()
-        {
-            var dt = this.MDataMapper?.GDatos.TraerDatosSQL(GetQuery());
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                return AdapterUtil.ConvertDataTable<MateriasByClassQuery>(dt, this);
-            }
-            else
-            {
-                return [];
-            }
-        }
 
         public override string GetQuery()
         {

@@ -124,6 +124,10 @@
 				}
 				@if (SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
 				{
+					<li><a href="~/update/actualizaciones" data-key="t-ecommerce">Actualizaciones</a></li>
+				}
+				@if (SecurityController.HavePermission(Identify, Permissions.SEND_MESSAGE))
+				{
 					<li><a href="~/update/NotificacionMatriculaActualizacion" data-key="t-ecommerce">Notificación Matrícula Actualización</a></li>
 				}
 			</ul>
@@ -169,7 +173,8 @@
 				{
 					<li><a href="~/Gestion_Cursos/Gestion_Grados" data-key="t-ecommerce">Generar Baremos</a></li>
 				}
-				<li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li>
+				@* <li><a href="~/Reports/Recorridos" data-key="t-report">Informes de alumnos - Recorrido</a></li> *@
+				<li><a href="~/Reports/Actualizaciones" data-key="t-report">Informes de actualizaciones</a></li>
 				<li><a href="~/Reports/PagosReport" data-key="t-report">Informes de pagos</a></li>
 				<li><a href="~/Reports/PagosNoAutorizadosReport" data-key="t-report">Informes de pagos no autorizados</a></li>
 				<!-- template -->

@@ -3,13 +3,14 @@
 import { Responsables } from './Responsables.js';
 import { EntityClass } from '../WDevCore/WModules/EntityClass.js';
 class Parientes extends EntityClass {
-   /** @param {Partial<Parientes>} [props] */
-   constructor(props) {
-       super(props, 'EntityDbo');
-       for (const prop in props) {
-           this[prop] = props[prop];
-       }
-   }
+
+    /** @param {Partial<Parientes>} [props] */
+    constructor(props) {
+        super(props, 'EntityDbo');
+        for (const prop in props) {
+            this[prop] = props[prop];
+        }
+    }
    /**@type {Number}*/ Id;
    /**@type {String}*/ Primer_nombre;
    /**@type {String}*/ Segundo_nombre;

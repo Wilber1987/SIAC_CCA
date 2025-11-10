@@ -79,6 +79,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
+
 		private static ResponseService GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
 		{
 			try
@@ -664,11 +665,11 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			inst.filterData?.Add(FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto));
 			inst.filterData?.Add(FilterData.Equal("Id_familia", parienteE?.Id_familia));
 			return inst.Get<Estudiantes_Data_Update>();
-        }
+		}
 
-        public static ResponseService UpdateEstudianteActualizados(string? sessionKey, Estudiantes_Data_Update inst)
-        {
-            UserModel user = AuthNetCore.User(sessionKey);
+		public static ResponseService UpdateEstudianteActualizados(string? sessionKey, Estudiantes_Data_Update inst)
+		{
+			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 			if (inst.Id_familia != null && inst.Id_familia == parienteE?.Id_familia)
@@ -677,7 +678,78 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				return inst.Update();
 			}
 			return new ResponseService(400, "Error al actualizar estudiantes");
-			
-        }
-    }
+
+		}
+
+		public static List<Parientes_Data_Update>? GetParientesQueNoActulizaron(Parientes_Data_Update inst)
+		{
+			var parientesActualizados = GetParientesActualizados(inst);
+			inst.filterData = inst.filterData ?? [];
+			inst.filterData?.AddRange([
+				FilterData.NotIn("Id", parientesActualizados.Select(x => x.Id).ToArray()),
+				FilterData.NotNull("User_id")
+			]);
+			var responsables = new Parientes
+			{
+				filterData = inst.filterData
+			}.GetResponsables();
+			return responsables.Select(p => new Parientes_Data_Update(p)).ToList();
+		}
+
+		public static List<Parientes_Data_Update>? GetParientesActualizados(Parientes_Data_Update inst)
+		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			inst.filterData = inst.filterData ?? [];
+			inst.filterData?.AddRange([
+				FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto),
+				FilterData.NotNull("User_id")
+			]);
+			return new Parientes_Data_Update()
+				.Where<Parientes_Data_Update>(inst.filterData?.ToArray());
+		}
+
+		public static object? GetParientesActulizacionData(Parientes_Data_Update inst)
+		{
+			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			int parientesActualizados = inst.Count(
+					FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto),
+					FilterData.NotNull("User_id"));
+			int parientesResponsables = GetParientesQueNoActulizaron(inst)?.Count ?? 0;
+
+			return new
+			{
+				Actualizados = parientesActualizados,
+				NoActualizados = parientesResponsables - parientesActualizados
+			};
+		}
+
+		public static async Task<ResponseService> ReenviarBoleta(Parientes_Data_Update inst)
+		{
+			try
+			{
+				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+				Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = inst.User_id }.Find<Parientes_Data_Update>();
+				var updatedData = GetUpdatedData(pariente, periodoLectivo, true);
+				//List<Estudiantes_Data_Update> retenidos = [];
+				var retenidos = new Estudiantes().Where<Estudiantes>(
+					FilterData.Equal("Retenido", true),
+					FilterData.Equal("Id_familia", pariente?.Id_familia)
+				);
+				(string? templatePage, var Attach_Files) = SaveUpdateData(
+					pariente,
+					updatedData,
+					[.. retenidos.Select(e => new Estudiantes_Data_Update(e))]
+				);
+				await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
+				return new ResponseService(200, "Boleta enviada");
+			}
+			catch (System.Exception ex)
+			{
+				LoggerServices.AddMessageError("Error en el envio: " + ex.Message, ex);
+				return new ResponseService(500, "Error en el envio");
+			}
+
+
+		}
+	}
 }

@@ -59,6 +59,13 @@ class Estudiantes extends EntityClass {
         return await this.GetData("ApiReportes/GetEstudiantesConRecorridos");
     }
 
+    /**
+    * @returns {Promise<Array<Estudiantes>>}
+    */
+    async GetEstudiantesActualizaciones() {
+        return await this.GetData("ApiReportes/GetEstudiantesActualizaciones");
+    }
+
 }
 export { Estudiantes };
 

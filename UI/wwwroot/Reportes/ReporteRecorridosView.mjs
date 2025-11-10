@@ -157,25 +157,6 @@ class ReporteRecorridosView extends HTMLElement {
     * @returns {any}
     */
     ReportEstudiantesRecorridos(dataSet) {
-        /*const table = html`<table class="table table-striped mb-0">
-            <thead>
-                <th>N°</th><th>Tutor</th><th>Nombre del alumno</th><th>Correo</th><th>Télefono</th><th>Nivel</th><th>Dirección</th>           
-            </thead>
-            <tbody></tbody>
-        </table>`
-        dataSet.forEach(element => {
-            table.append(WRender.Create({
-                tagName: "tr", children: [
-                    { tagName: "td", innerText: element.No },
-                    { tagName: "td", innerText: element.Tutor },
-                    { tagName: "td", innerText: element.Nombre_del_Alumno },
-                    { tagName: "td", innerText: element.Correo },
-                    { tagName: "td", innerText: element.Telefono },
-                    { tagName: "td", innerText: element.Nivel },
-                    { tagName: "td", innerText: element.Direccion }
-                ]
-            }))
-        });*/
         const encodedText = "Colegio Centro Am&#xE9;rica";
         const parser = new DOMParser();
         const decodedText = parser.parseFromString(encodedText, "text/html").documentElement.textContent;
@@ -230,48 +211,6 @@ class ReporteRecorridosView extends HTMLElement {
                 exportPdf: true,
                 exportPdfApi: true,
                 DocumentViewFirst: true,
-            /*exportXlsAction2: async (htmlNode, filename = "reporteRecorridos") => {
-                const htmlString = htmlNode.outerHTML;
-                // Codificar la cadena en Base64
-                const htmlBase64 = btoa(unescape(encodeURIComponent(htmlString.replace(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g, (match) => {
-                    return rgbToHex(match); // Convierte rgb a hexadecimal
-                }))));
-                // Crear el objeto para enviar al endpoint
-                console.log(htmlBase64);
-    
-                const payload = {
-                    DocumentHtml: htmlBase64
-                };
-                //const response = await WAjaxTools.PostRequest("../api/ApiReportes/ExportToExcel", payload)
-                const response = await fetch('../api/ApiReportes/ExportToExcel', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-    
-                // Verificar si la respuesta es correcta
-                if (!response.ok) {
-                    throw new Error(`Error en la exportación: ${response.statusText}`);
-                }
-    
-                // Convertir la respuesta en un blob (archivo)
-                const blob = await response.blob();
-    
-                // Crear un enlace para descargar el archivo
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-    
-                // Liberar la URL del objeto
-                window.URL.revokeObjectURL(url);
-            }*/
-            //ModelObject: model
         })}
         </div>
        

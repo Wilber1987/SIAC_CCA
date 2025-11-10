@@ -104,7 +104,7 @@ namespace DataBaseModel
 		}
 
 
-		public  List<Parientes> GetResponsables()
+		public List<Parientes> GetResponsables1()
 		{
 			//var parientes = Where<Parientes>(FilterData.NotNull("User_id"));
 			var estudianteActivos = new Estudiante_clases { }.Where<Estudiante_clases>(
@@ -133,6 +133,25 @@ namespace DataBaseModel
 					Email = Pariente.Parientes?.Email,
 					User_id = Pariente.Parientes?.User_id
 				}).ToList();
-		}
+		}	
+		public List<Parientes> GetResponsables()
+		{
+			//var parientes = Where<Parientes>(FilterData.NotNull("User_id"));
+			var estudianteActivos = new Estudiante_View { }.Where<Estudiante_View>(
+				FilterData.Equal("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)
+			).Select(e => e.Id_familia).Distinct().ToArray();
+
+			/*var parientesActivos = new Estudiantes_responsables_familia()
+				.Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", estudianteActivos))
+				.Where(responsable => responsable.Parientes?.User_id != null)
+				.GroupBy(responsable => responsable.Pariente_id)
+				.Select(group => group.First()) // Elegir un representante por Pariente_id
+				.ToList();*/
+			var parientes = Where<Parientes>(FilterData.In("Id_familia", estudianteActivos));
+
+			return parientes;
+		}		
+			
+		
 	}
 }

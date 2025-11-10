@@ -54,11 +54,37 @@ namespace UI.Controllers
 		{
 			return UpdateOperation.GetParientesQueLoguearon(inst);
 		}
+
 		[HttpPost]
 		[AuthController(Permissions.SEND_MESSAGE)]
 		public List<ViewParientesUpdate>? GetParientesQueActulizaron(Parientes_Data_Update inst)
 		{
 			return UpdateOperation.GetParientesQueActulizaron(inst);
+		}
+		
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public object? GetParientesActulizacionData(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesActulizacionData(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesActualizados(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesActualizados(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public List<Parientes_Data_Update>? GetParientesQueNoActulizaron(Parientes_Data_Update inst)
+		{
+			return UpdateOperation.GetParientesQueNoActulizaron(inst);
+		}
+		[HttpPost]
+		[AuthController(Permissions.SEND_MESSAGE)]
+		public async Task<ResponseService> ReenviarBoleta(Parientes_Data_Update inst)
+		{
+			return await UpdateOperation.ReenviarBoleta(inst);
 		}
 
 		[HttpPost]

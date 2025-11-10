@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using ClosedXML.Excel;
+using CAPA_NEGOCIO.Reports.Models;
 
 namespace UI.Controllers
 {
@@ -17,11 +18,19 @@ namespace UI.Controllers
 	public class ApiReportesController : ControllerBase
 	{
 		[HttpPost]
-		[AuthController(Permissions.UPDATE_FAMILY_DATA)]
+		[AuthController(Permissions.REPORTE_ACCESS)]
 		public List<Estudiantes_Data_Update> GetEstudiantesConRecorridos(Estudiantes_Data_Update inst)
 		{
 			return inst.GetEstudiantesConRecorridos();
 		}
+
+		[HttpPost]
+		[AuthController(Permissions.REPORTE_ACCESS)]
+		public List<EstudiantesUpdateReportModel> GetEstudiantesUpdateReportModel(EstudiantesUpdateReportModel inst)
+		{
+			return inst.Get<EstudiantesUpdateReportModel>();
+		}
+
 
 		[HttpPost]
 		[AuthController]
