@@ -33,7 +33,7 @@ class EstudiantesUpdateReportModel extends EntityClass {
         /** @type {string | null} */ this.Nivel = null;
         /** @type {number | null} */ this.Periodo_lectivo_id = null;
         /** @type {SecurityOption | null} */ this.SecurityOption = new SecurityOption(); // Asumiendo que SecurityOption es una clase o un objeto
-        /** @type {string | null} */ this.SecurityOptionLabel = this.SecurityOption?.Descripcion ?? "";
+       
         // Aplicar propiedades pasadas en el constructor
         if (props) {
             /** @type {keyof EstudiantesUpdateReportModel} */
@@ -45,6 +45,7 @@ class EstudiantesUpdateReportModel extends EntityClass {
                 }
             }
         }
+        /** @type {string | null} */ this.SecurityOptionLabel = this.SecurityOption?.Descripcion ?? "";
     }
     /**
     * @returns {Promise<any>}
