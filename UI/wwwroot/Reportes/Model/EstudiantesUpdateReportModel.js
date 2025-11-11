@@ -20,6 +20,7 @@ class EstudiantesUpdateReportModel extends EntityClass {
         super(props, "Reportes");
         /** @type {number | null} */ this.Id = null;
         /** @type {string | null} */ this.Id_familia = null;
+        /** @type {string | null} */ this.Idtfamilia = null;
         /** @type {string | null} */ this.Codigo = null;
         /** @type {string | null} */ this.Nombre_completo = null;
         /** @type {string | null} */ this.Primer_nombre = null;
@@ -67,7 +68,8 @@ class EstudiantesUpdateReportModel_Modelcomponent {
     }
 
     /**@type {ModelProperty}*/ Id = { type: "number", primary: true, hidden: true, hiddenFilter: true };
-    /**@type {ModelProperty}*/ Id_familia = { type: "text", label: "ID Familia", hiddenFilter: true };
+    //**@type {ModelProperty}*/ Id_familia = { type: "text", label: "ID Familia", hiddenFilter: true };
+    /**@type {ModelProperty}*/ Idtfamilia = { type: "text", label: "ID Familia", hiddenFilter: true };
     /**@type {ModelProperty}*/ Codigo = { type: "text", label: "Código", hiddenFilter: true };
     /**@type {ModelProperty}*/ Nombre_completo = { type: "text", hiddenFilter: true };
     //**@type {ModelProperty}*/ Primer_nombre = { type: "text", label: "Primer Nombre" , hiddenFilter: true};

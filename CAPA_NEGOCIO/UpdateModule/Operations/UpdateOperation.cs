@@ -740,6 +740,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					updatedData,
 					[.. retenidos.Select(e => new Estudiantes_Data_Update(e))]
 				);
+				pariente.Email = inst.Email;
 				await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 				return new ResponseService(200, "Boleta enviada");
 			}

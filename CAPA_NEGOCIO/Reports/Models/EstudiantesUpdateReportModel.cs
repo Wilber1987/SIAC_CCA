@@ -8,6 +8,7 @@ namespace CAPA_NEGOCIO.Reports.Models
     {
         public int? Id { get; set; }
         public string? Id_familia { get; set; }
+        public string? Idtfamilia { get; set; }
         public string? Codigo { get; set; }
         public string? Primer_nombre { get; set; }
         public string? Segundo_nombre { get; set; }
@@ -42,6 +43,7 @@ namespace CAPA_NEGOCIO.Reports.Models
             Periodo_lectivo_id = periodo?.Id;
             return $@"SELECT
                 e.id_familia,
+                f.idtfamilia,
                 e.codigo,
                 e.id,
                 e.primer_nombre,
@@ -57,6 +59,8 @@ namespace CAPA_NEGOCIO.Reports.Models
                 ec.periodo_lectivo_id
             FROM
                 update_data.estudiantes_data_update as e
+            INNER JOIN familias as f ON
+                f.id = e.id_familia
             INNER JOIN estudiante_clases as ec ON
                 e.id = ec.estudiante_id
             INNER JOIN clases as c ON
