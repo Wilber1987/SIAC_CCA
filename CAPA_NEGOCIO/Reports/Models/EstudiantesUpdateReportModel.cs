@@ -1,4 +1,5 @@
 using APPCORE;
+using APPCORE.Services;
 using CAPA_NEGOCIO.UpdateModule.Model;
 using DataBaseModel;
 
@@ -16,11 +17,16 @@ namespace CAPA_NEGOCIO.Reports.Models
         public string? Segundo_apellido { get; set; }
         public DateTime? Fecha_nacimiento { get; set; }
         public string? Periodo_Lectivo_Update { get; set; }
-        public string? Grado { get; set; }
+        public int? Grado { get; set; }
         public string? Seccion { get; set; }
         public string? Nivel { get; set; }
         public int? Periodo_lectivo_id { get; set; }
         public string? Nombre_completo { get { return $"{Primer_nombre} {Segundo_nombre} {Primer_apellido} {Segundo_apellido}"; } }
+
+        public string? NombreGrado
+		{
+			get { return $"{NumberUtility.ObtenerEnumeracion((Nivel?.ToUpper() == "SECUNDARIA" ?  this.Grado + 6: this.Grado )?? 0)}"; }
+		}
 
 
         [JsonProp]
