@@ -35,10 +35,11 @@ class ActualizacionesView extends HTMLElement {
      * @param {Parientes} parienteActualizado
      */
     async ReenviarBoleta(parienteActualizado) {
+        const pariente =  new Parientes(parienteActualizado);
         const form = new WForm({
             ModelObject: { /**@type {ModelProperty}*/ Email: { type: 'EMAIL' } },
-            EntityModel: parienteActualizado,
-            EditObject: parienteActualizado,
+            EntityModel: pariente,
+            EditObject:pariente,
             AutoSave: false,
             StyleForm: "ColumnX1",
             Options: false

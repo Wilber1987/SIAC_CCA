@@ -30,6 +30,7 @@ class EstudiantesUpdateReportModel extends EntityClass {
         /** @type {Date | null} */ this.Fecha_nacimiento = null; // DateTime? en C# se mapea a Date | null en JS
         /** @type {string | null} */ this.Periodo_Lectivo_Update = null;
         /** @type {string | null} */ this.Grado = null;
+        /** @type {string | null} */ this.NombreGrado = null;
         /** @type {string | null} */ this.Seccion = null;
         /** @type {string | null} */ this.Nivel = null;
         /** @type {number | null} */ this.Periodo_lectivo_id = null;
@@ -78,7 +79,7 @@ class EstudiantesUpdateReportModel_Modelcomponent {
     //**@type {ModelProperty}*/ Segundo_apellido = { type: "text", label: "Segundo Apellido", require: false, hiddenFilter: true };
     /**@type {ModelProperty}*/ Fecha_nacimiento = { type: "date", label: "Fecha de Nacimiento", hiddenFilter: true };
     /**@type {ModelProperty}*/ Periodo_Lectivo_Update = { type: "select", hiddenInTable: true, label: "Periodo de Actualización", Dataset: [] };
-    /**@type {ModelProperty}*/ Grado = { type: "text", label: "Grado", hiddenFilter: true };
+    /**@type {ModelProperty}*/ NombreGrado = { type: "text", label: "Grado", hiddenFilter: true };
     /**@type {ModelProperty}*/ Seccion = { type: "text", label: "Sección", hiddenFilter: true };
     /**@type {ModelProperty}*/ Nivel = { type: "text", label: "Nivel", hiddenFilter: true };
     /**@type {ModelProperty}*/ Periodo_lectivo_id = { type: "number", label: "ID Periodo Lectivo", hidden: true, hiddenFilter: true };
