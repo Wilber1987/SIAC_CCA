@@ -113,15 +113,17 @@ namespace CAPA_NEGOCIO.Oparations
 				var calificacion = new ViewCalificacionesActivasSiac();
 				calificacion.SetConnection(MySqlConnections.SiacTest);
 				calificacion.CreateViewEstudiantesActivos();
+				var fechaFiltro = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
 				var filter = new FilterData
 				{
 					PropName = "updated_at",
 					FilterType = ">=",
-					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
-				};
+					Values = new List<string?> { fechaFiltro.ToString("yyyy-MM-dd HH:mm:ss") }
+					//Values = new List<string?> { fechaUltimaActualizacion.ToString() }
+				};				
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(
-					//filter
+					filter
 				);
 
 				LoggerServices.AddMessageInfo($"migrateCalificaciones --> Registros encontrados en MySQL: {calificacionMsql.Count}");

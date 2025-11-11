@@ -355,7 +355,7 @@ namespace CAPA_NEGOCIO.Oparations
 				try
 				{
 					var data = new Tbl_aca_tutor();
-					data.SetConnection(MySqlConnections.BellacomTest);
+					data.SetConnection(MySqlConnections.BellacomTest);									
 
 					var filter = new FilterData
 					{

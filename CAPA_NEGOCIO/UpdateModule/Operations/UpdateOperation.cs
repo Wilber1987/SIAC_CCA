@@ -740,10 +740,14 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 					updatedData,
 					[.. retenidos.Select(e => new Estudiantes_Data_Update(e))]
 				);
+				if (Attach_Files.Count() == 0)
+				{
+					return new ResponseService(500, "No se reenviaron los documentos, ya que no se pudieron recuperar. intentelo nuevamente");
+				}				
 				await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 				return new ResponseService(200, "Boleta enviada");
 			}
-			catch (System.Exception ex)
+			catch (Exception ex)
 			{
 				LoggerServices.AddMessageError("Error en el envio: " + ex.Message, ex);
 				return new ResponseService(500, "Error en el envio");
