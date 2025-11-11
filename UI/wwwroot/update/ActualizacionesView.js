@@ -43,7 +43,7 @@ class ActualizacionesView extends HTMLElement {
             StyleForm: "ColumnX1",
             Options: false
         });
-        this.append(new WModalForm({
+        const modal = new WModalForm({
             title: "Reenviar boleta",
             ObjectModal: html`<div>
                 ${form}
@@ -54,12 +54,14 @@ class ActualizacionesView extends HTMLElement {
                     }
                     this.append(ModalVericateAction(async () => {
                         const response = await parienteActualizado.ReenviarBoleta();
+                        modal.close();
                         WAlertMessage.ResponseMessage(response);
                     }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
                 }}">Enviar</button>
             </div>`
-        }))       
+        })
+        this.append(modal)       
     }
 
     NavElements() {
