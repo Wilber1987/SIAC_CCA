@@ -9,6 +9,9 @@ import { WAppNavigator } from "../WDevCore/WComponents/WAppNavigator.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
 import { html } from "../WDevCore/WModules/WComponentsTools.js";
 import { css } from "../WDevCore/WModules/WStyledRender.js";
+import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
+import { WForm } from "../WDevCore/WComponents/WForm.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
 
 
 /**
@@ -32,8 +35,33 @@ class ActualizacionesView extends HTMLElement {
      * @param {Parientes} parienteActualizado
      */
     async ReenviarBoleta(parienteActualizado) {
-        const response = await parienteActualizado.ReenviarBoleta();
-        WAlertMessage.ResponseMessage(response);
+        const form = new WForm({
+            ModelObject: { /**@type {ModelProperty}*/ Email: { type: 'EMAIL' } },
+            EntityModel: parienteActualizado,
+            EditObject: parienteActualizado,
+            AutoSave: false,
+            StyleForm: "ColumnX1",
+            Options: false
+        });
+        const modal = new WModalForm({
+            title: "Reenviar boleta",
+            ObjectModal: html`<div>
+                ${form}
+                <button class="Btn check-icon" onclick="${async () => {
+                    if (!form.Validate()) {
+                        WAlertMessage.Warning("Correo invalido", true)
+                        return;
+                    }
+                    this.append(ModalVericateAction(async () => {
+                        const response = await parienteActualizado.ReenviarBoleta();
+                        modal.close();
+                        WAlertMessage.ResponseMessage(response);
+                    }, "Esta a punto de reenviar los documentos de contrato y boleta al correo introducido. ¿Desea continuar?"));
+
+                }}">Enviar</button>
+            </div>`
+        })
+        this.append(modal)       
     }
 
     NavElements() {
@@ -44,7 +72,7 @@ class ActualizacionesView extends HTMLElement {
                 const modelEntity = new Parientes({ Get: async () => modelEntity.GetParientesQueNoActulizaron() })
                 return new WTableComponent({
                     ModelObject: new Parientes_ModelComponent(),
-                    EntityModel: modelEntity,                   
+                    EntityModel: modelEntity,
                     Options: {
                         Filter: true,
                         UseManualControlForFiltering: true

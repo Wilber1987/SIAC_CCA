@@ -128,7 +128,6 @@ app.UseSession();
 app.UseAuthorization();
 
 //new BellacomUpdateOperation().updateBellacomData();
-
 //await new MigrateDocentes().Migrate();
 //await new MigrateGestionCursos().Migrate();
 //await new MigrateEstudiantes().Migrate();

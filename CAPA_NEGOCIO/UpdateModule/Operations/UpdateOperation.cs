@@ -744,6 +744,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					return new ResponseService(500, "No se reenviaron los documentos, ya que no se pudieron recuperar. intentelo nuevamente");
 				}				
+				pariente.Email = inst.Email;
 				await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 				return new ResponseService(200, "Boleta enviada");
 			}

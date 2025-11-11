@@ -49,7 +49,7 @@ namespace DataBaseModel
 		public string? Nombre_Estudiantes { get; set; }
 		public string? Sexo { get; set; }
 		public string? Estado { get; set; } 
-		public string? Idtfamilia { get; set; } 
+		public string? Idtfamilia { get; set; }
 		public string? Codigo_familia { get; set; }
 		public string? Observaciones { get; set; }		
 		public int? Periodo_lectivo_id { get; set; }		
