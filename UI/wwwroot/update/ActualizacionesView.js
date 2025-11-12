@@ -35,11 +35,11 @@ class ActualizacionesView extends HTMLElement {
      * @param {Parientes} parienteActualizado
      */
     async ReenviarBoleta(parienteActualizado) {
-        const pariente =  new Parientes(parienteActualizado);
+        const pariente =  new Parientes({ Id: parienteActualizado.Id, Email: parienteActualizado.Email, User_id: parienteActualizado.User_id});
         const form = new WForm({
             ModelObject: { /**@type {ModelProperty}*/ Email: { type: 'EMAIL' } },
             EntityModel: pariente,
-            EditObject:pariente,
+            EditObject: pariente,
             AutoSave: false,
             StyleForm: "ColumnX1",
             Options: false
@@ -54,7 +54,7 @@ class ActualizacionesView extends HTMLElement {
                         return;
                     }
                     this.append(ModalVericateAction(async () => {
-                        const response = await parienteActualizado.ReenviarBoleta();
+                        const response = await pariente.ReenviarBoleta();
                         modal.close();
                         WAlertMessage.ResponseMessage(response);
                     }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));

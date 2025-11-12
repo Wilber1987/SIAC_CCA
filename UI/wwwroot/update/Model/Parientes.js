@@ -6,6 +6,7 @@ class Parientes extends EntityClass {
     /** @param {Partial<Parientes>} [props] */
     constructor(props) {
         super(props, 'Update');
+        this.User_id = null;
         for (const prop in props) {
             this[prop] = props[prop];
         };
