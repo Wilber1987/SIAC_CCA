@@ -35,7 +35,9 @@ class ActualizacionesView extends HTMLElement {
      * @param {Parientes} parienteActualizado
      */
     async ReenviarBoleta(parienteActualizado) {
-        const pariente =  new Parientes({ Id: parienteActualizado.Id, Email: parienteActualizado.Email, User_id: parienteActualizado.User_id});
+        const pariente = new Parientes({
+            Id: parienteActualizado.Id, Email: parienteActualizado.Email, User_id: parienteActualizado.User_id
+        });
         const form = new WForm({
             ModelObject: { /**@type {ModelProperty}*/ Email: { type: 'EMAIL' } },
             EntityModel: pariente,
@@ -62,7 +64,7 @@ class ActualizacionesView extends HTMLElement {
                 }}">Enviar</button>
             </div>`
         })
-        this.append(modal)       
+        this.append(modal)
     }
 
     NavElements() {
