@@ -35,11 +35,13 @@ class ActualizacionesView extends HTMLElement {
      * @param {Parientes} parienteActualizado
      */
     async ReenviarBoleta(parienteActualizado) {
-        const pariente =  new Parientes(parienteActualizado);
+        const pariente = new Parientes({
+            Id: parienteActualizado.Id, Email: parienteActualizado.Email, User_id: parienteActualizado.User_id
+        });
         const form = new WForm({
             ModelObject: { /**@type {ModelProperty}*/ Email: { type: 'EMAIL' } },
             EntityModel: pariente,
-            EditObject:pariente,
+            EditObject: pariente,
             AutoSave: false,
             StyleForm: "ColumnX1",
             Options: false
@@ -54,7 +56,7 @@ class ActualizacionesView extends HTMLElement {
                         return;
                     }
                     this.append(ModalVericateAction(async () => {
-                        const response = await parienteActualizado.ReenviarBoleta();
+                        const response = await pariente.ReenviarBoleta();
                         modal.close();
                         WAlertMessage.ResponseMessage(response);
                     }, "Esta a punto de reenviar los documentos de contrato y boleta al correo introducido. ¿Desea continuar?"));
@@ -62,7 +64,7 @@ class ActualizacionesView extends HTMLElement {
                 }}">Enviar</button>
             </div>`
         })
-        this.append(modal)       
+        this.append(modal)
     }
 
     NavElements() {

@@ -76,7 +76,7 @@ builder.Services.AddCronJob<SendMailNotificationsSchedulerJob>(options =>
 });
 
 /***sincronizacion de siac y bellacom a sistema*/
-builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
+/*builder.Services.AddCronJob<MigrateDocentesCronJob>(options =>
 {
 	options.CronExpression = "30 17 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
@@ -98,7 +98,7 @@ builder.Services.AddCronJob<MigrateNotasCronJob>(options =>
 {
 	options.CronExpression = "0 1 * * *";
 	options.TimeZone = TimeZoneInfo.Local;
-});
+});*/
 
 #endregion
 
@@ -128,6 +128,7 @@ app.UseSession();
 app.UseAuthorization();
 
 //new BellacomUpdateOperation().updateBellacomData();
+
 //await new MigrateDocentes().Migrate();
 //await new MigrateGestionCursos().Migrate();
 //await new MigrateEstudiantes().Migrate();

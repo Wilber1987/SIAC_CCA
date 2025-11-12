@@ -22,8 +22,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			await migrateTipoNotas();
-			await migrateEvaluaciones();
+			//await migrateTipoNotas();
+			//await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 
@@ -121,9 +121,11 @@ namespace CAPA_NEGOCIO.Oparations
 					FilterType = ">=",
 					Values = new List<string?> { fechaFiltro.ToString("yyyy-MM-dd HH:mm:ss") }
 					//Values = new List<string?> { fechaUltimaActualizacion.ToString() }
-				};				
+				};
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(
-					filter
+					filter,
+					FilterData.Equal("estudiante_clase_id", 33475)
+
 				);
 
 				LoggerServices.AddMessageInfo($"migrateCalificaciones --> Registros encontrados en MySQL: {calificacionMsql.Count}");
@@ -140,7 +142,7 @@ namespace CAPA_NEGOCIO.Oparations
 						);
 
 						foreach (var tn in grupo)
-						{							
+						{
 							try
 							{
 								var existingCalificacion = new Calificaciones()
@@ -163,7 +165,7 @@ namespace CAPA_NEGOCIO.Oparations
 									existingCalificacion.Materia_id = tn.Materia_id;
 									existingCalificacion.Periodo = tn.Periodo;
 
-									existingCalificacion.Update();									
+									existingCalificacion.Update();
 								}
 								else
 								{
@@ -208,37 +210,16 @@ namespace CAPA_NEGOCIO.Oparations
 							foreach (var idGroup in registrosAEliminar.GroupBy(x => x.Estudiante_clase_id))
 							{
 								var duplicados = idGroup.ToList();
-
-								if (duplicados.Count == 1)
+								// Eliminar primero los que tengan Resultado == null
+								if (duplicados.Any())
 								{
-									// Solo uno para eliminar
-									var registro = duplicados[0];
-									registro.Delete();
-									LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación eliminada: ID = {registro.Id}");
-								}
-								else
-								{
-									// Eliminar primero los que tengan Resultado == null
-									var conResultadoNull = duplicados.Where(x => x.Resultado == null).ToList();
-
-									if (conResultadoNull.Any())
+									foreach (var registro in duplicados)
 									{
-										foreach (var registro in conResultadoNull)
-										{
-											registro.Delete();
-											LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación con Resultado NULL eliminada: ID = {registro.Id}");
-										}
-									}
-									else
-									{
-										// Si no hay ninguno con Resultado null, eliminar todos (o dejar uno si lo deseas)
-										foreach (var registro in duplicados)
-										{
-											registro.Delete();
-											LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación eliminada (sin Resultado NULL disponible): ID = {registro.Id}");
-										}
+										registro.Delete();
+										LoggerServices.AddMessageInfo($"migrateCalificaciones --> Calificación con Resultado NULL eliminada: ID = {registro.Id}");
 									}
 								}
+
 							}
 						}
 						catch (Exception ex)
