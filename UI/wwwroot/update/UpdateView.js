@@ -50,18 +50,36 @@ class UpdateView extends HTMLElement {
         // @ts-ignore
         this.UpdateData = await new UpdateData().Get();
         this.AllEstudiantesRetenidos = this.UpdateData.Estudiantes.every(est => est.Retenido == true);
-        this.NavManager = new WAppNavigator({
-            NavStyle: "tab",
-            Inicialize: true,
-            TabContainer: this.TabContainer,
-            Elements: this.NavElements()
-        });
-        this.append(this.NavManager);
+        
+        this.tutoresView = html`<div class="element-container">
+            <h2>Tutores</h2>
+            <div class="element-data">
+                ${this.UpdateData?.Parientes?.map(pariente => this.TutorCard(pariente))}
+            </div>
+            ${this.CustomStyle.cloneNode(true)}
+            ${StylesControlsV2.cloneNode(true)}
+            ${this.OptionsContainer()}
+        </div>`;
+        this.HijosView = html`<div class="element-container">
+             <h2>Estudiantes</h2>
+            <div class="element-data"> 
+                ${this.UpdateData?.Estudiantes?.map(estudiante => this.EstudianteCard(estudiante))}
+            </div>
+            ${this.CustomStyle.cloneNode(true)}
+            ${StylesControlsV2.cloneNode(true)}
+            ${this.OptionsContainer()}
+        </div>`;
+        this.ActualizacionFormView = this.ActualizacionForm();
+        this.append(this.TabContainer);
+        this.Manager.NavigateFunction("tutores", this.tutoresView);
     }
-    OptionsContainer() {
+    OptionsContainer(withBack = true) {
         return WRender.Create({
-            className: "OptionsContainer", children: [
-                html`<button class="Btn check-icon" onclick="${() => {
+            className: "OptionsContainer-steaps", children: [
+                withBack ? html`<button class="Btn BtnReturn" onclick="${() => {
+                    this.BackAction();
+                }}">Regresar</button>` : "",
+                html`<button class="Btn btn-go" onclick="${() => {
                     if (this.AllEstudiantesRetenidos) {
                         this.Manager.NavigateFunction("finalizacio-proceso",
                             html`<div class="OptionsContainer">
@@ -78,39 +96,45 @@ class UpdateView extends HTMLElement {
                             </div>`,
                         );
                     } else {
-                        this.Manager.NavigateFunction("finalizacio-proceso", this.ActualizacionForm());
+
+                        if (this.tutoresView?.isConnected) {
+                            for (const pariente of this.UpdateData?.Parientes) {
+                                if (!WArrayF.ValidateByModel(pariente, new Parientes_ModelComponent())) {
+                                    this.append(ModalMessage(`Los datos del pariente ${pariente.Nombre_completo}  incompletos`, undefined));
+                                    return;
+                                }
+                            }
+                            this.Manager.NavigateFunction("Hijos", this.HijosView);
+                        } else if (this.HijosView?.isConnected) {
+                            for (const estudiante of this.UpdateData?.Estudiantes) {
+                                if (estudiante.Retenido === true) continue;
+                                if (!WArrayF.ValidateByModel(estudiante, new Estudiantes_ModelComponent({
+                                    SecurityOption: {
+                                        type: 'WRADIO', require: true
+                                    }
+                                }))) {
+                                    this.append(ModalMessage(`Los datos del estudiante ${estudiante.Nombre_completo}  incompletos`, undefined));
+                                    return;
+                                }
+                            }
+                            this.Manager.NavigateFunction("finalizacio-proceso", this.ActualizacionFormView);
+                        }
                     }
-                }}">Finalizar proceso de actualización</button>`,
+                }}">Continuar</button>`,
             ]
         });
     }
 
-    NavElements() {
-        return [{
-            name: "Tutores", rendered: this.UpdateData?.Parientes?.length > 0,
-            action: () => {
-                return html`<div class="element-container">
-                    <div class="element-data">
-                        ${this.UpdateData?.Parientes?.map(pariente => this.TutorCard(pariente))}
-                    </div>                    
-                    ${this.CustomStyle.cloneNode(true)}
-                    ${StylesControlsV2.cloneNode(true)}
-                    ${this.OptionsContainer()}
-                </div>`;
-            }
-        }, {
-            name: "Hijos", action: () => {
-                return html`<div class="element-container">
-                    <div class="element-data"> 
-                        ${this.UpdateData?.Estudiantes?.map(estudiante => this.EstudianteCard(estudiante))}
-                    </div>      
-                    ${this.CustomStyle.cloneNode(true)}
-                    ${StylesControlsV2.cloneNode(true)}
-                    ${this.OptionsContainer()}
-                </div>`;
-            }
-        }]
+
+    BackAction() {
+        if (this.HijosView?.isConnected) {
+
+            this.Manager.NavigateFunction("tutores", this.tutoresView);
+        } else if (this.ActualizacionFormView?.isConnected) {
+            this.Manager.NavigateFunction("Hijos", this.HijosView);
+        }
     }
+
     /**
      * Function to draw a card element for each tutor in the update form
      * @param {Parientes} pariente - The object containing the tutor data
@@ -316,7 +340,7 @@ class UpdateView extends HTMLElement {
                 // @ts-ignore
                 original[prop] = estudiante[prop];
             }
-            this.NavManager?.ActiveTab("Hijos");
+            this.Manager?.NavigateFunction("Hijos");
             console.log(estudiante);
         }, "¿Esta seguro que desea actualizar los datos del estudiante?"));
     }
@@ -331,7 +355,7 @@ class UpdateView extends HTMLElement {
                 // @ts-ignore
                 estudiante[prop] = original[prop];
             }
-            this.NavManager?.ActiveTab("Hijos");
+            this.Manager?.NavigateFunction("Hijos");
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
@@ -342,7 +366,6 @@ class UpdateView extends HTMLElement {
      * @param {WForm} form
      */
     EditTutor(pariente, original, form) {
-
         this.Manager.NavigateFunction("ParDetail_" + Date.now().toString(), html`<div class="TabContainer">  
             ${this.CustomStyle.cloneNode(true)}          
             <h3>${pariente.Nombre_completo}</h3>
@@ -381,7 +404,7 @@ class UpdateView extends HTMLElement {
     GuardarPariente(pariente, original) {
         this.append(ModalVericateAction(() => {
             Object.assign(original, pariente);
-            this.NavManager?.ActiveTab("Tutores");
+            this.Manager?.NavigateFunction("Tutores");
         }, "¿Esta seguro que desea actualizar los datos del tutor?"));
 
     }
@@ -394,12 +417,28 @@ class UpdateView extends HTMLElement {
     regresarPariente(pariente, original) {
         this.append(ModalVericateAction(() => {
             Object.assign(pariente, original);
-            this.NavManager?.ActiveTab("Tutores");
+            this.Manager?.NavigateFunction("Tutores");
         }, "¿Esta seguro que desea descartar los cambios?"));
     }
 
     ActualizacionForm() {
-        const inputTerminosYCondiciones = html`<input type="checkbox" checked class="inputChecked" id="terminos" name="terminos" value="terminos">`;
+        const inputTerminosYCondiciones = html`<input type="checkbox" checked class="inputChecked" id="terminos" name="terminos" value="terminos">`
+        /*<button class="Btn check-icon" onclick="${() => {
+                        document.body.append(new WModalForm({
+                            title: "Contrato",
+                            ObjectModal: html`<div class="WModalForm">
+                                ${this.UpdateData?.Contrato}                                
+                            </div>`,
+                        }))
+                    }}">Ver contrato</button>
+                <button class="Btn check-icon" onclick="${() => {
+                        document.body.append(new WModalForm({
+                            title: "Boleta",
+                            ObjectModal: html`<div class="WModalForm">                              
+                                ${this.UpdateData?.Boleta == "" ? "No se encuentra boleta de matrícula, ponerse en contacto con el colegio" : this.UpdateData?.Boleta}
+                            </div>`,
+                        }))
+                    }}">Ver boleta</button> */
         return html`<div class="OptionsContainer">
             ${this.CustomStyle.cloneNode(true)}
             ${StylesControlsV2.cloneNode(true)}
@@ -415,25 +454,10 @@ class UpdateView extends HTMLElement {
                 </div>`)}
                 </div>`,
                 html`<section class="WOptionsSection">
-                <button class="Btn" onclick="${() => {
-                        this.NavManager?.ActiveTab("Hijos");
-                    }}">Atrás</button>
-                <button class="Btn check-icon" onclick="${() => {
-                        document.body.append(new WModalForm({
-                            title: "Contrato",
-                            ObjectModal: html`<div class="WModalForm">
-                                ${this.UpdateData?.Contrato}                                
-                            </div>`,
-                        }))
-                    }}">Ver contrato</button>
-                <button class="Btn check-icon" onclick="${() => {
-                        document.body.append(new WModalForm({
-                            title: "Boleta",
-                            ObjectModal: html`<div class="WModalForm">                              
-                                ${this.UpdateData?.Boleta == "" ? "No se encuentra boleta de matrícula, ponerse en contacto con el colegio" : this.UpdateData?.Boleta}
-                            </div>`,
-                        }))
-                    }}">Ver boleta</button>
+                <button class="Btn BtnReturn" onclick="${() => {
+                        this.BackAction();
+                    }}">Regresar</button>
+                
                 <button class="Btn check-icon" onclick="${async () => {
                         // @ts-ignore
                         if (inputTerminosYCondiciones.checked != true) {
@@ -477,22 +501,25 @@ class UpdateView extends HTMLElement {
                             this.append(ModalMessage(response.message, undefined, true));
                         }, "Está a punto de finalizar el proceso de actualización de datos familiares y de aceptar los terminos y condiciones del contrato. ¿Desea continuar?"));
 
-                    }}">Aceptar</button>
+                    }}">Confirmar</button>
             </section>`
             ]}
         </div>`;
     }
 
     CustomStyle = css`
-        w-app-navigator, .OptionsContainer, h2, h3, h4 {
+        w-app-navigator, .OptionsContainer, h2, h3, h4, .OptionsContainer-steaps {
             display: flex;
             max-width: 100%;
             max-width: 1000px;
-            margin  : auto;
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
             padding: 10px 20px;
+        }
+        .OptionsContainer-steaps, .WOptionsSection {
+            display: flex;
+            flex-direction: row;
         }
         w-form, .form-container, .form-options {
             padding: 20px;

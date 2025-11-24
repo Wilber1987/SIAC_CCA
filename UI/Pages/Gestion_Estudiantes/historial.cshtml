@@ -1,12 +1,13 @@
 @page
 @using API.Controllers;
-@using APPCORE.Security; 
+@using APPCORE.Security;
 @using APPCORE;
+@using CAPA_NEGOCIO.SystemConfig
 @using DataBaseModel;
 @using CAPA_NEGOCIO.Gestion_Pagos.Operations
 @{
     string? identify = HttpContext?.Session.GetString("sessionKey");
-     if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
+    if (!SecurityController.HavePermission(identify, Permissions.GESTION_ESTUDIANTES_PROPIOS))
     {
         Response.Redirect("/Security/Login");
         return;
@@ -15,15 +16,21 @@
 
 }
 <script src="~/js/html2pdf.js"></script>
-@if(!pagos.IsInsolvente){
-<script type="module" >
-    import {HistorialView} from "/Gestion_Estudiantes/HistorialView.mjs";
-    window.onload = ()=> {
-        Main.append(new HistorialView());
-    }
-</script>
-<div id="Main" class="app-container"></div>
-}else{
-    <div id="Main" class="app-container"><h3 style="text-align: center;">Para poder visualizar las notas, usted debe estar solvente</h3></div>
+@if(SystemConfigImpl.IsBoletinInactive()) {
+    @Html.Raw(SystemConfigImpl.BoletinInactiveMessage())
+}else if (!pagos.IsInsolvente)
+{
+    <script type="module">
+        import { HistorialView } from "/Gestion_Estudiantes/HistorialView.mjs";
+        window.onload = () => {
+            Main.append(new HistorialView());
+        }
+    </script>
+    <div id="Main" class="app-container"></div>
+}  
+else
+{
+    <div id="Main" class="app-container">
+        <h3 style="text-align: center;">Para poder visualizar las notas, usted debe estar solvente</h3>
+    </div>
 }
-

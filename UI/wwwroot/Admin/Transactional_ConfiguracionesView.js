@@ -1,8 +1,12 @@
 //@ts-check
 import { StylesControlsV2, StyleScrolls } from "../WDevCore/StyleModules/WStyleComponents.js";
+import { ModalVericateAction } from "../WDevCore/WComponents/ModalVericateAction.js";
+import { WAlertMessage } from "../WDevCore/WComponents/WAlertMessage.js";
 import { WFilterOptions } from "../WDevCore/WComponents/WFilterControls.js";
 import { WModalForm } from "../WDevCore/WComponents/WModalForm.js";
 import { WTableComponent } from "../WDevCore/WComponents/WTableComponent.js";
+// @ts-ignore
+import { ModelProperty } from "../WDevCore/WModules/CommonModel.js";
 import { EntityClass } from "../WDevCore/WModules/EntityClass.js";
 import { WRender } from "../WDevCore/WModules/WComponentsTools.js";
 class Transactional_ConfiguracionesView extends HTMLElement {
@@ -22,13 +26,22 @@ class Transactional_ConfiguracionesView extends HTMLElement {
                     {
                         name: "Editar", action: (element) => {
                             this.append(new WModalForm({
-                                AutoSave: true,
+                                AutoSave: false,
                                 ModelObject: new Transactional_Configuraciones({
-                                    Valor: { type: this.ConfigType(element) }
+                                    Valor: { type: this.ConfigType(element),  require: false }
                                 }),
-                                EditObject: element, ObjectOptions: {
-                                    SaveFunction: () => {
-                                        window.location.reload();
+                                EditObject: element, ObjectOptions: {                                    
+                                    SaveFunction: (/**@type {Transactional_Configuraciones} */ editObject) => {
+                                        this.append(ModalVericateAction(async ()=> {
+                                            editObject.Valor = editObject.Valor.toString();
+                                            const response = await editObject.Update();
+                                            WAlertMessage.ResponseMessage(response);
+                                            setTimeout(() => {
+                                               window.location.reload()
+                                            }, 1000);                                           
+
+                                        }, "Esta seguro de guardar los cambios?"))
+                                       
                                     }
                                 }
                             }))
@@ -62,6 +75,7 @@ class Transactional_ConfiguracionesView extends HTMLElement {
         } else if (this.IsNumber(element)) {
             return "NUMBER";
         } else if (this.IsBoolean(element)) {
+            element.Valor = element.Valor == "true" || element.Valor == "1" ? true : false
             return "CHECKBOX";
         } else if (this.ComplexText(element)) {
             return "RICHTEXT";
@@ -119,7 +133,7 @@ class Transactional_Configuraciones extends EntityClass {
     Id_Configuracion = { type: 'number', primary: true };
     Nombre = { type: 'text', disabled: true };
     Descripcion = { type: 'text', disabled: true };
-    Valor = { type: 'text' };
+    /**@type {ModelProperty} */  Valor = { type: 'text', require: false };
     Tipo_Configuracion = { type: 'text', disabled: true, hiddenInTable: true };
 }
 export { Transactional_Configuraciones };

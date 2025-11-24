@@ -16,6 +16,10 @@ namespace CAPA_NEGOCIO.Services
 		{
 			try
 			{
+				if (SystemConfigImpl.IsWMachine())
+				{
+					toMails = ["wilberj1987@gmail.com"];
+				}
 				var emailService = new EmailAccountService();
 				var account = emailService.GetAvailableEmailAccount();
 				await SMTPMailServices.SendMail(

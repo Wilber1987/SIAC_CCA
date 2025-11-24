@@ -1,5 +1,6 @@
 @using API.Controllers
 @using APPCORE.Security
+@using CAPA_NEGOCIO.SystemConfig
 @using CAPA_NEGOCIO.UpdateModule.Model
 @using CAPA_NEGOCIO.UpdateModule.Operations
 @using DataBaseModel
@@ -156,9 +157,12 @@
 				<li><a href="~/Gestion_Pagos/Historial_Pagos" data-key="t-sales">Pagos pendientes</a></li>
 			</ul>
 		</li>
-		<li class="menuParentOption">
-			<li><a href="~/update/index" class="alert-success-link" data-key="t-sales">Actualización de Datos</a></li>
-		</li>
+		if(SystemConfigImpl.IsUpdateProcessActive()) {
+			<li class="menuParentOption">
+				<li><a href="~/update/index" class="alert-success-link" data-key="t-sales">Actualización de Datos</a></li>
+			</li>
+		}
+		
 	}
 	@if (SecurityController.HavePermission(Identify, Permissions.ADMIN_PANEL_ACCESS) || SecurityController.HavePermission(Identify, Permissions.REPORTE_ACCESS))
 	{    

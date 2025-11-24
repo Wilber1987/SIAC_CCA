@@ -53,9 +53,27 @@ namespace CAPA_NEGOCIO.SystemConfig
 		}
 
 		public static bool IsWMachine()
-        {
+		{
 			return Environment.MachineName == "WILBER";
-        }
+		}
+		public static bool IsUpdateProcessActive()
+		{
+			return Convert.ToBoolean(new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.IS_UPDATE_PROCESS_ACTIVE,
+				 "true", ConfiguracionesTypeEnum.BOOLEAN)?.Valor ?? "true");
+		}
+
+		public static bool IsBoletinInactive()
+		{
+			return Convert.ToBoolean(new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETIN_INACTIVE,
+				 "false", ConfiguracionesTypeEnum.BOOLEAN)?.Valor ?? "false");
+		}
+
+		public static string? BoletinInactiveMessage()
+		{
+			return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETIN_INACTIVE_MESSAGE, "<h2>El boletín esta inactivo, por el momento</h2>",
+			 ConfiguracionesTypeEnum.TEMPLATE)?.Valor;
+		}
+
 	}
 
 }
