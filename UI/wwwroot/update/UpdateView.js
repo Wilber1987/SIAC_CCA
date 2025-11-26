@@ -71,7 +71,7 @@ class UpdateView extends HTMLElement {
         </div>`;
         this.ActualizacionFormView = this.ActualizacionForm();
         this.append(this.TabContainer);
-        this.Manager.NavigateFunction("tutores", this.tutoresView);
+        this.Manager.NavigateFunction("Tutores", this.tutoresView);
     }
     OptionsContainer(withBack = true) {
         return WRender.Create({
@@ -129,7 +129,7 @@ class UpdateView extends HTMLElement {
     BackAction() {
         if (this.HijosView?.isConnected) {
 
-            this.Manager.NavigateFunction("tutores", this.tutoresView);
+            this.Manager.NavigateFunction("Tutores", this.tutoresView);
         } else if (this.ActualizacionFormView?.isConnected) {
             this.Manager.NavigateFunction("Hijos", this.HijosView);
         }
