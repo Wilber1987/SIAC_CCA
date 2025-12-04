@@ -92,13 +92,19 @@ namespace DataBaseModel
 				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
 				return estudiante.Where<Estudiantes>(
 					FilterData.In("Id", pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-				).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+				).Where(e =>
+					e.Estudiante_clases?.Any(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) == true &&
+					e.Estatus != "AB"
+				).ToList();
 			}
 			else if (pariente?.Estudiantes_responsables_familia != null && ignorarPeriodoLectivo)
 			{
-				return estudiante.Where<Estudiantes>(
-					FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-				).ToList();
+				return estudiante
+						.Where<Estudiantes>(
+							FilterData.In("Id", pariente.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+						)
+						.Where(e => e.Estatus != "AB")
+						.ToList();
 			}
 			return [];
 		}
@@ -133,7 +139,7 @@ namespace DataBaseModel
 					Email = Pariente.Parientes?.Email,
 					User_id = Pariente.Parientes?.User_id
 				}).ToList();
-		}	
+		}
 		public List<Parientes> GetResponsables()
 		{
 			//var parientes = Where<Parientes>(FilterData.NotNull("User_id"));
@@ -150,8 +156,8 @@ namespace DataBaseModel
 			var parientes = Where<Parientes>(FilterData.In("Id_familia", estudianteActivos));
 
 			return parientes;
-		}		
-			
-		
+		}
+
+
 	}
 }

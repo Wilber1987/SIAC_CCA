@@ -45,8 +45,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				else
 				{
 					var estudiantes = new Estudiantes().Where<Estudiantes>(
-							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())							
+						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id && e.Estatus != "AB") != null).ToList();
 
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])

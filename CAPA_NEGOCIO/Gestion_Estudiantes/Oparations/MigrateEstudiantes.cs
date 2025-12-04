@@ -222,6 +222,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existingEstudiante.Aniosacra = estudiantesView.Aniosacra;
 			existingEstudiante.Colegio_procede = estudiantesView.Colegio;
 			existingEstudiante.Retenido = estudiantesView.Retenido;
+			existingEstudiante.Estatus = estudiantesView.Estatus;
 
 
 			// Verifica la foto de SIAC usando el cliente SSH pasado

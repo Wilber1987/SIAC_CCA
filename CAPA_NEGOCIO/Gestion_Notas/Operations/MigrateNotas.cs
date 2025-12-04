@@ -22,8 +22,8 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task Migrate(String? codigo = null)
 		{
-			//await migrateTipoNotas();
-			//await migrateEvaluaciones();
+			await migrateTipoNotas();
+			await migrateEvaluaciones();
 			await migrateCalificaciones();
 		}
 
@@ -115,17 +115,20 @@ namespace CAPA_NEGOCIO.Oparations
 				calificacion.CreateViewEstudiantesActivos();
 				var fechaFiltro = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
+				int currentYear = DateTime.Now.Year;
+				DateTime firstDayOfYear = new DateTime(currentYear, 1, 1);
+		
+
 				var filter = new FilterData
 				{
 					PropName = "updated_at",
 					FilterType = ">=",
-					Values = new List<string?> { fechaFiltro.ToString("yyyy-MM-dd HH:mm:ss") }
+					Values = new List<string?> { firstDayOfYear.ToString("yyyy-MM-dd HH:mm:ss") }
 					//Values = new List<string?> { fechaUltimaActualizacion.ToString() }
 				};
 				var calificacionMsql = calificacion.Where<ViewCalificacionesActivasSiac>(
-					filter,
-					FilterData.Equal("estudiante_clase_id", 33475)
-
+					filter//,
+					//FilterData.Equal("estudiante_clase_id", 33475)*/
 				);
 
 				LoggerServices.AddMessageInfo($"migrateCalificaciones --> Registros encontrados en MySQL: {calificacionMsql.Count}");
