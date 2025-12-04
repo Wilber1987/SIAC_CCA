@@ -45,8 +45,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				else
 				{
 					var estudiantes = new Estudiantes().Where<Estudiantes>(
-							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())							
-						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id && e.Estatus != "AB") != null).ToList();
+							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
+						).Where(e => !isInOnceavoGrado(e.Estudiante_clases)
+						&& e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id && e.Estatus != "AB") != null).ToList();
+
 
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])
@@ -79,6 +81,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
+		private static bool isInOnceavoGrado(List<Estudiante_clases>? estudiante_clases)
+		{
+			return estudiante_clases?.Find(clase => clase.Descripcion == "décimo primer") != null;
+		}
 
 		private static ResponseService GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
 		{
@@ -126,7 +132,10 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 			UpdateData updateData = new UpdateData
 			{
-				Estudiantes = updatedDataQuery?.HaveRetenidos == true ? estudiantesRetenidos.Select(e => new Estudiantes_Data_Update(e)).ToList() : estudiantes,
+				Estudiantes = updatedDataQuery?.HaveRetenidos == true ? estudiantesRetenidos.Where(estudiante
+					=> !isInOnceavoGrado(estudiante.Estudiante_clases))
+					.Select(e => new Estudiantes_Data_Update(e)).ToList() 
+					: estudiantes.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 				EstudiantesRetenidos = estudiantesRetenidos.Select(e => new Estudiantes_Data_Update(e)).ToList(),
 				Parientes = updatedDataQuery?.HaveRetenidos == false ? parientes : [],
 				ParientesId = parientes.Select(e => e.Id.GetValueOrDefault()).ToList(),
@@ -743,7 +752,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				if (Attach_Files.Count() == 0)
 				{
 					return new ResponseService(500, "No se reenviaron los documentos, ya que no se pudieron recuperar. intentelo nuevamente");
-				}				
+				}
 				pariente.Email = inst.Email;
 				await MailServices.SendContractMail(pariente, templatePage, Attach_Files);
 				return new ResponseService(200, "Boleta enviada");
