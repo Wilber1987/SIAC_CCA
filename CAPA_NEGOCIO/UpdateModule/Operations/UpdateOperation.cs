@@ -46,7 +46,8 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				{
 					var estudiantes = new Estudiantes().Where<Estudiantes>(
 							FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray())
-						).Where(e => e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
+						).Where(e => !isInOnceavoGrado(e.Estudiante_clases) 
+						&& e.Estudiante_clases?.Find(ec => ec.Periodo_lectivo_id == periodoLectivo?.Id) != null).ToList();
 
 					List<Parientes>? parientes = estudiantes
 						.SelectMany(e => e.Responsables ?? [])
@@ -79,8 +80,12 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		}
 
+        private static bool isInOnceavoGrado(List<Estudiante_clases>? estudiante_clases)
+        {
+            return estudiante_clases?.Find(clase => clase.Descripcion == "décimo primer") != null;
+        }
 
-		private static ResponseService GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
+        private static ResponseService GetBoletaContracts(UpdateData updateData, Parientes_Data_Update pariente)
 		{
 			try
 			{
