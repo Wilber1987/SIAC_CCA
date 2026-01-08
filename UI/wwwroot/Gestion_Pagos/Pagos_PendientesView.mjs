@@ -237,7 +237,7 @@ console.log(this.pagosSeleccionados);
 		if (control.checked) {
 			let pagosAnterioresNoSeleccionados = false;
 			// @ts-ignore
-			const pagosAnteriores = pagosPendientes.filter(p => new Date(p.Fecha).getMonth() < fechaPagoSeleccionado.getMonth());
+			const pagosAnteriores = pagosPendientes.filter(p => new Date(p.Fecha).getMonth() < fechaPagoSeleccionado.getMonth() &&  new Date(p.Fecha).getFullYear() < fechaPagoSeleccionado.getFullYear());
 			pagosAnteriores.forEach(pagoSeleccionadoAnterior => {
 				if (!pagosSeleccionados.some(p => p.Pago?.Id_Pago == pagoSeleccionadoAnterior?.Id_Pago)) {
 					pagosAnterioresNoSeleccionados = true;
