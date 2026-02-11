@@ -22,7 +22,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		{
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 
 			Parientes_Data_Update? pariente = new Parientes_Data_Update
 			{
@@ -254,7 +254,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateEstudiante(string? sessionKey, Estudiantes_Data_Update inst)
 		{
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var estudiante = new Estudiantes_Data_Update
@@ -290,7 +290,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static ResponseService UpdateParientes(string? sessionKey, Parientes_Data_Update inst)
 		{
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? pariente = new Parientes { User_id = user.UserId }.Find<Parientes>();
 			var parienteData = new Parientes_Data_Update
@@ -329,7 +329,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			//inst.Responsable_Pago = true;
 			var clases = new Estudiante_clases
 			{
-				filterData = [FilterData.In("Periodo_lectivo_id", Periodo_lectivos.PeriodoActivo()?.Id)]
+				filterData = [FilterData.In("Periodo_lectivo_id", Periodo_lectivos.Actualizacion_PeriodoActivo()?.Id)]
 			}.SimpleGet<Estudiante_clases>();
 
 			var estudiantes = new Estudiantes
@@ -382,7 +382,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 			UserModel user = AuthNetCore.User(sessionKey);
 			try
 			{
-				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+				var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 				if (inst.AceptaTerminosYCondiciones == true)
 				{
 					UpdateData? updatedData = null;
@@ -613,7 +613,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static UpdateData? GetUpdateDataById(Parientes_Data_Update inst)
 		{
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			Parientes_Data_Update? pariente = new Parientes_Data_Update { Id = inst.Id }.Find<Parientes_Data_Update>();
 			if (pariente?.Actualizo == true)
 			{
@@ -674,7 +674,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			inst.filterData?.Add(FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto));
 			inst.filterData?.Add(FilterData.Equal("Id_familia", parienteE?.Id_familia));
 			return inst.Get<Estudiantes_Data_Update>();
@@ -684,7 +684,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		{
 			UserModel user = AuthNetCore.User(sessionKey);
 			Parientes? parienteE = new Parientes { User_id = user.UserId }.Find<Parientes>();
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			if (inst.Id_familia != null && inst.Id_familia == parienteE?.Id_familia)
 			{
 				inst.Periodo_Lectivo_Update = periodoLectivo?.Nombre_corto;
@@ -711,7 +711,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static List<Parientes_Data_Update>? GetParientesActualizados(Parientes_Data_Update inst)
 		{
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			inst.filterData = inst.filterData ?? [];
 			inst.filterData?.AddRange([
 				FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto),
@@ -723,7 +723,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 
 		public static object? GetParientesActulizacionData(Parientes_Data_Update inst)
 		{
-			var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+			var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 			int parientesActualizados = inst.Count(
 					FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto),
 					FilterData.NotNull("User_id"));
@@ -740,7 +740,7 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 		{
 			try
 			{
-				var periodoLectivo = Periodo_lectivos.PeriodoActivo();
+				var periodoLectivo = Periodo_lectivos.Actualizacion_PeriodoActivo();
 				Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = inst.User_id }.Find<Parientes_Data_Update>();
 				var updatedData = GetUpdatedData(pariente, periodoLectivo, true);
 				//List<Estudiantes_Data_Update> retenidos = [];

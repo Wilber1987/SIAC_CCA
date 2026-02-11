@@ -16,7 +16,10 @@
         return;
     }
     UserModel user = AuthNetCore.User(identify);
-    Parientes_Data_Update? pariente = new Parientes_Data_Update { User_id = user.UserId }.Find<Parientes_Data_Update>();
+    Parientes_Data_Update? pariente = new Parientes_Data_Update { 
+        User_id = user.UserId,
+        Periodo_Lectivo_Update = Periodo_lectivos.Actualizacion_PeriodoActivo()?.Nombre_corto
+        }.Find<Parientes_Data_Update>();
     string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "IP no disponible";
     if (pariente != null)
     {
@@ -49,7 +52,7 @@
 }
 
 @if (pariente != null && pariente.Acepto_terminos == true
-&& getUpdateData?.UpdatedData?.HaveRetenidos == false)
+&& getUpdateData?.UpdatedData?.HaveRetenidos != true)
 {
     <div id="Main" class="app-container">
         <h1 style="text-align: center;">¡Datos actualizados! Revise la información enviada a su correo.</h1>

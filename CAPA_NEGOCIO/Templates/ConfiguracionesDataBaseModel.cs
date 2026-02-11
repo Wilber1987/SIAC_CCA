@@ -163,7 +163,8 @@ namespace DataBaseModel
 		ACTUALIZACION_FOOTER,
         IS_UPDATE_PROCESS_ACTIVE,
         BOLETIN_INACTIVE,
-        BOLETIN_INACTIVE_MESSAGE
+        BOLETIN_INACTIVE_MESSAGE,
+        UPDATE_YEAR_ACTIVE
     }
 
 	public class Config

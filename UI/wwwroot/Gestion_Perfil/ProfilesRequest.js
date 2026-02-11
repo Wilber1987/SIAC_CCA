@@ -12,7 +12,7 @@ class ProfileRequest_ModelComponent extends EntityClass {
     }
     /**@type {ModelProperty}*/ User_id = { type: 'number', hidden: true };
     //datos perfil
-    /**@type {ModelProperty}*/ Foto = { type: 'img' , require: false};
+    /**@type {ModelProperty}*/ Foto = { type: 'img', require: false };
     /**@type {ModelProperty}*/ Nombre = { type: 'text' };
 
     /**@type {ModelProperty}*/ Correo_Anterior = { type: 'text' };
@@ -26,6 +26,7 @@ class ProfileRequest_ModelComponent extends EntityClass {
     /**@type {ModelProperty}*/ Celular = { type: 'text' };
     /**@type {ModelProperty}*/ Direccion = { type: 'text' };
     /**@type {ModelProperty}*/ Observacion = { type: 'textarea' };
+    /**@type {ModelProperty} */ ParienteId = { type: "number", hidden: true };
 }
 
 export { ProfileRequest_ModelComponent }

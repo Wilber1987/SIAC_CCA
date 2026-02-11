@@ -1,4 +1,5 @@
 using APPCORE;
+using CAPA_NEGOCIO.SystemConfig;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,15 @@ namespace DataBaseModel {
             }.Find<Periodo_lectivos>() ?? new Periodo_lectivos{ 
                 Nombre_corto = (DateTime.Now.Year - 1).ToString() //"2024"//(DateTime.Now.Year - 1).ToString() //todo
             }.Find<Periodo_lectivos>();
-       }   
-   }
+       }
+
+        public static Periodo_lectivos? Actualizacion_PeriodoActivo()
+        {
+            string updateYear = SystemConfigImpl.GetUpdateYearActive();
+            var periodoLectivo = new  Periodo_lectivos{ 
+                Nombre_corto = updateYear
+            }.Find<Periodo_lectivos>();
+            return periodoLectivo ?? PeriodoActivo();
+        }
+    }
 }
