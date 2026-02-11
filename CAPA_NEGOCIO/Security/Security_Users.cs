@@ -59,6 +59,22 @@ namespace CAPA_NEGOCIO
 			return Tbl_Profile.Get_Profile(Id_User.GetValueOrDefault(), this);
 		}
 
+		public object SaveUserImple(string identity)
+		{
+			ResponseService savedUserResponse = SaveUser(identity) as ResponseService;
+			if (savedUserResponse?.status == 200)
+			{
+				var pariente = new Parientes{ User_id = Id_User }.Find<Parientes>();
+				if (pariente != null)
+				{
+					pariente.Email = this.Mail;
+					pariente.Update();
+				}
+				return savedUserResponse;
+			}
+			return new ResponseService(400, "Error actualizando datos!");
+		}
+
 		public Security_Users withConection(APPCORE.BDCore.Abstracts.WDataMapper mapper)
 		{
 			this.SetConnection(mapper);
