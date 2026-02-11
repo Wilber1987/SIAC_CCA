@@ -70,7 +70,7 @@ window.onload = () => {
                     Foto: pariente.Foto,
                     ParienteId: pariente.Pariente_id ?? pariente.Id
                 }), ObjectOptions: {
-                    SaveFunction: async (editObject) => {                       
+                    SaveFunction: async () => {                       
                         document.body.appendChild(ModalMessage("Datos actualizados correctamente", undefined, true));
                         //location.reload();
                     }
