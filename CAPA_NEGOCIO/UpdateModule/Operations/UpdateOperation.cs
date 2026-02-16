@@ -113,10 +113,26 @@ namespace CAPA_NEGOCIO.UpdateModule.Operations
 				FilterData.JsonPropEqual("DataContract", "Year", periodoLectivo?.Nombre_corto)
 			);
 
-			var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
+			/*var estudiantes = new Estudiantes_Data_Update().Where<Estudiantes_Data_Update>(
 				FilterData.In("Id", pariente?.Estudiantes_responsables_familia?.Select(r => r.Estudiante_id).ToArray()),
 				FilterData.Equal("Periodo_Lectivo_Update", periodoLectivo?.Nombre_corto)
-			);
+			);*/
+
+			var estudiantes = new Estudiantes_Data_Update()
+				.Where<Estudiantes_Data_Update>(
+					FilterData.In("Id",
+						pariente?.Estudiantes_responsables_familia?
+							.Select(r => r.Estudiante_id)
+							.ToArray()
+					)
+				)
+				.GroupBy(e => e.Id)
+				.Select(g => g
+					.OrderByDescending(x => x.Periodo_Lectivo_Update) 
+					.First()
+				)
+				.ToList();
+
 
 			var parientesId = estudiantes?.SelectMany(e => e.Responsables ?? [])
 				.Select(f => f.Pariente_id).Distinct().ToArray();
