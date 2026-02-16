@@ -129,19 +129,18 @@ namespace CAPA_NEGOCIO.Security.Operations
         {
             try
             {
-                if (inst.Id == null)
+                if (string.IsNullOrEmpty(inst.Id))
                 {
-                    SaveProfileRequest(inst, identity);
-
+                   // SaveProfileRequest(inst, identity);
                 }
                 UserModel user = AuthNetCore.User(identity);
                 var pariente = new Parientes().Find<Parientes>(
-                    FilterData.Like("ProfileRequest", $"{inst.Id}")
+                    FilterData.Equal("Id", inst.ParienteId )
                 );
                 var dbUser = new Security_Users { Id_User = user.UserId}.Find<Security_Users>();
                 if (pariente != null)
                 {
-                    ProfileRequest? solicitud = pariente.ProfileRequest?.Find(x => x.Id == inst.Id);
+                    //ProfileRequest? solicitud = pariente.ProfileRequest?.Find(x => x.Id == inst.Id);
 
                     pariente.Email = inst.Correo;
                     pariente.Direccion = inst.Direccion;
@@ -152,7 +151,7 @@ namespace CAPA_NEGOCIO.Security.Operations
 
                     //solicitud!.Estado = inst.Estado;
                     pariente.Update();
-                    LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
+                    //LoggerServices.AddMessageInfo($"Se actualizo el estado de la solicitud por el usuario con id={user.UserId}");
 
                     if(dbUser != null && dbUser.Id_User.Equals(pariente.User_id)){//si el usuario responsable cambia el correo lo actualizamos en el user
                         dbUser.Mail = inst.Correo;

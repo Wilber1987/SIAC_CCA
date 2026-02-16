@@ -70,10 +70,17 @@ namespace CAPA_NEGOCIO.SystemConfig
 
 		public static string? BoletinInactiveMessage()
 		{
-			return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETIN_INACTIVE_MESSAGE, "<h2>El boletín esta inactivo, por el momento</h2>",
+			return new Transactional_Configuraciones().GetParam(ConfiguracionesThemeEnum.BOLETIN_INACTIVE_MESSAGE,
+			"<h2>El boletín esta inactivo, por el momento</h2>",
 			 ConfiguracionesTypeEnum.TEMPLATE)?.Valor;
 		}
 
-	}
+        internal static string GetUpdateYearActive()
+        {
+            return new Transactional_Configuraciones()
+				.GetParam(ConfiguracionesThemeEnum.UPDATE_YEAR_ACTIVE, "2025",
+				ConfiguracionesTypeEnum.NUMBER)?.Valor ?? "2025";
+        }
+    }
 
 }

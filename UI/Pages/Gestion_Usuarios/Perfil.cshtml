@@ -11,11 +11,11 @@
         Response.Redirect("/Security/Login");
         return;
     }
-    var pageConfig = Config.pageConfig();
+    PageConfig? pageConfig = Config.pageConfig();
     UserModel user = AuthNetCore.User(identify);
-    var perfil = CAPA_NEGOCIO.Tbl_Profile.Get_Profile(user);
-    var pagos = PagosOperation.GetSaldoPendiente(identify);
-    var avatar = perfil.Foto != null
+    CAPA_NEGOCIO.Tbl_Profile? perfil = CAPA_NEGOCIO.Tbl_Profile.Get_Profile(user);
+    InfoPagos? pagos = PagosOperation.GetSaldoPendiente(identify);
+    string? avatar = perfil.Foto != null
     ? perfil.Foto
     : (perfil!.Sexo?.ToUpper() == "M"
     ? pageConfig.MEDIA_IMG_PATH + "avatar.png" : pageConfig.MEDIA_IMG_PATH + "avatar_fem.png");

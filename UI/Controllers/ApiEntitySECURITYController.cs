@@ -31,7 +31,7 @@ namespace API.Controllers
         [AdminAuth]
         public Object saveSecurity_Users(CAPA_NEGOCIO.Security_Users inv)
         {
-            return inv.SaveUser(HttpContext.Session.GetString("sessionKey"));
+            return inv.SaveUserImple(HttpContext.Session.GetString("sessionKey"));
         }
 
         [HttpPost]

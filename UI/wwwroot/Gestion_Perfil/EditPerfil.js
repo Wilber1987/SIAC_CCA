@@ -37,7 +37,7 @@ window.onload = () => {
     }*/
     // @ts-ignore
     let parientePass = JSON.parse(editPassword.name);
-    console.log(parientePass);
+   
 
     // @ts-ignore
     editPassword.onclick = () => {
@@ -57,6 +57,7 @@ window.onload = () => {
         var pariente = JSON.parse(btn.name);
         // @ts-ignore
         btn.onclick = () => {
+             console.log(pariente);
             document.body.appendChild(new WModalForm({
                 title: "EDITAR PERFIL",
                 ModelObject: model,
@@ -67,9 +68,9 @@ window.onload = () => {
                     Celular: pariente.Celular,
                     Direccion: pariente.Direccion,
                     Foto: pariente.Foto,
-                    ParienteId: pariente.Id
+                    ParienteId: pariente.Pariente_id ?? pariente.Id
                 }), ObjectOptions: {
-                    SaveFunction: async () => {
+                    SaveFunction: async () => {                       
                         document.body.appendChild(ModalMessage("Datos actualizados correctamente", undefined, true));
                         //location.reload();
                     }
