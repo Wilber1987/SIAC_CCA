@@ -19,12 +19,42 @@ namespace CAPA_NEGOCIO.Oparations
     {
         public static void sendInvitations()
         {
+            var ultimoPeriodo = new Periodo_lectivos()
+                .Get<Periodo_lectivos>()
+                .OrderByDescending(p => p.Id)
+                .FirstOrDefault();
+
+            if (ultimoPeriodo == null) return;
+
+            
+            var estudiantesActivosIds = new Estudiante_clases()
+                .Where<Estudiante_clases>(FilterData.Equal("Periodo_lectivo_id", ultimoPeriodo.Id))
+                .Select(ec => ec.Estudiante_id)
+                .Distinct()
+                .ToList();
+
+            if (!estudiantesActivosIds.Any()) return;
+
+           var parientesActivosIds = new Estudiantes_responsables_familia()
+                .Where<Estudiantes_responsables_familia>(FilterData.In("Estudiante_id", estudiantesActivosIds))
+                .Select(rf => rf.Pariente_id)
+                .Where(id => id.HasValue)
+                .Cast<int>()
+                .Distinct()
+                .ToList();
+
+            if (!parientesActivosIds.Any()) return;
+
+            string idsParientesString = string.Join(",", parientesActivosIds);
+
             var tutor = new Parientes();
             var filter = FilterData.And(
+                FilterData.In("id", idsParientesString), 
                 FilterData.Distinc("credenciales_enviadas", true),
-                FilterData.NotNull("user_id")
+                FilterData.NotNull("user_id"),
+                FilterData.Equal("Responsable_Pago", true)
             );
-            //tutor.filterData?.Add(FilterData.Equal("Id", 1881));
+
             tutor.filterData?.Add(FilterData.Limit(200));
             var tutores = tutor.Where<Parientes>(filter);
 
@@ -32,7 +62,18 @@ namespace CAPA_NEGOCIO.Oparations
             {
                 try
                 {
-                    Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("id_user", t.User_id));
+                    // 1. Buscamos el usuario
+                    Security_Users? usuario = new Security_Users().Find<Security_Users>(FilterData.Equal("Id_User", t.User_id));
+                    if (usuario == null || usuario.Estado != "ACTIVO")
+                    {
+                        LoggerServices.AddMessageInfo($"Salto de envío: El pariente {t.Id} ya no tiene un usuario activo.");
+                        return; 
+                    }
+
+                    if (string.IsNullOrEmpty(t.Email) || !StringUtil.IsValidEmail(t.Email))
+                    {
+                        return;
+                    }
 
                     var plantillaString = HtmlContentGetter.ReadHtmlFile("credencialesUsuario.html", "Resources");
                     var template = TemplateServices.RenderTemplateCredenciales(plantillaString, usuario, t.Nombre_completo);
@@ -48,9 +89,9 @@ namespace CAPA_NEGOCIO.Oparations
                             Type = ".pdf"
                         }
                     });
+
                     t.Credenciales_Enviadas = true;
                     t.Update();
-                    
                 }
                 catch (Exception ex)
                 {                    

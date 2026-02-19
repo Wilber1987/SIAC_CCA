@@ -368,13 +368,11 @@ namespace CAPA_NEGOCIO.Oparations
 
 				//	BeginGlobalTransaction();
 
-					dataMsql.ForEach(static tn =>
+					dataMsql.ForEach(tn => // Quitamos el 'static' para poder usar métodos de la clase
 					{
-						var existing = new Parientes()
-						{
-							Id = tn.Idtutor
-						}.SimpleFind<Parientes>();
+						var existing = new Parientes() { Id = tn.Idtutor }.SimpleFind<Parientes>();
 
+						// Normalización de fechas para SQL Server
 						tn.Fechagrabacion = DateUtil.ValidSqlDateTime(tn.Fechagrabacion.GetValueOrDefault());
 						tn.Fechamodificacion = DateUtil.ValidSqlDateTime(tn.Fechamodificacion.GetValueOrDefault());
 						tn.Fechaactualizacion = DateUtil.ValidSqlDateTime(tn.Fechaactualizacion.GetValueOrDefault());
@@ -382,35 +380,53 @@ namespace CAPA_NEGOCIO.Oparations
 
 						if (existing != null)
 						{
+							bool esResponsableEnSige = tn.Responsablepago ?? false;
+							bool eraResponsableLocal = existing.Responsable_Pago ?? false;
+
+							// 1. Primero actualizamos los datos básicos (nombres, teléfonos, etc.)
 							buildPariente(tn, existing);
+
+							// 2. Manejo de Seguridad (Usuarios)
+							if (eraResponsableLocal && !esResponsableEnSige)
+							{
+								// DOWNGRADE: Inactivar usuario antiguo
+								if (existing.User_id != null)
+								{
+									var userToDisable = new Security_Users { Id_User = (int)existing.User_id }.Find<Security_Users>();
+									if (userToDisable != null)
+									{
+										userToDisable.Estado = "INACTIVO";
+										userToDisable.Update();
+									}
+								}
+							}
+							else if (!eraResponsableLocal && esResponsableEnSige)
+							{
+								// UPGRADE: Crear usuario nuevo
+								if (StringUtil.IsValidEmail(tn.Email))
+								{
+									var user = CreateSecurityUser(tn, rolResponsable);
+									// AQUÍ vinculamos el ID de la tabla security_users con el pariente
+									existing.User_id = user.Id_User; 
+									existing.Credenciales_Enviadas = false;
+								}
+							}
+
+							// 3. Guardamos TODO en la tabla parientes (incluyendo el nuevo User_id si hubo upgrade)
 							existing.Update();
 						}
-						else if (existing == null)
+						else
 						{
+							// Lógica para NUEVOS registros
 							Parientes newPariente = new Parientes();
 							buildPariente(tn, newPariente);
 
-							if (newPariente.Responsable_Pago == true && StringUtil.IsValidEmail(tn.Email))
+							if ((tn.Responsablepago ?? false) && StringUtil.IsValidEmail(tn.Email))
 							{
-								var rolPadreResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
-								var user = (Security_Users?)new Security_Users
-								{
-									Nombres = tn.Nombres + " " + tn.Apellidos,
-									Estado = "ACTIVO",
-									Descripcion = tn.Nombres + " " + tn.Apellidos,
-									Password = StringUtil.GeneratePassword(tn.Email, tn.Nombres, tn.Apellidos),
-									Mail = tn.Email, //StringUtil.GenerateNickName(tn.Nombres, tn.Apellidos),
-									Token = null,
-									Security_Users_Roles = new List<Security_Users_Roles>
-									{
-										new Security_Users_Roles { Security_Role = rolPadreResponsable, Estado = "ACTIVO" }
-									}
-								}.Save_User(null);
-
+								var user = CreateSecurityUser(tn, rolResponsable);
 								newPariente.User_id = user.Id_User;
 								newPariente.Credenciales_Enviadas = false;
 							}
-
 							newPariente.Save();
 						}
 					});
@@ -436,6 +452,40 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 
 			return true;
+		}
+
+		private Security_Users CreateSecurityUser(Tbl_aca_tutor tn, Security_Roles rolPadre)
+		{
+			string cleanEmail = tn.Email?.Trim().ToLower() ?? "";
+
+			var existingUser = new Security_Users().Where<Security_Users>(
+				FilterData.Equal("Mail", cleanEmail)
+			).FirstOrDefault();
+
+			if (existingUser != null)
+			{
+				if (existingUser.Estado != "ACTIVO")
+				{
+					existingUser.Estado = "ACTIVO";
+					existingUser.Update();
+				}
+				return existingUser;
+			}
+
+			var newUser = new Security_Users
+			{
+				Nombres = (tn.Nombres + " " + tn.Apellidos).Trim(),
+				Estado = "ACTIVO",
+				Descripcion = (tn.Nombres + " " + tn.Apellidos).Trim(),
+				Password = StringUtil.GeneratePassword(cleanEmail, tn.Nombres, tn.Apellidos),
+				Mail = cleanEmail,
+				Security_Users_Roles = new List<Security_Users_Roles>
+				{
+					new Security_Users_Roles { Security_Role = rolPadre, Estado = "ACTIVO" }
+				}
+			};
+			
+			return (Security_Users)newUser.Save_User(null);
 		}
 
 		public async Task<bool> migrateEstudiantesReponsablesFamilia()
