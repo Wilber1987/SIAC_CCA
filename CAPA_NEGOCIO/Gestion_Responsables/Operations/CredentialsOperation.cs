@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using APPCORE;
-using APPCORE.Security;
 using APPCORE.Services;
 using CAPA_NEGOCIO.Services;
 using CAPA_NEGOCIO.Templates;
-using CAPA_NEGOCIO.Util;
 using AppCore.Services;
 using DataBaseModel;
-using Microsoft.Identity.Client;
 using APPCORE.Util;
 
 namespace CAPA_NEGOCIO.Oparations
@@ -31,7 +24,7 @@ namespace CAPA_NEGOCIO.Oparations
                 .Where<Estudiante_clases>(FilterData.Equal("Periodo_lectivo_id", ultimoPeriodo.Id))
                 .Select(ec => ec.Estudiante_id)
                 .Distinct()
-                .ToList();
+                .ToArray();
 
             if (!estudiantesActivosIds.Any()) return;
 
@@ -77,7 +70,7 @@ namespace CAPA_NEGOCIO.Oparations
 
                     var plantillaString = HtmlContentGetter.ReadHtmlFile("credencialesUsuario.html", "Resources");
                     var template = TemplateServices.RenderTemplateCredenciales(plantillaString, usuario, t.Nombre_completo);
-                    string subject = "Credenciales para acceso al Portal CCA";
+                    string subject = "Renovación credenciales (Actualización de Portal CCA)";
 
                     MailServices.SendMail(new List<String>() { t.Email }, null, subject, template,
                     new List<ModelFiles>

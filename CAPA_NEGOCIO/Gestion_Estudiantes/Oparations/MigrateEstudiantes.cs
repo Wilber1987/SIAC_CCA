@@ -79,9 +79,9 @@ namespace CAPA_NEGOCIO.Oparations
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);					
+					LoggerServices.AddMessageError("ERROR: MigrateEstudiantes.MigrateParentesco.", ex);
 					forwardedPort.Stop();
-					client.Disconnect();					
+					client.Disconnect();
 				}
 				finally
 				{
@@ -89,7 +89,7 @@ namespace CAPA_NEGOCIO.Oparations
 					{
 						forwardedPort.Stop();
 					}
-					
+
 					client.Disconnect();
 				}
 			}
@@ -99,9 +99,9 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateEstudiantesSiac(SshTunnelService sshService)
 		{
 			Console.Write("-->migrateEstudiantes");
-            int currentYear = MigrationDates.GetCurrentYear();
+			int currentYear = MigrationDates.GetCurrentYear();
 			try
-			{				
+			{
 				using (var siacSshClient = sshService.GetSshClient("Siac"))
 				{
 					siacSshClient.Connect();
@@ -112,7 +112,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var estudiante = new ViewEstudiantesActivosSiac();
 					estudiante.SetConnection(MySqlConnections.SiacTest);
 					//estudiante.CreateViewEstudiantesActivos();
-					var EstudiantesMsql = estudiante.Where<ViewEstudiantesActivosSiac>(FilterData.Equal("nombre_corto", currentYear));				
+					var EstudiantesMsql = estudiante.Where<ViewEstudiantesActivosSiac>(FilterData.Equal("nombre_corto", currentYear));
 
 					//estudiante.DestroyView("viewestudiantesactivossiac");
 					Console.Write("Estudiantes encontrados: " + EstudiantesMsql.Count);
@@ -154,7 +154,7 @@ namespace CAPA_NEGOCIO.Oparations
 						bellacomTunnel.Stop();
 						bellacomSshClient.Disconnect();
 					}
-					
+
 					if (siacTunnel.IsStarted)
 					{
 						siacTunnel.Stop();
@@ -184,7 +184,7 @@ namespace CAPA_NEGOCIO.Oparations
 				Console.WriteLine($"Estudiante con código {est.Codigo} no encontrado en la vista de migración. Registro omitido.");
 				return;
 			}
-			
+
 			// Obtener datos de la familia usando BellacomTest
 			var familiaJoin = new Tbl_aca_familia();
 			familiaJoin.SetConnection(bellacomConnection);
@@ -194,7 +194,7 @@ namespace CAPA_NEGOCIO.Oparations
 			{
 				existingEstudiante.Id_familia = familiaDatos.Idfamilia;
 			}
-			
+
 
 			// Asignación de datos básicos del estudiante
 			existingEstudiante.Id = est.Id;
@@ -259,11 +259,11 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					PropName = "fechaactualizacion",
 					FilterType = ">=",
-					Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+					Values = new List<string?> { fechaUltimaActualizacion.ToString() }
 				};
 				var familiasMsql = familias.Where<Tbl_aca_familia>(/*filter*/);
 
-				
+
 				try
 				{
 					//BeginGlobalTransaction();
@@ -276,8 +276,9 @@ namespace CAPA_NEGOCIO.Oparations
 
 						if (existingFamilia != null /*&& (existingFamilia.Fecha_ultima_notificacion != tn.Fechaultimanotificacion)*/)
 						{
-							if (tn.Idtfamilia == null || tn.Idtfamilia == ""){
-								Console.Write("-->idtfamilia nulo para la familia: "+tn.Idfamilia);
+							if (tn.Idtfamilia == null || tn.Idtfamilia == "")
+							{
+								Console.Write("-->idtfamilia nulo para la familia: " + tn.Idfamilia);
 							}
 							existingFamilia.Idtfamilia = tn.Idtfamilia;
 							existingFamilia.Descripcion = tn.Texto;
@@ -337,16 +338,10 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			Console.Write("-->MigrateParientesAndUsers");
 
-			// Si no existe el rol de pariente, se debe crear para asignárselo al usuario de cada responsable.
-			// Ya que se crea un usuario por cada miembro de familia que tenga el check de responsable.
 			var fechaUltimaActualizacion = MigrateService.GetLastUpdate("PARIENTESUSUARIOS");
 			var rolResponsable = validateRolPariente();
-			if (rolResponsable == null)
-			{
-				return false;
-			}
+			if (rolResponsable == null) return false;
 
-			// Implementación del túnel SSH
 			using (var client = _sshTunnelService.GetSshClient("Bellacom"))
 			{
 				client.Connect();
@@ -356,40 +351,38 @@ namespace CAPA_NEGOCIO.Oparations
 				try
 				{
 					var data = new Tbl_aca_tutor();
-					data.SetConnection(MySqlConnections.BellacomTest);									
+					data.SetConnection(MySqlConnections.BellacomTest);
 
 					var filter = new FilterData
 					{
 						PropName = "fechamodificacion",
 						FilterType = ">=",
-						Values = new List<string?> { fechaUltimaActualizacion.ToString()}
+						Values = new List<string?> { fechaUltimaActualizacion.ToString() }
 					};
-					var dataMsql = data.Where<Tbl_aca_tutor>();
+					var dataMsql = data.Where<Tbl_aca_tutor>(filter);
 
-				//	BeginGlobalTransaction();
-
-					dataMsql.ForEach(tn => // Quitamos el 'static' para poder usar métodos de la clase
+					dataMsql.ForEach(tn =>
 					{
 						var existing = new Parientes() { Id = tn.Idtutor }.SimpleFind<Parientes>();
 
-						// Normalización de fechas para SQL Server
 						tn.Fechagrabacion = DateUtil.ValidSqlDateTime(tn.Fechagrabacion.GetValueOrDefault());
 						tn.Fechamodificacion = DateUtil.ValidSqlDateTime(tn.Fechamodificacion.GetValueOrDefault());
 						tn.Fechaactualizacion = DateUtil.ValidSqlDateTime(tn.Fechaactualizacion.GetValueOrDefault());
 						tn.Fechanacimiento = DateUtil.ValidSqlDateTime(tn.Fechanacimiento.GetValueOrDefault());
 
+						// 1. REGLA: ÚNICA CONDICIÓN DE RESPONSABLE
+						bool esResponsableEnSige = tn.Responsablepago ?? false;
+
 						if (existing != null)
 						{
-							bool esResponsableEnSige = tn.Responsablepago ?? false;
 							bool eraResponsableLocal = existing.Responsable_Pago ?? false;
 
-							// 1. Primero actualizamos los datos básicos (nombres, teléfonos, etc.)
-							buildPariente(tn, existing);
+							buildPariente(tn, existing); // Actualizamos datos básicos
 
-							// 2. Manejo de Seguridad (Usuarios)
+							// 2. MANEJO DE SEGURIDAD Y CREDENCIALES
 							if (eraResponsableLocal && !esResponsableEnSige)
 							{
-								// DOWNGRADE: Inactivar usuario antiguo
+								// DOWNGRADE: Quitar acceso
 								if (existing.User_id != null)
 								{
 									var userToDisable = new Security_Users { Id_User = (int)existing.User_id }.Find<Security_Users>();
@@ -402,46 +395,54 @@ namespace CAPA_NEGOCIO.Oparations
 							}
 							else if (!eraResponsableLocal && esResponsableEnSige)
 							{
-								// UPGRADE: Crear usuario nuevo
+								// UPGRADE: Pasa a ser responsable
 								if (StringUtil.IsValidEmail(tn.Email))
 								{
-									var user = CreateSecurityUser(tn, rolResponsable);
-									// AQUÍ vinculamos el ID de la tabla security_users con el pariente
-									existing.User_id = user.Id_User; 
-									existing.Credenciales_Enviadas = false;
+									var (user, isNewUser) = CreateSecurityUser(tn, rolResponsable);
+									existing.User_id = user.Id_User;
+
+									// REGLA: Solo en false si se tuvo que CREAR un usuario nuevo
+									// Si solo se reactivó uno viejo (isNewUser = false), NO mandamos correo
+									if (isNewUser)
+									{
+										existing.Credenciales_Enviadas = false;
+									}
 								}
 							}
 
-							// 3. Guardamos TODO en la tabla parientes (incluyendo el nuevo User_id si hubo upgrade)
 							existing.Update();
 						}
 						else
 						{
-							// Lógica para NUEVOS registros
+							// REGLA: REGISTRO TOTALMENTE NUEVO
 							Parientes newPariente = new Parientes();
 							buildPariente(tn, newPariente);
 
-							if ((tn.Responsablepago ?? false) && StringUtil.IsValidEmail(tn.Email))
+							if (esResponsableEnSige && StringUtil.IsValidEmail(tn.Email))
 							{
-								var user = CreateSecurityUser(tn, rolResponsable);
+								var (user, isNewUser) = CreateSecurityUser(tn, rolResponsable);
 								newPariente.User_id = user.Id_User;
+
+								// Si es totalmente nuevo y tiene usuario, sí o sí mandamos credenciales
 								newPariente.Credenciales_Enviadas = false;
 							}
+							else
+							{
+								// Si es nuevo pero NO es responsable, lo dejamos en true (o null) 
+								// para evitar que tu tarea CronJob lo agarre por error alguna vez.
+								newPariente.Credenciales_Enviadas = true;
+							}
+
 							newPariente.Save();
 						}
 					});
 					MigrateService.UpdateLastUpdate("PARIENTESUSUARIOS");
-					//CommitGlobalTransaction();
 				}
 				catch (Exception ex)
 				{
 					LoggerServices.AddMessageError("ERROR: MigrateParientesAndUsers.", ex);
-					if (forwardedPort.IsStarted)
-					{
-						forwardedPort.Stop();
-					}
+					if (forwardedPort.IsStarted) forwardedPort.Stop();
 					client.Disconnect();
-					//RollBackGlobalTransaction();
 					throw;
 				}
 				finally
@@ -450,11 +451,46 @@ namespace CAPA_NEGOCIO.Oparations
 					client.Disconnect();
 				}
 			}
-
 			return true;
 		}
 
-		private Security_Users CreateSecurityUser(Tbl_aca_tutor tn, Security_Roles rolPadre)
+		private (Security_Users, bool isNewUser) CreateSecurityUser(Tbl_aca_tutor tn, Security_Roles rolPadre)
+		{
+			string cleanEmail = tn.Email?.Trim().ToLower() ?? "";
+
+			var existingUser = new Security_Users().Where<Security_Users>(
+				FilterData.Equal("Mail", cleanEmail)
+			).FirstOrDefault();
+
+			if (existingUser != null)
+			{
+				if (existingUser.Estado != "ACTIVO")
+				{
+					existingUser.Estado = "ACTIVO";
+					existingUser.Update();
+				}
+				// Devuelve false porque el usuario ya existía
+				return (existingUser, false);
+			}
+
+			var newUser = new Security_Users
+			{
+				Nombres = (tn.Nombres + " " + tn.Apellidos).Trim(),
+				Estado = "ACTIVO",
+				Descripcion = (tn.Nombres + " " + tn.Apellidos).Trim(),
+				Password = StringUtil.GeneratePassword(cleanEmail, tn.Nombres, tn.Apellidos),
+				Mail = cleanEmail,
+				Security_Users_Roles = new List<Security_Users_Roles>
+		{
+			new Security_Users_Roles { Security_Role = rolPadre, Estado = "ACTIVO" }
+		}
+			};
+
+			// Devuelve true porque es un usuario recién creado
+			return ((Security_Users)newUser.Save_User(null), true);
+		}
+
+		private Security_Users CreateSecurityUserResp(Tbl_aca_tutor tn, Security_Roles rolPadre)
 		{
 			string cleanEmail = tn.Email?.Trim().ToLower() ?? "";
 
@@ -484,7 +520,7 @@ namespace CAPA_NEGOCIO.Oparations
 					new Security_Users_Roles { Security_Role = rolPadre, Estado = "ACTIVO" }
 				}
 			};
-			
+
 			return (Security_Users)newUser.Save_User(null);
 		}
 
@@ -493,7 +529,7 @@ namespace CAPA_NEGOCIO.Oparations
 			Console.Write("-->migrateEstudiantesReponsablesFamilia");
 			var familia = new Familias();
 			var familiasSqlserver = familia.Get<Familias>(
-				//FilterData.In("")
+			//FilterData.In("")
 			);
 			try
 			{
@@ -546,7 +582,7 @@ namespace CAPA_NEGOCIO.Oparations
 			}
 			return true;
 		}
-		
+
 		public Security_Roles validateRolPariente()
 		{
 			try
@@ -606,7 +642,7 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Id_familia = tn.Idfamilia;
 			existing.Id_relacion_familiar = tn.Idrelacionfamiliar;
 			existing.Id_Pais = tn.Idpais;
-			
+
 		}
 
 	}

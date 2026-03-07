@@ -64,8 +64,8 @@ builder.Services.AddSession(options =>
 //ENVIA CORREO CREDENCIALES
 builder.Services.AddCronJob<SendMailCredentialsSchedulerJob>(options =>
 {
-	options.CronExpression = "* * * * *";
-	options.TimeZone = TimeZoneInfo.Local;
+    options.CronExpression = "*/15 * * * *"; 
+    options.TimeZone = TimeZoneInfo.Local;
 });
 
 //ENVIA DATOS A BELLACOM

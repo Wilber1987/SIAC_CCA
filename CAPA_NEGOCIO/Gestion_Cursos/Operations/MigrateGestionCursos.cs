@@ -37,9 +37,10 @@ namespace CAPA_NEGOCIO.Oparations
 			await migrateAsignaturas();
 			await migrateClases();
 			await migrateMateria();
-			await migrateEstudiantesClases();
 			await migrateDocentesAsignaturas();
 			await migrateDocentesMaterias();
+			await migrateEstudiantesClases();
+
 		}
 
 		public async Task<bool> migrateNiveles()
@@ -65,7 +66,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					LoggerServices.AddMessageInfo($"migrateNiveles--> Niveles encontrados en MySQL: {nivelsMsql.Count}");
 
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 					int actualizados = 0;
 					int insertados = 0;
 
@@ -104,7 +105,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 					LoggerServices.AddMessageInfo($"migrateNiveles--> Transacción completada. Niveles actualizados: {actualizados}, insertados: {insertados}");
 				}
 				catch (Exception ex)
@@ -245,7 +246,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 					LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Periodos encontrados en MySQL: {periodosMsql.Count}");
 
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 					int actualizados = 0;
 					int insertados = 0;
 
@@ -277,7 +278,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 					LoggerServices.AddMessageInfo($"migratePeriodosLectivos--> Transacción completada. Periodos actualizados: {actualizados}, insertados: {insertados}");
 				}
 				catch (Exception ex)
@@ -330,7 +331,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var asignaturasMsql = asignatura.Get<Asignaturas>();
 					LoggerServices.AddMessageInfo($"migrateAsignaturas--> Asignaturas encontradas: {asignaturasMsql.Count}");
 
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 					int insertados = 0;
 					int actualizados = 0;
 
@@ -363,7 +364,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 					LoggerServices.AddMessageInfo($"migrateAsignaturas--> Migración completada. Insertados: {insertados}, Actualizados: {actualizados}");
 				}
 				catch (Exception ex)
@@ -429,7 +430,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var materiasMsql = materia.Where<Materias>(filter);
 					LoggerServices.AddMessageInfo($"migrateMateria --> Materias encontradas: {materiasMsql.Count}");
 
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 
 					int insertados = 0;
 					int actualizados = 0;
@@ -461,7 +462,7 @@ namespace CAPA_NEGOCIO.Oparations
 					});
 
 					MigrateService.UpdateLastUpdate("MATERIAS");
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 
 					LoggerServices.AddMessageInfo($"migrateMateria --> Migración finalizada. Insertados: {insertados}, Actualizados: {actualizados}");
 				}
@@ -524,7 +525,7 @@ namespace CAPA_NEGOCIO.Oparations
 					var clasesMsql = clase.Get<Clases>();
 					LoggerServices.AddMessageInfo($"migrateClases --> Clases encontradas: {clasesMsql.Count}");
 
-					BeginGlobalTransaction();
+					//BeginGlobalTransaction();
 
 					clasesMsql.ForEach(clase =>
 					{
@@ -555,7 +556,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 					});
 
-					CommitGlobalTransaction();
+					//CommitGlobalTransaction();
 					LoggerServices.AddMessageInfo("migrateClases --> Migración de clases finalizada.");
 				}
 				catch (Exception ex)
@@ -717,7 +718,7 @@ namespace CAPA_NEGOCIO.Oparations
 						var docAsigsMsql = docAsig.Get<Docente_asignaturas>();
 
 						// Iniciar transacción para entorno local
-						BeginGlobalTransaction();
+						//BeginGlobalTransaction();
 
 						foreach (var item in docAsigsMsql)
 						{
@@ -744,7 +745,7 @@ namespace CAPA_NEGOCIO.Oparations
 						}
 
 						// Confirmar transacción
-						CommitGlobalTransaction();
+						//CommitGlobalTransaction();
 					}
 					catch (Exception ex)
 					{
@@ -773,7 +774,7 @@ namespace CAPA_NEGOCIO.Oparations
 
 		public async Task<bool> migrateDocentesMaterias()
 		{
-			Console.WriteLine("--> migrateDocentesMaterias");
+			LoggerServices.AddMessageInfo("migrateDocentesMaterias --> Iniciando migración de docentes y materias.");
 
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
@@ -781,18 +782,26 @@ namespace CAPA_NEGOCIO.Oparations
 				{
 					// Conexión SSH
 					siacSshClient.Connect();
+					LoggerServices.AddMessageInfo("migrateDocentesMaterias --> Cliente SSH conectado.");
+
 					var siacTunnel = _sshTunnelService.GetForwardedPort("Siac", siacSshClient, 3307);
 					siacTunnel.Start();
+					LoggerServices.AddMessageInfo("migrateDocentesMaterias --> Túnel SSH establecido.");
 
 					try
 					{
 						// Obtener datos desde SiacTest
 						var docMat = new Docente_materias();
 						docMat.SetConnection(MySqlConnections.SiacTest);
-						var docMatsMsql = docMat.Where<Docente_materias>();						
+						var docMatsMsql = docMat.Where<Docente_materias>();
+
+						LoggerServices.AddMessageInfo($"migrateDocentesMaterias --> Registros encontrados en MySQL: {docMatsMsql.Count}");
 
 						// Transacción local
-						BeginGlobalTransaction();
+						//BeginGlobalTransaction();
+
+						int insertados = 0;
+						int actualizados = 0;
 
 						foreach (var item in docMatsMsql)
 						{
@@ -803,47 +812,53 @@ namespace CAPA_NEGOCIO.Oparations
 
 							if (existing != null)
 							{
-								// Actualizar solo si hay cambios en Updated_at
-								//if (existing.Updated_at != item.Updated_at)
-								//{
-									existing.Materia_id = item.Materia_id;
-									existing.Seccion_id = item.Seccion_id;
-									existing.Docente_id = item.Docente_id;
-									existing.Updated_at = item.Updated_at;
-									existing.Docentes = null;
-									existing.Update();
-								//}
+								// Actualizar el registro existente
+								existing.Materia_id = item.Materia_id;
+								existing.Seccion_id = item.Seccion_id;
+								existing.Docente_id = item.Docente_id;
+								existing.Updated_at = item.Updated_at;
+								existing.Docentes = null;
+								existing.Update();
+
+								actualizados++;
+								// LoggerServices.AddMessageInfo($"migrateDocentesMaterias --> Actualizado ID: {item.Id}");
 							}
 							else
 							{
 								item.Save();
+								insertados++;
+								// LoggerServices.AddMessageInfo($"migrateDocentesMaterias --> Insertado ID: {item.Id}");
 							}
 						}
 
-						CommitGlobalTransaction();
+						//CommitGlobalTransaction();
+						LoggerServices.AddMessageInfo($"migrateDocentesMaterias --> Migración finalizada. Insertados: {insertados}, Actualizados: {actualizados}");
 					}
 					catch (Exception ex)
 					{
-						LoggerServices.AddMessageError("ERROR en migrateDocentesMaterias durante la transacción.", ex);
-						// Podrías hacer RollbackGlobalTransaction(); aquí si tu sistema lo soporta
+						LoggerServices.AddMessageError("migrateDocentesMaterias --> ERROR durante la transacción.", ex);
+						RollBackGlobalTransaction();
 					}
 					finally
 					{
 						if (siacTunnel.IsStarted)
+						{
 							siacTunnel.Stop();
+							LoggerServices.AddMessageInfo("migrateDocentesMaterias --> Túnel SSH detenido.");
+						}
 
 						siacSshClient.Disconnect();
+						LoggerServices.AddMessageInfo("migrateDocentesMaterias --> Cliente SSH desconectado.");
 					}
 				}
 				catch (Exception ex)
 				{
-					LoggerServices.AddMessageError("ERROR en conexión SSH migrateDocentesMaterias.", ex);
+					LoggerServices.AddMessageError("migrateDocentesMaterias --> ERROR en conexión SSH.", ex);
 					return false;
 				}
 			}
 
 			return true;
 		}
-
 	}
 }

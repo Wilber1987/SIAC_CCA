@@ -11,6 +11,9 @@ namespace BackgroundJob.Cron.Jobs
     public class SendMailCredentialsSchedulerJob : CronBackgroundJob
     {
         private readonly ILogger<SendMailCredentialsSchedulerJob> _log;
+        
+        
+        private readonly DateTime _fechaArranque = new DateTime(2026, 2, 20, 6, 0, 0);
 
         public SendMailCredentialsSchedulerJob(CronSettings<SendMailCredentialsSchedulerJob> settings, ILogger<SendMailCredentialsSchedulerJob> log)
             : base(settings.CronExpression, settings.TimeZone)
@@ -19,7 +22,13 @@ namespace BackgroundJob.Cron.Jobs
         }
 
         protected override async Task<Task> DoWork(CancellationToken stoppingToken)
-        {
+        {            
+            if (DateTime.Now < _fechaArranque)
+            {
+                _log.LogInformation("El cron se disparó, pero se omitirá hasta el {0}", _fechaArranque);
+                return Task.CompletedTask; 
+            }
+
             _log.LogInformation(":::::::::::Running...  SendMailCredentialsSchedulerJob at {0}", DateTime.UtcNow);
             try
             {
