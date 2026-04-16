@@ -22,9 +22,10 @@ namespace CAPA_NEGOCIO.Oparations
 		{
 			await MigrateParentesco();
 			await MigrateFamilia();
-			await migrateEstudiantesSiac(_sshTunnelService);
 			await MigrateParientesAndUsers();
+			await migrateEstudiantesSiac(_sshTunnelService);			
 			await migrateEstudiantesReponsablesFamilia();
+			//await FixDuplicateUsers();
 		}
 
 		private IConfigurationRoot LoadConfiguration()
@@ -130,7 +131,7 @@ namespace CAPA_NEGOCIO.Oparations
 						foreach (var est in EstudiantesMsql)
 						{
 							var existingEstudiante = new Estudiantes() { Codigo = est.Codigo }.SimpleFind<Estudiantes>();
-							Console.Write("migrando estudiantes: " + i.ToString()); i++;
+							Console.Write("migrando estudiantes: " + i.ToString()+", "); i++;
 							est.Fecha_nacimiento = DateUtil.ValidSqlDateTime(est.Fecha_nacimiento.GetValueOrDefault());
 							est.Updated_at = DateUtil.ValidSqlDateTime(est.Updated_at.GetValueOrDefault());
 							est.Created_at = DateUtil.ValidSqlDateTime(est.Created_at.GetValueOrDefault());
@@ -353,13 +354,25 @@ namespace CAPA_NEGOCIO.Oparations
 					var data = new Tbl_aca_tutor();
 					data.SetConnection(MySqlConnections.BellacomTest);
 
-					var filter = new FilterData
+					/*var filter = new FilterData
 					{
 						PropName = "fechamodificacion",
 						FilterType = ">=",
 						Values = new List<string?> { fechaUltimaActualizacion.ToString() }
-					};
-					var dataMsql = data.Where<Tbl_aca_tutor>(filter);
+					};*/
+
+					//var dataMsql = data.Where<Tbl_aca_tutor>(filter);
+					
+					var condicionModificados = FilterData.Greater("fechamodificacion", fechaUltimaActualizacion);
+					var condicionNuevos = FilterData.Greater("fechagrabacion", fechaUltimaActualizacion); 
+					var condicionNuevosid = FilterData.Equal("idtutor", 3701);
+
+					var filtroMigracion = FilterData.Or(condicionModificados, condicionNuevos);
+					var filtroFinalMigracion = FilterData.And(filtroMigracion, condicionNuevosid);
+					var dataMsql = data.Where<Tbl_aca_tutor>(filtroMigracion);
+					//var dataMsql = data.Where<Tbl_aca_tutor>(filtroFinalMigracion);
+										
+					//var tutor5570 = dataMsql.FirstOrDefault(t => t.Idtutor == 5570);
 
 					dataMsql.ForEach(tn =>
 					{
@@ -481,9 +494,9 @@ namespace CAPA_NEGOCIO.Oparations
 				Password = StringUtil.GeneratePassword(cleanEmail, tn.Nombres, tn.Apellidos),
 				Mail = cleanEmail,
 				Security_Users_Roles = new List<Security_Users_Roles>
-		{
-			new Security_Users_Roles { Security_Role = rolPadre, Estado = "ACTIVO" }
-		}
+				{
+					new Security_Users_Roles { Security_Role = rolPadre, Estado = "ACTIVO" }
+				}
 			};
 
 			// Devuelve true porque es un usuario recién creado
@@ -644,6 +657,72 @@ namespace CAPA_NEGOCIO.Oparations
 			existing.Id_Pais = tn.Idpais;
 
 		}
+
+		public async Task<bool> FixDuplicateUsers()
+        {
+            List<int> duplicatedUserIds = new List<int> {
+                17086, 18111, 17315, 18048, 18257, 21065, 23730, 17092, 17155, 17567,
+                17175, 18549, 17759, 19511, 18183, 18034, 21051, 17785, 17536,
+                18057, 18349, 17124, 17748, 17376, 17854, 17476, 17150, 17602, 17199,
+                18032, 17385, 23731, 18344, 18673, 21006, 18278, 18510, 18095, 21012,
+                19246, 17451, 17471, 18347, 18256, 21645, 17171, 17666, 18422, 17729,
+                17420, 17749, 22687, 21585, 18070, 19032, 19344, 17993, 18113,
+                18714, 20901, 17289, 17830, 17203, 17501, 17933, 18978
+
+            };
+
+
+            var rolResponsable = new Security_Roles().Find<Security_Roles>(FilterData.Equal("descripcion", "PADRE_RESPONSABLE"));
+            if (rolResponsable == null) return false;
+            foreach (int uId in duplicatedUserIds)
+
+            {
+               var parientes = new Parientes()
+                    .Where<Parientes>(FilterData.Equal("user_id", uId))
+                    .OrderBy(p => p.Id)
+                    .ToList();
+
+
+                if (parientes.Count <= 1) continue;
+
+                var parientesAFixear = parientes.Skip(1).ToList();
+                foreach (var p in parientesAFixear)
+                {
+
+                    /*if (p.Responsable_Pago == true)
+
+                    {*/
+                      
+                        string claveNombres = p.Primer_nombre + "F" + p.Id_familia;
+
+                        var newUser = new Security_Users
+                        {
+                            Nombres = (p.Primer_nombre + " " + p.Primer_apellido).Trim(),
+                            Estado = "ACTIVO",
+                            Descripcion = (p.Primer_nombre + " " + p.Primer_apellido).Trim(),
+                            Password = StringUtil.GeneratePassword(p.Email, claveNombres, p.Primer_apellido),
+                            Mail = p.Email,
+                            Security_Users_Roles = new List<Security_Users_Roles>
+
+                            {
+                                new Security_Users_Roles { Security_Role = rolResponsable, Estado = "ACTIVO" }
+                            }
+                        };
+
+
+                        var savedUser = (newUser.Save_User(null) as ResponseService).body as Security_Users;
+
+                        p.User_id = savedUser.Id_User;
+                        p.Credenciales_Enviadas = true;
+                        p.Update();
+
+                   // }
+
+                }
+            }
+
+            return true;
+        }
 
 	}
 }

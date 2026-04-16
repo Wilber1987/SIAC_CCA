@@ -37,7 +37,6 @@ namespace CAPA_NEGOCIO.Oparations
 		public async Task<bool> migrateTipoNotas()
 		{
 			Console.Write("-->migrateTipoNotas");
-
 			// Iniciar el túnel SSH para SiacTest
 			using (var siacSshClient = _sshTunnelService.GetSshClient("Siac"))
 			{
@@ -90,7 +89,6 @@ namespace CAPA_NEGOCIO.Oparations
 					siacSshClient.Disconnect();
 				}
 			}
-
 			return true;
 		}
 

@@ -19,10 +19,12 @@ namespace CAPA_NEGOCIO.Services
 			try
 			{
 				var ActualizacionesCron = new ActualizacionesCron();
-				var resultado = ActualizacionesCron.Where<ActualizacionesCron>(FilterData.Equal("descripcion", tipo)).FirstOrDefault();
-				if (resultado != null)
+				//var resultado = ActualizacionesCron.Where<ActualizacionesCron>(FilterData.Equal("descripcion",  tipo)).FirstOrDefault();
+				var resultado = new ActualizacionesCron().Find<ActualizacionesCron>(FilterData.Equal("descripcion", tipo));				
+
+				if (resultado == null)
 				{
-					return DateTime.Now.AddDays(-5);
+					return DateTime.Now.AddDays(-10);
 				}
 
 				return (DateTime)(resultado?.Fecha_Actualizacion);
