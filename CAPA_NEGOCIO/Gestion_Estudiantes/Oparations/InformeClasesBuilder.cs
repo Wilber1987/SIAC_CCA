@@ -74,7 +74,6 @@ namespace DataBaseModel
         public static Clase_Group BuildClaseGroup(List<MateriasByClassQuery> clases, List<Estudiante_Clases_View> clasesView)
         {
             Clases? claseE = new Clases { Id = clases.First().Clase_id }.Find<Clases>();
-            //Estudiante_clases estudiante_Clases = new Estudiante_clases { Id = clases.est}
             MateriasByClassQuery clase = clases.First();
             Secciones? seccion = new Secciones { Id = clases.First().Seccion_id }.Find<Secciones>();
 
@@ -85,13 +84,12 @@ namespace DataBaseModel
                 Repite = clase?.Repitente == true ? "SI" : "NO",
                 Nivel = claseE?.Niveles?.Nombre,
                 Seccion = seccion?.Nombre,
-                Guia = seccion?.Guia?.Nombre_completo,
-                Asignaturas = clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()
-                /*Asignaturas = clasesView.Any(e => e.Nombre_nivel == "PREESCOLAR")
-                                ? new List<Asignatura_Group>()
-                                : clases.Select(c => BuildAsignaturaGroup(c, clasesView)).ToList()*/
-                /*Asignaturas = C.GroupBy(A => A.Nombre_asignatura)
-                    .Select(A => BuildAsignaturaGroup(A)).ToList()*/
+                Guia = seccion?.Guia?.Nombre_completo,                
+               
+                Asignaturas = clases.Select(c => BuildAsignaturaGroup(c, clasesView))
+                                    .GroupBy(a => a.Descripcion) 
+                                    .Select(g => g.OrderByDescending(a => a.Updated_at).First())
+                                    .ToList()
             };
         }
 
@@ -188,11 +186,19 @@ namespace DataBaseModel
                 Descripcion = materiasByClass.Nombre,
                 Descripcion_Corta = materiasByClass.Nombre,
                 Docente = materiasByClass.GetNombreCompletoDocente(),
-                Evaluaciones = A?.GroupBy(e => e.Evaluacion).Where(g => g.Count() == 1).Select(g => g.First()).Select(g => g.Evaluacion).ToList() ?? [],
+                Evaluaciones = A?.GroupBy(e => e.Evaluacion)
+                                .Where(g => g.Count() == 1)
+                                .Select(g => g.First())
+                                .Select(g => g.Evaluacion)
+                                .ToList() ?? [],
                 Calificaciones = calificaciones_Groups.OrderBy(c => c.Calificacion_updated_at)
-                .ThenBy(c => c.Evaluacion!.Contains('B') ? 1 :
-                    c.Evaluacion.Contains("S") ? 2 :
-                    c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? []
+                    .ThenBy(c => c.Evaluacion!.Contains('B') ? 1 :
+                        c.Evaluacion.Contains("S") ? 2 :
+                        c.Evaluacion.Contains("F") ? 3 : 4).ToList() ?? [],
+
+                Updated_at = calificaciones_Groups.Count > 0 
+                            ? calificaciones_Groups.Max(c => c.Calificacion_updated_at) 
+                            : DateTime.Now,
             };
         }
 

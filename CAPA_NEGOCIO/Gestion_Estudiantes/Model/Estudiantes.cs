@@ -129,6 +129,8 @@ namespace DataBaseModel
 		public List<Calificacion_Group>? Calificaciones { get; set; }
 		public string? Docente { get; set; }
 		public string? Descripcion_Corta { get; set; }
+
+		public DateTime? Updated_at { get; set; }
 	}
 
 	public class Clase_Group
