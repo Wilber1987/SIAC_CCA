@@ -26,38 +26,58 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
                 List<Parientes> parientesFiltrados = [];
 
                 // Lógica de segmentación según el tipo de notificación
-                if (request.NotificationType == NotificationTypeEnum.RESPONSABLE && request.Responsables?.Count > 0)
+                if (request.NotificationType == NotificationTypeEnum.RESPONSABLE)
                 {
-                    parientesFiltrados = new Parientes().Where<Parientes>(FilterData.In("User_Id", request.Responsables.ToArray()));
+                    if (request.Responsables?.Count > 0)
+                    {
+                        parientesFiltrados = new Parientes().Where<Parientes>(FilterData.In("User_Id", request.Responsables.ToArray()));
+                    }
+                    else
+                    {
+                        return new ResponseService(403, "Debe seleccionar almenos un responsable");
+                    }
+
                 }
                 else if (request.NotificationType == NotificationTypeEnum.SECCION && request.Secciones?.Count > 0)
                 {
-                    var estudiante_Clases = new Estudiante_clases().Where<Estudiante_clases>(
-                        FilterData.In("Seccion_id", request.Secciones.ToArray()),
-                        FilterData.In("Clase_id", request.Clases?.ToArray() ?? [])
-                    );
-                    parientesFiltrados = GetParientesFromClases(estudiante_Clases);
+                    if (request.Secciones?.Count > 0)
+                    {
+                        var estudiante_Clases = new Estudiante_clases().Where<Estudiante_clases>(
+                            FilterData.In("Seccion_id", request.Secciones.ToArray()),
+                            FilterData.In("Clase_id", request.Clases?.ToArray() ?? [])
+                        );
+                        parientesFiltrados = GetParientesFromClases(estudiante_Clases);
+                    }
+                    else
+                    {
+                        return new ResponseService(403, "Debe seleccionar almenos una sección");
+                    }
                 }
                 else if (request.NotificationType == NotificationTypeEnum.CLASE && request.Clases?.Count > 0)
                 {
-                    var estudiante_Clases = new Estudiante_clases().Where<Estudiante_clases>(
-                        FilterData.In("Clase_id", request.Clases.ToArray())
-                    );
-                    parientesFiltrados = GetParientesFromClases(estudiante_Clases);
+                    if (request.Clases?.Count > 0)
+                    {
+                        var estudiante_Clases = new Estudiante_clases().Where<Estudiante_clases>(
+                            FilterData.In("Clase_id", request.Clases.ToArray())
+                        );
+                        parientesFiltrados = GetParientesFromClases(estudiante_Clases);
+
+                    }
+                    else
+                    {
+                        return new ResponseService(403, "Debe seleccionar almenos una clase");
+                    }
                 }
                 else
                 {
-                    parientesFiltrados = new Parientes().GetResponsables();
+                    return new ResponseService(403, "No hay datos seleccionados");
                 }
-
                 // --- FILTRO CRÍTICO: Solo parientes con estudiantes en el periodo activo ---
                 var parientesConAlumnosActivos = FiltrarPorPeriodoActivo(parientesFiltrados, periodoActivoId);
-
                 // Guardar en la tabla de notificaciones
                 SendNotificacion(request, parientesConAlumnosActivos);
-
                 LoggerServices.AddMessageInfo($"El usuario con id = {user.UserId} guardó {parientesConAlumnosActivos.Count} notificaciones filtradas por periodo {periodoActivoId}");
-                
+
                 return new ResponseService { status = 200, message = "Notificaciones programadas correctamente" };
             }
             catch (System.Exception EX)
@@ -86,11 +106,14 @@ namespace CAPA_NEGOCIO.Gestion_Mensajes.Operations
         // Método para filtrar la lista final según el Periodo Lectivo Activo
         private List<Parientes> FiltrarPorPeriodoActivo(List<Parientes> listaOriginal, int? periodoId)
         {
+            if (true)
+            {
+                return listaOriginal;
+            }
             if (periodoId == null) return [];
-
-            return listaOriginal.Where(p => 
-                p.Estudiantes_responsables_familia != null && 
-                p.Estudiantes_responsables_familia.Any(erf => 
+            return listaOriginal.Where(p =>
+                p.Estudiantes_responsables_familia != null &&
+                p.Estudiantes_responsables_familia.Any(erf =>
                     erf.Estudiantes?.Estudiante_clases?.Any(ec => ec.Periodo_lectivo_id == periodoId) ?? false
                 )
             ).ToList();
